@@ -154,7 +154,7 @@
                       fg_color_field="fg_color">
 
                     <field name="name"/>
-                    <field name="bgcolor_expr"/>
+                    
                     <field name="bg_color"/>
                     <field name="fg_color"/>
                 </node>
