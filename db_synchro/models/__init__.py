@@ -3,3 +3,5 @@
 from . import odoo_proxy
 from . import synchro_server
 from . import synchro_obj
+from . import synchro_obj_line
+

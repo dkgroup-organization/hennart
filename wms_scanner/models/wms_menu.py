@@ -34,8 +34,8 @@ class WmsMenu(models.Model):
         string='Image filename',
         default='construction.jpg')
     menu_type = fields.Selection(
-        [('menu', 'Menu'), ('scenario', 'Scenario'), ('logout', 'Logout'), ('wms', 'Return to WMS'), ('scanner', 'Test scanner')],
-        string="type",
+        [('menu', 'Sub Menu'), ('scenario', 'Scenario'), ('logout', 'Logout'), ('wms', 'Return to WMS')],
+        string="Action",
         default="menu")
     scenario_id = fields.Many2one(
         comodel_name='wms.scenario',

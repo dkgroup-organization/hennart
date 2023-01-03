@@ -24,6 +24,7 @@ MAP_FIELDS = {'7': MAP_FIELDS_V7,
              '13': {},
              '14': {},
              '15': {},
+             '16': {},
              }
 
 # Default field to use when searching the corresponding object

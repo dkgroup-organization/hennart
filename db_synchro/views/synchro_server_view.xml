@@ -44,7 +44,6 @@
 
           <group string="Initialisation" name="initialisation">
           <button name="migrate_base" string="Migrate Base" type="object"/>
-          <button name="migrate_partner" string="Migrate partner" type="object"/>
 
           </group>
 

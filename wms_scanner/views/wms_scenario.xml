@@ -20,7 +20,7 @@
                         <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
                             <field name="active" widget="boolean_button" options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
                         </button>
-                        <button name="open_diagram" type="object" string="Diagram" class="oe_stat_button" icon="fa-code-fork"/>
+                        <!--<button name="open_diagram" type="object" string="Diagram" class="oe_stat_button" icon="fa-code-fork"/>-->
 
                     </div>
                     <group colspan="4" col="4">
@@ -38,23 +38,23 @@
                                     <field name="name"/>
                                     <field name="action_scanner"/>
                                     <field name="action_variable"/>
+                                    <field name="scenario_id" invisible="1"/>
                                 </tree>
                                 <form string="Step">
                                     <group>
                                         <field name="name"/>
-                                        
                                     </group>
                                     <notebook>
                                         <page string="Action">
                                         <group>
                                             <field name="action_scanner"/>
-                                            <field name="action_model"/>
-                                            <field name="action_variable"/>
-                                            <field name="action_image"/>
-                                            <field name="action_message"/>
-                                            <field name="action_scan" invisible="1"/>
+                                            <field name="action_model" attrs="{'invisible':[('action_scanner','!=', 'scan_model')]}"/>
+                                            <field name="action_variable" attrs="{'invisible':[('action_scanner','==', 'none')]}"/>
+                                            <field name="action_message" attrs="{'invisible':[('action_scanner','==', 'none')]}"/>
                                             <field name="scenario_id" invisible="1"/>
                                         </group>
+                                            <separator string="Enter the python code here" colspan="4"/>
+                                            <field name="python_code" colspan="4" nolabel="1" widget="ace" options="{'mode': 'python'}"/>
                                         </page>
                                         <page string="Transition">
                                             <separator string="Outgoing transitions" colspan="4"/>
@@ -93,10 +93,6 @@
                                                     </group>
                                                 </form>
                                             </field>
-                                        </page>
-                                        <page string="Code">
-                                            <separator string="Enter the python code here" colspan="4"/>
-                                            <field name="python_code" colspan="4" nolabel="1" widget="ace" options="{'mode': 'python'}"/>
                                         </page>
 
                                     </notebook>
@@ -143,32 +139,27 @@
             </search>
         </field>
     </record>
-    <record id="view_wms_scenario_diagram" model="ir.ui.view">
+    <!--<record id="view_wms_scenario_diagram" model="ir.ui.view">
         <field name="name">wms.scenario.diagram</field>
         <field name="model">wms.scenario</field>
         <field name="arch" type="xml">
-            <diagram_plus string="Scenario Editor">
-                <node object="wms.scenario.step" 
-                      shape="rectangle:rectangle==True" 
+            <diagram_plus>
+
+                <node object="wms.scenario.step"
                       bg_color_field="bg_color"
                       fg_color_field="fg_color">
 
-                    <field name="name"/>
-                    
-                    <field name="bg_color"/>
-                    <field name="fg_color"/>
                 </node>
                 <arrow object="wms.scenario.transition" 
                        source="from_id" 
                        destination="to_id" 
                        label="['name']">
-                    <field name="name"/>
-                    <field name="from_id"/>
-                    <field name="to_id"/>
+
                 </arrow>
+
             </diagram_plus>
         </field>
-    </record>
+    </record>-->
 
     <record model="ir.actions.act_window" id="act_open_wms_scenario_view">
         <field name="name">Scanner Scenario</field>

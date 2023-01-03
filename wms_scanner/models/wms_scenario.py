@@ -6,7 +6,7 @@
 from odoo import models, api, fields
 from odoo import _
 from odoo.http import request
-
+from odoo.tools.safe_eval import safe_eval
 import logging
 logger = logging.getLogger('wms_scanner')
 
@@ -26,8 +26,9 @@ class WmsScenario(models.Model):
         default=100,
         required=False,
         help='Sequence order.')
-    scenario_image = fields.Char('Image filename', default='construction.jpg')
-
+    scenario_image = fields.Char(
+        string='Image filename',
+        default='construction.jpg')
     debug_mode = fields.Boolean(
         string='Debug mode')
     active = fields.Boolean(
@@ -101,162 +102,69 @@ class WmsScenario(models.Model):
             'type': 'ir.actions.act_window',
             'target': 'current',
             }
+        # not available at this time 2022-12
+        action = False
         return action
-
-    def get_session_data(self):
-        "get data by session, so one session data by scanner"
-        return request.session.get('scenario_data', {})
-
-    def save_session_data(self, scenario_data):
-        "save data by session, so one session data by scanner"
-        request.session['scenario_data'] = scenario_data
 
     def get_scanner_response(self):
         "get the response of the scanner, only one scanner by session"
-        return dict(request.params) or {}
+        params = dict(request.params) or {}
+        scan = params.get('scan', '')
+        return scan
+
+    def get_button_response(self):
+        "get the response of button"
+        params = dict(request.params) or {}
+        button = params.get('button', '')
+        return button
 
     def do_scenario(self, data):
         "execute the scenario"
         self.ensure_one()
-        data['scenario'] = self
-        scenario_data = self.get_session_data()
 
         # init data if first time
-        if not scenario_data or scenario_data.get('scenario', 0) != self.id:
+        if not (data.get('scenario') and data.get('step')) or data.get('scenario') != self:
             # start new scenario
-            step_ids = self.env['wms.scenario.step'].search(
-                    [('scenario_id', '=', self.id), ('action_scanner', '=', 'start')])
-            if step_ids:
-                scenario_data = {'scenario': self.id, 'step': step_ids[0].id}
+            if self.step_ids:
+                data.update({'scenario': self, 'step': self.step_ids[0], 'user': self.env.user})
             else:
-                scenario_data = {'scenario': self.id}
+                data = {'scenario': self}
                 # There is no starting step
-                debug = _("There is no starting step in this scenario")
+                debug = _("There is no step in this scenario")
                 data.update({'debug': debug})
 
-        # Get the current step of the scenario
-        step_ids = self.env['wms.scenario.step'].search(
-                    [('scenario_id', '=', self.id),
-                     ('id', '=', scenario_data.get('step', 0))])
-        if step_ids:
-            data['step'] = step_ids[0]
-            if step_ids[0].action_scanner == 'start':
-                self.save_session_data({'scenario': self.id, 'step': step_ids[0].id})
-            data = self.continue_scenario(data)
-
-        # Add debug information if exist
-        data = self.scenario_debug(data)
+        # Do next step
+        data = self.continue_scenario(data)
 
         return data
-
-    def compute_step(self, scenario_data, data, transitions_tested):
-        "check transition and update scenario_data of the current step"
-        self.ensure_one()
-        step_id = scenario_data.get('step')
-        step = self.env['wms.scenario.step'].browse(step_id)
-        print('-------Step-------', step.name)
-
-        # Check transition, return next step
-        for transition in step.out_transition_ids:
-            # prevent infinite loop
-            if transition in transitions_tested:
-                # There is a infinite loop
-                debug = data.get('debug', '')
-                debug += "<br/>" + _("There is a infinite loop in this scenario!")
-                data.update({'debug': debug})
-                break
-            else:
-                transitions_tested |= transition
-
-            # Check if python code to execute
-            if step.python_code:
-                scenario_data, data = step.run(scenario_data, data)
-
-            # Check if one transition is ok
-            if transition.check(scenario_data, data):
-                print('-------transition-------', transition.name)
-                scenario_data['step'] = transition.to_id.id
-                scenario_data, data, transitions_tested = self.compute_step(
-                                    scenario_data, data, transitions_tested)
-                break
-
-        # return the new current step
-        return scenario_data, data, transitions_tested
 
     def continue_scenario(self, data):
         "Check the response, and choice the next step"
         self.ensure_one()
-        scenario_data = self.get_session_data()
-        transitions_tested = self.env['wms.scenario.transition']
-
-        # <<<< Compute user response >>>>
-        step = self.env['wms.scenario.step'].browse(scenario_data.get('step'))
-        response = self.get_scanner_response()
+        step = data['step']
 
         # check button
-        if response.get('button'):
+        if self.get_button_response():
             # do button action
             pass
         # check scan
-        elif step.action_scan:
+        elif step.action_scanner != 'none':
             # do scan response
-            scenario_data, data = step.read_scan(scenario_data, data)
+            data = step.read_scan(data)
         # to defined
         else:
             pass
 
+        print("\n-------:", step, data)
         if data.get('warning'):
             return data
         else:
             # Defined next step
-            scenario_data, data, transitions_tested = self.compute_step(scenario_data, data, transitions_tested)
-            if data.get('warning'):
-                return data
-            else:
-                # Save result and update qweb data
-                self.save_session_data(scenario_data)
-                data['step'] = self.env['wms.scenario.step'].browse(scenario_data.get('step'))
+            pass
 
         return data
 
-    def scenario_debug(self, data):
-        "add debug informations on qweb data"
-        self.ensure_one()
-        if self.debug_mode:
-            debug = data.get('debug', '')
-            debug += "</b><b>INPUT DATA:</b><br/>" + self.format_debug(self.get_scanner_response())
-            debug += "<b>SESSION DATA:</b><br/>" + self.format_debug(self.get_session_data())
-            debug += "<b>QWEB DATA:</b><br/>" + self.format_debug(data)
-            data.update({'debug': debug})
-        return data
 
-    @api.model
-    def format_debug(self, sub_data):
-        "Debug information, return sub_data in html"
-        if not sub_data:
-            html = ""
-        if type(sub_data) is dict:
-            html = "<ul>"
-            for key in list(sub_data.keys()):
-                if type(sub_data[key]) in [list, dict]:
-                    html += '<li><b>%s: </b></li>' % (key)
-                    html += self.data_debug(sub_data[key])
-                else:
-                    html += '<li><b>%s: </b>%s</li>' % (key, sub_data[key])
-            html += "</ul>"
 
-        elif type(sub_data) is list:
-            html = "<ul>"
-            for idx, item in enumerate(sub_data):
-                if type(item) in [list, dict]:
-                    html += '<li>[%s]:</li>' % (idx)
-                    html += self.data_debug(item)
-                else:
-                    html += '<li>[%s]: %s</li>' % (idx, item)
-            html += "</ul>"
-
-        else:
-            html = "<li>%s</li>" % (sub_data)
-        return html
 
 

@@ -14,7 +14,9 @@
             <field name="description"/>
             <field name="remote_id"/>
             <field name="local_id"/>
+            <field name="update_date"/>
           </group>
+          <button name="update_values" type="object" string="update" context="{'auto_update': True}" icon="fa-update"/>
         </sheet>
       </form>
     </field>
@@ -26,10 +28,13 @@
       <tree string="Transfered IDs Details" decoration-danger="local_id == 0">
         <field name="name"/>
         <field name="server_id"/>
-        <field name="obj_id"/>
-        <field name="description"/>
         <field name="remote_id"/>
         <field name="local_id"/>
+        <field name="obj_id"/>
+        <field name="description"/>
+        <field name="error"/>
+        <field name="update_date"/>
+        <button name="update_values" type="object" string="update" context="{'auto_update': True}" icon="fa-update"/>
       </tree>
     </field>
   </record>
@@ -150,6 +155,10 @@
                   <field name="remote_id"/>
                   <field name="local_id"/>
                   <field name="resource_ref" widget="reference"/>
+                  <field name="error"/>
+                  <field name="update_date"/>
+                  <button name="update_values" type="object" string="update" context="{'auto_update': True}" icon="fa-update"/>
+
                 </tree>
               </field>
               <button name="unlink_mapping" string="Reset mapping" type="object"/>
@@ -178,7 +187,7 @@
     </field>
   </record>
   <record id="ir_filters_regclass_tree" model="ir.ui.view">
-    <field name="name">synchro.obj.line.form</field>
+    <field name="name">synchro.obj.form</field>
     <field name="model">synchro.obj</field>
     <field name="arch" type="xml">
       <search string="Synchronized objects">

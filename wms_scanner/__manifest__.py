@@ -4,7 +4,7 @@
 {
     'name': 'WMS Scanner',
     'summary': 'Allows managing barcode readers with complex scenarios',
-    'version': '13.0.1.0.1',
+    'version': '14.0.1.0.1',
     'category': 'Generic Modules/Inventory Control',
     'website': 'https://opencrea.fr',
     'author': 'OpenCrea',

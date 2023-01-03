@@ -2,7 +2,7 @@
 
 {
     "name": "Multi-DB Synchronization",
-    "version": "15.0.1.0.0",
+    "version": "16.0.1.0.0",
     "category": "Tools",
     "license": "AGPL-3",
     "summary": "Multi-DB Synchronization",
@@ -10,15 +10,12 @@
     "website": "https://dkgroup.fr",
     "maintainer": "DK group",
     "images": [],
-    "depends": [
-        "base"
-    ],
+    "depends": ["base", "sale"],
     "data": [
         "views/synchro_menu.xml",
         "views/synchro_server_view.xml",
         "views/synchro_obj_view.xml",
         "security/ir.model.access.csv",
-        "data/ir_cron.xml",
     ],
     "installable": True,
 }

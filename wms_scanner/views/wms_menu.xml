@@ -5,10 +5,11 @@
         <field name="model">wms.menu</field>
         <field name="arch" type="xml">
             <tree string="Scanner Scenario">
-                <field name="sequence"/>
+                <field name="sequence" widget="handle"/>
+                <field name="parent_id"/>
                 <field name="name"/>
                 <field name="menu_type"/>
-                <field name="parent_id"/>
+
             </tree>
         </field>
     </record>

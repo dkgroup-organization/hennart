@@ -61,9 +61,10 @@ class BaseSynchroServer(models.Model):
          ('13', 'Version 13.0'),
          ('14', 'Version 14.0'),
          ('15', 'Version 15.0'),
+         ('16', 'Version 16.0'),
          ],
         string='Version',
-        default='14',
+        default='16',
         required=True
     )
 
@@ -71,7 +72,6 @@ class BaseSynchroServer(models.Model):
         'synchro.obj',
         'server_id',
         string='Models',
-        ondelete='cascade'
     )
 
     def get_map_fields(self):
@@ -169,8 +169,6 @@ class BaseSynchroServer(models.Model):
         bank_obj = self.migrate_obj('res.bank')
         self.migrate_obj('res.partner.bank')
         self.migrate_obj('res.groups')
-        self.migrate_obj('res.users')
-        #self.migrate_obj('res.partner')
 
         remote_company_ids = self.remote_company_ids()
         company_values = company_obj.remote_read(remote_company_ids)
@@ -185,24 +183,29 @@ class BaseSynchroServer(models.Model):
 
         for server in self:
             partner_obj = server.get_obj('res.partner')
+            if not partner_obj or partner_obj.state != 'synchronise':
+                continue
             remote_company_ids = server.remote_company_ids()
             partner_loading_ids = partner_obj.get_synchronazed_remote_ids()
             partner_remote_ids = []
             partner_obj.auto_create = True
+            partner_obj.auto_search = False
 
-            for model_name in ['res.users', 'sale.order', 'purchase.order', 'account.move',
-                               'res.partner.bank', 'account.payment']:
+            for model_name in ['res.users', 'sale.order', 'purchase.order', 'account.move']:
                 if self.env['ir.model'].search([('model', '=', model_name)]):
                     # search the partner used
                     model_obj = server.get_obj(model_name)
                     groupby_domain = [('company_id', 'in', remote_company_ids)]
+                    if hasattr(self.env[model_obj.model_id.model], 'active'):
+                        groupby_domain.append(('active', '=', True))
                     partner_search_ids = model_obj.read_groupby_ids('partner_id', groupby_domain)
 
                     # limit the number of load
                     for partner_id in partner_search_ids:
-                        if partner_id not in partner_loading_ids:
+                        if partner_id not in partner_loading_ids and partner_id not in partner_remote_ids:
                             partner_remote_ids.append(partner_id)
-                        if len(partner_remote_ids) > limit:
+
+                        if limit and len(partner_remote_ids) > limit:
                             break
 
             obj_vals = partner_obj.remote_read(partner_remote_ids)
@@ -210,35 +213,13 @@ class BaseSynchroServer(models.Model):
 
             remote_child_ids = partner_obj.remote_search([('parent_id', 'in', partner_loading_ids),
                                                           ('id', 'not in', partner_loading_ids)])
+
             obj_vals = partner_obj.remote_read(remote_child_ids)
             partner_obj.write_local_value(obj_vals)
 
-    def migrate_product(self, limit=50):
-        """ product migration"""
-        for server in self:
-            product_obj = server.get_obj('product.product')
-            product_obj.auto_create = True
-            remote_company_ids = server.remote_company_ids()
-            product_loading_ids = product_obj.get_synchronazed_remote_ids()
-            remote_ids = []
 
-            for model_name in ['sale.order.line', 'purchase.order.line', 'account.move.line',
-                               'stock.quant', 'product.pricelist.item', 'product.supplierinfo']:
-                if self.env['ir.model'].search([('model', '=', model_name)]):
-                    model_obj = server.get_obj(model_name)
-                    groupby_domain = [('company_id', 'in', remote_company_ids)]
-                    product_search_ids = model_obj.read_groupby_ids('product_id', groupby_domain)
-
-                    # limit the number of load
-                    for product_id in product_search_ids:
-                        if product_id not in product_loading_ids:
-                            remote_ids.append(product_id)
-                        if len(remote_ids) > limit:
-                            break
-                server.migrate_product_product(remote_ids)
-
-    def migrate_product_product(self, remote_ids):
-        " Migrate product "
+    def migrate_simple_product(self, remote_ids):
+        " Migrate product with no variant, check doublon with default_code"
         self.ensure_one()
 
         product_obj = self.get_obj('product.product')
@@ -251,40 +232,85 @@ class BaseSynchroServer(models.Model):
             product_tmpl_id = remote_value.get('product_tmpl_id')
             remote_id = remote_value.get('id')
 
+            # Check if the product is already migrate
             if product_obj.get_local_id(remote_id, no_create=True, no_search=True):
-                # the product is already migrate
                 continue
-            elif product_tmpl_obj.get_local_id(product_tmpl_id[0], no_create=True, no_search=True):
-                # the product template is already migrate
-                product_obj.get_local_id(remote_id)
-            else:
-                # Create template and product
-                product_tmpl_local_id = product_tmpl_obj.get_local_id(product_tmpl_id[0])
-                product_tmpl_local = self.env['product.template'].browse(product_tmpl_local_id)
 
+            # If doublon check the linking id
+            if default_code and product_ids:
+                local_id = product_ids[0].id
+                local_tmpl_id = product_ids[0].product_tmpl_id.id
+                # check mapping id for product
+                condition = [
+                    ('local_id', '=', local_id),
+                    ('remote_id', '=', remote_id),
+                    ('obj_id', '=', product_obj.id)]
+                line_ids = self.env['synchro.obj.line'].search(condition)
+                if not line_ids:
+                    line_vals = {
+                        'local_id': local_id,
+                        'remote_id': remote_id,
+                        'obj_id': product_obj.id}
+                    line_ids.create(line_vals)
+
+                # check mapping id for product template
+                condition = [
+                    ('local_id', '=', local_tmpl_id),
+                    ('remote_id', '=', product_tmpl_id[0]),
+                    ('obj_id', '=', product_tmpl_obj.id)]
+                line_ids = self.env['synchro.obj.line'].search(condition)
+                if not line_ids:
+                    line_vals = {
+                        'local_id': local_tmpl_id,
+                        'remote_id': product_tmpl_id[0],
+                        'obj_id': product_tmpl_obj.id}
+                    line_ids.create(line_vals)
+            # if not doublon create product
+            else:
+                product_tmpl_local_id = product_tmpl_obj.get_local_id(
+                                            product_tmpl_id[0])
+
+                product_tmpl_local = self.env['product.template'].browse(
+                                            product_tmpl_local_id)
+
+                # TODO, if futur project with variant, change the rule here
                 local_product_id = product_tmpl_local.product_variant_id.id
 
-                vals_line = {
-                    'obj_id': product_obj.id,
-                    'remote_id': remote_id,
-                    'local_id': local_product_id}
-                self.env['synchro.obj.line'].create(vals_line)
+                condition = [
+                    ('remote_id', '=', remote_id),
+                    ('obj_id', '=', product_obj.id)]
+                local_ids = self.env['synchro.obj.line'].search(condition)
+                if local_ids:
+                    if local_ids[0].local_id != local_product_id:
+                        local_ids[0].local_id = local_product_id
+                else:
+                    vals_line = {
+                        'obj_id': product_obj.id,
+                        'remote_id': remote_id,
+                        'local_id': local_product_id}
+                    local_ids.create(vals_line)
 
                 product_obj.write_local_value([remote_value])
 
+    def get_user_password(self):
+        """ test the password copy"""
+        for server in self:
+            user_obj = server.get_obj('res.users')
+            remote_ids = user_obj.get_synchronazed_remote_ids()
+            remote_values = user_obj.remote_read(remote_ids, remote_fields=['login', 'password'])
 
     @api.model
-    def cron_migrate(self, limit=50):
+    def cron_migrate(self):
         "sheduled migration"
-        # _logger.info('\n-------cron_migrate--------\n')
 
         for server in self.search([]):
+
             server.migrate_partner()
-            server.migrate_product()
+            #server.migrate_product()
             obj_ids = server.obj_ids.search([('state', '=', 'synchronise')], order='sequence')
             for obj in obj_ids:
-                res = obj.load_remote_record(limit=limit)
-                if res:
-                    break
-
+                if obj.model_id.model in ["product.product", "res.partner"]:
+                    continue
+                else:
+                    obj.load_remote_record()
 

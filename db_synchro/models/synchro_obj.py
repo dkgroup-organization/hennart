@@ -11,22 +11,12 @@ from . import synchro_data
 _logger = logging.getLogger(__name__)
 
 MAPING_SEARCH = synchro_data.MAPING_SEARCH
-MIN_DATE = synchro_data.MIN_DATE
-
-
-class BaseSynchroObjDepend(models.Model):
-    """Class many2many hiearchy depend object."""
-    _name = "synchro.obj.depend"
-    _description = "Relation order unter object"
-
-    child_id = fields.Many2one('synchro.obj', 'child')
-    parent_id = fields.Many2one('synchro.obj', 'parent')
 
 
 class BaseSynchroObj(models.Model):
     """Class to store the migration configuration by object."""
     _name = "synchro.obj"
-    _description = "Register Class"
+    _description = "synchro.obj"
     _order = 'sequence'
 
     name = fields.Char(
@@ -87,8 +77,7 @@ class BaseSynchroObj(models.Model):
     line_id = fields.One2many(
         'synchro.obj.line',
         'obj_id',
-        string='IDs Affected',
-        ondelete='cascade'
+        string='IDs Affected'
     )
     avoid_ids = fields.One2many(
         'synchro.obj.avoid',
@@ -110,10 +99,10 @@ class BaseSynchroObj(models.Model):
         column1='parent_id',
         column2='child_id',
         string='Childs',
-        ondelete='cascade'
         )
 
     note = fields.Html("Notes")
+
     default_value = fields.Text("Defaults values")
     sync_limit = fields.Integer("Load limite by cron", default=1)
 
@@ -181,21 +170,20 @@ class BaseSynchroObj(models.Model):
                     local_field.check_remote = True
                     local_field.remote_type = remote_fields[local_field.name]['type']
                     if local_field.remote_type not in ['one2many']:
-                        if local_field.name not in except_fields and local_field.field_id.store:
+                        if local_field.name not in except_fields:
                             local_field.synchronize = True
 
     def unlink_mapping(self):
         for obj in self:
             obj.line_id.unlink()
 
-    def load_remote_record(self, limit=10, domain=[]):
+    def load_remote_record(self, limit=50):
         "Load remote record"
         limit = self.env.context.get('limit', 0) or limit
-        synchronize_date = fields.Datetime.now()
 
         for obj in self:
             already_ids = obj.get_synchronazed_remote_ids()
-            domain = [('id', 'not in', already_ids)] + domain
+            domain = [('id', 'not in', already_ids)]
 
             remote_domain = eval(obj.domain)
             if remote_domain:
@@ -206,16 +194,12 @@ class BaseSynchroObj(models.Model):
                 pass
             elif limit and len(obj_ids) > limit:
                 obj_ids = obj_ids[:limit]
-                synchronize_date = False
 
             for obj_id in obj_ids:
                 obj_vals = obj.remote_read([obj_id])
-                _logger.info("\write_local_value;%s;%s\n%s" % (obj.model_id.model, obj_id, obj_vals))
                 obj.write_local_value(obj_vals)
 
-            if synchronize_date:
-                obj.synchronize_date = synchronize_date
-            return obj_ids
+            obj.synchronize_date = fields.Datetime.now()
 
     def check_childs(self):
         "check the child of this object"
@@ -305,11 +289,8 @@ class BaseSynchroObj(models.Model):
                 description = '%s ' % (search_value) + description
                 condition.append((search_field, '=', search_value))
 
-
-
             local_ids = self.env[self.model_id.model].search(condition)
             local_id = local_ids and (len(local_ids) == 1) and local_ids[0].id or False
-
 
             line_condition = [
                     ('obj_id', '=', self.id),
@@ -356,6 +337,19 @@ class BaseSynchroObj(models.Model):
         condition = [('remote_id', '=', remote_id), ('obj_id', '=', self.id)]
         local_ids = self.env['synchro.obj.line'].search(condition)
 
+        if not local_ids:
+            self.env['synchro.obj.line'].create({
+                'local_id': 0,
+                'remote_id': remote_id,
+                'obj_id': self.id,
+                'description': '?',
+                'update_date': fields.Datetime.now(),
+                })
+
+        for line in local_ids:
+            if line.error:
+                return False
+
         if check_local_id:
             # Check if there is a local object pointing by these ids
             checking_local_ids = self.env['synchro.obj.line']
@@ -364,7 +358,7 @@ class BaseSynchroObj(models.Model):
                     if self.env[self.model_id.model].browse(checking_local_id.local_id):
                         checking_local_ids |= checking_local_id
                 except:
-                    checking_local_id.unlink()
+                    checking_local_id.error = "local Deleting"
 
             local_ids = checking_local_ids
 
@@ -380,74 +374,15 @@ class BaseSynchroObj(models.Model):
                     return result[remote_id]
 
             if self.auto_create and not no_create:
-
                 remote_vals = self.remote_read([remote_id])
                 if remote_vals:
-                    remote_value = self.exception_value_create(remote_vals[0])
-                    local_vals = self.get_local_value(remote_value)
-                    new_obj = self.env[self.model_id.model].with_context(check_move_validity=False,synchro=True).create(local_vals)
-                    # Update line
-                    local_ids = self.env['synchro.obj.line'].search(condition)
-                    if local_ids:
-                        local_ids.write({'local_id': new_obj.id})
-                    else:
-                        line_vals = {
-                            'local_id': new_obj.id,
-                            'remote_id': remote_id,
-                            'obj_id': self.id
-                            }
-                        self.env['synchro.obj.line'].create(line_vals)
-
-                    return new_obj.id
+                    self.write_local_value(remote_vals)
+                    return self.get_local_id(remote_id,
+                                             no_create=True, no_search=True, check_local_id=True)
                 else:
                     return False
             else:
                 return False
-
-    def get_many2x_field(self):
-        "get list of field type many2x"
-        many2x_field = {}
-
-        for sync_field in self.field_ids:
-            if sync_field.field_id.ttype in ['many2one', 'many2many']:
-                many2x_field[sync_field.name] = {
-                    'type': sync_field.field_id.ttype,
-                    'model': sync_field.field_id.relation}
-        return many2x_field
-
-    def get_ids_many2x(self, remote_values):
-        "check id in many2x field"
-        self.ensure_one()
-        many2x_model = {}
-        many2x_field = self.get_many2x_field()
-
-        for remote_field in list(many2x_field.keys()):
-            many2x_model[many2x_field[remote_field]['model']] = []
-
-        for remote_value in remote_values:
-            for remote_field in list(many2x_field.keys()):
-                if many2x_field[remote_field]['type'] == 'many2one':
-                    if remote_value[remote_field]:
-                        if remote_value[remote_field][0] not in many2x_model[many2x_field[remote_field]['model']]:
-                            many2x_model[many2x_field[remote_field]['model']].append(remote_value[remote_field][0])
-                if many2x_field[remote_field]['type'] == 'many2many':
-                    for remote_id in remote_value[remote_field]:
-                        if remote_id not in many2x_model[many2x_field[remote_field]['model']]:
-                            many2x_model[many2x_field[remote_field]['model']].append(remote_id)
-        return many2x_model
-
-    def check_ids_many2x(self, remote_values):
-        "Check ids to load"
-        self.ensure_one()
-        many2x_model = self.get_ids_many2x(remote_values)
-
-        for model_name in list(many2x_model.keys()):
-            sync_obj = self.server_id.get_obj(model_name)
-            remote_ids = list(many2x_model[model_name])
-            for remote_id in remote_ids:
-                if sync_obj.get_local_id(remote_id, no_create=True, no_search=True):
-                    many2x_model[model_name].remove(remote_id)
-        return many2x_model
 
     def get_local_value(self, remote_value):
         """get local database the values for man2x field
@@ -458,15 +393,10 @@ class BaseSynchroObj(models.Model):
         local_value = {}
 
         for sync_field in self.field_ids:
-
-            if sync_field.field_id.relation:
-                many2_obj = self.server_id.get_obj(sync_field.field_id.relation)
-                if many2_obj.state == 'cancel':
-                    continue
-
             if sync_field.field_id.ttype in ['many2one']:
                 if remote_value.get(sync_field.name):
                     many2_remote_id = remote_value.get(sync_field.name)[0]
+                    many2_obj = self.server_id.get_obj(sync_field.field_id.relation)
                     many2_local_id = many2_obj.get_local_id(many2_remote_id)
                     if many2_local_id:
                         field_name = sync_field.field_id.name
@@ -475,6 +405,7 @@ class BaseSynchroObj(models.Model):
             elif sync_field.field_id.ttype in ['many2many']:
                 many2_remote_ids = remote_value.get(sync_field.name)
                 if many2_remote_ids:
+                    many2_obj = self.server_id.get_obj(sync_field.field_id.relation)
                     many2_local_ids = []
                     for many2_remote_id in many2_remote_ids:
                         many2_local_id = many2_obj.get_local_id(many2_remote_id)
@@ -512,11 +443,8 @@ class BaseSynchroObj(models.Model):
     def exception_value_create(self, remote_value):
         "hook exception for value"
         self.ensure_one()
-
-        if self.model_name == 'account.move':
-            if remote_value.get('state'):
-                #no possible to create a done state
-                remote_value['state'] = 'draft'
+        if self.model_name == 'res.partner' and not remote_value.get('name'):
+            remote_value['name'] = '?'
 
         remote_value = self.exception_value_write(remote_value)
         return remote_value
@@ -531,7 +459,7 @@ class BaseSynchroObj(models.Model):
 
         elif self.model_name == 'res.partner':
             type_value = remote_value.get('type')
-            if type_value and type_value not in ['invoice', 'contact', 'delivery', 'other']:
+            if type_value and type_value not in ['invoice', 'contact', 'delivery', 'private', 'other']:
                 remote_value['type'] = 'contact'
 
         elif self.model_name == 'sale.order':
@@ -557,7 +485,7 @@ class BaseSynchroObj(models.Model):
 
         return remote_value
 
-    def write_local_value(self, remote_values):
+    def write_local_value(self, remote_values, commit=True):
         """write in local database the values, the values is a list of dic vals
             values: [{'id': 1, 'name': 'My object name', ....}, {'id': 2, ...}]
             the id field is the remote id and must be set
@@ -567,31 +495,41 @@ class BaseSynchroObj(models.Model):
         for remote_value in remote_values:
             remote_id = remote_value.get('id')
             local_id = self.get_local_id(remote_id, no_create=True)
+            error = False
 
-            if local_id:
-                if self.auto_update:
-                    # Write
-                    remote_value = self.exception_value_write(remote_value)
-                    local_value = self.get_local_value(remote_value)
-                    browse_obj = self.env[self.model_id.model].browse(local_id)
-                    browse_obj.sudo().with_context(check_move_validity=False,synchro=True).write(local_value)
+            if local_id and (self.auto_update or self.env.context.get('auto_update')):
+                # Write
+                remote_value = self.exception_value_write(remote_value)
+                local_value = self.get_local_value(remote_value)
+                browse_obj = self.env[self.model_id.model].browse(local_id)
+                try:
+                    browse_obj.sudo().with_context(synchro=True).write(local_value)
+                except Exception as e:
+                    error = "%s" % e
+
             elif self.auto_create:
                 # Create
                 remote_value = self.exception_value_create(remote_value)
                 local_value = self.get_local_value(remote_value)
-                new_obj = self.env[self.model_id.model].sudo().with_context(check_move_validity=False,synchro=True).create(local_value)
-                local_id = new_obj.id
-                condition = [('remote_id', '=', remote_id), ('obj_id', '=', self.id)]
-                local_ids = self.env['synchro.obj.line'].search(condition)
-                if local_ids:
-                    local_ids.with_context(check_move_validity=False,synchro=True).write({'local_id': local_id})
-                else:
-                    local_ids.with_context(check_move_validity=False,synchro=True).create({
-                                    'local_id': local_id,
-                                    'remote_id': remote_id,
-                                    'obj_id': self.id,
-                                    'description': '%s' % (remote_value.get('name', '???'))
-                                    })
+                _logger.info("create: %s: %s" % (self.model_id.model, local_value))
+                try:
+                    new_obj = self.env[self.model_id.model].sudo().with_context(synchro=True).create(local_value)
+                    local_id = new_obj.id
+
+                except Exception as e:
+                    local_id = 0
+                    error = "%s" % e
+
+            condition = [('remote_id', '=', remote_id), ('obj_id', '=', self.id)]
+            local_ids = self.env['synchro.obj.line'].search(condition)
+            local_ids.write({
+                    'local_id': local_id,
+                    'description': '%s' % (remote_value.get('name', '???')),
+                    'update_date': fields.Datetime.now(),
+                    'error': error})
+
+            if commit:
+                self.env.cr.commit()
 
     @api.model
     def get_synchronazed_remote_ids(self):
@@ -600,117 +538,27 @@ class BaseSynchroObj(models.Model):
         line_ids = self.env['synchro.obj.line'].search([('obj_id', '=', self.id)])
         return line_ids.mapped('remote_id')
 
+    def update_synchronize_date(self):
+        """ Update the value of synchronize date"""
+        for obj in self:
+            condition = [('error', '=', False), ('obj_id', '=', obj.id)]
+            line_ids = obj.line_id.search(condition, limit=1, order='update_date')
+            if line_ids:
+                obj.synchronize_date = line_ids[0].update_date
 
-class BaseSynchroObjAvoid(models.Model):
-    """Class to avoid the base synchro object."""
-    _name = "synchro.obj.avoid"
-    _description = "Fields to not synchronize"
-
-    name = fields.Char(
-        string='Remote Name',
-        required=True
-    )
-    remote_type = fields.Char(
-        string='Remote Type'
-    )
-    obj_id = fields.Many2one(
-        'synchro.obj',
-        string='Object',
-        required=True,
-        ondelete='SET NULL',
-    )
-    field_id = fields.Many2one(
-        'ir.model.fields',
-        ondelete='SET DEFAULT',
-        string='local field',
-        required=True,
-    )
-    synchronize = fields.Boolean('synchronyse')
-    check_remote = fields.Boolean('Remote checking')
-
-    def button_synchronize(self):
-        "to synchronize"
-        for obj_avoid in self:
-            obj_avoid.synchronize = True
-
-    def button_unsynchronize(self):
-        "to synchronize"
-        for obj_avoid in self:
-            obj_avoid.synchronize = False
+    def update_line(self):
+        """ Update the values by checking write_date on remote object"""
+        self.update_synchronize_date()
+        new_date = fields.Datetime.now()
+        for obj in self:
+            condition = [('write_date', '>', obj.synchronize_date)]
+            last_obj_writing_ids = obj.remote_search(condition)
+            for line in obj.line_id:
+                if line.remote_id not in last_obj_writing_ids:
+                    line.update_date = new_date
+                elif obj.auto_update:
+                    line.update_values()
+        self.update_synchronize_date()
 
 
-class BaseSynchroObjField(models.Model):
-    """Class Fields to synchronize."""
-    _name = "synchro.obj.field"
-    _description = "Fields to synchronize"
 
-    name = fields.Char(
-        string='Remote field name',
-        required=True
-    )
-    field_id = fields.Many2one(
-        'ir.model.fields',
-        string='local field',
-        ondelete='SET DEFAULT',
-        required=True,
-    )
-    obj_id = fields.Many2one(
-        'synchro.obj',
-        string='Object',
-        required=True,
-        ondelete='SET DEFAULT',
-    )
-
-    @api.onchange('field_id')
-    def onchange_field(self):
-        "return the name"
-        self.name = self.field_id.name or ''
-
-
-class BaseSynchroObjLine(models.Model):
-    """Class to store object line in base synchro."""
-    _name = "synchro.obj.line"
-    _description = "Synchronized record"
-
-    @api.model
-    def _selection_target_model(self):
-        models = self.env['ir.model'].search([])
-        return [(model.model, model.name) for model in models]
-
-    name = fields.Datetime(
-        string='Date',
-        required=True,
-        default=lambda *args: time.strftime('%Y-%m-%d %H:%M:%S')
-    )
-    obj_id = fields.Many2one(
-        'synchro.obj',
-        string='Object',
-        required=True,
-        ondelete='SET DEFAULT',
-        index=True
-    )
-    description = fields.Char('description')
-    local_id = fields.Integer(string='Local ID', index=True)
-    remote_id = fields.Integer(string='Remote ID', index=True)
-    server_id = fields.Many2one(related='obj_id.server_id', store=True)
-    model_id = fields.Integer(related='obj_id.model_id.id', store=True, index=True)
-
-    todo = fields.Boolean('Todo')
-
-    resource_ref = fields.Reference(string='Record', selection='_selection_target_model', compute='_compute_resource_ref')
-
-    @api.depends('obj_id', 'local_id')
-    def _compute_resource_ref(self):
-        for line in self:
-            model_name = line.obj_id.model_id.model or False
-            if model_name:
-                line.resource_ref = '%s,%s' % (model_name, line.local_id or 0)
-            else:
-                line.resource_ref = False
-
-    @api.onchange('local_id', 'remote_id')
-    def onchange_local_id(self):
-        if self.local_id and self.remote_id:
-            self.todo = False
-        else:
-            self.todo = True

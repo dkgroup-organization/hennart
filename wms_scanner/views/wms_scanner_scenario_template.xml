@@ -57,14 +57,15 @@
     </template>
     <!-- SCENARIO STEP SCAN-->
     <template id="scanner_scenario_scan" name="scanner_scenario_scan">
-      <t t-if="step.action_scan">
+      <t t-if="step.action_scanner != 'none'">
         <tr>
           <td>
-            <img t-att-src="img_path + (step.action_image or 'scan.jpg')" class="img_scenario"/>
+            <img t-att-src="img_path + 'scan.jpg'" class="img_scenario"/>
           </td>
           <td>
             <form action="scanner" method="post">
               <input type="hidden" name="scenario" t-att-value="scenario.id"/>
+              <input type="hidden" name="step" t-att-value="step.id"/>
               <input type="text" id="scan" name="scan" value="" autocomplete="off"/>
               <button type="submit" value="valider">
                 <img t-att-src="img_path + 'ok.jpg'" border="0" class="img_small"/>
