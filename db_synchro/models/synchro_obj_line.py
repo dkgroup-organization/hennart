@@ -11,15 +11,6 @@ from . import synchro_data
 _logger = logging.getLogger(__name__)
 
 
-class BaseSynchroObjDepend(models.Model):
-    """Class many2many hierarchy depend on object."""
-    _name = "synchro.obj.depend"
-    _description = "Relation order unter object"
-
-    child_id = fields.Many2one('synchro.obj', 'child')
-    parent_id = fields.Many2one('synchro.obj', 'parent')
-
-
 class BaseSynchroObjAvoid(models.Model):
     """Class to avoid the base synchro object."""
     _name = "synchro.obj.avoid"
@@ -36,13 +27,12 @@ class BaseSynchroObjAvoid(models.Model):
         'synchro.obj',
         string='Object',
         required=True,
-        ondelete='SET NULL',
     )
     field_id = fields.Many2one(
         'ir.model.fields',
-        ondelete='SET DEFAULT',
         string='local field',
         required=True,
+        ondelete='cascade'
     )
     synchronize = fields.Boolean('synchronyse')
     check_remote = fields.Boolean('Remote checking')
@@ -70,14 +60,13 @@ class BaseSynchroObjField(models.Model):
     field_id = fields.Many2one(
         'ir.model.fields',
         string='local field',
-        ondelete='SET DEFAULT',
         required=True,
+        ondelete='cascade'
     )
     obj_id = fields.Many2one(
         'synchro.obj',
         string='Object',
         required=True,
-        ondelete='SET DEFAULT',
     )
 
     @api.onchange('field_id')

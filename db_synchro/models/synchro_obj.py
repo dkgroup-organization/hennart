@@ -10,7 +10,15 @@ from . import synchro_data
 
 _logger = logging.getLogger(__name__)
 
-MAPING_SEARCH = synchro_data.MAPING_SEARCH
+
+class BaseSynchroObjDepend(models.Model):
+    """Class many2many hierarchy depend on object."""
+    _name = "synchro.obj.depend"
+    _description = "Relation order between object"
+
+    name = fields.Char('not used')
+    child_id = fields.Many2one('synchro.obj', 'child')
+    parent_id = fields.Many2one('synchro.obj', 'parent')
 
 
 class BaseSynchroObj(models.Model):
@@ -19,80 +27,25 @@ class BaseSynchroObj(models.Model):
     _description = "synchro.obj"
     _order = 'sequence'
 
-    name = fields.Char(
-        string='Name',
-        required=True
-    )
-    auto_create = fields.Boolean(
-        string='Create',
-    )
-    auto_update = fields.Boolean(
-        string='Update',
-    )
-    auto_search = fields.Boolean(
-        string='Search',
-    )
-    domain = fields.Char(
-        string='Remote Domain',
-        required=True,
-        default='[]'
-    )
-    search_field = fields.Char(
-        string='Search field',
-        help='define a search field if it is not name, example: code, default_code...'
-    )
-    server_id = fields.Many2one(
-        'synchro.server',
-        string='Server',
-        required=True
-    )
-    model_id = fields.Many2one(
-        'ir.model',
-        string='Object to synchronize',
-        ondelete='SET NULL',
-        required=True
-    )
-    model_name = fields.Char(
-        string='Remote Object name',
-        required=True
-    )
-    action = fields.Selection(
-        [('download', 'Download'),
-         ('upload', 'Upload'),
-         ('both', 'Both')],
-        string='Direction (deprecated)',
-        required=True,
-        default='download'
-    )
-    sequence = fields.Integer(
-        string='Sequence'
-    )
-    active = fields.Boolean(
-        string='Active',
-        default=True
-    )
-    synchronize_date = fields.Datetime(
-        string='Latest Synchronization'
-    )
-    line_id = fields.One2many(
-        'synchro.obj.line',
-        'obj_id',
-        string='IDs Affected'
-    )
-    avoid_ids = fields.One2many(
-        'synchro.obj.avoid',
-        'obj_id',
-        domain=[('synchronize', '=', False)],
-        string='All fields.',
-
-    )
-    field_ids = fields.One2many(
-        'synchro.obj.avoid',
-        'obj_id',
-        domain=[('synchronize', '=', True)],
-        string='Fields to synchronize',
-
-    )
+    name = fields.Char(string='Name', required=True)
+    auto_create = fields.Boolean(string='Create')
+    auto_update = fields.Boolean(string='Update')
+    auto_search = fields.Boolean(string='Search')
+    domain = fields.Char(string='Remote Domain', required=True, default='[]')
+    search_field = fields.Char(string='Search field', default="name",
+                               help='define a search field if it is not name, example: code, default_code...')
+    server_id = fields.Many2one('synchro.server', string='Server', required=True)
+    model_id = fields.Many2one('ir.model', string='Object to synchronize', required=True, ondelete='cascade')
+    model_name = fields.Char('Remote Object name', required=True)
+    sequence = fields.Integer('Sequence')
+    level = fields.Integer('level')
+    active = fields.Boolean('Active', default=True)
+    synchronize_date = fields.Datetime('Latest Synchronization')
+    line_id = fields.One2many('synchro.obj.line', 'obj_id', string='IDs Affected')
+    avoid_ids = fields.One2many('synchro.obj.avoid', 'obj_id', domain=[('synchronize', '=', False)],
+                                string='All fields.')
+    field_ids = fields.One2many('synchro.obj.avoid', 'obj_id', domain=[('synchronize', '=', True)],
+                                string='Fields to synchronize')
     child_ids = fields.Many2many(
         comodel_name='synchro.obj',
         relation='synchro_obj_depend',
@@ -106,13 +59,13 @@ class BaseSynchroObj(models.Model):
     default_value = fields.Text("Defaults values")
     sync_limit = fields.Integer("Load limite by cron", default=1)
 
-    state = fields.Selection(
-            [('draft', 'Draft'),
-            ('manual', 'Manual'),
-            ('auto', 'Auto'),
-            ('synchronise', 'Synchronise'),
-            ('cancel', 'Cancelled')
-            ], string='State', index=True, default='draft')
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('manual', 'Manual'),
+        ('auto', 'Auto'),
+        ('synchronise', 'Synchronise'),
+        ('cancel', 'Cancelled')
+        ], string='State', index=True, default='draft')
 
     def unlink(self):
         "unlink line before"
@@ -121,7 +74,7 @@ class BaseSynchroObj(models.Model):
             obj.avoid_ids.unlink()
             obj.line_id.unlink()
 
-        ret = super(BaseSynchroObj, self).unlink()
+        ret = super().unlink()
         return ret
 
     def get_default_value(self):
@@ -137,6 +90,8 @@ class BaseSynchroObj(models.Model):
     def onchange_field(self):
         "return the name"
         self.model_name = self.model_id.model or ''
+        if not self.name:
+            self.name = self.model_id.model or ''
 
     def update_field(self):
         "update the list of local field"
@@ -188,18 +143,26 @@ class BaseSynchroObj(models.Model):
             remote_domain = eval(obj.domain)
             if remote_domain:
                 domain += remote_domain
-            obj_ids = obj.remote_search(domain)
+
+            remote_ids = obj.remote_search(domain)
+            remote_ids.sort()
 
             if limit and limit < 0:
                 pass
-            elif limit and len(obj_ids) > limit:
-                obj_ids = obj_ids[:limit]
+            elif limit and len(remote_ids) > limit:
+                remote_ids = remote_ids[:limit]
 
-            for obj_id in obj_ids:
-                obj_vals = obj.remote_read([obj_id])
-                obj.write_local_value(obj_vals)
+            remote_values = obj.remote_read(remote_ids)
+            obj.write_local_value(remote_values)
 
             obj.synchronize_date = fields.Datetime.now()
+
+    def load_remote_product(self, remote_ids=[]):
+        "Load remote record"
+        self.ensure_one()
+        if self.model_id.model == 'product.product':
+            product_tmpl_obj = self.server_id.get_obj('product.template')
+            pass
 
     def check_childs(self):
         "check the child of this object"
@@ -218,13 +181,44 @@ class BaseSynchroObj(models.Model):
             child_ids |= obj.server_id.create_obj(object_list)
             obj.write({'child_ids': [(6, 1, child_ids.ids)]})
 
+    def action_order(self):
+        """ Order by recursive dependence """
+
+        def deeper_sequence(obj, res):
+            """ check if there are child, if not start sequence = 100, else add 100 by level"""
+            # obj Already checked
+            if obj in res:
+                return res
+
+            if not obj.child_ids:
+                obj.check_childs()
+
+            res |= obj
+
+            if not obj.child_ids and obj.level != 1:
+                obj.level = 1
+            else:
+                for obj_child in obj.child_ids:
+                    res |= deeper_sequence(obj_child, res=res)
+
+                obj.level = max(obj.child_ids.mapped('level') or [0]) + 1
+
+            return res
+
+        res = self.env['synchro.obj']
+        self.level = 0
+        for obj in self:
+            res = deeper_sequence(obj, res)
+
+        for obj in self:
+            obj.sequence = 1000 * obj.level + len(obj.child_ids)
+
     def remote_read(self, remote_ids, remote_fields=[]):
         "read the value of the remote object filter on remote_ids"
         self.ensure_one()
         remote_odoo = odoo_proxy.RPCProxy(self.server_id)
         remote_fields = remote_fields or self.field_ids.mapped('name')
-        remote_value = remote_odoo.get(self.model_name).read(
-                        remote_ids, remote_fields)
+        remote_value = remote_odoo.get(self.model_name).read(remote_ids, remote_fields)
         return remote_value
 
     def remote_search(self, domain=[]):
@@ -254,10 +248,9 @@ class BaseSynchroObj(models.Model):
     def default_search_field(self):
         "return the default search field to do mapping"
         self.ensure_one()
-        maping_search = MAPING_SEARCH
 
-        if maping_search.get(self.model_name):
-            search_field = maping_search[self.model_name]
+        if self.search_field:
+            search_field = [self.search_field]
         else:
             search_field = ['name']
         return search_field
@@ -279,14 +272,13 @@ class BaseSynchroObj(models.Model):
             remote_id = remote_value['id']
             local_id = False
             res[remote_id] = False
-            description = remote_value.get('name', '???')
 
             # Construct the condition from the search_fields and search
             condition = []
             description = ''
             for search_field in search_fields:
                 search_value = remote_value.get(search_field)
-                description = '%s ' % (search_value) + description
+                description = '%s ' % search_value + description
                 condition.append((search_field, '=', search_value))
 
             local_ids = self.env[self.model_id.model].search(condition)
@@ -451,6 +443,7 @@ class BaseSynchroObj(models.Model):
 
     def exception_value(self, remote_value):
         "hook exception for value"
+        # TODO: create a data mapping and remove this
         self.ensure_one()
 
         if self.model_name == 'hr_timesheet.sheet':
@@ -507,7 +500,7 @@ class BaseSynchroObj(models.Model):
                 except Exception as e:
                     error = "%s" % e
 
-            elif self.auto_create:
+            elif self.auto_create or self.env.context.get('auto_create'):
                 # Create
                 remote_value = self.exception_value_create(remote_value)
                 local_value = self.get_local_value(remote_value)

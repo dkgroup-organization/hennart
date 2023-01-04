@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_invoice_imported_form" model="ir.ui.view">
+    <field name="name">account.invoice.form</field>
+    <field name="model">account.invoice</field>
+    <field name="arch" type="xml">
+      <form string="Invoice imported">
+        <header>
+          <button name="recompute_invoice" string="recompute tva" type="object"/>
+        </header>
+        <sheet string="Imported Invoice">
+          <group>
+            <field name="number"/>
+            <field name="name"/>
+            <field name="origin"/>
+            <field name="type"/>
+            <field name="reference"/>
+            <field name="refund_invoice_id" can_create="true" can_write="true"/>
+            <field name="move_name"/>
+            <field name="move_id" can_create="true" can_write="true"/>
+          </group>
+          <notebook>
+            <page string="general">
+              <field name="invoice_line_ids">
+                <tree string="Invoice Lines" editable="bottom">
+                  <field name="product_id"/>
+                  <field name="name"/>
+                  <field name="account_id"/>
+                  <field name="quantity"/>
+                  <field name="price_unit"/>
+                  <field name="discount"/>
+                  <field name="invoice_line_tax_ids" widget="many2many_tags"/>
+                  <field name="price_subtotal"/>
+                </tree>
+              </field>
+              <group>
+                <field name="state"/>
+                <field name="sent"/>
+                <field name="date_invoice"/>
+                <field name="date_due"/>
+                <field name="partner_id" can_create="true" can_write="true"/>
+                <field name="partner_shipping_id" can_create="true" can_write="true"/>
+                <field name="vendor_bill_id" can_create="true" can_write="true"/>
+                <field name="payment_term_id" can_create="true" can_write="true"/>
+                <field name="date"/>
+                <field name="market_place"/>
+                <field name="reconciliation_shopping_feed"/>
+                <field name="account_id" can_create="true" can_write="true"/>
+                <field name="amount_untaxed"/>
+                <field name="amount_untaxed_signed"/>
+                <field name="amount_untaxed_invoice_signed"/>
+                <field name="amount_tax"/>
+                <field name="amount_tax_signed"/>
+                <field name="amount_total"/>
+                <field name="amount_total_signed"/>
+                <field name="amount_total_company_signed"/>
+              </group>
+            </page>
+            <page string="additionnal info">
+              <group>
+                <field name="comment" colspan="4"/>
+                <field name="refund_invoice_ids" colspan="4"/>
+                <newline/>
+                <field name="currency_id" can_create="true" can_write="true"/>
+                <field name="journal_id" can_create="true" can_write="true"/>
+                <field name="company_id" can_create="true" can_write="true"/>
+                <field name="partner_bank_id" can_create="true" can_write="true"/>
+                <newline/>
+                <field name="payment_ids" colspan="4" can_create="true" can_write="true"/>
+                <newline/>
+                <field name="user_id" can_create="true" can_write="true"/>
+                <field name="fiscal_position_id" can_create="true" can_write="true"/>
+                <field name="commercial_partner_id" can_create="true" can_write="true"/>
+                <field name="sequence_number_next"/>
+                <field name="sequence_number_next_prefix"/>
+                <field name="incoterm_id" can_create="true" can_write="true"/>
+                <field name="source_email"/>
+                <newline/>
+                <field name="tax_line_ids"/>
+                <newline/>
+              </group>
+            </page>
+            <page string="synchro">
+              <group>
+                <field name="remote_id"/>
+                <field name="synchro_obj"/>
+                <field name="invoice_line_ok"/>
+                <field name="invoice_post_ok"/>
+                <field name="invoice_post"/>
+                <field name="state_void_line"/>
+                <field name="state_balanced"/>
+              </group>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="view_invoice_imported_tree" model="ir.ui.view">
+    <field name="name">account.invoice.tree</field>
+    <field name="model">account.invoice</field>
+    <field name="arch" type="xml">
+      <tree string="Account invoice">
+        <field name="number"/>
+        <field name="name"/>
+        <field name="amount_untaxed"/>
+        <field name="amount_tax"/>
+        <field name="amount_total"/>
+        <field name="journal_id"/>
+        <field name="type"/>
+        <field name="invoice_post"/>
+      </tree>
+    </field>
+  </record>
+  <record id="view_search_account_invoice" model="ir.ui.view">
+    <field name="name">account.invoice.form</field>
+    <field name="model">account.invoice</field>
+    <field name="arch" type="xml">
+      <search string="Invoice">
+        <field name="number"/>
+        <field name="name"/>
+        <group string="Group By">
+          <filter string="Partner" name="partner" context="{'group_by':'partner_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+  <record id="action_invoice_imported_tree" model="ir.actions.act_window">
+    <field name="name">Invoice Imported</field>
+    <field name="type">ir.actions.act_window</field>
+    <field name="res_model">account.invoice</field>
+    <field name="binding_view_types">form</field>
+  </record>
+  <menuitem action="action_invoice_imported_tree" id="synchro_invoice_tree_menu_id" parent="sirius_synchro.synchro_history" sequence="50"/>
+</odoo>

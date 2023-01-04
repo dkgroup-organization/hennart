@@ -14,10 +14,7 @@ class BaseSynchroServer(models.Model):
     _name = "synchro.server"
     _description = "Synchronized server"
 
-    name = fields.Char(
-        string='Server name',
-        required=True
-    )
+    name = fields.Char('Server name', required=True)
     server_protocol = fields.Selection(
         [('http', 'HTTP'),
          ('https', 'HTTPS'),
@@ -25,31 +22,13 @@ class BaseSynchroServer(models.Model):
          ('https_1_1', 'HTTPS TLSv1_1'),
          ('https_1_2', 'HTTPS TLSv1_2'),
          ],
-        string='Protocol',
-        default='http',
-        required=True
-    )
-    server_url = fields.Char(
-        string='Server URL',
-        required=True
-    )
-    server_port = fields.Integer(
-        string='Server Port',
-        required=True,
-        default=8069
-    )
-    server_db = fields.Char(
-        string='Server Database',
-        required=True
-    )
-    login = fields.Char(
-        string='User Name',
-        required=True
-    )
-    password = fields.Char(
-        string='Password',
-        required=True
-    )
+        string='Protocol', default='http', required=True)
+    server_url = fields.Char('Server URL', required=True)
+    server_port = fields.Integer('Server Port', required=True, default=8069)
+    server_db = fields.Char('Server Database', required=True)
+    login = fields.Char('User Name', required=True)
+    password = fields.Char('Password', required=True)
+    obj_ids = fields.One2many('synchro.obj', 'server_id')
     server_version = fields.Selection(
         [('6', 'Version 6.1'),
          ('7', 'Version 7.0'),
@@ -63,16 +42,7 @@ class BaseSynchroServer(models.Model):
          ('15', 'Version 15.0'),
          ('16', 'Version 16.0'),
          ],
-        string='Version',
-        default='16',
-        required=True
-    )
-
-    obj_ids = fields.One2many(
-        'synchro.obj',
-        'server_id',
-        string='Models',
-    )
+        string='Version', default='16', required=True)
 
     def get_map_fields(self):
         " Return a mapping field to do by odoo object, it's a pre-configuration by version"
@@ -97,26 +67,32 @@ class BaseSynchroServer(models.Model):
         "create object to synchronyze"
         res = self.env['synchro.obj']
         for server in self:
-            for base_object in object_list:
+            for model_name in object_list:
                 if not server.obj_ids.search([
-                                    ('model_id.model', '=', base_object),
+                                    ('model_id.model', '=', model_name),
                                     ('server_id', '=', server.id)]):
 
-                    model_condition = [('model', '=', base_object)]
+                    model_condition = [('model', '=', model_name)]
                     model_ids = self.env['ir.model'].search(model_condition)
                     if model_ids:
                         obj_vals = {
-                            'name': base_object,
-                            'model_name': base_object,
+                            'name': model_name,
+                            'model_name': model_name,
                             'server_id': server.id,
                             'sequence': model_ids[0].id,
                             'model_id': model_ids[0].id,
                             }
                         new_obj = self.env['synchro.obj'].create(obj_vals)
+
+                        options = OPTIONS_OBJ.get(model_name, {})
+                        for field_name in list(options.keys()):
+                            if hasattr(new_obj, field_name):
+                                setattr(new_obj, field_name, options[field_name])
+
                         new_obj.update_field()
                         res |= new_obj
                     else:
-                        raise Warning(_('This object is not available: %s' % (base_object)))
+                        raise Warning(_('This object is not available: %s' % (model_name)))
         return res
 
     def remote_company_ids(self):
@@ -144,19 +120,11 @@ class BaseSynchroServer(models.Model):
         options = options or OPTIONS_OBJ.get(obj_name, {})
         obj_obj = self.get_obj(obj_name)
 
-        if options.get('auto_search'):
-            obj_obj.auto_search = True
-        if options.get('auto_create'):
-            obj_obj.auto_create = True
-        if options.get('auto_update'):
-            obj_obj.auto_update = True
-        if options.get('domain'):
-            obj_obj.domain = options.get('domain')
+        for field_name in list(options.keys()):
+            if hasattr(obj_obj, field_name):
+                setattr(obj_obj, field_name, options[field_name])
 
-        except_fields = options.get('except_fields', [])
-        obj_obj.update_remote_field(except_fields=except_fields)
         obj_obj.check_childs()
-        obj_obj.state = 'manual'
         return obj_obj
 
     def migrate_base(self):
@@ -191,11 +159,14 @@ class BaseSynchroServer(models.Model):
             partner_obj.auto_create = True
             partner_obj.auto_search = False
 
-            for model_name in ['res.users', 'sale.order', 'purchase.order', 'account.move']:
+            list_model = ['res.users', 'sale.order', 'purchase.order', 'account.move']
+
+            for model_name in list_model:
                 if self.env['ir.model'].search([('model', '=', model_name)]):
                     # search the partner used
                     model_obj = server.get_obj(model_name)
                     groupby_domain = [('company_id', 'in', remote_company_ids)]
+
                     if hasattr(self.env[model_obj.model_id.model], 'active'):
                         groupby_domain.append(('active', '=', True))
                     partner_search_ids = model_obj.read_groupby_ids('partner_id', groupby_domain)
@@ -217,9 +188,8 @@ class BaseSynchroServer(models.Model):
             obj_vals = partner_obj.remote_read(remote_child_ids)
             partner_obj.write_local_value(obj_vals)
 
-
     def migrate_simple_product(self, remote_ids):
-        " Migrate product with no variant, check doublon with default_code"
+        """ Migrate product with no variant"""
         self.ensure_one()
 
         product_obj = self.get_obj('product.product')
@@ -229,51 +199,18 @@ class BaseSynchroServer(models.Model):
 
         for remote_value in remote_values:
 
-            product_tmpl_id = remote_value.get('product_tmpl_id')
+            remote_tmpl_id = remote_value.get('product_tmpl_id')
             remote_id = remote_value.get('id')
 
             # Check if the product is already migrate
             if product_obj.get_local_id(remote_id, no_create=True, no_search=True):
                 continue
 
-            # If doublon check the linking id
-            if default_code and product_ids:
-                local_id = product_ids[0].id
-                local_tmpl_id = product_ids[0].product_tmpl_id.id
-                # check mapping id for product
-                condition = [
-                    ('local_id', '=', local_id),
-                    ('remote_id', '=', remote_id),
-                    ('obj_id', '=', product_obj.id)]
-                line_ids = self.env['synchro.obj.line'].search(condition)
-                if not line_ids:
-                    line_vals = {
-                        'local_id': local_id,
-                        'remote_id': remote_id,
-                        'obj_id': product_obj.id}
-                    line_ids.create(line_vals)
-
-                # check mapping id for product template
-                condition = [
-                    ('local_id', '=', local_tmpl_id),
-                    ('remote_id', '=', product_tmpl_id[0]),
-                    ('obj_id', '=', product_tmpl_obj.id)]
-                line_ids = self.env['synchro.obj.line'].search(condition)
-                if not line_ids:
-                    line_vals = {
-                        'local_id': local_tmpl_id,
-                        'remote_id': product_tmpl_id[0],
-                        'obj_id': product_tmpl_obj.id}
-                    line_ids.create(line_vals)
-            # if not doublon create product
+            # if not, create product
             else:
-                product_tmpl_local_id = product_tmpl_obj.get_local_id(
-                                            product_tmpl_id[0])
+                product_tmpl_local_id = product_tmpl_obj.get_local_id(remote_tmpl_id[0])
+                product_tmpl_local = self.env['product.template'].browse(product_tmpl_local_id)
 
-                product_tmpl_local = self.env['product.template'].browse(
-                                            product_tmpl_local_id)
-
-                # TODO, if futur project with variant, change the rule here
                 local_product_id = product_tmpl_local.product_variant_id.id
 
                 condition = [
@@ -309,8 +246,7 @@ class BaseSynchroServer(models.Model):
             #server.migrate_product()
             obj_ids = server.obj_ids.search([('state', '=', 'synchronise')], order='sequence')
             for obj in obj_ids:
-                if obj.model_id.model in ["product.product", "res.partner"]:
+                if obj.model_id.model in ["product.product", "product.template", "res.partner"]:
                     continue
                 else:
                     obj.load_remote_record()
-

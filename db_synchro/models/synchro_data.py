@@ -13,6 +13,7 @@ MAP_FIELDS_V7 = {'account.invoice': {
                 'account.invoice.line': {'invoice_line_tax_ids': 'invoice_line_tax_id'},
                 'account.payment': {'communication': 'name', 'name': 'number'}
                 }
+
 MAP_FIELDS_V10 = {}
 
 MAP_FIELDS = {'7': MAP_FIELDS_V7,
@@ -27,25 +28,16 @@ MAP_FIELDS = {'7': MAP_FIELDS_V7,
              '16': {},
              }
 
-# Default field to use when searching the corresponding object
-MAPING_SEARCH = {
-            'res.currency': ['name'],
-            'account.account': ['code'],
-            'account.tax': ['name'],
-            'account.journal': ['name'],
-            'res.users': ['login'],
-            'account.invoice': ['number'],
-            }
-
 # Option to use when the object is created in automatique mode
 OPTIONS_OBJ = {
     'res.company': {'except_fields': ['parent_id', 'user_ids'], 'auto_update': True},
     'ir.module.module': {'domain': [('state', '=', 'installed')], 'auto_search': True},
-    'res.currency': {'auto_search': True},
+    'res.currency': {'auto_search': True, 'search_field': 'symbol'},
     'res.bank': {'auto_create': True},
     'res.partner.bank': {'auto_create': True},
     'res.groups': {'auto_search': True},
-    'res.users': {'except_fields': ['alias_id', 'groups_id', 'action_id'], 'auto_search': True},
+    'res.users': {'except_fields': ['alias_id', 'groups_id', 'action_id'], 'auto_search': True,
+                  'search_field': 'login'},
     'res.partner': {'except_fields': ['commercial_partner_id', 'message_follower_ids', 'signup_expiration',
             'signup_token', 'category_id'],
             'auto_search': True, 'auto_create': True},
@@ -61,7 +53,7 @@ OPTIONS_OBJ = {
     'product.type': {'auto_create': True, 'auto_update': True},
     'res.country': {'auto_search': True},
     'res.country.state': {'auto_search': True, 'auto_create': True, 'auto_update': True},
-    'res.partner.title': {'auto_search': True, 'auto_create': True, 'auto_update': True},
+    'res.partner.title': {'auto_search': True, 'auto_create': False, 'auto_update': True},
     'crm.team': {'auto_search': True, 'auto_create': True, 'auto_update': True},
     'account.journal': {'auto_search': True},
 
