@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="web.BooleanOkField" owl="1">
+        <div class="o_favorite" t-on-click.prevent.stop="() => props.update(!props.value)">
+            <a href="#">
+                <i
+                    class="fa"
+                    role="img"
+                    t-att-class="props.value ? 'fa-circle' : 'fa-circle-o'"
+                    t-att-title="props.value ? 'Ok' : 'Ko'"
+                    t-att-aria-label="props.value ? 'Ok' : 'Ko'"
+                />
+                <t t-if="!props.noLabel"> <t t-esc="props.value ? 'Ok' : 'Ko'" /></t>
+            </a>
+        </div>
+    </t>
+
+</templates>

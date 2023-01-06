@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_transfer_line_form" model="ir.ui.view">
+        <field name="name">synchro.obj.line.form</field>
+        <field name="model">synchro.obj.line</field>
+        <field name="arch" type="xml">
+            <form string="Transfered IDs Details">
+                <sheet>
+                    <group col="4">
+                        <field name="name"/>
+                        <field name="server_id"/>
+                        <field name="obj_id"/>
+                        <field name="description"/>
+                        <field name="remote_id"/>
+                        <field name="local_id"/>
+                        <field name="update_date"/>
+                    </group>
+                    <button name="update_values" type="object" string="update" context="{'auto_update': True}"
+                            icon="fa-update"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_transfer_line_tree" model="ir.ui.view">
+        <field name="name">synchro.obj.line.tree</field>
+        <field name="model">synchro.obj.line</field>
+        <field name="arch" type="xml">
+            <tree string="Transfered IDs Details" decoration-danger="local_id == 0">
+              <header>
+                <button name="update_values" type="object" string="update" context="{'auto_update': True}"
+                        icon="fa-update"/>
+              </header>
+                <field name="name"/>
+                <field name="server_id"/>
+                <field name="remote_id"/>
+                <field name="local_id"/>
+                <field name="obj_id"/>
+                <field name="description"/>
+                <field name="error"/>
+                <field name="update_date"/>
+                <button name="update_values" type="object" string="update" context="{'auto_update': True}"
+                        icon="fa-update"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="ir_filters_transfer_line_form" model="ir.ui.view">
+        <field name="name">synchro.obj.line.search</field>
+        <field name="model">synchro.obj.line</field>
+        <field name="arch" type="xml">
+            <search string="Transfered Ids Details">
+                <field name="name"/>
+                <field name="obj_id"/>
+                <group string="Group By">
+                    <filter string="Object" name="grp_obj" context="{'group_by':'obj_id'}"/>
+                    <filter string="Date" name="grp_date" context="{'group_by':'name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="actions_transfer_line_form" model="ir.actions.act_window">
+        <field name="name">Filters</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">synchro.obj.line</field>
+        <field name="binding_view_types">form</field>
+        <field name="view_id" ref="view_transfer_line_tree"/>
+        <field name="search_view_id" ref="ir_filters_transfer_line_form"/>
+    </record>
+
+    <record id="action_base_synchro_obj_line_tree" model="ir.actions.act_window">
+        <field name="name">Synchronized record</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">synchro.obj.line</field>
+        <field name="binding_view_types">form</field>
+    </record>
+
+    <menuitem action="action_base_synchro_obj_line_tree" id="menu_action_base_synchro_obj_line_tree"
+              parent="db_synchro.synchro_history"/>
+
+</odoo>

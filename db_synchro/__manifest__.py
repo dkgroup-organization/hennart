@@ -15,6 +15,7 @@
         "views/synchro_menu.xml",
         "views/synchro_server_view.xml",
         "views/synchro_obj_view.xml",
+        "views/synchro_obj_line_view.xml",
         "security/ir.model.access.csv",
     ],
     "installable": True,

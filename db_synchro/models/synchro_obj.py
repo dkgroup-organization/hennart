@@ -8,6 +8,8 @@ from odoo.models import MAGIC_COLUMNS
 from . import odoo_proxy
 from . import synchro_data
 
+OPTIONS_OBJ = synchro_data.OPTIONS_OBJ
+
 _logger = logging.getLogger(__name__)
 
 
@@ -42,8 +44,7 @@ class BaseSynchroObj(models.Model):
     active = fields.Boolean('Active', default=True)
     synchronize_date = fields.Datetime('Latest Synchronization')
     line_id = fields.One2many('synchro.obj.line', 'obj_id', string='IDs Affected')
-    avoid_ids = fields.One2many('synchro.obj.avoid', 'obj_id', domain=[('synchronize', '=', False)],
-                                string='All fields.')
+    avoid_ids = fields.One2many('synchro.obj.avoid', 'obj_id', string='All fields.')
     field_ids = fields.One2many('synchro.obj.avoid', 'obj_id', domain=[('synchronize', '=', True)],
                                 string='Fields to synchronize')
     child_ids = fields.Many2many(
@@ -93,40 +94,81 @@ class BaseSynchroObj(models.Model):
         if not self.name:
             self.name = self.model_id.model or ''
 
+    def get_map_fields(self):
+        """ Return a mapping field to do by odoo object, it's a pre-configuration by version
+            see synchro_data.py for information
+        """
+        self.ensure_one()
+        if self.server_id.server_version:
+            return synchro_data.MAP_FIELDS.get(self.server_id.server_version, {})
+        else:
+            return {}
+
+    def get_default_option(self):
+        """ Return a default value field by odoo object, it's a pre-configuration by version
+            see synchro_data.py for information
+        """
+        self.ensure_one()
+        return synchro_data.OPTIONS_OBJ.get(self.model_id.model, {})
+
+    def get_except_fields(self):
+        """ Return a default value field by odoo object, it's a pre-configuration by version
+            see synchro_data.py for information
+        """
+        self.ensure_one()
+        options = synchro_data.OPTIONS_OBJ.get(self.model_id.model, {})
+        return options.get('except_fields', [])
+
     def update_field(self):
         "update the list of local field"
         for obj in self:
-            map_fields = obj.server_id.get_map_fields()
-            obj.avoid_ids.unlink()
-            obj.field_ids.unlink()
+            # load preconfiguration mapping fields, see synchro_data.py
+            dic_option = obj.get_default_option()
+            for name_field in list(dic_option.keys()):
+                if hasattr(obj, name_field):
+                    setattr(obj, name_field, dic_option[name_field])
+
+            map_fields = obj.get_map_fields()
+            check_avoid_ids = self.env['synchro.obj.avoid']
+
             for field_rec in obj.model_id.field_id:
                 if field_rec.store and field_rec.name not in MAGIC_COLUMNS:
 
-                    name_V7 = field_rec.name
+                    name_VX = field_rec.name
                     if obj.name in list(map_fields.keys()):
-                        if name_V7 in list(map_fields[obj.name].keys()):
-                            name_V7 = map_fields[obj.name][name_V7]
-
-                    field_value = {
-                        'obj_id': obj.id,
-                        'field_id': field_rec.id,
-                        'name': name_V7,
-                        }
-                    self.env['synchro.obj.avoid'].create(field_value)
+                        if name_VX in list(map_fields[obj.name].keys()):
+                            name_VX = map_fields[obj.name][name_VX]
+                    
+                    condition = [('obj_id', '=', obj.id), ('field_id', '=', field_rec.id)]
+                    avoid_ids = self.env['synchro.obj.avoid'].search(condition)
+                    
+                    if not avoid_ids:
+                        field_value = {
+                            'obj_id': obj.id,
+                            'field_id': field_rec.id,
+                            'name': name_VX,
+                            }
+                        check_avoid_ids |= self.env['synchro.obj.avoid'].create(field_value)
+                    else:
+                        check_avoid_ids |= avoid_ids
+            (obj.avoid_ids - check_avoid_ids).unlink()
 
     def update_remote_field(self, except_fields=[]):
         "update the field who can be synchronized"
+
         for obj in self:
             remote_odoo = odoo_proxy.RPCProxy(obj.server_id)
             remote_fields = remote_odoo.get(self.model_name).fields_get()
+            except_fields = obj.get_except_fields()
 
             for local_field in obj.avoid_ids | obj.field_ids:
                 if local_field.name in list(remote_fields.keys()):
                     local_field.check_remote = True
                     local_field.remote_type = remote_fields[local_field.name]['type']
                     if local_field.remote_type not in ['one2many']:
-                        if local_field.name not in except_fields:
-                            local_field.synchronize = True
+                        local_field.synchronize = True
+                    if local_field.name in except_fields:
+                        local_field.synchronize = False
 
     def unlink_mapping(self):
         for obj in self:
@@ -153,16 +195,71 @@ class BaseSynchroObj(models.Model):
                 remote_ids = remote_ids[:limit]
 
             remote_values = obj.remote_read(remote_ids)
-            obj.write_local_value(remote_values)
+            print('\n', remote_values)
+            if obj.model_id.model == 'product.product':
+                obj.load_remote_product(remote_values)
+            else:
+                obj.write_local_value(remote_values)
+
+            if obj.model_id.model == 'product.template':
+                obj.load_remote_product_template(remote_values)
 
             obj.synchronize_date = fields.Datetime.now()
 
-    def load_remote_product(self, remote_ids=[]):
-        "Load remote record"
+    def load_remote_user(self, remote_values={}):
+        """ exception for user, create partner and user in the same time"""
         self.ensure_one()
+        if self.model_id.model == 'res.users':
+            for remote_value in remote_values:
+                remote_partner_id = remote_value.get('partner_id')
+                partner_obj = self.server_id.get_obj('res.partner')
+                partner_local_id = partner_obj.get_local_id(remote_partner_id[0])
+
+    def load_remote_product(self, remote_values={}):
+        """ exception for product, create template and variant in the same time"""
+        self.ensure_one()
+
         if self.model_id.model == 'product.product':
-            product_tmpl_obj = self.server_id.get_obj('product.template')
-            pass
+            for remote_value in remote_values:
+                remote_tmpl_id = remote_value.get('product_tmpl_id')
+                remote_id = remote_value.get('id')
+
+                if self.get_local_id(remote_id, no_create=True, no_search=True):
+                    continue
+                elif self.auto_create or self.env.context.get('auto_create'):
+                    product_tmpl_obj = self.server_id.get_obj('product.template')
+                    product_tmpl_local_id = product_tmpl_obj.get_local_id(remote_tmpl_id[0])
+                    product_tmpl_local = self.env['product.template'].browse(product_tmpl_local_id)
+                    local_product_id = product_tmpl_local.product_variant_id.id
+
+                    condition = [
+                        ('remote_id', '=', remote_id),
+                        ('obj_id', '=', self.id)]
+                    local_ids = self.env['synchro.obj.line'].search(condition)
+                    if local_ids:
+                        if local_ids[0].local_id != local_product_id:
+                            local_ids[0].local_id = local_product_id
+                    else:
+                        vals_line = {
+                            'obj_id': self.id,
+                            'remote_id': remote_id,
+                            'local_id': local_product_id}
+                        local_ids.create(vals_line)
+            self.write_local_value(remote_values)
+
+    def load_remote_product_template(self, remote_values={}):
+        """ exception for product, create template and variant in the same time"""
+        self.ensure_one()
+
+        if self.model_id.model == 'product.template':
+            for remote_value in remote_values:
+                remote_tmpl_id = remote_value.get('id')
+                domain = [('product_tmpl_id', '=', remote_tmpl_id)]
+                product_obj = self.server_id.get_obj('product.product')
+                remote_ids = product_obj.remote_search(domain)
+                remote_values2 = product_obj.remote_read(remote_ids)
+                product_obj.load_remote_product(remote_values2)
+
 
     def check_childs(self):
         "check the child of this object"
@@ -369,15 +466,14 @@ class BaseSynchroObj(models.Model):
                 remote_vals = self.remote_read([remote_id])
                 if remote_vals:
                     self.write_local_value(remote_vals)
-                    return self.get_local_id(remote_id,
-                                             no_create=True, no_search=True, check_local_id=True)
+                    return self.get_local_id(remote_id, no_create=True, no_search=True, check_local_id=True)
                 else:
                     return False
             else:
                 return False
 
     def get_local_value(self, remote_value):
-        """get local database the values for man2x field
+        """get local database the values for mani2x field
             values: [{'id': 1, 'name': 'My object name', ....}, {'id': 2, ...}]
             the id field is the remote id and must be set
         """

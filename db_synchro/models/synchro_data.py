@@ -28,7 +28,7 @@ MAP_FIELDS = {'7': MAP_FIELDS_V7,
              '16': {},
              }
 
-# Option to use when the object is created in automatique mode
+# preconfiguration option to use when the object is created
 OPTIONS_OBJ = {
     'res.company': {'except_fields': ['parent_id', 'user_ids'], 'auto_update': True},
     'ir.module.module': {'domain': [('state', '=', 'installed')], 'auto_search': True},
@@ -38,7 +38,7 @@ OPTIONS_OBJ = {
     'res.groups': {'auto_search': True},
     'res.users': {'except_fields': ['alias_id', 'groups_id', 'action_id'], 'auto_search': True,
                   'search_field': 'login'},
-    'res.partner': {'except_fields': ['commercial_partner_id', 'message_follower_ids', 'signup_expiration',
+    'res.partner': {'except_fields': ['vat', 'message_follower_ids', 'signup_expiration', 'user_id',
             'signup_token', 'category_id'],
             'auto_search': True, 'auto_create': True},
     'uom.uom': {'auto_search': True},
@@ -51,9 +51,11 @@ OPTIONS_OBJ = {
     'product.material': {'auto_create': True, 'auto_update': True},
     'product.manufacturing.area':	 {'auto_create': True, 'auto_update': True},
     'product.type': {'auto_create': True, 'auto_update': True},
-    'res.country': {'auto_search': True},
+    'res.country': {'auto_search': True, 'state': 'auto'},
     'res.country.state': {'auto_search': True, 'auto_create': True, 'auto_update': True},
     'res.partner.title': {'auto_search': True, 'auto_create': False, 'auto_update': True},
+    'res.partner.category': {'auto_search': True, 'auto_create': True, 'auto_update': True, 'state': 'auto',
+                             'except_fields': ['partner_ids']},
     'crm.team': {'auto_search': True, 'auto_create': True, 'auto_update': True},
     'account.journal': {'auto_search': True},
 

@@ -5,7 +5,6 @@ from odoo import api, fields, models
 from odoo.tools.translate import _
 from . import synchro_data
 
-MAP_FIELDS = synchro_data.MAP_FIELDS
 OPTIONS_OBJ = synchro_data.OPTIONS_OBJ
 
 
@@ -43,14 +42,6 @@ class BaseSynchroServer(models.Model):
          ('16', 'Version 16.0'),
          ],
         string='Version', default='16', required=True)
-
-    def get_map_fields(self):
-        " Return a mapping field to do by odoo object, it's a pre-configuration by version"
-        self.ensure_one()
-        if self.server_version:
-            return MAP_FIELDS.get(self.server_version, {})
-        else:
-            return {}
 
     def get_obj(self, model_name=''):
         "return the object with model_name"
