@@ -7,6 +7,8 @@
         <field name="arch" type="xml">
             <form string="Transfer Details">
                 <header>
+                    <button name="update_field" string="initialyse" type="object" class="oe_highlight"/>
+                    <button name="update_remote_field" string="Update remote" type="object" class="oe_highlight"/>
                     <field name="state" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
@@ -27,6 +29,9 @@
                             <field name="domain" colspan="4"/>
                             <field name="synchronize_date"/>
                         </group>
+                        <group>
+                            <field name="note"/>
+                        </group>
                     </group>
                     <notebook>
                         <page string="Field">
@@ -45,10 +50,6 @@
                             </field>
                         </page>
                         <page string="All Fields">
-                            <button name="update_field" string="initialyse" type="object" class="oe_highlight"/>
-                            <button name="update_remote_field" string="Update remote" type="object"
-                                    class="oe_highlight"/>
-                            <separator string="All Fields"/>
                             <field name="avoid_ids">
                                 <tree string="Fields" editable="top"
                                       decoration-warning="check_remote != True"
@@ -61,13 +62,21 @@
                                 </tree>
                             </field>
                         </page>
-                        <page string="Notes">
+                         <page string="Remote Fields">
+                            <field name="remote_field_ids">
+                                <tree string="Remote fields" editable="top" decoration-muted="state == 'cancel'"
+                                        decoration-success="state in ['to_create', 'to_link']">
+                                    <field name="name"/>
+                                    <field name="description"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notes" invisible="1">
                             <group>
                                 <button name="get_default_value" string="Default values" type="object"/>
                                 <field name="default_value"/>
                             </group>
-                            <field name="note"/>
-
                         </page>
                         <page string="depends">
                             <button name="check_childs" string="check childs" type="object"/>

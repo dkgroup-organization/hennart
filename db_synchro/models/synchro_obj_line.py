@@ -43,7 +43,8 @@ class BaseSynchroObjLine(models.Model):
     error = fields.Char("Error")
     update_date = fields.Datetime(string='Latest remote update')
     removed = fields.Boolean(default=False, string="Removed on remote")
-    resource_ref = fields.Reference(string='Record', selection='_selection_target_model', compute='_compute_resource_ref')
+    resource_ref = fields.Reference(string='Record', selection='_selection_target_model',
+                                    compute='_compute_resource_ref')
 
     @api.depends('obj_id', 'local_id')
     def _compute_resource_ref(self):

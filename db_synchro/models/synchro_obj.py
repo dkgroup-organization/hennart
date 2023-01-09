@@ -7,6 +7,7 @@ from odoo import api, fields, models
 from odoo.models import MAGIC_COLUMNS
 from . import odoo_proxy
 from . import synchro_data
+import json
 
 OPTIONS_OBJ = synchro_data.OPTIONS_OBJ
 
@@ -47,6 +48,9 @@ class BaseSynchroObj(models.Model):
     avoid_ids = fields.One2many('synchro.obj.avoid', 'obj_id', string='All fields.')
     field_ids = fields.One2many('synchro.obj.avoid', 'obj_id', domain=[('synchronize', '=', True)],
                                 string='Fields to synchronize')
+
+    remote_field_ids = fields.One2many('synchro.obj.field', 'obj_id', string='Remote fields')
+
     child_ids = fields.Many2many(
         comodel_name='synchro.obj',
         relation='synchro_obj_depend',
@@ -74,7 +78,6 @@ class BaseSynchroObj(models.Model):
             obj.field_ids.unlink()
             obj.avoid_ids.unlink()
             obj.line_id.unlink()
-
         ret = super().unlink()
         return ret
 
@@ -122,11 +125,6 @@ class BaseSynchroObj(models.Model):
     def update_field(self):
         "update the list of local field"
         for obj in self:
-            # load preconfiguration mapping fields, see synchro_data.py
-            dic_option = obj.get_default_option()
-            for name_field in list(dic_option.keys()):
-                if hasattr(obj, name_field):
-                    setattr(obj, name_field, dic_option[name_field])
 
             map_fields = obj.get_map_fields()
             check_avoid_ids = self.env['synchro.obj.avoid']
@@ -153,13 +151,19 @@ class BaseSynchroObj(models.Model):
                         check_avoid_ids |= avoid_ids
             (obj.avoid_ids - check_avoid_ids).unlink()
 
+            # load preconfiguration mapping fields, see synchro_data.py
+            dic_option = obj.get_default_option()
+            for name_field in list(dic_option.keys()):
+                if hasattr(obj, name_field):
+                    setattr(obj, name_field, dic_option[name_field])
+
     def update_remote_field(self, except_fields=[]):
         "update the field who can be synchronized"
 
         for obj in self:
             remote_odoo = odoo_proxy.RPCProxy(obj.server_id)
             remote_fields = remote_odoo.get(self.model_name).fields_get()
-            except_fields = obj.get_except_fields()
+            except_fields += obj.get_except_fields()
 
             for local_field in obj.avoid_ids | obj.field_ids:
                 if local_field.name in list(remote_fields.keys()):
@@ -169,6 +173,25 @@ class BaseSynchroObj(models.Model):
                         local_field.synchronize = True
                     if local_field.name in except_fields:
                         local_field.synchronize = False
+                    del remote_fields[local_field.name]
+
+            obj.import_remote_fields(remote_fields)
+
+    def import_remote_fields(self, data={}):
+        """ import the list of remote fields"""
+        self.ensure_one()
+
+        for field_name in list(data.keys()):
+            remote_field_ids = self.env['synchro.obj.field'].search([('name', '=', field_name)])
+
+            if remote_field_ids:
+                remote_field_ids.write({'description': json.dumps(data[field_name])})
+            else:
+                self.env['synchro.obj.field'].create({
+                    'name': field_name,
+                    'obj_id': self.id,
+                    'description': json.dumps(data[field_name]),
+                    })
 
     def unlink_mapping(self):
         for obj in self:
@@ -260,7 +283,6 @@ class BaseSynchroObj(models.Model):
                 remote_values2 = product_obj.remote_read(remote_ids)
                 product_obj.load_remote_product(remote_values2)
 
-
     def check_childs(self):
         "check the child of this object"
         for obj in self:
@@ -279,10 +301,10 @@ class BaseSynchroObj(models.Model):
             obj.write({'child_ids': [(6, 1, child_ids.ids)]})
 
     def action_order(self):
-        """ Order by recursive dependence """
+        """ Order by recursive level of dependence """
 
         def deeper_sequence(obj, res):
-            """ check if there are child, if not start sequence = 100, else add 100 by level"""
+            """ check if there are child, if not start sequence = 1000, else add 1000 by level"""
             # obj Already checked
             if obj in res:
                 return res

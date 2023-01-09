@@ -10,6 +10,7 @@ MAP_FIELDS_V7 = {'account.invoice': {
                     'invoice_line_ids': 'invoice_line',
                     'tax_line_ids': 'tax_line',
                     'payment_term_id': 'payment_term'},
+                'product.product': {'product_tag_ids'},
                 'account.invoice.line': {'invoice_line_tax_ids': 'invoice_line_tax_id'},
                 'account.payment': {'communication': 'name', 'name': 'number'}
                 }
@@ -39,7 +40,7 @@ OPTIONS_OBJ = {
     'res.users': {'except_fields': ['alias_id', 'groups_id', 'action_id'], 'auto_search': True,
                   'search_field': 'login'},
     'res.partner': {'except_fields': ['vat', 'message_follower_ids', 'signup_expiration', 'user_id',
-            'signup_token', 'category_id'],
+                                      'commercial_partner_id', 'signup_token', 'category_id'],
             'auto_search': True, 'auto_create': True},
     'uom.uom': {'auto_search': True},
     'product.category': {'auto_search': True, 'auto_create': True, 'auto_update': True},

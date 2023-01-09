@@ -2,7 +2,7 @@
 
 import time
 import logging
-# import threading
+import json
 from odoo import api, fields, models
 from odoo.models import MAGIC_COLUMNS
 from . import odoo_proxy
@@ -14,17 +14,15 @@ _logger = logging.getLogger(__name__)
 class BaseSynchroObjField(models.Model):
     """Class Remote Fields."""
     _name = "synchro.obj.field"
-    _description = "Remote Fields"
+    _description = "Remote Fields not linking"
 
     name = fields.Char(
         string='Remote field name',
         required=True
     )
-    field_id = fields.Many2one(
-        'ir.model.fields',
+    local_field_id = fields.Many2one(
+        'synchro.obj.avoid',
         string='local field',
-        required=True,
-        ondelete='cascade'
     )
     obj_id = fields.Many2one(
         'synchro.obj',
@@ -32,12 +30,15 @@ class BaseSynchroObjField(models.Model):
         required=True,
     )
 
-    #description = fields.Char('description')
+    description = fields.Char('description')
+
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('to_create', 'To create'),
+        ('to_link', 'To link'),
+        ('not_used', 'Not used'),
+        ('cancel', 'Cancelled')
+        ], string='State', index=True, default='draft')
 
 
-
-    @api.onchange('field_id')
-    def onchange_field(self):
-        "return the name"
-        self.name = self.field_id.name or ''
 
