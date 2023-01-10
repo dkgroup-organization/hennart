@@ -130,8 +130,9 @@ class BaseSynchroObj(models.Model):
             check_avoid_ids = self.env['synchro.obj.avoid']
 
             for field_rec in obj.model_id.field_id:
-                if field_rec.store and field_rec.name not in MAGIC_COLUMNS:
+                if field_rec.store and (field_rec.name not in MAGIC_COLUMNS):
 
+                    # Change the field name by pre-configuration, see synchro_data.py
                     name_VX = field_rec.name
                     if obj.name in list(map_fields.keys()):
                         if name_VX in list(map_fields[obj.name].keys()):
@@ -151,7 +152,7 @@ class BaseSynchroObj(models.Model):
                         check_avoid_ids |= avoid_ids
             (obj.avoid_ids - check_avoid_ids).unlink()
 
-            # load preconfiguration mapping fields, see synchro_data.py
+            # load pre-configuration default value fields, see synchro_data.py
             dic_option = obj.get_default_option()
             for name_field in list(dic_option.keys()):
                 if hasattr(obj, name_field):
@@ -218,7 +219,6 @@ class BaseSynchroObj(models.Model):
                 remote_ids = remote_ids[:limit]
 
             remote_values = obj.remote_read(remote_ids)
-            print('\n', remote_values)
             if obj.model_id.model == 'product.product':
                 obj.load_remote_product(remote_values)
             else:
@@ -381,11 +381,7 @@ class BaseSynchroObj(models.Model):
         res = {}
         # Get the significative search field like code, name... and read the remote value
         search_fields = self.default_search_field()
-        if 'name' in search_fields:
-            remote_values = self.remote_read(remote_ids, search_fields)
-        else:
-            # Add name only to have human description
-            remote_values = self.remote_read(remote_ids, search_fields + ['name'])
+        remote_values = self.remote_read(remote_ids, search_fields)
 
         for remote_value in remote_values:
             remote_id = remote_value['id']
@@ -635,7 +631,7 @@ class BaseSynchroObj(models.Model):
             local_ids = self.env['synchro.obj.line'].search(condition)
             local_ids.write({
                     'local_id': local_id,
-                    'description': '%s' % (remote_value.get('name', '???')),
+                    'description': '%s' % remote_value.get(self.search_field) or remote_value.get('name', '???'),
                     'update_date': fields.Datetime.now(),
                     'error': error})
 

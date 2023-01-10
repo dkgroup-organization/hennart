@@ -138,7 +138,7 @@ class BaseSynchroServer(models.Model):
             bank_obj.get_local_id(bank_id)
 
     def migrate_partner(self, limit=50):
-        """ partner migration"""
+        """ partner migration, look after active and used partner, don't load unused partner"""
 
         for server in self:
             partner_obj = server.get_obj('res.partner')
@@ -178,6 +178,7 @@ class BaseSynchroServer(models.Model):
 
             obj_vals = partner_obj.remote_read(remote_child_ids)
             partner_obj.write_local_value(obj_vals)
+
 
     def migrate_simple_product(self, remote_ids):
         """ Migrate product with no variant"""
@@ -229,15 +230,12 @@ class BaseSynchroServer(models.Model):
 
     @api.model
     def cron_migrate(self):
-        "sheduled migration"
+        """ Scheduled migration"""
 
         for server in self.search([]):
-
-            server.migrate_partner()
-            #server.migrate_product()
             obj_ids = server.obj_ids.search([('state', '=', 'synchronise')], order='sequence')
             for obj in obj_ids:
-                if obj.model_id.model in ["product.product", "product.template", "res.partner"]:
-                    continue
+                if obj.model_id.model in ["res.partner"]:
+                    server.migrate_partner()
                 else:
                     obj.load_remote_record()
