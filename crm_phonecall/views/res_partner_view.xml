@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_partners_form_crm_calls_inherit" model="ir.ui.view">
+        <field name="name">view.res.partner.form.crm.inherited.calls</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="crm.view_partners_form_crm1"/>
+
+        <field eval="18" name="priority"/>
+        <field name="arch" type="xml">
+            <button name="schedule_meeting" position="before">
+                <button
+                        class="oe_stat_button"
+                        context="{'search_default_partner_id': active_id}"
+                        icon="fa-phone"
+                        name="%(crm_phonecall.crm_case_categ_phone_incoming0)d"
+                        type="action"
+                >
+                    <field name="phonecall_count" string="Calls" widget="statinfo"/>
+                </button>
+            </button>
+        </field>
+    </record>
+
+
+    <record id="view_partner_crm_appointement_form" model="ir.ui.view">
+        <field name="name">view_partner_crm_appointement_form</field>
+        <field name="model">res.partner</field>
+        <field name="priority">30</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+
+            <field name="user_id" position="after">
+                <group>
+                    <field name="user2_id"/>
+                </group>
+            </field>
+
+            <page name="sales_purchases" position="after">
+                <page string="Appointment" attrs="{'invisible': [('is_company','=',False)]}">
+                    <newline/>
+                    <div>
+                        <field name="appointment_ids" nolabel="1" context="{'default_partner_id': active_id}">
+                            <tree editable="bottom">
+                                <field name="channel"/>
+                                <field name="type1"/>
+                                <field name="day"/>
+                                <field name="time" widget="float_time"/>
+                                <field name="frequency"/>
+                                <field name="partner_id" invisible="1"/>
+                                <field name="contact_id" create="0" domain="[('parent_id','=', partner_id)]"
+                                    options="{'no_quick_create': True, 'no_create_edit' : True}"/>
+                            </tree>
+                        </field>
+                    </div>
+
+                    <newline/>
+                    <div>
+                        <field name="appointment_delivery_ids" nolabel="1" string="Delivery appointement"
+                               context="{'default_partner_id': active_id}">
+                            <tree editable="bottom">
+                                <field name="carrier_id" options="{'no_quick_create': True, 'no_create_edit' : True}"/>
+                                <field name="load_day"/>
+                                <field name="delivery_day"/>
+                                <field name="partner_id" invisible="1"/>
+                            </tree>
+                        </field>
+                    </div>
+
+                </page>
+            </page>
+
+        </field>
+    </record>
+
+
+</odoo>
