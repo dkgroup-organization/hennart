@@ -29,16 +29,17 @@
 ###############################################
 
 from odoo import api, fields, models, _
-from datetime import date, timedelta
+import pytz
+import datetime
 
 class PartnerCrmAppointment(models.Model):
     _name = "partner.crm.appointment"
-    _description = "Partner Appointement"
+    _description = "Partner Appointment"
 
     type1 = fields.Selection([
                         ('spontaneous', 'Spontaneous'),
                         ('todo', 'To call'),
-                           ], 'Type', index=True, required=True)
+                           ], 'Type', index=True, default='todo')
 
     day = fields.Selection([
                         ('0', 'Monday'),
@@ -68,4 +69,72 @@ class PartnerCrmAppointment(models.Model):
     partner_id = fields.Many2one('res.partner', 'Customer')
     contact_id = fields.Many2one('res.partner', 'Contact')
 
-        
+    def init_appointment(self):
+        """ ON change frequency or day remove previous appointment"""
+        today = fields.datetime.now()
+        phone_ids = self.env['crm.phone'].search([('date', '>=', today), ('appointment_id', '=', self.ids)])
+        phone_ids.unlink()
+
+    @api.model
+    def timezone_2_utc(self, nextday, time, timezone="Europe/Paris"):
+        """ return datetime with time (in float) with conversion in  timezone to UTC"""
+        time = time or 8.0
+        hour = int(time)
+        minute = int((float(time) - float(hour)) * 60.0)
+        nextday = nextday.replace(hour=hour, minute=minute, second=0)
+        nextday_timezone = pytz.timezone(timezone).localize(nextday, is_dst=False)
+        return nextday_timezone.astimezone(pytz.utc).replace(tzinfo=None)
+
+    def create_next_appointment(self):
+        """ return true if the last appointment is so older"""
+        today = fields.datetime.now()
+        res = self.env['crm.phonecall']
+
+        for appointment in self:
+            # check last appointment is ok in the futur
+            partner = appointment.partner_id
+            last_phone_ids = self.env['crm.phonecall'].search([('appointment_id', '=', appointment.id)],
+                                                               order="date desc", limit=1)
+            # if there is already a appointment: skip
+            if last_phone_ids and last_phone_ids[0].date >= today:
+                continue
+            # Else if the last appointment is older than the frequency: create one
+            if not last_phone_ids or (today - last_phone_ids[0].date).days > int(appointment.frequency):
+                weekday = int(appointment.day)
+                now_weekday = today.weekday()
+
+                if now_weekday <= weekday:
+                    nextday = today + datetime.timedelta(days=(weekday - now_weekday))
+                else:
+                    nextday = today + datetime.timedelta(days=(7 + weekday - now_weekday))
+
+                nextday_utc = self.timezone_2_utc(nextday, appointment.time)
+
+                phone_vals = {
+                    'user_id': partner.user_id.id or False,
+                    'name': partner.name or '?',
+                    'partner_id': partner.id,
+                    'partner_phone': partner.phone or '',
+                    'partner_mobile': partner.mobile or '',
+                    'duration': 0.5,
+                    'appointment_id': appointment.id,
+                    'channel': appointment.channel,
+                    'type1': appointment.type1,
+                    'date': nextday_utc,
+                }
+                res != self.env['crm.phonecall'].create(phone_vals)
+
+        return res
+
+    @api.model
+    def cron_phone_appointment(self):
+        """ Plan the customer call to do """
+        today = fields.datetime.now()
+        last_phone_ids = self.env['crm.phonecall'].search(
+            [('date', '>', today), ('state', 'not in', ['cancel', 'done']), ('appointment_id', '!=', False)])
+        futur_appointment_ids = last_phone_ids.mapped('appointment_id')
+        print('-----------futur_appointment_ids--------------', futur_appointment_ids)
+        appointment_ids = self.search([('id', 'not in', futur_appointment_ids.ids)])
+        res = appointment_ids.create_next_appointment()
+        print(res)
+        return res

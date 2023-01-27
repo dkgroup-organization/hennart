@@ -85,9 +85,6 @@ class CrmPhonecall(models.Model):
 
     appointment_id = fields.Many2one('partner.crm.appointment', 'Appointment')
 
-    # day_id = fields.Many2one(compute="_update_info", method=True, relation="timeline.day", string='Day', store=True)
-    # week_id = fields.Many2one(compute="_update_info", method=True, relation="timeline.week", string='Week', store=True)
-
     @api.onchange("partner_id")
     def _onchange_partner_id(self):
         """Contact number details should be change based on partner."""
