@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from functools import reduce
-
+from odoo.exceptions import UserError
 from odoo import _, api, fields, models
 
 
@@ -232,19 +232,45 @@ class CrmPhonecall(models.Model):
         return opportunity_id.redirect_lead_opportunity_view()
 
     def action_sale_create(self):
-        "create a sale order"
-        sale_obj = self.env['sale.order']
+        """ Create sale order"""
+        action = {}
+        sale_ids = self.env['sale.order']
 
         for phonecall in self:
-
             if not phonecall.partner_id:
-                # TODO: error to raise
-                pass
+                raise UserError(_('Error!'), _('Please define a contact before create a sale order'))
             elif phonecall.partner_id.is_company:
-                partner_id = phonecall.partner_id.id
+                partner = phonecall.partner_id
             elif phonecall.partner_id.parent_id:
-                partner_id = phonecall.partner_id.parent_id.id
+                partner = phonecall.partner_id.parent_id
             else:
-                partner_id = phonecall.partner_id.id
+                partner = phonecall.partner_id
+            if not partner:
+                continue
 
-        return
+            sale_vals = {
+                'user_id': partner.user_id.id or False,
+                'partner_id': partner.id,
+                'state': 'draft'
+            }
+
+            sale = self.env['sale.order'].create(sale_vals)
+            sale_ids |= sale
+            phonecall.write({'state': 'done'})
+
+        if sale_ids:
+            action = {
+                'name': _('Sale'),
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'sale.order',
+                'res_id': sale[0].id,
+                'target': 'current',
+                'context': {},
+                'type': 'ir.actions.act_window',
+                }
+            if len(sale_ids) > 1:
+                action['res_id'] = False
+                action['domain'] = [('id', 'in', sale_ids.ids)]
+
+        return action

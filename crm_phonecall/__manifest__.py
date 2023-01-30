@@ -12,7 +12,7 @@
     "data": [
         "security/crm_security.xml",
         "security/ir.model.access.csv",
-        "data/ir_cron_data.xml"
+        "data/ir_cron_data.xml",
         "wizard/crm_phonecall_to_phonecall_view.xml",
         "views/crm_phonecall_view.xml",
         "views/res_partner_view.xml",

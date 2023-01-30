@@ -46,11 +46,11 @@
                     type="object"
                 />
                 <button
-                    attrs="{'invisible':[('opportunity_id','!=',False)]}"
+
                     icon="fa-hand-pointer-o"
-                    name="action_button_convert2opportunity"
+                    name="action_sale_create"
                     states="open,pending"
-                    string="Convert to Opportunity"
+                    string="Create quotation"
                     type="object"
                 />
                 <field name="partner_phone" />
@@ -78,17 +78,17 @@
                 <sheet string="Phone Call">
                     <div class="oe_button_box" name="button_box">
                         <button
-                            attrs="{'invisible':[ '|', ('opportunity_id','!=',False), ('state', 'not in', ('open', 'done'))]}"
+                            attrs="{'invisible':[('state', 'not in', ('open', 'done'))]}"
                             class="oe_stat_button"
-                            help="Convert To Opportunity"
+                            help="Create quotation"
                             icon="fa-star"
-                            name="action_button_convert2opportunity"
+                            name="action_sale_create"
                             type="object"
                         >
                             <span>
-                                Convert
+                                Create
                                 <br />
-                                To Opportunity
+                                Quotation
                             </span>
                         </button>
                         <button
@@ -109,6 +109,7 @@
                             name="action_make_meeting"
                             type="object"
                         >
+
                             <span>
                                 Schedule
                                 <br />
@@ -221,11 +222,11 @@
                     type="object"
                 />
                 <button
-                    attrs="{'invisible':[('opportunity_id','!=',False)]}"
+
                     icon="fa-hand-pointer-o"
-                    name="action_button_convert2opportunity"
+                    name="action_sale_create"
                     states="open,pending"
-                    string="Convert to Opportunity"
+                    string="Create quotation"
                     type="object"
                 />
             </tree>

@@ -39,7 +39,7 @@ class PartnerCrmAppointment(models.Model):
     type1 = fields.Selection([
                         ('spontaneous', 'Spontaneous'),
                         ('todo', 'To call'),
-                           ], 'Type', index=True, default='todo')
+                           ], 'Type', default='todo')
 
     day = fields.Selection([
                         ('0', 'Monday'),
@@ -49,7 +49,7 @@ class PartnerCrmAppointment(models.Model):
                         ('4', 'Friday'),
                         ('5', 'Saturday'),
                         ('6', 'Sunday'),
-                           ], 'Day', index=True, required=True)
+                           ], 'Day', required=True)
     frequency = fields.Selection([
                         ('7', 'Every week'),
                         ('14', 'Every 2 week'),
@@ -58,7 +58,7 @@ class PartnerCrmAppointment(models.Model):
                         ('42', 'Every 6 week'),
                            ], 'Frequency', default='7', required=True)
 
-    time = fields.Float('Time')
+    time = fields.Float('Time', default=8.0)
     channel = fields.Selection([
                         ('phone', 'Phone'),
                         ('fax', 'Fax'),
@@ -69,11 +69,14 @@ class PartnerCrmAppointment(models.Model):
     partner_id = fields.Many2one('res.partner', 'Customer')
     contact_id = fields.Many2one('res.partner', 'Contact')
 
+    @api.depends('frequency', 'day', 'contact_id', 'time')
     def init_appointment(self):
         """ ON change frequency or day remove previous appointment"""
         today = fields.datetime.now()
-        phone_ids = self.env['crm.phone'].search([('date', '>=', today), ('appointment_id', '=', self.ids)])
+        condition = [('date', '>=', today), ('partner_id', '=', self.mapped('partner_id'))]
+        phone_ids = self.env['crm.phonecall'].search(condition)
         phone_ids.unlink()
+        self.create_next_appointment()
 
     @api.model
     def timezone_2_utc(self, nextday, time, timezone="Europe/Paris"):
