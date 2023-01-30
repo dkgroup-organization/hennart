@@ -3,15 +3,16 @@
 
 {
     "name": "CRM Phone Calls",
-    "version": "15.0.1.0.2",
+    "version": "16.0.1.0.2",
     "category": "Customer Relationship Management",
-    "author": "Odoo S.A., Tecnativa, Odoo Community Association (OCA)",
-    "website": "https://github.com/OCA/crm",
+    "author": "Odoo S.A., Tecnativa, Odoo Community Association (OCA), DK Group",
+    "website": "https://github.com/dkgroup-organization/hennart",
     "license": "AGPL-3",
-    "depends": ["crm", "calendar", "delivery"],
+    "depends": ["crm", "calendar", "delivery", "sale"],
     "data": [
         "security/crm_security.xml",
         "security/ir.model.access.csv",
+        "data/ir_cron_data.xml"
         "wizard/crm_phonecall_to_phonecall_view.xml",
         "views/crm_phonecall_view.xml",
         "views/res_partner_view.xml",

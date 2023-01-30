@@ -121,6 +121,7 @@ class PartnerCrmAppointment(models.Model):
                     'channel': appointment.channel,
                     'type1': appointment.type1,
                     'date': nextday_utc,
+                    'state': 'open',
                 }
                 res != self.env['crm.phonecall'].create(phone_vals)
 
@@ -133,8 +134,6 @@ class PartnerCrmAppointment(models.Model):
         last_phone_ids = self.env['crm.phonecall'].search(
             [('date', '>', today), ('state', 'not in', ['cancel', 'done']), ('appointment_id', '!=', False)])
         futur_appointment_ids = last_phone_ids.mapped('appointment_id')
-        print('-----------futur_appointment_ids--------------', futur_appointment_ids)
         appointment_ids = self.search([('id', 'not in', futur_appointment_ids.ids)])
         res = appointment_ids.create_next_appointment()
-        print(res)
         return res

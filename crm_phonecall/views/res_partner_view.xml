@@ -21,7 +21,6 @@
         </field>
     </record>
 
-
     <record id="view_partner_crm_appointement_form" model="ir.ui.view">
         <field name="name">view_partner_crm_appointement_form</field>
         <field name="model">res.partner</field>
@@ -29,15 +28,12 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
 
-
-            <field name="user_id" position="after">
-                <group>
-                    <field name="user2_id"/>
-                </group>
-            </field>
-
             <page name="sales_purchases" position="after">
                 <page string="Appointment" attrs="{'invisible': [('is_company','=',False)]}">
+                    <group>
+                        <field name="user_id"/>
+                        <field name="user2_id"/>
+                    </group>
                     <newline/>
                     <div>
                         <field name="appointment_ids" nolabel="1" context="{'default_partner_id': active_id}">
@@ -49,11 +45,10 @@
                                 <field name="frequency"/>
                                 <field name="partner_id" invisible="1"/>
                                 <field name="contact_id" create="0" domain="[('parent_id','=', partner_id)]"
-                                    options="{'no_quick_create': True, 'no_create_edit' : True}"/>
+                                       options="{'no_quick_create': True, 'no_create_edit' : True}"/>
                             </tree>
                         </field>
                     </div>
-
                     <newline/>
                     <div>
                         <field name="appointment_delivery_ids" nolabel="1" string="Delivery appointement"
@@ -66,12 +61,9 @@
                             </tree>
                         </field>
                     </div>
-
                 </page>
             </page>
-
         </field>
     </record>
-
 
 </odoo>

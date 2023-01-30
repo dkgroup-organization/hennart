@@ -230,3 +230,21 @@ class CrmPhonecall(models.Model):
         opportunity_id = opportunity.create(self._prepare_opportunity_vals())
         self.write({"opportunity_id": opportunity_id.id, "state": "done"})
         return opportunity_id.redirect_lead_opportunity_view()
+
+    def action_sale_create(self):
+        "create a sale order"
+        sale_obj = self.env['sale.order']
+
+        for phonecall in self:
+
+            if not phonecall.partner_id:
+                # TODO: error to raise
+                pass
+            elif phonecall.partner_id.is_company:
+                partner_id = phonecall.partner_id.id
+            elif phonecall.partner_id.parent_id:
+                partner_id = phonecall.partner_id.parent_id.id
+            else:
+                partner_id = phonecall.partner_id.id
+
+        return
