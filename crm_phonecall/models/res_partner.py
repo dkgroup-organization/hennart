@@ -2,7 +2,7 @@
 # Copyright 2017 Tecnativa - Vicent Cubells
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import fields, models
+from odoo import fields, models, api
 
 
 class ResPartner(models.Model):
@@ -23,5 +23,5 @@ class ResPartner(models.Model):
         """Calculate number of phonecalls."""
         for partner in self:
             partner.phonecall_count = self.env["crm.phonecall"].search_count(
-                [("partner_id", "=", partner.id)]
+                [("partner_id", "=", partner.id), ('state', 'in', ['open', 'pending'])]
             )
