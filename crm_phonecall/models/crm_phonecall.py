@@ -5,7 +5,13 @@
 from functools import reduce
 from odoo.exceptions import UserError
 from odoo import _, api, fields, models
-
+from odoo.tools.safe_eval import safe_eval
+from datetime import datetime
+from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
+import pytz
+from odoo import api, fields, models, _, Command
+from odoo.addons.base.models.decimal_precision import DecimalPrecision
 
 class CrmPhonecall(models.Model):
     """Model for CRM phonecalls."""
@@ -247,12 +253,75 @@ class CrmPhonecall(models.Model):
                 partner = phonecall.partner_id
             if not partner:
                 continue
+            commitment_date = False
+            date_entrepot = False
+            carrier = False
+            today1 = datetime.now()
+            
 
-            sale_vals = {
-                'user_id': partner.user_id.id or False,
-                'partner_id': partner.id,
-                'state': 'draft'
+            if partner.appointment_delivery_ids:
+                app = phonecall.partner_id.appointment_delivery_ids[0]
+
+                if today1.weekday() == int(app.load_day):
+                  if  today1.hour <= 12:
+                    while today1.weekday() != int(app.load_day): #0 for monday
+                      today1 += timedelta(days=1)
+                    date_entrepot = today1
+                    today2 = date_entrepot
+
+                    while today2.weekday() != int(app.delivery_day): #0 for monday
+                      today2 += timedelta(days=1)
+                    commitment_date = today2
+
+                    sale_vals = {
+                    'user_id': partner.user_id.id or False,
+                    'partner_id': partner.id,
+                    'state': 'draft',
+                    'date_entrepot':date_entrepot,
+                    'carrier_id' : partner.appointment_delivery_ids[0].carrier_id.id,
+                    'commitment_date': commitment_date
             }
+                  else:
+                    today1 += timedelta(days=1)
+                    while today1.weekday() != int(app.load_day): #0 for monday
+                      today1 += timedelta(days=1)
+                    date_entrepot = today1
+                    today2 = date_entrepot
+
+                    while today2.weekday() != int(app.delivery_day): #0 for monday
+                      today2 += timedelta(days=1)
+                    commitment_date = today2
+
+                    sale_vals = {
+                    'user_id': partner.user_id.id or False,
+                    'partner_id': partner.id,
+                    'state': 'draft',
+                    'date_entrepot':date_entrepot,
+                    'carrier_id' : partner.appointment_delivery_ids[0].carrier_id.id,
+                    'commitment_date': commitment_date
+                    }
+
+                else:
+                    while today1.weekday() != int(app.load_day): #0 for monday
+                      today1 += timedelta(days=1)
+                    date_entrepot = today1
+                    today2 = date_entrepot
+
+                    while today2.weekday() != int(app.delivery_day): #0 for monday
+                      today2 += timedelta(days=1)
+                    commitment_date = today2
+
+                    sale_vals = {
+                    'user_id': partner.user_id.id or False,
+                    'partner_id': partner.id,
+                    'state': 'draft',
+                    'date_entrepot':date_entrepot,
+                    'carrier_id' : partner.appointment_delivery_ids[0].carrier_id.id,
+                    'commitment_date': commitment_date
+                    }
+
+            
+
 
             sale = self.env['sale.order'].create(sale_vals)
             sale_ids |= sale
