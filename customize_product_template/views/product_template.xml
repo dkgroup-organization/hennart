@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+       <record id="view_form_product_template_add_fileds" model="ir.ui.view">
+            <field name="name">product.template.add.fileds</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='group_general']" position="after">
+                   <group name="group_general2" string="Général">
+                      <field name="code_ean_prix"/>
+                        <field name="code_ean_poids"/>
+                          <field name="code_DUN14"/>
+                            <field name="not_solded"/>
+                   </group>
+
+
+                <group name="description33" string="Description">
+                      <field name="origine"/>
+                        <!--<field name="area"/>-->
+                        <!--  <field name="ingredient"/>-->
+                        <!--    <field name="allergen"/>-->
+                        <!--      <field name="production_specificity"/>-->
+                                <field name="specificity_milk"/>
+                                  <field name="heat_treatment_milk"/>
+                                    <field name="rennet"/>
+                                    <field name="salting"/>
+                                    <field name="pate_molle"/>
+                                    <field name="type_milk"/>
+                      
+                   </group>
+
+
+
+               <group name="milk_fat" string="milk Fat">
+                      <field name="matiere_grasse"/>
+                        <field name="fat_in_product"/>
+                          <field name="fat_in_dry_matter"/>
+                            <field name="whole_milk"/>
+                   </group>
+
+
+            <group name="nutritionals_values" string="Nutritionals values">
+                      <field name="nv_energy_kj"/>
+                        <field name="nv_energy_kc"/>
+                          <field name="nv_fat"/>
+                            <field name="nv_saturated_fatty_acids"/>
+                            <field name="nv_carbohydrates"/>
+                            <field name="nv_sugars"/>
+                            <field name="nv_protein"/>
+                            <field name="nv_salt"/>
+
+
+                   </group>
+
+
+
+
+
+                </xpath>
+
+
+                 <xpath expr="//group[@name='group_lots_and_weight']" position="after">
+
+            <group name="datee" string="Date">
+                      <field name="life_date"/>
+                        <field name="use_date"/>
+                          <field name="life_time"/>
+                            <field name="use_time"/>
+                            <field name="alert_time"/>
+                            <field name="removal_time"/> 
+                   </group>
+
+
+             <group name="Weight" string="Weight">
+                       <field name="volume"/>
+                        <field name="to_weight"/>
+                          <field name="tare"/>
+                            <field name="weight"/>
+                            <field name="weight_net"/>
+                   </group>
+
+                  </xpath>
+
+       <xpath expr="//page[@name='inventory']" position="after">
+
+<page name="production" string="Production">
+
+                 <group name="label" string="Label">
+                       <field name="format_etiquette"/>
+                        <field name="to_label"/>
+                      
+                   </group>
+
+                   <group name="production" string="Production">
+                       <field name="gestion_affinage"/>
+                        <field name="to_personnalize"/>
+                      
+                   </group>
+</page>
+      </xpath>
+
+              
+           </field>
+        </record>
+    </data>
+</odoo>
