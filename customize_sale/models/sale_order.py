@@ -19,14 +19,14 @@ class Sale_Order(models.Model):
     _inherit = 'sale.order'
 
 
-    date_entrepot = fields.Datetime(
-        "Date entrepôt", store=True,
-        help="Date entrepôt")
+    date_delivered = fields.Datetime(
+        "Date de livraison Client", store=True,
+        help="Date de livraison Client")
 
     @api.onchange('partner_id')
     def onchange_partner_id_dates(self):
         for rec in self:
-            commitment_date = False
+            delivered_date = False
             date_entrepot = False
             carrier = False
             today1 = datetime.now()
@@ -36,7 +36,7 @@ class Sale_Order(models.Model):
                 app = rec.partner_id.appointment_delivery_ids[0]
 
                 if today1.weekday() == int(app.load_day):
-                  if  today1.hour <= 12:
+                  if  today1.hour < 11:
                     while today1.weekday() != int(app.load_day): #0 for monday
                       today1 += timedelta(days=1)
                     date_entrepot = today1
@@ -44,10 +44,10 @@ class Sale_Order(models.Model):
 
                     while today2.weekday() != int(app.delivery_day): #0 for monday
                       today2 += timedelta(days=1)
-                    commitment_date = today2
+                    delivered_date = today2
 
-                    rec.date_entrepot = date_entrepot
-                    rec.commitment_date = commitment_date
+                    rec.date_delivered = delivered_date
+                    rec.commitment_date = date_entrepot
                     rec.carrier_id = rec.partner_id.appointment_delivery_ids[0].carrier_id.id
                     user_id = rec.user_id.id
                   else:
@@ -59,10 +59,10 @@ class Sale_Order(models.Model):
 
                     while today2.weekday() != int(app.delivery_day): #0 for monday
                       today2 += timedelta(days=1)
-                    commitment_date = today2
+                    delivered_date= today2
 
-                    rec.date_entrepot = date_entrepot
-                    rec.commitment_date = commitment_date
+                    rec.date_delivered = delivered_date
+                    rec.commitment_date = date_entrepot
                     rec.carrier_id = rec.partner_id.appointment_delivery_ids[0].carrier_id.id
                     user_id = rec.user_id.id
 
@@ -74,13 +74,30 @@ class Sale_Order(models.Model):
 
                     while today2.weekday() != int(app.delivery_day): #0 for monday
                       today2 += timedelta(days=1)
-                    commitment_date = today2
+                    delivered_date = today2
 
-                    rec.date_entrepot = date_entrepot
-                    rec.commitment_date = commitment_date
+                    rec.date_delivered = delivered_date
+                    rec.commitment_date = date_entrepot
                     rec.carrier_id = rec.partner_id.appointment_delivery_ids[0].carrier_id.id
                     user_id = rec.user_id.id
 
+
+
+
+class Stock_picking(models.Model):
+    _inherit = 'stock.picking'
+
+
+    date_delivered = fields.Datetime(
+        "Date de livraison Client",compute='_compute_date_deliverd',
+        help="Date de livraison Client")
+
+    def _compute_date_deliverd(self):
+        for order in self:
+            if order.sale_id:
+               order.date_delivered = order.sale_id.date_delivered
+            else:
+                order.date_delivered = False
 
 
 
