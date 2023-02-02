@@ -253,7 +253,7 @@ class CrmPhonecall(models.Model):
                 partner = phonecall.partner_id
             if not partner:
                 continue
-            commitment_date = False
+            delivered_date = False
             date_entrepot = False
             carrier = False
             today1 = datetime.now()
@@ -263,7 +263,7 @@ class CrmPhonecall(models.Model):
                 app = phonecall.partner_id.appointment_delivery_ids[0]
 
                 if today1.weekday() == int(app.load_day):
-                  if  today1.hour <= 12:
+                  if  today1.hour < 11:
                     while today1.weekday() != int(app.load_day): #0 for monday
                       today1 += timedelta(days=1)
                     date_entrepot = today1
@@ -271,15 +271,15 @@ class CrmPhonecall(models.Model):
 
                     while today2.weekday() != int(app.delivery_day): #0 for monday
                       today2 += timedelta(days=1)
-                    commitment_date = today2
+                    delivered_date = today2
 
                     sale_vals = {
                     'user_id': partner.user_id.id or False,
                     'partner_id': partner.id,
                     'state': 'draft',
-                    'date_entrepot':date_entrepot,
+                    'date_delivered':delivered_date,
                     'carrier_id' : partner.appointment_delivery_ids[0].carrier_id.id,
-                    'commitment_date': commitment_date
+                    'commitment_date': date_entrepot
             }
                   else:
                     today1 += timedelta(days=1)
@@ -290,15 +290,15 @@ class CrmPhonecall(models.Model):
 
                     while today2.weekday() != int(app.delivery_day): #0 for monday
                       today2 += timedelta(days=1)
-                    commitment_date = today2
+                    delivered_date = today2
 
                     sale_vals = {
                     'user_id': partner.user_id.id or False,
                     'partner_id': partner.id,
                     'state': 'draft',
-                    'date_entrepot':date_entrepot,
+                    'date_delivered':delivered_date,
                     'carrier_id' : partner.appointment_delivery_ids[0].carrier_id.id,
-                    'commitment_date': commitment_date
+                    'commitment_date': date_entrepot
                     }
 
                 else:
@@ -309,15 +309,15 @@ class CrmPhonecall(models.Model):
 
                     while today2.weekday() != int(app.delivery_day): #0 for monday
                       today2 += timedelta(days=1)
-                    commitment_date = today2
+                    delivered_date = today2
 
                     sale_vals = {
                     'user_id': partner.user_id.id or False,
                     'partner_id': partner.id,
                     'state': 'draft',
-                    'date_entrepot':date_entrepot,
+                    'date_delivered':delivered_date,
                     'carrier_id' : partner.appointment_delivery_ids[0].carrier_id.id,
-                    'commitment_date': commitment_date
+                    'commitment_date':  date_entrepot
                     }
 
             
