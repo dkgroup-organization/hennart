@@ -18,9 +18,9 @@
                 <group name="description33" string="Description">
                       <field name="origine"/>
                      <field name="area"/>
-                 <field name="ingredient"/>
-                          <field name="allergen"/>
-                            <field name="production_specificity"/>
+                 <field name="ingredient"  widget="many2many_tags"/>
+                          <field name="allergen"  widget="many2many_tags"/>
+                            <field name="production_specificity"  widget="many2many_tags"/>
                                 <field name="specificity_milk"/>
                                   <field name="heat_treatment_milk"/>
                                     <field name="rennet"/>
