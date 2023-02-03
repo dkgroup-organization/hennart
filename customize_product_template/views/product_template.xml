@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
        <record id="view_form_product_template_add_fileds" model="ir.ui.view">
@@ -13,23 +13,6 @@
                           <field name="code_DUN14"/>
                             <field name="not_solded"/>
                    </group>
-
-
-                <group name="description33" string="Description">
-                      <field name="origine"/>
-                     <field name="area"/>
-                 <field name="ingredient"  widget="many2many_tags"/>
-                          <field name="allergen"  widget="many2many_tags"/>
-                            <field name="production_specificity"  widget="many2many_tags"/>
-                                <field name="specificity_milk"/>
-                                  <field name="heat_treatment_milk"/>
-                                    <field name="rennet"/>
-                                    <field name="salting"/>
-                                    <field name="pate_molle"/>
-                                    <field name="type_milk"/>
-                      
-                   </group>
-
 
 
                <group name="milk_fat" string="milk Fat">
@@ -100,8 +83,104 @@
 </page>
       </xpath>
 
+
+
+
+ <xpath expr="//page[@name='inventory']" position="after">
+
+<page name="description" string="Description">
+
+ <group name="description33" string="Description">
+                      <field name="origine"/>
+                      <field name="area"/>
+                         <field name="ingredient" widget="many2many_tags"/>
+                         <field name="allergen" widget="many2many_tags" />
+                           <field name="production_specificity" widget="many2many_tags"/>
+                                <field name="specificity_milk" />
+                                  <field name="heat_treatment_milk"/>
+                                    <field name="rennet"/>
+                                    <field name="salting"/>
+                                    <field name="pate_molle"/>
+                                    <field name="type_milk"/>
+                      
+                   </group>
+
+
+</page>
+      </xpath>
+
+
               
            </field>
         </record>
+
+
+<record id="action_product_area" model="ir.actions.act_window">
+        <field name="name">Product Area</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.area</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+ <menuitem id="product_area_menu"
+              name="Product Area"
+              action="action_product_area"
+              parent="sale.menu_sale_config"
+              sequence="100"/>
+
+
+<record id="action_product_allergen" model="ir.actions.act_window">
+        <field name="name">Product Allergen</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.allergen</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+ <menuitem id="product_allergen_menu"
+              name="Product Allergen"
+              action="action_product_allergen"
+              parent="sale.menu_sale_config"
+              sequence="100"/>
+
+
+
+
+<record id="action_product_ingredient" model="ir.actions.act_window">
+        <field name="name">Product Ingredient</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.ingredient</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+ <menuitem id="product_ingredient_menu"
+              name="Product Ingredient"
+              action="action_product_ingredient"
+              parent="sale.menu_sale_config"
+              sequence="100"/>
+
+
+
+
+<record id="action_product_specificity" model="ir.actions.act_window">
+        <field name="name">Product Specificity</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.specificity</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+
+ <menuitem id="product_specificity_menu"
+              name="Product Specificity"
+              action="action_product_specificity"
+              parent="sale.menu_sale_config"
+              sequence="100"/>
+
     </data>
 </odoo>
