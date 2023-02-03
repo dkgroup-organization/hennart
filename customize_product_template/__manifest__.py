@@ -12,6 +12,7 @@
     "images": [],
     "depends": ["account", "sale"],
     "data": [
+        'security/ir.model.access.csv',
         "views/product_template.xml",
 
 
