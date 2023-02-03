@@ -9,6 +9,23 @@ from odoo import api, fields, models, _, Command
 from odoo.addons.base.models.decimal_precision import DecimalPrecision
 
 
+class Product_area(models.Model):
+    _name = 'product.area'
+    name = fields.Char(string='Name', required=True, translate=True)
+    
+class Product_allergen(models.Model):
+    _name = 'product.allergen'
+    name = fields.Char(string='Name', required=True, translate=True)
+    
+class Product_ingredient(models.Model):
+    _name = 'product.ingredient'
+    name = fields.Char(string='Name', required=True, translate=True)
+    
+class Product_specificity(models.Model):
+    _name = 'product.specificity'
+    name = fields.Char(string='Name', required=True, translate=True)
+    
+    
 class Product_tempalte(models.Model):
     _inherit = 'product.template'
 
