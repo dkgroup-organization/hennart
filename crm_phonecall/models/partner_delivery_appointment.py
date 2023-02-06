@@ -58,8 +58,8 @@ class partner_delivery_appointment(models.Model):
                         ('5', 'Saturday'),
                         ('6', 'Sunday'),
                            ], 'Delivery Day', index=True)
-    delivery_time = fields.Float('Delivery Time')
 
+    delivery_time = fields.Float('Delivery Time')
     partner_id = fields.Many2one('res.partner', 'Customer')
     carrier_id = fields.Many2one("delivery.carrier", "Delivery Method")
 
