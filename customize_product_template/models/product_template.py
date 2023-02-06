@@ -29,15 +29,16 @@ class Product_specificity(models.Model):
 class Product_tempalte(models.Model):
     _inherit = 'product.template'
 
-    code_ean_prix = fields.Char('CODE EAN Prix', size=12)
-    code_ean_poids = fields.Char('CODE EAN Poids', size=12)
-    code_DUN14 = fields.Char('CODE DUN14', size=14)
+    code_ean_prix = fields.Char('Code EAN Prix', size=12)
+    code_ean_poids = fields.Char('Code EAN Poids', size=12)
+    code_DUN14 = fields.Char('Code DUN14', size=14)
     not_solded = fields.Boolean(string='No longer sold')
-    origine = fields.Char('Origine', size=128,select=True)
+    origine = fields.Char('Origine', size=128, select=True)
     area = fields.Many2one(string='Area', comodel_name='product.area')
-    ingredient = fields.Many2many('product.ingredient','ingredient_rel', string="Ingredient")
+    ingredient = fields.Many2many('product.ingredient', 'ingredient_rel', string="Ingredient")
     allergen = fields.Many2many( 'product.allergen', 'allereg_reel',string="Allergen" )
-    production_specificity = fields.Many2many('product.specificity','specifit_reel' ,string="Production specifity" , help='define some spécificity like OGM, IGP, farmer, presence of GMO')
+    production_specificity = fields.Many2many('product.specificity','specifit_reel', string="Production specifity",
+                                              help='define some spécificity like OGM, IGP, farmer, presence of GMO')
     specificity_milk = fields.Selection(
         selection=[
             ('farmer', 'Farmer'),
@@ -78,7 +79,6 @@ class Product_tempalte(models.Model):
         selection=[
             ('dry', 'Dry'),
             ('brine', 'Brine'),
-           
         ],
         string='Salting')
 
@@ -90,12 +90,10 @@ class Product_tempalte(models.Model):
             ('sheep', 'Sheep'),
             ('vegetable', 'Vegetable'),
             ('other', 'Other'),
-
-           
         ],
         string='Type milk')
 
-    matiere_grasse =  fields.Char('Fat', size=12)
+    matiere_grasse = fields.Char('Fat', size=12)
     fat_in_product = fields.Float(string='Fat in product (%)')
     fat_in_dry_matter = fields.Float(
         string='Fat in dry matter (%)') 
@@ -109,15 +107,11 @@ class Product_tempalte(models.Model):
     nv_sugars = fields.Float(string='Sugars (g)')
     nv_protein = fields.Float(string=' Protein (g)')
     nv_salt = fields.Float(string='Salt (g)')
+
     life_date = fields.Boolean(string='DLC : End of Life Date')
     use_date = fields.Boolean(string='DDM : Best before Date')
-    life_time = fields.Integer(string='DLC : Product Life Time',help='When a new a Serial Number is issued, this is the number of days before the goods may become dangerous and must not be consumed' )
-    use_time = fields.Integer(string='Product Use Time',help='When a new a Serial Number is issued, this is the number of days before the goods starts deteriorating, without being dangerous yet' )
-    alert_time = fields.Integer(string='Product Alert Time',help='When a new a Serial Number is issued, this is the number of days before an alert should be notified' )
 
-    removal_time = fields.Integer(string='Product Removal Time',help='When a new a Serial Number is issued, this is the number of days before the goods should be removed from the stock.' )
-
-    volume = fields.Float(string='Volume',help='The volume in m3')
+    # volume = fields.Float(string='Volume',help='The volume in m3')
     to_weight = fields.Boolean(string='a peser')
     tare = fields.Float(string='Tare',help='Tare')
     weight_net = fields.Float(string='Net Weight',help='The net weight in Kg.')
@@ -125,8 +119,6 @@ class Product_tempalte(models.Model):
     to_label = fields.Boolean(string='a etiqueter')
     gestion_affinage = fields.Boolean(string='Gestion de l affinage')
     to_personnalize = fields.Boolean(string='Specifique au client')
-
-
 
 
 

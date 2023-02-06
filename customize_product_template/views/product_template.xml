@@ -1,186 +1,157 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
-       <record id="view_form_product_template_add_fileds" model="ir.ui.view">
+        <record id="view_form_product_template_add_fileds" model="ir.ui.view">
             <field name="name">product.template.add.fileds</field>
             <field name="model">product.template</field>
+            <field name="priority">20</field>
             <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[@name='group_general']" position="after">
-                   <group name="group_general2" string="Général">
-                      <field name="code_ean_prix"/>
-                        <field name="code_ean_poids"/>
-                          <field name="code_DUN14"/>
-                            <field name="not_solded"/>
-                   </group>
+                <field name="categ_id" position="after">
+                    <field name="code_ean_prix"/>
+                    <field name="code_ean_poids"/>
+                    <field name="code_DUN14"/>
+                </field>
 
+                <group name="sale" position="inside">
+                    <group>
+                        <field name="not_solded"/>
+                    </group>
+                </group>
 
-               <group name="milk_fat" string="milk Fat">
-                      <field name="matiere_grasse"/>
-                        <field name="fat_in_product"/>
-                          <field name="fat_in_dry_matter"/>
-                            <field name="whole_milk"/>
-                   </group>
-
-
-            <group name="nutritionals_values" string="Nutritionals values">
-                      <field name="nv_energy_kj"/>
-                        <field name="nv_energy_kc"/>
-                          <field name="nv_fat"/>
-                            <field name="nv_saturated_fatty_acids"/>
-                            <field name="nv_carbohydrates"/>
-                            <field name="nv_sugars"/>
-                            <field name="nv_protein"/>
-                            <field name="nv_salt"/>
-
-
-                   </group>
-
-
-
-
-
+                <xpath expr="//group[@name='group_lots_and_weight']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
 
+                <xpath expr="//group[@name='expiry_and_lots']" position="inside">
+                    <field name="life_date"/>
+                    <field name="use_date"/>
+                </xpath>
 
-                 <xpath expr="//group[@name='group_lots_and_weight']" position="after">
-
-            <group name="datee" string="Date">
-                      <field name="life_date"/>
-                        <field name="use_date"/>
-                          <field name="life_time"/>
-                            <field name="use_time"/>
-                            <field name="alert_time"/>
-                            <field name="removal_time"/> 
-                   </group>
-
-
-             <group name="Weight" string="Weight">
-                       <field name="volume"/>
+                <xpath expr="//group[@name='group_lots_and_weight']" position="after">
+                    <group name="Weight" string="Weight">
+                        <field name="volume"/>
                         <field name="to_weight"/>
-                          <field name="tare"/>
-                            <field name="weight"/>
-                            <field name="weight_net"/>
-                   </group>
+                        <field name="tare"/>
+                        <field name="weight"/>
+                        <field name="weight_net"/>
+                    </group>
+                </xpath>
 
-                  </xpath>
+                <xpath expr="//page[@name='inventory']" position="after">
+                    <page name="production" string="Production">
+                        <group name="label" string="Label">
+                            <field name="format_etiquette"/>
+                            <field name="to_label"/>
+                        </group>
 
-       <xpath expr="//page[@name='inventory']" position="after">
+                        <group name="production" string="Production">
+                            <field name="gestion_affinage"/>
+                            <field name="to_personnalize"/>
+                        </group>
+                    </page>
+                </xpath>
 
-<page name="production" string="Production">
+                <xpath expr="//page[@name='inventory']" position="after">
 
-                 <group name="label" string="Label">
-                       <field name="format_etiquette"/>
-                        <field name="to_label"/>
-                      
-                   </group>
+                    <page name="description" string="Description">
+                        <group>
+                            <group name="description33" string="Description">
+                                <field name="origine"/>
+                                <field name="area"/>
+                                <field name="ingredient" widget="many2many_tags"/>
+                                <field name="allergen" widget="many2many_tags"/>
+                                <field name="production_specificity" widget="many2many_tags"/>
+                                <field name="specificity_milk"/>
+                                <field name="heat_treatment_milk"/>
+                                <field name="rennet"/>
+                                <field name="salting"/>
+                                <field name="pate_molle"/>
+                                <field name="type_milk"/>
+                            </group>
 
-                   <group name="production" string="Production">
-                       <field name="gestion_affinage"/>
-                        <field name="to_personnalize"/>
-                      
-                   </group>
-</page>
-      </xpath>
+                            <group name="milk_fat" string="milk Fat">
+                                <field name="matiere_grasse"/>
+                                <field name="fat_in_product"/>
+                                <field name="fat_in_dry_matter"/>
+                                <field name="whole_milk"/>
+                            </group>
 
-
-
-
- <xpath expr="//page[@name='inventory']" position="after">
-
-<page name="description" string="Description">
-
- <group name="description33" string="Description">
-                      <field name="origine"/>
-                      <field name="area"/>
-                         <field name="ingredient" widget="many2many_tags"/>
-                         <field name="allergen" widget="many2many_tags" />
-                           <field name="production_specificity" widget="many2many_tags"/>
-                                <field name="specificity_milk" />
-                                  <field name="heat_treatment_milk"/>
-                                    <field name="rennet"/>
-                                    <field name="salting"/>
-                                    <field name="pate_molle"/>
-                                    <field name="type_milk"/>
-                      
-                   </group>
-
-
-</page>
-      </xpath>
-
-
-              
-           </field>
+                            <group name="nutritionals_values" string="Nutritionals values">
+                                <field name="nv_energy_kj"/>
+                                <field name="nv_energy_kc"/>
+                                <field name="nv_fat"/>
+                                <field name="nv_saturated_fatty_acids"/>
+                                <field name="nv_carbohydrates"/>
+                                <field name="nv_sugars"/>
+                                <field name="nv_protein"/>
+                                <field name="nv_salt"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
         </record>
 
 
-<record id="action_product_area" model="ir.actions.act_window">
-        <field name="name">Product Area</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">product.area</field>
-        <field name="view_mode">tree,form</field>
-    </record>
+        <record id="action_product_area" model="ir.actions.act_window">
+            <field name="name">Product Area</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.area</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
 
-
- <menuitem id="product_area_menu"
-              name="Product Area"
-              action="action_product_area"
-              parent="sale.menu_sale_config"
-              sequence="100"/>
-
-
-<record id="action_product_allergen" model="ir.actions.act_window">
-        <field name="name">Product Allergen</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">product.allergen</field>
-        <field name="view_mode">tree,form</field>
-    </record>
+        <menuitem id="product_area_menu"
+                  name="Product Area"
+                  action="action_product_area"
+                  parent="sale.menu_sale_config"
+                  sequence="100"/>
 
 
-
- <menuitem id="product_allergen_menu"
-              name="Product Allergen"
-              action="action_product_allergen"
-              parent="sale.menu_sale_config"
-              sequence="100"/>
-
-
+        <record id="action_product_allergen" model="ir.actions.act_window">
+            <field name="name">Product Allergen</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.allergen</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
 
-<record id="action_product_ingredient" model="ir.actions.act_window">
-        <field name="name">Product Ingredient</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">product.ingredient</field>
-        <field name="view_mode">tree,form</field>
-    </record>
+        <menuitem id="product_allergen_menu"
+                  name="Product Allergen"
+                  action="action_product_allergen"
+                  parent="sale.menu_sale_config"
+                  sequence="100"/>
 
 
-
- <menuitem id="product_ingredient_menu"
-              name="Product Ingredient"
-              action="action_product_ingredient"
-              parent="sale.menu_sale_config"
-              sequence="100"/>
-
-
+        <record id="action_product_ingredient" model="ir.actions.act_window">
+            <field name="name">Product Ingredient</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.ingredient</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
 
-<record id="action_product_specificity" model="ir.actions.act_window">
-        <field name="name">Product Specificity</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">product.specificity</field>
-        <field name="view_mode">tree,form</field>
-    </record>
+        <menuitem id="product_ingredient_menu"
+                  name="Product Ingredient"
+                  action="action_product_ingredient"
+                  parent="sale.menu_sale_config"
+                  sequence="100"/>
 
 
+        <record id="action_product_specificity" model="ir.actions.act_window">
+            <field name="name">Product Specificity</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.specificity</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
- <menuitem id="product_specificity_menu"
-              name="Product Specificity"
-              action="action_product_specificity"
-              parent="sale.menu_sale_config"
-              sequence="100"/>
+
+        <menuitem id="product_specificity_menu"
+                  name="Product Specificity"
+                  action="action_product_specificity"
+                  parent="sale.menu_sale_config"
+                  sequence="100"/>
 
     </data>
 </odoo>
