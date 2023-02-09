@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo noupdate="1">
+    <record model="crm.claim.category" id="categ_claim1">
+        <field name="name">Factual Claims</field>
+        <field name="team_id" ref="sales_team.team_sales_department" />
+    </record>
+    <record model="crm.claim.category" id="categ_claim2">
+        <field name="name">Value Claims</field>
+        <field name="team_id" ref="sales_team.team_sales_department" />
+    </record>
+    <record model="crm.claim.category" id="categ_claim3">
+        <field name="name">Policy Claims</field>
+        <field name="team_id" ref="sales_team.team_sales_department" />
+    </record>
+    <record model="utm.campaign" id="claim_source1">
+        <field name="name">Corrective</field>
+    </record>
+    <record model="utm.campaign" id="claim_source2">
+        <field name="name">Preventive</field>
+    </record>
+    <record model="crm.claim.stage" id="stage_claim1">
+        <field name="name">New</field>
+        <field name="sequence">1</field>
+        <field name="case_default" eval="True" />
+    </record>
+    <record model="crm.claim.stage" id="stage_claim5">
+        <field name="name">In Progress</field>
+        <field name="sequence">27</field>
+        <field name="case_default" eval="True" />
+    </record>
+    <record model="crm.claim.stage" id="stage_claim2">
+        <field name="name">Settled</field>
+        <field name="sequence">28</field>
+        <field name="case_default" eval="True" />
+    </record>
+    <record model="crm.claim.stage" id="stage_claim3">
+        <field name="name">Rejected</field>
+        <field name="sequence">29</field>
+        <field name="case_default" eval="True" />
+    </record>
+    
+    
+    
+    
+    
+
+
+     <record id="reclam012" model="quality.claim">
+            <field name="name">Corps etranger</field>
+        </record>
+
+            <record id="reclam013" model="quality.claim">
+            <field name="name">Coulant/mou</field>
+        </record>
+            <record id="reclam014" model="quality.claim">
+            <field name="name">Fissures/lainures</field>
+        </record>
+            <record id="reclam015" model="quality.claim">
+            <field name="name">Humide/poisseux</field>
+        </record>
+            <record id="reclam016" model="quality.claim">
+            <field name="name">Insectes</field>
+        </record>
+            <record id="reclam017" model="quality.claim">
+            <field name="name">Moisissures croûte</field>
+        </record>
+            <record id="reclam018" model="quality.claim">
+            <field name="name">Moisissures pâte</field>
+        </record>
+            <record id="reclam019" model="quality.claim">
+            <field name="name">Odeur désagréable</field>
+        </record>
+
+            <record id="reclam010" model="quality.claim">
+            <field name="name">Respect d'affinage</field>
+        </record>
+
+
+            <record id="reclam0101" model="quality.claim">
+            <field name="name">Saveur désagréable</field>
+        </record>
+
+            <record id="reclam0102" model="quality.claim">
+            <field name="name">Sec</field>
+        </record>
+
+            <record id="reclam0103" model="quality.claim">
+            <field name="name">Trou de sonde</field>
+        </record>
+ 
+
+
+
+
+        
+
+          <record id="reclam0104" model="preparation.claim">
+            <field name="name">Cassé</field>
+        </record>
+         <record id="reclam0105" model="preparation.claim">
+            <field name="name">Date trop courte</field>
+        </record>
+         <record id="reclam106" model="preparation.claim">
+            <field name="name">Ecart poids</field>
+        </record>
+         <record id="reclam0107" model="preparation.claim">
+            <field name="name">Ecrasé</field>
+        </record>
+         <record id="reclam108" model="preparation.claim">
+            <field name="name">Emballage</field>
+        </record>
+         <record id="reclam109" model="preparation.claim">
+            <field name="name">Erreur Produit</field>
+        </record>
+         <record id="reclam110" model="preparation.claim">
+            <field name="name">Erreur quantité</field>
+        </record>
+         <record id="reclam1112" model="preparation.claim">
+            <field name="name">Etiquette DLUO</field>
+        </record>
+         <record id="reclam113" model="preparation.claim">
+            <field name="name">Etiquette manquante</field>
+        </record>
+         <record id="reclam114" model="preparation.claim">
+            <field name="name">Etiquette prix</field>
+        </record>
+         <record id="reclam1" model="preparation.claim">
+            <field name="name">Manquant</field>
+        </record>
+         <record id="reclam115" model="preparation.claim">
+            <field name="name">Pas le poids Minimum</field>
+        </record>
+
+
+
+
+
+
+
+
+
+           <record id="reclam117" model="avaris.claim">
+            <field name="name">Abimé</field>
+        </record>
+                <record id="reclam118" model="avaris.claim">
+            <field name="name">Erreur destinataire</field>
+        </record>
+                <record id="reclam119" model="avaris.claim">
+            <field name="name">Manquant</field>
+        </record>
+                <record id="reclam120" model="avaris.claim">
+            <field name="name">Perdu</field>
+        </record>
+                <record id="reclam121" model="avaris.claim">
+            <field name="name">Retard</field>
+        </record>
+                <record id="reclam122" model="avaris.claim">
+            <field name="name">Température</field>
+        </record>
+
+
+
+
+
+          <record id="reclam123" model="saisie.claim">
+            <field name="name">Code Produit</field>
+        </record>
+         <record id="reclam124" model="saisie.claim">
+            <field name="name">Erreur quantité</field>
+        </record>
+         <record id="reclam125" model="saisie.claim">
+            <field name="name">Erreur tarif</field>
+        </record>
+         <record id="reclam126" model="saisie.claim">
+            <field name="name">Oubli promo</field>
+        </record>
+         <record id="reclam127" model="saisie.claim">
+            <field name="name">Oubli remise</field>
+        </record>
+       
+
+
+
+
+
+ <record id="reclam128" model="divers.claim">
+            <field name="name">Erreur du client</field>
+        </record>
+         <record id="reclam129" model="divers.claim">
+            <field name="name">Geste comcial</field>
+        </record>
+
+
+</odoo>
