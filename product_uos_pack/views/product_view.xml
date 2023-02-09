@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_form_product_template_uos" model="ir.ui.view">
+            <field name="name">product.template.uos</field>
+            <field name="model">product.template</field>
+            <field name="priority">30</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+
+                <field name="uom_id" position="after">
+                    <field name="uos_id"/>
+                </field>
+              
+           </field>
+        </record>
+
+
+
+
+    </data>
+</odoo>

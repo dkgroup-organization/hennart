@@ -3,9 +3,9 @@
 
 {
     'name': 'WMS packaging',
-    'version': '14.0.1',
+    'version': '16.0.1',
     'category': 'Base',
-    'summary': 'WMS packaging',
+    'summary': 'WMS packaging and UOS',
     'description': """
 This module contains the customization packaging
 
