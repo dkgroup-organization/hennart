@@ -1,0 +1,299 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* wms_carrier
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-10-03 10:13+0000\n"
+"PO-Revision-Date: 2016-10-03 10:13+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: wms_carrier
+#: selection:delivery.carrier.order,state:0
+msgid "Available"
+msgstr "Disponible"
+
+#. module: wms_carrier
+#: selection:delivery.carrier.order,state:0
+msgid "Cancelled"
+msgstr "Annuler"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,carrier_id:0
+msgid "Carrier"
+msgstr "Transporteur"
+
+#. module: wms_carrier
+#: code:_description:0
+#: view:delivery.carrier.order:0
+#: model:ir.model,name:wms_carrier.model_delivery_carrier_order
+#, python-format
+msgid "Carrier Order"
+msgstr "Bon de transport"
+
+#. module: wms_carrier
+#: model:ir.actions.act_window,name:wms_carrier.delivery_carrier_order_action
+#: model:ir.ui.menu,name:wms_carrier.delivery_carrier_order_menu
+#: field:stock.picking,carrier_order_id:0
+#: field:stock.picking.out,carrier_order_id:0
+msgid "Carrier order"
+msgstr "Bon de transport"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,note:0
+msgid "Comment"
+msgstr "Commentaire"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,content:0
+msgid "Content of export"
+msgstr "Contenu du fichier EDI"
+
+#. module: wms_carrier
+#: help:delivery.carrier.order,date_expected:0
+msgid "Date"
+msgstr "Date"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,date_expected:0
+msgid "Date expected"
+msgstr "Date prévue"
+
+#. module: wms_carrier
+#: help:delivery.carrier.order,date_done:0
+msgid "Date of Completion"
+msgstr "Date de réalisation"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,date_done:0
+msgid "Date of Transfer"
+msgstr "Date du transfert"
+
+#. module: wms_carrier
+#: view:delivery.carrier.order:0
+msgid "Delivery Information"
+msgstr "Information"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,picking_ids:0
+msgid "Delivery Order"
+msgstr "Bon de livraison"
+
+#. module: wms_carrier
+#: code:_description:0
+#: model:ir.model,name:wms_carrier.model_stock_picking_out
+#, python-format
+msgid "Delivery Orders"
+msgstr "Bons de livraisons"
+
+#. module: wms_carrier
+#: view:delivery.carrier.order:0
+#: selection:delivery.carrier.order,state:0
+msgid "Done"
+msgstr "Terminé"
+
+#. module: wms_carrier
+#: selection:delivery.carrier.order,state:0
+msgid "Draft"
+msgstr "Brouillion"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,driver_name:0
+msgid "Driver name"
+msgstr "Nom du chauffeur"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,edi_done:0
+msgid "EDI Already sending"
+msgstr "EDI envoyé"
+
+#. module: wms_carrier
+#: view:delivery.carrier.order:0
+msgid "Export"
+msgstr "Export EDI"
+
+#. module: wms_carrier
+#: view:delivery.carrier.order:0
+msgid "Export Information"
+msgstr "Information"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,message_follower_ids:0
+msgid "Followers"
+msgstr "Abonnés"
+
+#. module: wms_carrier
+#: help:delivery.carrier.order,message_summary:0
+msgid "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
+msgstr "Résumé."
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,hour_expected:0
+msgid "Hour expected"
+msgstr "Heure prévue"
+
+#. module: wms_carrier
+#: help:delivery.carrier.order,message_unread:0
+msgid "If checked new messages require your attention."
+msgstr "Si coché, ce message requière votre attention."
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,message_is_follower:0
+msgid "Is a Follower"
+msgstr "Abonnés"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,message_ids:0
+msgid "Messages"
+msgstr "Messages"
+
+#. module: wms_carrier
+#: help:delivery.carrier.order,message_ids:0
+msgid "Messages and communication history"
+msgstr "Messages et historique des communications"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,nb_pallet_in:0
+msgid "Nb Pallets In"
+msgstr "Nb Palettes Ramenées"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,nb_pallet_out:0
+msgid "Nb Pallets Out"
+msgstr "Nb Palettes prises"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,nb_pallet_ground:0
+msgid "Nb Pallets on Ground"
+msgstr "Nb Palettes au sol"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,nb_container:0
+msgid "Nb container"
+msgstr "Nb containers"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,nb_line:0
+msgid "Nb line"
+msgstr "Nb lignes"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,number_of_packages:0
+msgid "Nb packages"
+msgstr "Nb Colis"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,nb_pallet:0
+msgid "Nb pallet"
+msgstr "Nb pallet"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,nb_picking:0
+msgid "Nb picking"
+msgstr "Nb de Bon de livraison"
+
+#. module: wms_carrier
+#: field:stock.picking.out,nb_container:0
+msgid "Number of container"
+msgstr "Nb de containers"
+
+#. module: wms_carrier
+#: field:stock.picking,nb_pallet:0
+msgid "Number of palet"
+msgstr "Nb de palettes"
+
+#. module: wms_carrier
+#: field:stock.picking.out,nb_pallet:0
+msgid "Number of pallet"
+msgstr "Nb de palettes"
+
+#. module: wms_carrier
+#: view:delivery.carrier.order:0
+msgid "Picking"
+msgstr "Bons de livraison"
+
+#. module: wms_carrier
+#: code:_description:0
+#: model:ir.model,name:wms_carrier.model_stock_picking
+#, python-format
+msgid "Picking List"
+msgstr "Opération de manutention"
+
+#. module: wms_carrier
+#: view:delivery.carrier.order:0
+msgid "Send EDI"
+msgstr "Envoie EDI"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,state:0
+msgid "Status"
+msgstr "Status"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,message_summary:0
+msgid "Summary"
+msgstr "Résumé"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,temperature:0
+msgid "Temperature"
+msgstr "Temperature"
+
+#. module: wms_carrier
+#: view:delivery.carrier.order:0
+msgid "Total"
+msgstr "Total"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,message_unread:0
+msgid "Unread Messages"
+msgstr "Messages non lus"
+
+#. module: wms_carrier
+#: selection:delivery.carrier.order,state:0
+msgid "Waiting"
+msgstr "Attendre"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,warehouse_id:0
+msgid "Warehouse"
+msgstr "Entrepôt"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,weight:0
+msgid "Weight"
+msgstr "Poids"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,timeline_id:0
+msgid "day timeline"
+msgstr "Période"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,name:0
+msgid "description"
+msgstr "description"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,save_as:0
+#: field:delivery.carrier.order,save_name:0
+msgid "save as"
+msgstr "sauvegarder sous..."
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,date_delivered:0
+msgid "unknown"
+msgstr "Inconnu"
+
+#. module: wms_carrier
+#: field:delivery.carrier.order,week_id:0
+msgid "week timeline"
+msgstr "week timeline"
+
