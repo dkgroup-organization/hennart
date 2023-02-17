@@ -143,37 +143,28 @@ class delivery_carrier_order(models.Model):
         for order in self:
             for picking in order.picking_ids:
                 picking_ids.append(picking.id)
-                output_location_id = picking.warehouse_id.lot_output_id.id
+                # output_location_id = picking.warehouse_id.lot_output_id.id
                 for move in picking.move_line_ids:
-                    if move.state == 'done' and move.location_dest_id.id == output_location_id:
+                    if move.state == 'done':
                         move_output_ids.append(move.id)
 
-        date_done = picking.scheduled_date + time.strftime(' %H:%M:%S')
-        move_obj.write(move_output_ids, {
+        date_done = picking.scheduled_date
+        moves = move_obj.search([('id','in',move_output_ids)])
+        for mm in moves:
+         mm.write({
             'location_dest_id': customer_location_id,
-            'date_expected': date_done,
             'date': date_done,
+          
             })
 
         #Admin change the state
-        picking_obj.check_state(picking_ids)
+        # picking_obj.check_state(picking_ids)
 
         for order in self:
             for picking in order.picking_ids:
-                if picking.state in ['assigned', 'done']:
-                    picking_obj.action_done([picking.id])
-
-        self.check_state(ids)
-        for order in self:
-            if order.state == 'done' and order.edi_done is False:
-                self.button_action_send([order.id])
-
-            if order.state == 'done':
-                for picking in order.picking_ids:
-                    try:
-                        picking_obj.button_action_send([picking.id])
-                    except:
-                        pass
+                if picking.state in ['assigned', 'confirmed','waiting']:
+                    picking.button_validate()
+        self.check_state()
 
         return True
 
