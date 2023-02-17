@@ -33,7 +33,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 import pytz
 import base64
-import pysftp
+# import pysftp
 import os
 
 # mounting directory with chronopost files
