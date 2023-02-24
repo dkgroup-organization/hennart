@@ -19,7 +19,6 @@ class WmsController(http.Controller):
     @http.route(['/scanner'], type='http', auth='user', redirect='/web/login?redirect=%2Fscanner', csrf=False)
     def index(self, debug=False, **k):
         """ the main core of the scanner:
-
             - in first the possibility to have multiple session opened for a user, so 1 login for many scanner but only one session by scanner
             - in second a workflow analyse by session open, so a storage of data workflow by opened session.
             - in third a qweb render to return simple HTML page, so an internal odoo reading and accessing data,
@@ -58,19 +57,23 @@ class WmsController(http.Controller):
 
     def get_session_data(self):
         """ Get the data previously stored in session, restore the odoo object
-        a named convention design an odoo object started by: model_
-        after 'model_' add the name of the model the value is a tuple (model._name, ids)
+        a named convention design an odoo object started by: model.
+        after 'model.' add the name of the model the value is a tuple (model._name, ids)
         This named object store ids of this object
         """
         data = {}
         session_data = request.session.get('session_data', self.init_data())
 
         for data_key, data_value in session_data.items():
-            if len(data_key) > 6 and data_key[:6] == "model_":
+            if len(data_key) > 6 and data_key[:6] == "model.":
                 # restore this odoo object
                 data[data_key[6:]] = request.env[data_value[0]].browse(data_value[1])
             else:
                 data[data_key] = data_value
+
+
+        data['user'] = request.env['res.users'].browse(request.uid)
+        data['header_menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
         return data
 
     def save_session_data(self, data):
@@ -79,15 +82,18 @@ class WmsController(http.Controller):
         - qweb_template
         - function
         -
-
         """
 
         session_data = {}
 
         for key in list(data.keys()):
+            if key in ['user', 'header_menu', 'menu']:
+                # Don't save this objects
+                continue
+
             if hasattr(data[key], '_name') and hasattr(data[key], 'ids'):
                 # Odoo model name
-                session_data['model_' + key] = (data[key]._name, data[key].ids)
+                session_data['model.' + key] = (data[key]._name, data[key].ids)
             else:
                 session_data.update({key: data[key]})
 
@@ -137,6 +143,7 @@ class WmsController(http.Controller):
         else:
             # To defined or some error
             data = self.main_menu()
+
         return data
 
     def main_menu(self):

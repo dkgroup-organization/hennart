@@ -1,86 +1,155 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-  <data>
-    <template id="wms_scanner_menu_template" name="wms_scanner_menu_template">
-      <html>
-        <t t-call="wms_scanner.scanner_html_header"/>
-        <t t-call="wms_scanner.scanner_menu_body"/>
-      </html>
-    </template>
-    <!-- HEADER -->
-    <template id="scanner_html_header" name="scanner_html_header">
-      <head>
-        <title>SCANNER</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-        <link t-if="css" rel="stylesheet" type="text/css" t-att-href="css"/>
-        <link t-else="" rel="stylesheet" type="text/css" href="wms_scanner/static/src/css/screen_320.css"/>
-        <script src="wms_scanner/static/src/js/wms_scanner.js"/>
-      </head>
-      
-    </template>
-    <!-- BODY -->
-    <template id="scanner_menu_body" name="scanner_menu_body">
-      <body>
-        <div id="scanner_content" class="screen_size">
-	<t t-set="img_path" t-value="'wms_scanner/static/src/img/'"/>
-          <table>
-            <t t-call="wms_scanner.scanner_menu_header"/>
-            <t t-call="wms_scanner.scanner_menu_list"/>
-          </table>
-        </div>
-      </body>
-    </template>
-    <!-- HEADER TABLE -->
-    <template id="scanner_menu_header" name="scanner_menu_header">
-      <tr>
-        <td>
-          <t t-if="menu">
-            <t t-if="menu[0].parent_id">
-              <a t-att-href="menu[0].parent_id.parent_id and menu[0].parent_id.parent_id.menu_code or '?menu=0'">
-                <img t-att-src="img_path + (menu[0].parent_id.image_file or 'default.jpg')" class="img_menu"/>
-              </a>
-            </t>
-          </t>
-          <t t-if="not menu">
-            <a href="?menu=0">
-              <img t-att-src="img_path + 'home.jpg'" class="img_menu"/>
-            </a>
-          </t>
-        </td>
-        <td>
-          <t t-if="user">
-            <t t-esc="user.company_id.name"/>
-            <center>
-              <small>
-                <font color="grey">
-                  <t t-esc="user.name" class="user"/>
-                </font>
-              </small>
-            </center>
-          </t>
-        </td>
-      </tr>
-    </template>
-    <!-- MENU -->
-    <template id="scanner_menu_list" name="scanner_menu_list">
-      <t t-if="menu">
-        <t t-foreach="menu" t-as="menu_item">
-          <tr>
-            <td>
-              <a t-att-href="menu_item.menu_code">
-                <img t-att-src="img_path + (menu_item.image_file or 'default.jpg')" class="img_menu"/>
-              </a>
-            </td>
-            <td>
-              <a t-att-href="menu_item.menu_code">
-                <strong>
-                  <t t-esc="menu_item.name"/>
-                </strong>
-              </a>
-            </td>
-          </tr>
-        </t>
-      </t>
-    </template>
-  </data>
+    <data>
+        <!-- TEMPLATE -->
+        <template id="wms_scanner_menu_template" name="wms_scanner_menu_template">
+            <html>
+                <t t-call="wms_scanner.scanner_html_head"/>
+                <t t-call="wms_scanner.scanner_menu_body"/>
+            </html>
+        </template>
+
+        <template id="scanner_scenario_blank" name="scanner_scenario_blank">
+            <html>
+                <t t-call="wms_scanner.scanner_html_head"/>
+                <t t-call="wms_scanner.scanner_blank_body"/>
+            </html>
+        </template>
+
+
+        <!-- HEAD -->
+        <template id="scanner_html_head" name="scanner_html_header">
+            <head>
+                <meta charset="UTF-8"/>
+                <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <link rel="stylesheet" href="wms_scanner/static/src/css/style.css"/>
+                <title>
+                    <t t-esc="user.company_id.name"/>
+                </title>
+            </head>
+        </template>
+
+
+        <!-- BODY -->
+        <template id="scanner_menu_body" name="scanner_menu_body">
+            <body class="font-poppins duration-500 min-h-screen">
+                <t t-call="wms_scanner.scanner_menu_body_header"/>
+                <t t-call="wms_scanner.scanner_menu_body_main"/>
+                <script src="wms_scanner/static/src/js/script.js"/>
+            </body>
+        </template>
+
+        <template id="scanner_blank_body" name="scanner_blank_body">
+            <body class="font-poppins duration-500 min-h-screen">
+                <t t-call="wms_scanner.scanner_menu_body_header"/>
+                <img src="wms_scanner/static/src/img/logout.svg" alt=""/>
+                <t t-call="wms_scanner.scanner_blank_body_main"/>
+                <script src="wms_scanner/static/src/js/script.js"/>
+            </body>
+        </template>
+
+
+        <!-- BODY HEADER -->
+        <template id="scanner_menu_body_header" name="scanner_menu_body_header">
+            <header class="sticky top-0 z-50">
+                <div class="container mx-auto p-5 mb-16 landscape:m-auto landscape:pb-0">
+                    <div class="flex justify-between items-center duration-500 landscape:justify-end">
+                        <div class="logout landscape:hidden">
+                            <a href="" class="flex items-center gap-1">
+                                <img src="wms_scanner/static/src/img/logout.svg" alt=""/>
+                                Logout
+                            </a>
+                        </div>
+                        <div>
+                            <button
+                                    class="menu-toggle w-10 z-50 duration-500 relative"
+                                    aria-controls="primary-menu"
+                                    aria-expanded="false"
+                            >
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </button>
+                        </div>
+                        <nav class="hidden bg-white px-5 py-12 landscape:px-16 landscape:py-6">
+                            <div class="hidden landscape:block">
+                                <a href="" class="flex items-center gap-1">
+                                    <img src="wms_scanner/static/src/img/logout.svg" alt=""/>
+                                    Logout
+                                </a>
+                            </div>
+                            <h2 class="landscape:hidden">Main menu</h2>
+                            <ul class="grid grid-cols-2 gap-6 mt-8 landscape:grid-cols-3">
+                                <t t-foreach="header_menu" t-as="menu_item">
+                                    <li>
+                                        <a t-att-href="menu_item.href"
+                                           class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5
+                                            gap-2.5 landscape:pl-5 landscape:py-4 landscape:w-auto">
+                                            <img t-att-src="'wms_scanner/static/src/img/' + (menu_item.image_file or 'infos.svg')"
+                                                 alt=""/>
+                                            <t t-esc="menu_item.name"/>
+                                        </a>
+                                    </li>
+                                </t>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </header>
+        </template>
+
+
+        <!-- BODY main -->
+        <template id="scanner_menu_body_main" name="scanner_menu_body_main">
+            <main class="relative">
+                <section id="home">
+                    <div class="container mx-auto px-5">
+
+                        <div class="flex flex-col gap-5 mb-11 justify-between landscape:items-center landscape:flex-row">
+                            <div class="flex items-center justify-between landscape:gap-2.5">
+                                <h1>Bonjour
+                                    <t t-esc="user.name"/>
+                                </h1>
+                                <img src="wms_scanner/static/src/img/hands.svg" alt=""/>
+                            </div>
+
+                            <div>
+                                <p>Please, select an option.</p>
+                            </div>
+                        </div>
+
+                        <ul class="grid grid-cols-2 gap-6 landscape:grid-cols-3 landscape:gap-y-5 landscape:gap-x-14">
+
+                            <t t-foreach="menu" t-as="menu_item">
+                                <li>
+                                    <a t-att-href="menu_item.href"
+                                       class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2.5 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                                    >
+                                        <img t-att-src="'wms_scanner/static/src/img/' + (menu_item.image_file or 'infos.svg')"
+                                             alt=""/>
+                                        <t t-esc="menu_item.name"/>
+                                    </a>
+                                </li>
+                            </t>
+                        </ul>
+                    </div>
+                </section>
+            </main>
+        </template>
+
+        <template id="scanner_blank_body_main" name="scanner_blank_body_main">
+            <main class="relative">
+                <section id="home">
+                    <t t-if="debug">
+                        <t t-raw="debug"/>
+                    </t>
+
+                </section>
+            </main>
+        </template>
+
+
+
+    </data>
 </odoo>
