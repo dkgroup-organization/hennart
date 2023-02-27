@@ -25,7 +25,7 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
                 <link rel="stylesheet" href="wms_scanner/static/src/css/style.css"/>
                 <title>
-                    <t t-esc="user.company_id.name"/>
+                    <t t-if="user" t-esc="user.company_id.name"/>
                 </title>
             </head>
         </template>
@@ -43,7 +43,6 @@
         <template id="scanner_blank_body" name="scanner_blank_body">
             <body class="font-poppins duration-500 min-h-screen">
                 <t t-call="wms_scanner.scanner_menu_body_header"/>
-                <img src="wms_scanner/static/src/img/logout.svg" alt=""/>
                 <t t-call="wms_scanner.scanner_blank_body_main"/>
                 <script src="wms_scanner/static/src/js/script.js"/>
             </body>
@@ -56,7 +55,7 @@
                 <div class="container mx-auto p-5 mb-16 landscape:m-auto landscape:pb-0">
                     <div class="flex justify-between items-center duration-500 landscape:justify-end">
                         <div class="logout landscape:hidden">
-                            <a href="" class="flex items-center gap-1">
+                            <a href="?function=logout" class="flex items-center gap-1">
                                 <img src="wms_scanner/static/src/img/logout.svg" alt=""/>
                                 Logout
                             </a>
@@ -74,7 +73,7 @@
                         </div>
                         <nav class="hidden bg-white px-5 py-12 landscape:px-16 landscape:py-6">
                             <div class="hidden landscape:block">
-                                <a href="" class="flex items-center gap-1">
+                                <a href="?function=wms" class="flex items-center gap-1">
                                     <img src="wms_scanner/static/src/img/logout.svg" alt=""/>
                                     Logout
                                 </a>
@@ -144,12 +143,9 @@
                     <t t-if="debug">
                         <t t-raw="debug"/>
                     </t>
-
                 </section>
             </main>
         </template>
-
-
 
     </data>
 </odoo>

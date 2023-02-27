@@ -36,7 +36,6 @@
         'views/menu.xml',
         'views/wms_scanner_menu_template.xml',
         'views/wms_scanner_scenario_template.xml',
-        'views/wms_scanner_blank_template.xml',
         'views/wms_scanner_zxing_template.xml',
         'views/wms_scanner_zxing2_template.xml',
 

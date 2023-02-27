@@ -5,9 +5,9 @@
 import logging
 import string
 from odoo.tools.safe_eval import safe_eval, test_python_expr
-from odoo import models, api, fields
+from odoo import models, api, fields, _
+from odoo.http import request
 from odoo.exceptions import MissingError, UserError, ValidationError
-from odoo import _
 
 logger = logging.getLogger('wms_scanner')
 
@@ -29,7 +29,9 @@ class WmsScenarioStep(models.Model):
     action_model = fields.Many2one('ir.model', string="model")
     action_variable = fields.Char(string='Variable', default='scan')
     action_message = fields.Html(string='message')
-
+    step_qweb = fields.Char(
+        string='QWEB Template',
+        help="Use a specific QWEB template at this step")
     scenario_id = fields.Many2one(
         comodel_name='wms.scenario',
         string='Scenario',
@@ -53,10 +55,20 @@ class WmsScenarioStep(models.Model):
         help='Python code to execute.')
     scenario_notes = fields.Text(related='scenario_id.notes')
 
+    def get_scanner_response(self):
+        "get the response of the scanner, only one scanner by session"
+        self.ensure_one()
+        params = dict(request.params) or {}
+        if self.action_variable:
+            scan = params.get(self.action_variable, '')
+        else:
+            scan = params.get('scan', '')
+        return scan
+
     def read_scan(self, data={}):
         "Decode scan and return associated objects"
         self.ensure_one()
-        scan = self.scenario_id.get_scanner_response()
+        scan = self.get_scanner_response()
 
         def is_alphanumeric(scan):
             "check the scan string"
@@ -72,10 +84,10 @@ class WmsScenarioStep(models.Model):
         elif not self.action_variable:
             data['warning'] = _('This scenario is currently under construction.'
                                 'Some parameters are not set. (variable)')
-        elif self.action_scanner == 'scan_text':
-            data[self.action_variable] = "%s" % (scan)
         elif not is_alphanumeric(scan):
             data['warning'] = _('The barcode is unreadable')
+        elif self.action_scanner == 'scan_text':
+            data[self.action_variable] = "%s" % (scan)
         elif self.action_scanner == 'scan_quantity':
             try:
                 quantity = float(scan)

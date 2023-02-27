@@ -29,6 +29,8 @@ class WmsScenario(models.Model):
     scenario_image = fields.Char(
         string='Image filename',
         default='construction.jpg')
+    scenario_qweb = fields.Char(
+        string='QWEB Template')
     debug_mode = fields.Boolean(
         string='Debug mode')
     active = fields.Boolean(
@@ -106,12 +108,6 @@ class WmsScenario(models.Model):
         action = False
         return action
 
-    def get_scanner_response(self):
-        "get the response of the scanner, only one scanner by session"
-        params = dict(request.params) or {}
-        scan = params.get('scan', '')
-        return scan
-
     def get_button_response(self):
         "get the response of button"
         params = dict(request.params) or {}
@@ -130,9 +126,8 @@ class WmsScenario(models.Model):
             else:
                 data = {'scenario': self}
                 # There is no starting step
-                debug = _("There is no step in this scenario")
-                data.update({'debug': debug})
-
+                warning = _("There is no step in this scenario")
+                data.update({'warning': warning})
         # Do next step
         data = self.continue_scenario(data)
 
@@ -155,7 +150,7 @@ class WmsScenario(models.Model):
         else:
             pass
 
-        print("\n-------:", step, data)
+        print("\n--data-----:", data)
         if data.get('warning'):
             return data
         else:
