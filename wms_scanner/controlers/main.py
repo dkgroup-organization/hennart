@@ -28,8 +28,9 @@ class WmsController(http.Controller):
             return http.local_redirect('/web/login?redirect=%2Fscanner')
 
         # Get session data
-        session = self.env['wms.session'].get_session()
+        session = request.env['wms.session'].get_session()
         data = session.get_data()
+        print("-------session.get_data()-------", session.name, data)
 
         # Analyse response, complete data
         data = self.analyse_response(data)
@@ -45,19 +46,17 @@ class WmsController(http.Controller):
         session.save_data(data)
         return res
 
-    def get_qweb_data(self):
-        """ Add standard information to data"""
-        # Add standard object
-        qweb_data = {}
-        qweb_data['user'] = request.env['res.users'].browse(request.uid)
-        qweb_data['header_menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
-        return qweb_data
-
+    def main_menu(self):
+        """ Return to main menu """
+        data = {}
+        data['menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
+        return data
 
     def analyse_response(self, data):
-        "Analyse response"
+        """Analyse response"""
         # get the scanner response
         response = dict(request.params) or {}
+        print("-------request.params-------", response)
 
         if not response:
             # first time go to main menu
@@ -102,13 +101,7 @@ class WmsController(http.Controller):
             # To defined or some error
             data = self.main_menu()
 
-        return data
-
-    def main_menu(self):
-        """ Return to main menu """
-        data = self.init_data()
-        data['menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
-        return data
+        return data or {}
 
     def session_function(self, data):
         "Specific menu function"
@@ -165,6 +158,13 @@ class WmsController(http.Controller):
         else:
             html = "<li>%s</li>" % (sub_data)
         return html
+
+    def get_qweb_data(self):
+        """ Add standard information to data"""
+        qweb_data = {}
+        qweb_data['user'] = request.env['res.users'].browse(request.uid)
+        qweb_data['header_menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
+        return qweb_data
 
     def render_QWEB(self, data):
         """ Use Qweb to render the page"""

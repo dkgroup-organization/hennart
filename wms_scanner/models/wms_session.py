@@ -5,6 +5,9 @@ from odoo import api, fields, models, _
 import json
 from odoo.http import request
 
+# Reserved variable term in data
+DATA_RESERVED_NAME = ['user', 'header_menu', 'menu', 'warning', 'scan', 'button']
+
 
 class WmsSession(models.Model):
     _name = "wms.session"
@@ -41,9 +44,8 @@ class WmsSession(models.Model):
         if not session_ids:
             session_ids = self.create({
                 'name': cookie_sid,
-                'cookie_sid': cookie_sid,
-                'user': self.env.user.id,
-                'start_date': self.Datetime.now(),
+                'user_id': self.env.user.id,
+                'start_date': fields.Datetime.now(),
                 'state': 'confirm',
             })
         return session_ids[0]
@@ -54,7 +56,7 @@ class WmsSession(models.Model):
             session_data = {}
 
             for key in list(data.keys()):
-                if key in ['user', 'header_menu', 'menu', 'warning']:
+                if key in DATA_RESERVED_NAME:
                     # Don't save this objects
                     continue
 

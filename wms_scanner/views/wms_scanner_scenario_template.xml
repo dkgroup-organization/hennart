@@ -32,17 +32,9 @@
                                         fill="#9DB2CE"
                                 />
                             </svg>
-
                             <h1>Informations</h1>
                         </div>
                         <form class="grid grid-cols-1 gap-8 landscape:gap-6" method="post">
-                            <t t-if="scenario">
-                                <input type="hidden" name="scenario" t-att-value="scenario.id"/>
-                            </t>
-                            <t t-if="step">
-                                <input type="hidden" name="step" t-att-value="step.id"/>
-                            </t>
-
                             <div>
                                 <label for="code">Code barre:</label>
                                 <input

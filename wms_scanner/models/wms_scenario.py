@@ -105,21 +105,30 @@ class WmsScenario(models.Model):
             'target': 'current',
             }
         # not available at this time 2022-12
-        action = False
+        action = {}
         return action
 
-    def get_button_response(self):
+    def do_scenario(self, data):
+        "execute the scenario"
+        self.ensure_one()
+        data = self.init_scenario(data)
+        data = self.get_button(data)
+        data = data['step'].execute_step(data)
+        return data
+
+    def get_button_response(self, data):
         "get the response of button"
         params = dict(request.params) or {}
         button = params.get('button', '')
         return button
 
-    def do_scenario(self, data):
-        "execute the scenario"
-        self.ensure_one()
-
+    def init_scenario(self, data):
+        """ initiate data"""
+        if data.get('scenario') != self:
+            # TODO: Choice if data is to be initialased
+            pass
         # init data if first time
-        if not (data.get('scenario') and data.get('step')) or data.get('scenario') != self:
+        if not (data.get('scenario') and data.get('step')):
             # start new scenario
             if self.step_ids:
                 data.update({'scenario': self, 'step': self.step_ids[0], 'user': self.env.user})
@@ -128,36 +137,15 @@ class WmsScenario(models.Model):
                 # There is no starting step
                 warning = _("There is no step in this scenario")
                 data.update({'warning': warning})
-        # Do next step
-        data = self.continue_scenario(data)
-
         return data
 
-    def continue_scenario(self, data):
-        "Check the response, and choice the next step"
-        self.ensure_one()
-        step = data['step']
-
-        # check button
-        if self.get_button_response():
-            # do button action
-            pass
-        # check scan
-        elif step.action_scanner != 'none':
-            # do scan response
-            data = step.read_scan(data)
-        # to defined
-        else:
-            pass
-
-        print("\n--data-----:", data)
-        if data.get('warning'):
-            return data
-        else:
-            # Defined next step
-            pass
-
+    def get_button(self, data):
+        """" Get the button """
+        params = dict(request.params) or {}
+        if params.get('button'):
+            data['button'] = params.get('button')
         return data
+
 
 
 

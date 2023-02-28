@@ -20,15 +20,16 @@ class WmsScenarioStep(models.Model):
         string='Name',
         help='Name of the step.')
     action_scanner = fields.Selection(
-        [('none', 'Not used'),
+        [('none', 'No scan'),
          ('scan_quantity', 'Enter quantity'),
-         ('scan_text', 'Enter description'),
+         ('scan_text', 'Enter Text'),
          ('scan_model', 'Scan model'),
+         ('scan_info', 'Scan search'),
          ],
         string="Scanner", default="none")
-    action_model = fields.Many2one('ir.model', string="model")
-    action_variable = fields.Char(string='Variable', default='scan')
-    action_message = fields.Html(string='message')
+    action_model = fields.Many2one('ir.model', string="model to scan")
+    action_variable = fields.Char(string='Variable', default='scan variable')
+    action_message = fields.Html(string='message to user')
     step_qweb = fields.Char(
         string='QWEB Template',
         help="Use a specific QWEB template at this step")
@@ -56,7 +57,7 @@ class WmsScenarioStep(models.Model):
     scenario_notes = fields.Text(related='scenario_id.notes')
 
     def get_scanner_response(self):
-        "get the response of the scanner, only one scanner by session"
+        "get the response of the scanner, only one scan by session"
         self.ensure_one()
         params = dict(request.params) or {}
         if self.action_variable:
@@ -68,7 +69,8 @@ class WmsScenarioStep(models.Model):
     def read_scan(self, data={}):
         "Decode scan and return associated objects"
         self.ensure_one()
-        scan = self.get_scanner_response()
+        if self.action_scanner in ['none']:
+            return data
 
         def is_alphanumeric(scan):
             "check the scan string"
@@ -79,11 +81,12 @@ class WmsScenarioStep(models.Model):
                     break
             return res
 
+        scan = self.get_scanner_response()
         if not scan:
             data['warning'] = _('The barcode is empty')
         elif not self.action_variable:
             data['warning'] = _('This scenario is currently under construction.'
-                                'Some parameters are not set. (variable)')
+                                'Some parameters are not set. (no scan variable)')
         elif not is_alphanumeric(scan):
             data['warning'] = _('The barcode is unreadable')
         elif self.action_scanner == 'scan_text':
@@ -94,33 +97,36 @@ class WmsScenarioStep(models.Model):
                 data[self.action_variable] = quantity
             except:
                 data['warning'] = _('Please, enter a numeric value')
-        elif self.action_scanner == 'scan_model':
-            if self.action_model:
-                list_field = list(dir(self.env[self.action_model.model]))
+        elif self.action_scanner in ['scan_model', 'scan_info']:
+            models_ids = self.action_model
+            if self.action_scanner == 'scan_info':
+                models_ids = self.env['ir.model.fields'].search([('name', '=', 'barcode')]).mapped('model_id')
+
+            for action_model in models_ids:
                 for search_field in ['barcode', 'default_code', 'code', 'name']:
-                    if search_field in list_field:
+                    if hasattr(action_model, search_field):
                         condition = [(search_field, '=', scan)]
                         result_ids = self.env[self.action_model.model].search(condition)
                         if len(result_ids) == 1:
-                            data[self.action_variable] = result_ids[0].id
+                            data[self.action_variable] = result_ids[0]
                             break
                         elif len(result_ids) > 1:
                             data = self.read_scan_duplicate(data)
-                if not data.get(self.action_variable):
-                    data['warning'] = _('The barcode is unknow')
-            else:
-                data['warning'] = _('This scenario is currently under construction.'
-                                    'Some parameters are not set. (model)')
+
+                if data.get(self.action_variable):
+                    break
+            if not data.get(self.action_variable):
+                data['warning'] = _('The barcode is unknow')
         else:
             data['warning'] = _('The barcode is unknow')
-
         return data
 
     def read_scan_duplicate(self, data):
         "Function to return value when the scan found duplicat object"
+        data['warning'] = _('The barcode has multiples references')
         return data
 
-    def run(self, data={}):
+    def execute_code(self, data={}):
         "Eval the python code"
         self.ensure_one()
         localdict = data.copy()
@@ -128,3 +134,15 @@ class WmsScenarioStep(models.Model):
         if '__builtins__' in localdict:
             localdict.pop('__builtins__')
         return localdict
+
+    def execute_step(self, data):
+        """ compute the step"""
+        self.ensure_one()
+        data = self.read_scan(data)
+        if data.get('warning'):
+            return data
+        data = self.execute_code(data)
+        return data
+
+
+
