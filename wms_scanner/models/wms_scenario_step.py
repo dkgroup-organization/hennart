@@ -15,10 +15,12 @@ logger = logging.getLogger('wms_scanner')
 class WmsScenarioStep(models.Model):
     _name = 'wms.scenario.step'
     _description = 'Step for scenario'
+    _order = 'sequence'
 
+    sequence = fields.Integer('sequence')
     name = fields.Char(
-        string='Name',
-        help='Name of the step.')
+        string='Name', compute="compute_name",
+        store=True)
     action_scanner = fields.Selection(
         [('none', 'No scan'),
          ('scan_quantity', 'Enter quantity'),
@@ -28,7 +30,7 @@ class WmsScenarioStep(models.Model):
          ],
         string="Scanner", default="none")
     action_model = fields.Many2one('ir.model', string="model to scan")
-    action_variable = fields.Char(string='Variable', default='scan variable')
+    action_variable = fields.Char(string='Variable', default='scan')
     action_message = fields.Html(string='message to user')
     step_qweb = fields.Char(
         string='QWEB Template',
@@ -56,11 +58,20 @@ class WmsScenarioStep(models.Model):
         help='Python code to execute.')
     scenario_notes = fields.Text(related='scenario_id.notes')
 
+    @api.depends('sequence', 'action_scanner', 'action_variable')
+    def compute_name(self):
+        """ Compute the name of the step"""
+        for step in self:
+            name = "%s: %s " % (step.sequence, step.action_scanner or '?')
+            if step.action_variable:
+                name += "to var: %s " % (step.action_variable)
+            step.name = name
+
     def get_scanner_response(self):
         "get the response of the scanner, only one scan by session"
         self.ensure_one()
         params = dict(request.params) or {}
-        if self.action_variable:
+        if self.action_variable and params.get(self.action_variable):
             scan = params.get(self.action_variable, '')
         else:
             scan = params.get('scan', '')
@@ -102,8 +113,10 @@ class WmsScenarioStep(models.Model):
             if self.action_scanner == 'scan_info':
                 models_ids = self.env['ir.model.fields'].search([('name', '=', 'barcode')]).mapped('model_id')
 
-            for action_model in models_ids:
-                for search_field in ['barcode', 'default_code', 'code', 'name']:
+            for model_id in models_ids:
+                action_model = self.env[model_id.model]
+                list_fields = []
+                for search_field in ['barcode', 'default_code']:
                     if hasattr(action_model, search_field):
                         condition = [(search_field, '=', scan)]
                         result_ids = self.env[self.action_model.model].search(condition)
@@ -123,26 +136,53 @@ class WmsScenarioStep(models.Model):
 
     def read_scan_duplicate(self, data):
         "Function to return value when the scan found duplicat object"
-        data['warning'] = _('The barcode has multiples references')
-        return data
-
-    def execute_code(self, data={}):
-        "Eval the python code"
         self.ensure_one()
-        localdict = data.copy()
-        safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
-        if '__builtins__' in localdict:
-            localdict.pop('__builtins__')
-        return localdict
+        if self.action_scanner != 'scan_info':
+            data['warning'] = _('The barcode has multiples references')
+        return data
 
     def execute_step(self, data):
         """ compute the step"""
         self.ensure_one()
         data = self.read_scan(data)
-        if data.get('warning'):
-            return data
-        data = self.execute_code(data)
+        if not data.get('warning'):
+            data = self.execute_code(data)
+            if not data.get('warning'):
+                data = self.execute_transition(data)
+        data = self.info_message(data)
         return data
 
+    def info_message(self, data):
+        """ compute message from scanner"""
+        message = ''
+        if self.action_scanner in ['scan_info']:
+            scan_model = data.get(self.action_variable or 'scan')
+            message = ""
+            if hasattr(scan_model, '_name') and hasattr(scan_model, 'ids'):
+                for scan_model_id in scan_model:
+                    for field_name in ['default_code', 'barcode', 'name']:
+                        if hasattr(scan_model_id, field_name):
+                            message += "<p>%s </p>" % (getattr(scan_model, field_name))
+                    message += "<br/>"
+        if message:
+            data['message'] = message
+        return data
 
+    def execute_code(self, data={}):
+        "Eval the python code"
+        self.ensure_one()
+        localdict = {'data': data.copy()}
+        safe_eval(self.python_code, locals_dict=localdict, mode="exec", nocopy=True)
+        return localdict.get('data')
+
+    def execute_transition(self, data):
+        """ compute the step"""
+        self.ensure_one()
+        for transition in self.out_transition_ids:
+            localdict = {'data': data.copy()}
+            eval = safe_eval(transition.condition, locals_dict=localdict, mode="eval", nocopy=True)
+            if eval:
+                data['step'] = transition.to_id
+                break
+        return data
 

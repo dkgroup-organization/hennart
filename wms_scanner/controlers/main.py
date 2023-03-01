@@ -30,20 +30,20 @@ class WmsController(http.Controller):
         # Get session data
         session = request.env['wms.session'].get_session()
         data = session.get_data()
-        print("-------session.get_data()-------", session.name, data)
+        print("-------session.get_data()-------\n", data)
 
         # Analyse response, complete data
         data = self.analyse_response(data)
 
-        # Function or Qweb render
-        if data.get('function'):
-            res = self.session_function(data)
-        else:
-            qweb_data = self.get_qweb_data()
-            res = self.render_QWEB(data | qweb_data)
+        # Function to logout or return to odoo ...
+        self.session_function(data)
 
         # save session data
         session.save_data(data)
+        print("-------session.save_data()-------\n", data)
+
+        # Render QWEB to html, return response to client
+        res = self.render_QWEB(data)
         return res
 
     def main_menu(self):
@@ -76,12 +76,8 @@ class WmsController(http.Controller):
                 menu_ids = request.env['wms.menu'].search([('id', '=', int(response['menu']))])
                 if menu_ids:
                     menu = menu_ids[0]
-                    if menu.menu_type in ['wms', 'logout']:
-                        # Return session_function
-                        data['function'] = menu.menu_type
-                    else:
-                        # return childs menus
-                        data['menu'] = request.env['wms.menu'].search([('parent_id', '=', menu.id)])
+                    # return childs menus
+                    data['menu'] = request.env['wms.menu'].search([('parent_id', '=', menu.id)])
                 else:
                     data = self.main_menu()
 
@@ -105,34 +101,23 @@ class WmsController(http.Controller):
 
     def session_function(self, data):
         "Specific menu function"
-        function_name = data.get('function', '?')
+        if data.get('function'):
+            if data['function'] == 'wms':
+                # Return to Odoo
+                return request.redirect(location='/web')
 
-        if function_name == 'wms':
-            # Return to Odoo
-            return request.redirect(location='/web')
+            elif data['function'] == 'logout':
+                # Return to login page
+                request.session.logout()
+                return request.redirect(location='/web')
 
-        elif function_name == 'logout':
-            # Return to login page
-            request.session.logout()
-            return request.redirect(location='/web')
-
-        else:
-            # To defined or some error
-            request.session.logout()
-            return request.redirect(location='/web')
-
-    def session_logout(self, data):
-        "close the session, log information"
-        request.session.logout()
-        return request.redirect(self, '/web/login?redirect=%2Fscanner')
-
-    def session_debug(self, data):
+    def qweb_debug(self, data):
         "Debug information, return data in html"
-        debug = "<b>DATA:</b><br/>" + self.format_debug(data)
+        debug = "<div><b>DATA:</b><br/>" + self.format_debug(data) + "</div>"
         return debug
 
     def format_debug(self, sub_data):
-        "Debug information, return sub_data in html"
+        "Debug information, return data in html"
         if not sub_data:
             html = ""
         if type(sub_data) is dict:
@@ -154,7 +139,6 @@ class WmsController(http.Controller):
                 else:
                     html += '<li>[%s]: %s</li>' % (idx, item)
             html += "</ul>"
-
         else:
             html = "<li>%s</li>" % (sub_data)
         return html
@@ -168,13 +152,14 @@ class WmsController(http.Controller):
 
     def render_QWEB(self, data):
         """ Use Qweb to render the page"""
-        if data.get('menu'):
-            return request.render('wms_scanner.wms_scanner_menu_template', data)
+        qweb_data = self.get_qweb_data()
+        qweb_data.update({'data': data})
 
-        # Find the template
-        if data.get('qweb_template'):
-            qweb_template = data.get('qweb_template')
-        elif data.get('step') and data['step'].step_qweb:
+        if data.get('menu'):
+            return request.render('wms_scanner.wms_scanner_menu_template', qweb_data)
+
+        # Find the template to use, on step? on scenario
+        if data.get('step') and data['step'].step_qweb:
             qweb_template = data['step'].step_qweb
         elif data.get('scenario'):
             qweb_template = data['scenario'].scenario_qweb
@@ -182,7 +167,7 @@ class WmsController(http.Controller):
             qweb_template = ''
 
         if qweb_template:
-            return request.render(qweb_template, data)
+            return request.render(qweb_template, qweb_data)
         else:
-            data |= {'debug': self.session_debug(data)}
-            return request.render('wms_scanner.scanner_scenario_blank', data)
+            qweb_data |= {'debug': self.qweb_debug(data)}
+            return request.render('wms_scanner.scanner_scenario_blank', qweb_data)

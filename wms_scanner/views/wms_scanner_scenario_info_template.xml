@@ -35,6 +35,9 @@
                             <h1>Informations</h1>
                         </div>
                         <form class="grid grid-cols-1 gap-8 landscape:gap-6" method="post">
+                            <div t-if="data.get('warning')" class="mt-8 landscape:mt-4" style="background-color: red;">
+                                <span><t t-esc="data.get('warning')"/></span>
+                            </div>
                             <div>
                                 <label for="code">Code barre:</label>
                                 <input
@@ -42,6 +45,9 @@
                                         name="scan"
                                         class="w-full border border-gray-300 rounded-md p-2 mt-2.5"
                                 />
+                            </div>
+                            <div t-if="data.get('message')" class="mt-8 landscape:mt-4">
+                                <t t-raw="data.get('message','')"/>
                             </div>
                             <div class="mt-8 landscape:mt-4 landscape:order-last">
                                 <button type="submit" class="btn-green">Valider</button>

@@ -55,9 +55,9 @@
                 <div class="container mx-auto p-5 mb-16 landscape:m-auto landscape:pb-0">
                     <div class="flex justify-between items-center duration-500 landscape:justify-end">
                         <div class="logout landscape:hidden">
-                            <a href="?function=logout" class="flex items-center gap-1">
+                            <a href="?menu=0" class="flex items-center gap-1">
                                 <img src="wms_scanner/static/src/img/logout.svg" alt=""/>
-                                Logout
+                                menu
                             </a>
                         </div>
                         <div>
@@ -73,7 +73,7 @@
                         </div>
                         <nav class="hidden bg-white px-5 py-12 landscape:px-16 landscape:py-6">
                             <div class="hidden landscape:block">
-                                <a href="?function=wms" class="flex items-center gap-1">
+                                <a href="?menu=0" class="flex items-center gap-1">
                                     <img src="wms_scanner/static/src/img/logout.svg" alt=""/>
                                     Logout
                                 </a>
@@ -108,7 +108,7 @@
                         <div class="flex flex-col gap-5 mb-11 justify-between landscape:items-center landscape:flex-row">
                             <div class="flex items-center justify-between landscape:gap-2.5">
                                 <h1>Bonjour
-                                    <t t-esc="user.name"/>
+                                    <t t-esc="user.name or ''"/>
                                 </h1>
                                 <img src="wms_scanner/static/src/img/hands.svg" alt=""/>
                             </div>
@@ -140,9 +140,10 @@
         <template id="scanner_blank_body_main" name="scanner_blank_body_main">
             <main class="relative">
                 <section id="home">
-                    <t t-if="debug">
+                    <div t-if="debug" class="mt-8 landscape:mt-4">
+                        <img src="wms_scanner/static/src/img/infos.svg" alt=""/>
                         <t t-raw="debug"/>
-                    </t>
+                    </div>
                 </section>
             </main>
         </template>

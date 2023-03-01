@@ -111,27 +111,37 @@ class WmsScenario(models.Model):
     def do_scenario(self, data):
         "execute the scenario"
         self.ensure_one()
-        data = self.init_scenario(data)
-        data = self.get_button(data)
-        data = data['step'].execute_step(data)
+        if self.check_start(data):
+            data = self.init_scenario(data)
+        else:
+            data = self.init_scenario(data)
+            data = self.get_button(data)
+            data = data['step'].execute_step(data)
         return data
 
-    def get_button_response(self, data):
-        "get the response of button"
-        params = dict(request.params) or {}
-        button = params.get('button', '')
-        return button
+    def check_start(self, data):
+        """ Check if it is the first step"""
+        if data.get('scenario') and data.get('scenario') != self:
+            return True
+        if data.get('scenario') and not data.get('step'):
+            return True
+        return False
 
     def init_scenario(self, data):
         """ initiate data"""
-        if data.get('scenario') != self:
-            # TODO: Choice if data is to be initialased
-            pass
+        self.ensure_one()
+
+        # init the scenario if is not the same in data
+        if data.get('scenario') and data.get('scenario') != self:
+            del(data['scenario'])
+            if data.get('step'):
+                del(data['step'])
+
         # init data if first time
         if not (data.get('scenario') and data.get('step')):
             # start new scenario
             if self.step_ids:
-                data.update({'scenario': self, 'step': self.step_ids[0], 'user': self.env.user})
+                data = {'scenario': self, 'step': self.step_ids[0], 'user': self.env.user}
             else:
                 data = {'scenario': self}
                 # There is no starting step

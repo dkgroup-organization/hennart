@@ -34,10 +34,12 @@
                         <page string="Steps">
                             <field name="step_ids" nolabel="1" context="{'default_scenario_id': id}">
                                 <tree string="Step">
+                                    <field name="sequence" widget="handled"/>
                                     <field name="name"/>
                                     <field name="action_scanner"/>
                                     <field name="action_variable"/>
                                     <field name="scenario_id" invisible="1"/>
+
                                 </tree>
                                 <form string="Step">
                                     <group>
@@ -46,6 +48,7 @@
                                     <notebook>
                                         <page string="Action">
                                             <group>
+                                                <field name="sequence"/>
                                                 <field name="action_scanner"/>
                                                 <field name="action_model"
                                                        attrs="{'invisible':[('action_scanner','!=', 'scan_model')]}"/>
