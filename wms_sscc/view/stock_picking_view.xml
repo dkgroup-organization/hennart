@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+   <record id="view_stock_sscc_tree" model="ir.ui.view">
+      <field name="name">stock_sscc</field>
+      <field name="model">stock.sscc</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+        <tree string="sscc" editable="bottom">
+          <field name="name"/>
+          <field name="identifier" invisible="1"/>
+          <field name="prefixe" invisible="1"/>
+          <field name="cnuf" invisible="1"/>
+          <field name="serial" invisible="1"/>
+          <field name="number" invisible="1"/>
+          <field name="picking_id"/>
+        </tree>
+      </field>
+    </record>
+    <record id="view_stock_sscc_form" model="ir.ui.view">
+      <field name="name">stock_sscc</field>
+      <field name="model">stock.sscc</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+        <form string="sscc">
+          <field name="name"/>
+          <field name="identifier"/>
+          <field name="prefixe"/>
+          <field name="cnuf"/>
+          <field name="serial"/>
+          <field name="picking_id"/>
+          <field name="number"/>
+        </form>
+      </field>
+    </record>
+
+  <record id="view_stock_sscc_search" model="ir.ui.view">
+      <field name="name">stock_sscc.search</field>
+      <field name="model">stock.sscc</field>
+    <field name="arch" type="xml">
+      <search string="transport Lists">
+        <field name="name" string="sscc" filter_domain="[('name','ilike', self)]"/>
+        <field name="picking_id" string="Bon de livraison" filter_domain="[('picking_id.name','ilike', self)]"/>
+      </search>
+    </field>
+  </record>
+
+    <record id="action_stock_sscc" model="ir.actions.act_window">
+      <field name="name">sscc</field>
+      <field name="res_model">stock.sscc</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_stock_sscc" parent="stock.menu_warehouse_report" sequence="80" action="action_stock_sscc"/>
+
+
+
+<record id="view_picking_out_form_wms_sscc" model="ir.ui.view">
+      <field name="name">stock.picking.out.form.wms.sscc</field>
+      <field name="model">stock.picking</field>
+      <field name="inherit_id" ref="stock.view_picking_form"/>
+      <field name="priority">130</field>
+      <field name="arch" type="xml">
+       <xpath expr="//group[@name='carrier_data']" position="after">
+         <group>
+    
+                          
+          <field name="nb_sscc_label" class="oe_inline"/>
+          
+    
+  
+          <field name="sscc_lines_ids" readonly="1" class="oe_inline">
+            <tree>
+              <field name="name"/>
+            </tree>
+            </field>
+  
+      </group>
+        </xpath>
+      </field>
+    </record>
+    
+
+<record id="unique_sequence_id_sscc" model="ir.sequence">
+   <field name="name">Sequence sscc</field>
+   <field name="code">stock.sscc.code</field>
+   <field name="active">TRUE</field>
+   <field name="prefix">0</field>
+   <field name="padding">5</field>
+   <field name="number_next">1</field>
+   <field name="number_increment">1</field>
+</record>
+
+  </data>
+
+</openerp>

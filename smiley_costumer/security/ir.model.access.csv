@@ -1,0 +1,3 @@
+id,name,model_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_images_easy_sale,images_easy_sale,model_images_easy_sale,True,True,True,True
+access_param_late_paiement,param_late_paiement,model_param_late_paiement,True,True,True,True
