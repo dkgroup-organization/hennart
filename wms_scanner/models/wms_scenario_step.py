@@ -8,6 +8,7 @@ from odoo.tools.safe_eval import safe_eval, test_python_expr
 from odoo import models, api, fields, _
 from odoo.http import request
 from odoo.exceptions import MissingError, UserError, ValidationError
+import markupsafe
 
 logger = logging.getLogger('wms_scanner')
 
@@ -22,16 +23,16 @@ class WmsScenarioStep(models.Model):
         string='Name', compute="compute_name",
         store=True)
     action_scanner = fields.Selection(
-        [('none', 'No scan'),
+        [('no_scan', 'No scan'),
          ('scan_quantity', 'Enter quantity'),
          ('scan_text', 'Enter Text'),
          ('scan_model', 'Scan model'),
          ('scan_info', 'Scan search'),
          ],
-        string="Scanner", default="none")
-    action_model = fields.Many2one('ir.model', string="model to scan")
-    action_variable = fields.Char(string='Variable', default='scan')
-    action_message = fields.Html(string='message to user')
+        string="Scanner", default="no_scan", required=True)
+    action_model = fields.Many2one('ir.model', string="Model to scan")
+    action_variable = fields.Char(string='Input name', default='scan')
+    action_message = fields.Char(string='Input Placeholder')
     step_qweb = fields.Char(
         string='QWEB Template',
         help="Use a specific QWEB template at this step")
@@ -62,7 +63,12 @@ class WmsScenarioStep(models.Model):
     def compute_name(self):
         """ Compute the name of the step"""
         for step in self:
-            name = "%s: %s " % (step.sequence, step.action_scanner or '?')
+            name = "%s: " % (step.sequence)
+            if step.action_scanner == 'scan_model':
+                name += "scan %s " % (step.action_model.model or '?')
+            else:
+                name += "scan %s " % (step.action_scanner)
+
             if step.action_variable:
                 name += "to var: %s " % (step.action_variable)
             step.name = name
@@ -80,7 +86,11 @@ class WmsScenarioStep(models.Model):
     def read_scan(self, data={}):
         "Decode scan and return associated objects"
         self.ensure_one()
-        if self.action_scanner in ['none']:
+        action_scanner = self.action_scanner
+        action_variable = self.action_variable
+        action_model = self.action_model
+
+        if action_scanner in ['no_scan']:
             return data
 
         def is_alphanumeric(scan):
@@ -95,22 +105,23 @@ class WmsScenarioStep(models.Model):
         scan = self.get_scanner_response()
         if not scan:
             data['warning'] = _('The barcode is empty')
-        elif not self.action_variable:
+        elif not action_variable:
             data['warning'] = _('This scenario is currently under construction.'
                                 'Some parameters are not set. (no scan variable)')
         elif not is_alphanumeric(scan):
             data['warning'] = _('The barcode is unreadable')
-        elif self.action_scanner == 'scan_text':
-            data[self.action_variable] = "%s" % (scan)
-        elif self.action_scanner == 'scan_quantity':
+        elif action_scanner == 'scan_text':
+            data[action_variable] = "%s" % (scan)
+        elif action_scanner == 'scan_quantity':
             try:
                 quantity = float(scan)
-                data[self.action_variable] = quantity
+                data[action_variable] = quantity
             except:
                 data['warning'] = _('Please, enter a numeric value')
-        elif self.action_scanner in ['scan_model', 'scan_info']:
-            models_ids = self.action_model
-            if self.action_scanner == 'scan_info':
+
+        elif action_scanner in ['scan_model', 'scan_info']:
+            models_ids = action_model
+            if action_scanner == 'scan_info':
                 models_ids = self.env['ir.model.fields'].search([('name', '=', 'barcode')]).mapped('model_id')
 
             for model_id in models_ids:
@@ -119,16 +130,16 @@ class WmsScenarioStep(models.Model):
                 for search_field in ['barcode', 'default_code']:
                     if hasattr(action_model, search_field):
                         condition = [(search_field, '=', scan)]
-                        result_ids = self.env[self.action_model.model].search(condition)
+                        result_ids = action_model.search(condition)
                         if len(result_ids) == 1:
-                            data[self.action_variable] = result_ids[0]
+                            data[action_variable] = result_ids[0]
                             break
                         elif len(result_ids) > 1:
                             data = self.read_scan_duplicate(data)
 
-                if data.get(self.action_variable):
+                if data.get(action_variable):
                     break
-            if not data.get(self.action_variable):
+            if not data.get(action_variable):
                 data['warning'] = _('The barcode is unknow')
         else:
             data['warning'] = _('The barcode is unknow')
@@ -165,22 +176,27 @@ class WmsScenarioStep(models.Model):
                             message += "<p>%s </p>" % (getattr(scan_model, field_name))
                     message += "<br/>"
         if message:
-            data['message'] = message
+            data['message'] = markupsafe.Markup(message)
         return data
 
     def execute_code(self, data={}):
         "Eval the python code"
         self.ensure_one()
-        localdict = {'data': data.copy()}
-        safe_eval(self.python_code, locals_dict=localdict, mode="exec", nocopy=True)
-        return localdict.get('data')
+        if self.python_code:
+            localdict = {'data': data.copy()}
+            safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
+            return localdict.get('data')
+        else:
+            return data
 
     def execute_transition(self, data):
         """ compute the step"""
         self.ensure_one()
         for transition in self.out_transition_ids:
+            if not transition.condition:
+                continue
             localdict = {'data': data.copy()}
-            eval = safe_eval(transition.condition, locals_dict=localdict, mode="eval", nocopy=True)
+            eval = safe_eval(transition.condition, localdict, mode="eval", nocopy=True)
             if eval:
                 data['step'] = transition.to_id
                 break

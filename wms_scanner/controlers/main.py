@@ -4,6 +4,7 @@ import logging
 
 from odoo import http, models
 from odoo.http import request
+import markupsafe
 
 
 _logger = logging.getLogger(__name__)
@@ -32,81 +33,85 @@ class WmsController(http.Controller):
         data = session.get_data()
         print("-------session.get_data()-------\n", data)
 
-        # Analyse response, complete data
-        data = self.analyse_response(data)
-
-        # Function to logout or return to odoo ...
-        self.session_function(data)
+        # Analyse response, complete data, create qweb_data
+        qweb_data = self.analyse_response(data)
 
         # save session data
-        session.save_data(data)
-        print("-------session.save_data()-------\n", data)
+        session.save_data(qweb_data.get('data', {}))
+        print("-------session.save_data()-------\n", qweb_data.get('data', {}))
 
         # Render QWEB to html, return response to client
-        res = self.render_QWEB(data)
+        res = self.render_QWEB(qweb_data)
         return res
 
     def main_menu(self):
         """ Return to main menu """
-        data = {}
-        data['menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
-        return data
+        qweb_data = self.get_qweb_data()
+        qweb_data['menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
+        return qweb_data
+
+    def get_qweb_data(self):
+        """ Add standard information to data"""
+        qweb_data = {}
+        qweb_data['user'] = request.env['res.users'].browse(request.uid)
+        qweb_data['header_menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
+        return qweb_data
 
     def analyse_response(self, data):
         """Analyse response"""
         # get the scanner response
+        qweb_data = self.get_qweb_data()
         response = dict(request.params) or {}
         print("-------request.params-------", response)
 
         if not response:
             # first time go to main menu
-            data = self.main_menu()
+            qweb_data = self.main_menu()
 
         if response.get('function'):
-            if response.get('function', '?') in ['wms', 'logout']:
-                # Return session_function
-                data['function'] = response.get('function')
+            qweb_data = self.main_menu()
+            self.session_function(response)
 
         elif response.get('menu'):
-            if not response['menu'].isdigit() or response['menu'] <= '0':
+            if not response['menu'].isdigit() or int(response['menu']) <= 0:
                 # main menu (menu=0) or not defined, go to main menu
-                data = self.main_menu()
+                qweb_data = self.main_menu()
             else:
                 # list the childs menus
                 menu_ids = request.env['wms.menu'].search([('id', '=', int(response['menu']))])
                 if menu_ids:
                     menu = menu_ids[0]
                     # return childs menus
-                    data['menu'] = request.env['wms.menu'].search([('parent_id', '=', menu.id)])
+                    qweb_data['menu'] = request.env['wms.menu'].search([('parent_id', '=', menu.id)])
                 else:
-                    data = self.main_menu()
+                    qweb_data = self.main_menu()
 
         elif response.get('scenario'):
             # Go to the scenario
-            if not response['scenario'].isdigit() or response['scenario'] <= '0':
+            if not response['scenario'].isdigit() or int(response['scenario']) <= 0:
                 # scenario not defined, go to main menu
-                data = self.main_menu()
+                qweb_data = self.main_menu()
             else:
                 scenario_ids = request.env['wms.scenario'].search([('id', '=', int(response['scenario']))])
                 if scenario_ids:
-                    data = scenario_ids[0].do_scenario(data)
+                    qweb_data['data'] = scenario_ids[0].do_scenario(data)
                 else:
                     # scenario not defined, go to main menu
-                    data = self.main_menu()
+                    qweb_data = self.main_menu()
         else:
             # To defined or some error
-            data = self.main_menu()
+            qweb_data = self.main_menu()
 
-        return data or {}
+        return qweb_data or {}
 
-    def session_function(self, data):
+    def session_function(self, response):
         "Specific menu function"
-        if data.get('function'):
-            if data['function'] == 'wms':
+        if response.get('function'):
+            if response['function'] == 'wms':
                 # Return to Odoo
                 return request.redirect(location='/web')
 
-            elif data['function'] == 'logout':
+            elif response['function'] == 'logout':
                 # Return to login page
                 request.session.logout()
                 return request.redirect(location='/web')
@@ -114,7 +119,7 @@ class WmsController(http.Controller):
     def qweb_debug(self, data):
         "Debug information, return data in html"
         debug = "<div><b>DATA:</b><br/>" + self.format_debug(data) + "</div>"
-        return debug
+        return markupsafe.Markup(debug)
 
     def format_debug(self, sub_data):
         "Debug information, return data in html"
@@ -143,28 +148,20 @@ class WmsController(http.Controller):
             html = "<li>%s</li>" % (sub_data)
         return html
 
-    def get_qweb_data(self):
-        """ Add standard information to data"""
-        qweb_data = {}
-        qweb_data['user'] = request.env['res.users'].browse(request.uid)
-        qweb_data['header_menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
-        return qweb_data
-
-    def render_QWEB(self, data):
+    def render_QWEB(self, qweb_data):
         """ Use Qweb to render the page"""
-        qweb_data = self.get_qweb_data()
-        qweb_data.update({'data': data})
 
-        if data.get('menu'):
+        if qweb_data.get('menu'):
             return request.render('wms_scanner.wms_scanner_menu_template', qweb_data)
 
         # Find the template to use, on step? on scenario
+        data = qweb_data.get('data', {})
         if data.get('step') and data['step'].step_qweb:
             qweb_template = data['step'].step_qweb
         elif data.get('scenario'):
             qweb_template = data['scenario'].scenario_qweb
         else:
-            qweb_template = ''
+            qweb_template = False
 
         if qweb_template:
             return request.render(qweb_template, qweb_data)

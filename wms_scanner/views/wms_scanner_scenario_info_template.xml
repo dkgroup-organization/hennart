@@ -35,22 +35,36 @@
                             <h1>Informations</h1>
                         </div>
                         <form class="grid grid-cols-1 gap-8 landscape:gap-6" method="post">
-                            <div t-if="data.get('warning')" class="mt-8 landscape:mt-4" style="background-color: red;">
-                                <span><t t-esc="data.get('warning')"/></span>
-                            </div>
+
+
                             <div>
-                                <label for="code">Code barre:</label>
-                                <input
-                                        type="text"
-                                        name="scan"
-                                        class="w-full border border-gray-300 rounded-md p-2 mt-2.5"
-                                />
+                                <label for="code">Barcode:</label>
+                                <t t-if="data.get('step') and data['step'].action_variable == 'scan'">
+                                    <t t-if="data.get('warning')">
+                                        <input
+                                                type="text"
+                                                name="scan"
+                                                class="w-full border border-grey-300 warning rounded-md p-2 mt-2.5"
+                                                t-att-placeholder="data.get('warning')"
+                                        />
+                                    </t>
+                                    <t t-else="">
+                                        <input
+                                                type="text"
+                                                name="scan"
+                                                class="w-full border border-green-300 rounded-md p-2 mt-2.5"
+                                                t-att-placeholder="data['step'].action_message or ''"
+                                        />
+                                    </t>
+                                </t>
+
+
                             </div>
                             <div t-if="data.get('message')" class="mt-8 landscape:mt-4">
-                                <t t-raw="data.get('message','')"/>
+                                <t t-out="data.get('message','')"/>
                             </div>
                             <div class="mt-8 landscape:mt-4 landscape:order-last">
-                                <button type="submit" class="btn-green">Valider</button>
+                                <button type="submit" class="btn-green">Valid</button>
                             </div>
                         </form>
                     </div>

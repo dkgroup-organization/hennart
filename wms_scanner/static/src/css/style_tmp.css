@@ -1,0 +1,16 @@
+
+
+.border-green-300{
+  border-color: #60FF60;
+  background-color: #EEFFEE;
+}
+
+.warning {
+  background-color: #DD2020;
+  
+}
+
+.warning::placeholder {
+  color: #300000;
+  
+}

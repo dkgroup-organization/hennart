@@ -24,6 +24,7 @@
                 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
                 <link rel="stylesheet" href="wms_scanner/static/src/css/style.css"/>
+                <link rel="stylesheet" href="wms_scanner/static/src/css/style_tmp.css"/>
                 <title>
                     <t t-if="user" t-esc="user.company_id.name"/>
                 </title>
@@ -140,9 +141,11 @@
         <template id="scanner_blank_body_main" name="scanner_blank_body_main">
             <main class="relative">
                 <section id="home">
+                    <div class="container mx-auto px-5">
                     <div t-if="debug" class="mt-8 landscape:mt-4">
                         <img src="wms_scanner/static/src/img/infos.svg" alt=""/>
-                        <t t-raw="debug"/>
+                        <t t-out="debug"/>
+                    </div>
                     </div>
                 </section>
             </main>

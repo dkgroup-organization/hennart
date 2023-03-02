@@ -6,7 +6,7 @@ import json
 from odoo.http import request
 
 # Reserved variable term in data
-DATA_RESERVED_NAME = ['user', 'header_menu', 'menu', 'warning', 'scan', 'function', 'message', 'button']
+DATA_RESERVED_NAME = ['user', 'warning', 'scan', 'function', 'message', 'button']
 
 
 class WmsSession(models.Model):
