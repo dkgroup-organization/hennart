@@ -332,7 +332,7 @@
         <t t-foreach="page['default_location_ids']" t-as="default_location">
           <tr>
             <td>
-              
+
             </td>
             <td>
               <a t-att-href="'scanner?page=' + response.get('page') + '&amp;scan_type=location_id&amp;scan=' + str(default_location.id) ">
@@ -355,7 +355,7 @@
         <t t-foreach="page['preparation_ids']" t-as="preparation">
           <tr>
             <td>
-              
+
             </td>
             <td>
               <a t-att-href="'scanner?page=' + response.get('page') + '&amp;scan_type=preparation_id' + '&amp;scan=' + str(preparation.id)">
@@ -373,7 +373,7 @@
         <t t-foreach="page['picking_ids']" t-as="picking">
           <tr>
             <td>
-              
+
             </td>
             <td>
               <a t-att-href="'scanner?page=' + response.get('page') + '&amp;scan_type=picking_id'  + '&amp;scan=' + str(picking.id)">

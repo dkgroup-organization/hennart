@@ -29,6 +29,8 @@ class WmsScenario(models.Model):
     scenario_image = fields.Char(
         string='Image filename',
         default='construction.jpg')
+    scenario_qweb = fields.Char(
+        string='QWEB Template')
     debug_mode = fields.Boolean(
         string='Debug mode')
     active = fields.Boolean(
@@ -103,66 +105,57 @@ class WmsScenario(models.Model):
             'target': 'current',
             }
         # not available at this time 2022-12
-        action = False
+        action = {}
         return action
-
-    def get_scanner_response(self):
-        "get the response of the scanner, only one scanner by session"
-        params = dict(request.params) or {}
-        scan = params.get('scan', '')
-        return scan
-
-    def get_button_response(self):
-        "get the response of button"
-        params = dict(request.params) or {}
-        button = params.get('button', '')
-        return button
 
     def do_scenario(self, data):
         "execute the scenario"
         self.ensure_one()
+        if self.check_start(data):
+            data = self.init_scenario(data)
+        else:
+            data = self.init_scenario(data)
+            data = self.get_button(data)
+            data = data['step'].execute_step(data)
+        return data
+
+    def check_start(self, data):
+        """ Check if it is the first step"""
+        if data.get('scenario') and data.get('scenario') != self:
+            return True
+        if data.get('scenario') and not data.get('step'):
+            return True
+        return False
+
+    def init_scenario(self, data):
+        """ initiate data"""
+        self.ensure_one()
+
+        # init the scenario if is not the same in data
+        if data.get('scenario') and data.get('scenario') != self:
+            del(data['scenario'])
+            if data.get('step'):
+                del(data['step'])
 
         # init data if first time
-        if not (data.get('scenario') and data.get('step')) or data.get('scenario') != self:
+        if not (data.get('scenario') and data.get('step')):
             # start new scenario
             if self.step_ids:
-                data.update({'scenario': self, 'step': self.step_ids[0], 'user': self.env.user})
+                data = {'scenario': self, 'step': self.step_ids[0], 'user': self.env.user}
             else:
                 data = {'scenario': self}
                 # There is no starting step
-                debug = _("There is no step in this scenario")
-                data.update({'debug': debug})
-
-        # Do next step
-        data = self.continue_scenario(data)
-
+                warning = _("There is no step in this scenario")
+                data.update({'warning': warning})
         return data
 
-    def continue_scenario(self, data):
-        "Check the response, and choice the next step"
-        self.ensure_one()
-        step = data['step']
-
-        # check button
-        if self.get_button_response():
-            # do button action
-            pass
-        # check scan
-        elif step.action_scanner != 'none':
-            # do scan response
-            data = step.read_scan(data)
-        # to defined
-        else:
-            pass
-
-        print("\n-------:", step, data)
-        if data.get('warning'):
-            return data
-        else:
-            # Defined next step
-            pass
-
+    def get_button(self, data):
+        """" Get the button """
+        params = dict(request.params) or {}
+        if params.get('button'):
+            data['button'] = params.get('button')
         return data
+
 
 
 

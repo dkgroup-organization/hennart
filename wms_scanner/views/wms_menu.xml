@@ -9,7 +9,7 @@
                 <field name="parent_id"/>
                 <field name="name"/>
                 <field name="menu_type"/>
-
+                <field name="image_file"/>
             </tree>
         </field>
     </record>

@@ -42,8 +42,10 @@ class WmsMenu(models.Model):
         string='Scenario',
         help='Scenario for this menu.')
     menu_code = fields.Char(
+        string='Code')
+    href = fields.Char(
         string='Code',
-        compute='_compute_menu_code')
+        compute='_compute_menu_href')
     active = fields.Boolean(
         string='Active',
         default=True,
@@ -79,12 +81,12 @@ class WmsMenu(models.Model):
         column2='user_id',
         string='Allowed Users')
 
-    def _compute_menu_code(self):
+    def _compute_menu_href(self):
         "return the href of this menu"
         for menu in self:
             if menu.menu_type in ['menu', 'logout', 'wms', 'scanner']:
-                menu.menu_code = '?menu=%s' % (menu.id)
+                menu.href = '?menu=%s' % (menu.id)
             elif menu.menu_type == 'scenario':
-                menu.menu_code = '?scenario=%s' % (menu.scenario_id.id or 0)
+                menu.href = '?scenario=%s' % (menu.scenario_id.id or 0)
             else:
-                menu.menu_code = '?menu=0'
+                menu.href = '?menu=0'
