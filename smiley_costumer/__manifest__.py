@@ -11,6 +11,7 @@
     "data": [
     "security/ir.model.access.csv",
     "view/partner.xml",
+    "view/data.xml",
     ],
     'demo_xml': [],
     'installable': True,

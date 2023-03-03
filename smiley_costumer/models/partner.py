@@ -48,7 +48,7 @@ class res_partner(models.Model):
             if not param_customer_ids:
                 partner.image_late_paiement = False
             else:
-                    image_late_paiement_obj = self.env['images.easy.sale'].browse(1)
+                    image_late_paiement_obj = self.env['images.easy.sale'].search([(1,'=',1)],limit=1)
 
                     if param_customer_ids.level == 'red':
                         partner.image_late_paiement = image_late_paiement_obj.image_light_red
@@ -59,3 +59,14 @@ class res_partner(models.Model):
 
     image_late_paiement = fields.Binary(compute="_image_late_paiement", string='Image for late paiement')
     late_paiement = fields.Integer(compute="_update_info", string='Late paiement',store=True)
+
+
+
+
+
+class sale_order(models.Model):
+    _inherit = "sale.order"
+
+    image_late = fields.Binary(related="partner_id.image_late_paiement", string='Image for late paiement')
+
+
