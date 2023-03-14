@@ -1,0 +1,210 @@
+<!-- header.js -->
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <title>Hennart</title>
+  </head>
+
+  <body class="font-poppins duration-500 min-h-screen">
+    <header class="sticky top-0 z-50">
+      <div
+        class="container mx-auto px-5 pt-5 mb-[66px] landscape:m-auto landscape:px-4 landscape:pt-4"
+      >
+        <div
+          class="flex justify-between items-center duration-500 landscape:justify-end"
+        >
+          <div class="logout landscape:hidden">
+            <a href="" class="flex items-center gap-1">
+              <img src="./assets/img/logout.svg" alt="" />
+              Déconnexion
+            </a>
+          </div>
+          <div>
+            <button
+              class="menu-toggle w-8 z-50 duration-500 relative"
+              aria-controls="primary-menu"
+              aria-expanded="false"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+          <nav
+            class="hidden bg-white px-5 py-12 landscape:px-16 landscape:py-6"
+          >
+            <div class="hidden landscape:block">
+              <a href="" class="flex items-center gap-1">
+                <img src="./assets/img/logout.svg" alt="" />
+                Déconnexion
+              </a>
+            </div>
+            <h2 class="landscape:hidden">Menu Principal</h2>
+            <ul class="grid grid-cols-2 gap-6 mt-8 landscape:grid-cols-3">
+              <li>
+                <a
+                  href="./index.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/carton.svg" alt="" />
+                  Préparation
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./index.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/cheese.svg" alt="" />
+                  Production
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./deplacement.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/move.svg" alt="" />
+                  Déplacement
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./informations.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/infos.svg" alt="" />
+                  Informations
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./index.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/printer.svg" alt="" />
+                  Impression
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./inventaire.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/dashboard.svg" alt="" />
+                  Inventaire
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./index.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/pesage.svg" alt="" />
+                  Pesage
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./index.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/truck.svg" alt="" />
+                  Transport
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="relative">
+      <!-- End header.js -->
+      <section id="move">
+        <div class="container mx-auto px-5 pb-5 relative">
+          <div class="flex items-center gap-2.5 mb-10 landscape:mb-6">
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 30 30"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                class="fill-blue-500"
+                d="M15.25 17.5L14.0938 18.6562C13.8646 18.8854 13.75 19.1771 13.75 19.5312C13.75 19.8854 13.8646 20.1771 14.0938 20.4063C14.3229 20.6354 14.6146 20.75 14.9688 20.75C15.3229 20.75 15.6146 20.6354 15.8438 20.4063L19.125 17.125C19.375 16.875 19.5 16.5833 19.5 16.25C19.5 15.9167 19.375 15.625 19.125 15.375L15.8438 12.0938C15.6146 11.8646 15.3229 11.75 14.9688 11.75C14.6146 11.75 14.3229 11.8646 14.0938 12.0938C13.8646 12.3229 13.75 12.6146 13.75 12.9688C13.75 13.3229 13.8646 13.6146 14.0938 13.8438L15.25 15H11.25C10.8958 15 10.5992 15.1196 10.36 15.3587C10.12 15.5987 10 15.8958 10 16.25C10 16.6042 10.12 16.9008 10.36 17.14C10.5992 17.38 10.8958 17.5 11.25 17.5H15.25ZM5 25C4.3125 25 3.72417 24.7554 3.235 24.2663C2.745 23.7763 2.5 23.1875 2.5 22.5V7.5C2.5 6.8125 2.745 6.22417 3.235 5.735C3.72417 5.245 4.3125 5 5 5H11.4688C11.8021 5 12.12 5.0625 12.4225 5.1875C12.7242 5.3125 12.9896 5.48958 13.2188 5.71875L15 7.5H25C25.6875 7.5 26.2763 7.745 26.7663 8.235C27.2554 8.72417 27.5 9.3125 27.5 10V22.5C27.5 23.1875 27.2554 23.7763 26.7663 24.2663C26.2763 24.7554 25.6875 25 25 25H5ZM5 7.5V22.5H25V10H13.9688L11.4688 7.5H5Z"
+                fill="#9DB2CE"
+              />
+            </svg>
+            <h1>Déplacement</h1>
+          </div>
+          <form
+            class="flex flex-col items-center gap-[30px] landscape:gap-3 landscape:w-[49%]"
+          >
+            <input
+              type="text"
+              id="emplacement"
+              name="emplacement"
+              class="w-full border rounded-md p-4 landscape:py-2 border-green-600 bg-green-400 bg-opacity-20"
+              placeholder="Emplacement"
+            />
+            <div
+              class="flex flex-col gap-6 w-72 landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5"
+            >
+              <button
+                class="py-2 text-center border border-black rounded-md w-full"
+              >
+                Emplacement 1
+              </button>
+              <button
+                class="py-2 text-center border border-black rounded-md w-full"
+              >
+                Emplacement 2
+              </button>
+              <button
+                class="py-2 text-center border border-black rounded-md w-full"
+              >
+                Emplacement 3
+              </button>
+            </div>
+            <input
+              type="text"
+              id="destination"
+              name="destination"
+              class="w-full border border-gray-300 rounded-md p-4 landscape:py-2"
+              placeholder="destination"
+            />
+            <input
+              type="text"
+              id="product"
+              name="product"
+              class="w-full border border-gray-300 rounded-md p-4 landscape:py-2"
+              placeholder="Produit"
+            />
+            <input
+              type="number"
+              id="quantity"
+              name="quantity"
+              class="w-full border border-gray-300 rounded-md p-4 landscape:py-2"
+              placeholder="Quantité"
+            />
+            <button
+              type="submit"
+              class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3"
+            >
+              Valider
+            </button>
+          </form>
+        </div>
+      </section>
+      <!-- footer.js -->
+    </main>
+
+    <script src="./assets/js/script.js"></script>
+  </body>
+</html>
+<!-- End footer.js -->
