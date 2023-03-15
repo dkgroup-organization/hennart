@@ -126,7 +126,7 @@
     <main class="relative">
       <!-- End header.js -->
       <section id="dashboard">
-        <div class="container mx-auto px-5 pb-5 relative">
+        <div class="container mx-auto px-5 relative">
           <div class="flex items-center gap-2.5 mb-10 landscape:mb-6">
             <svg
               width="40"
@@ -150,24 +150,24 @@
               type="text"
               id="emplacement"
               name="emplacement"
-              class="w-full border rounded-md p-4 landscape:py-2 border-green-600 bg-green-400 bg-opacity-20"
+              class="input-green"
               placeholder="Emplacement"
             />
             <div
               class="flex flex-col gap-6 w-72 landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5"
             >
               <button
-                class="py-2 text-center border border-black rounded-md w-full"
+                class="input-select"
               >
                 Emplacement 1
               </button>
               <button
-                class="py-2 text-center border border-black rounded-md w-full"
+                class="input-select"
               >
                 Emplacement 2
               </button>
               <button
-                class="py-2 text-center border border-black rounded-md w-full"
+                class="input-select"
               >
                 Emplacement 3
               </button>
@@ -176,15 +176,22 @@
               type="text"
               id="product"
               name="product"
-              class="w-full border border-gray-300 rounded-md p-4 landscape:py-2"
+              class="input-default"
               placeholder="Produit"
             />
             <input
               type="number"
               id="quantity"
               name="quantity"
-              class="w-full border border-gray-300 rounded-md p-4 landscape:py-2"
+              class="input-default"
               placeholder="Quantité"
+            />
+            <input
+              type="text"
+              id="danger"
+              name="danger"
+              class="input-warning"
+              placeholder="Danger"
             />
             <button
               type="submit"

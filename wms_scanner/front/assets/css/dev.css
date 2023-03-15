@@ -53,6 +53,22 @@
     @apply border-green-600 bg-green-200 mb-[30px];
   }
 
+  .input-default {
+    @apply w-full border border-gray-300 rounded-md p-4;
+  }
+
+  .input-select {
+    @apply py-2 text-center border border-black rounded-md w-full;
+  }
+
+  .input-green {
+    @apply w-full border rounded-md p-4 border-green-600 bg-green-400 bg-opacity-20;
+  }
+
+  .input-warning {
+    @apply w-full border rounded-md p-4 border-red-600 bg-red-400 bg-opacity-20;
+  }
+
   ::placeholder {
     @apply text-gray-500 italic;
   }
@@ -65,6 +81,10 @@
 
   .active input {
     @apply mb-0;
+  }
+
+  .input-green, .input-warning, .input-default {
+    @apply py-2;
   }
 }
 
