@@ -1,0 +1,171 @@
+<!-- header.js -->
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <title>Hennart</title>
+  </head>
+
+  <body class="font-poppins duration-500 min-h-screen">
+    <header class="sticky top-0 z-50">
+      <div
+        class="container mx-auto px-5 pt-5 mb-[66px] landscape:m-auto landscape:px-4 landscape:pt-4"
+      >
+        <div
+          class="flex justify-between items-center duration-500 landscape:justify-end"
+        >
+          <div class="logout landscape:hidden">
+            <a href="" class="flex items-center gap-1">
+              <img src="./assets/img/logout.svg" alt="" />
+              Déconnexion
+            </a>
+          </div>
+          <div>
+            <button
+              class="menu-toggle w-8 z-50 duration-500 relative"
+              aria-controls="primary-menu"
+              aria-expanded="false"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+          <nav
+            class="hidden bg-white px-5 py-12 landscape:px-16 landscape:py-6"
+          >
+            <div class="hidden landscape:block">
+              <a href="" class="flex items-center gap-1">
+                <img src="./assets/img/logout.svg" alt="" />
+                Déconnexion
+              </a>
+            </div>
+            <h2 class="landscape:hidden">Menu Principal</h2>
+            <ul class="grid grid-cols-2 gap-6 mt-8 landscape:grid-cols-3">
+              <li>
+                <a
+                  href="./index.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/carton.svg" alt="" />
+                  Préparation
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./index.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/cheese.svg" alt="" />
+                  Production
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./deplacement.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/move.svg" alt="" />
+                  Déplacement
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./informations.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/infos.svg" alt="" />
+                  Informations
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./index.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/printer.svg" alt="" />
+                  Impression
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./inventaire.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/dashboard.svg" alt="" />
+                  Inventaire
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./index.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/pesage.svg" alt="" />
+                  Pesage
+                </a>
+              </li>
+              <li>
+                <a
+                  href="./index.html"
+                  class="border border-gray-200 flex items-center rounded-lg py-7 pl-2.5 gap-2 landscape:pl-5 landscape:py-4 landscape:w-auto"
+                >
+                  <img src="./assets/img/truck.svg" alt="" />
+                  Transport
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <main class="relative">
+      <!-- End header.js -->
+      <section id="infos">
+        <div class="container mx-auto px-5 pb-5 relative">
+          <div class="flex items-center gap-2.5 mb-10 landscape:mb-6">
+            <svg
+              width="40"
+              height="40"
+              viewBox="0 0 30 30"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                class="fill-green-600"
+                d="M13.75 21.25H16.25V13.75H13.75V21.25ZM15 11.25C15.3542 11.25 15.6513 11.13 15.8913 10.89C16.1304 10.6508 16.25 10.3542 16.25 10C16.25 9.64583 16.1304 9.34875 15.8913 9.10875C15.6513 8.86958 15.3542 8.75 15 8.75C14.6458 8.75 14.3492 8.86958 14.11 9.10875C13.87 9.34875 13.75 9.64583 13.75 10C13.75 10.3542 13.87 10.6508 14.11 10.89C14.3492 11.13 14.6458 11.25 15 11.25ZM15 27.5C13.2708 27.5 11.6458 27.1717 10.125 26.515C8.60417 25.8592 7.28125 24.9688 6.15625 23.8438C5.03125 22.7188 4.14083 21.3958 3.485 19.875C2.82833 18.3542 2.5 16.7292 2.5 15C2.5 13.2708 2.82833 11.6458 3.485 10.125C4.14083 8.60417 5.03125 7.28125 6.15625 6.15625C7.28125 5.03125 8.60417 4.14042 10.125 3.48375C11.6458 2.82792 13.2708 2.5 15 2.5C16.7292 2.5 18.3542 2.82792 19.875 3.48375C21.3958 4.14042 22.7188 5.03125 23.8438 6.15625C24.9688 7.28125 25.8592 8.60417 26.515 10.125C27.1717 11.6458 27.5 13.2708 27.5 15C27.5 16.7292 27.1717 18.3542 26.515 19.875C25.8592 21.3958 24.9688 22.7188 23.8438 23.8438C22.7188 24.9688 21.3958 25.8592 19.875 26.515C18.3542 27.1717 16.7292 27.5 15 27.5ZM15 25C17.7917 25 20.1562 24.0312 22.0938 22.0938C24.0312 20.1562 25 17.7917 25 15C25 12.2083 24.0312 9.84375 22.0938 7.90625C20.1562 5.96875 17.7917 5 15 5C12.2083 5 9.84375 5.96875 7.90625 7.90625C5.96875 9.84375 5 12.2083 5 15C5 17.7917 5.96875 20.1562 7.90625 22.0938C9.84375 24.0312 12.2083 25 15 25Z"
+                fill="#9DB2CE"
+              />
+            </svg>
+            <h1>Informations</h1>
+          </div>
+          <form
+            class="flex flex-col items-center gap-[30px] landscape:gap-3 landscape:w-[49%]"
+          >
+            <input
+              type="text"
+              id="code"
+              name="code"
+              class="w-full border border-gray-300 rounded-md p-4 landscape:py-2"
+              placeholder="Code barre"
+            />
+            <button
+              type="submit"
+              class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3"
+            >
+              Valider
+            </button>
+          </form>
+        </div>
+      </section>
+      <!-- footer.js -->
+    </main>
+
+    <script src="./assets/js/script.js"></script>
+  </body>
+</html>
+<!-- End footer.js -->
