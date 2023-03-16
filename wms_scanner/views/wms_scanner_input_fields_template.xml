@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <template id="scanner_move_input_location_origin_id" name="scanner_move_input_location_origin_id">
+
+            <t t-if="data.get('step') and data['step'].action_variable == 'location_origin_id'">
+                <t t-if="data.get('warning')">
+                    <input
+                            type="text"
+                            id="location_origin_id"
+                            name="location_origin_id"
+                            class="input-warning"
+                            t-att-placeholder="data.get('warning')"
+                    />
+
+                </t>
+                <t t-else="">
+                    <input
+                            type="text"
+                            id="location_origin_id"
+                            name="location_origin_id"
+                            class="input-green"
+                            t-att-placeholder="data['step'].action_message or ''"
+                    />
+                </t>
+            <div  t-if="data.get('message')"
+              id="wizard"
+              class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:max-h-64"
+            ></div>
+            </t>
+
+            <t t-else="">
+                <p
+                        type="text"
+                        id="location_origin_id"
+                        name="location_origin_id"
+                        class="input-default"
+                >
+                    <t t-out="data.get('location_origin_id') and data['location_origin_id'].name or 'Origin location'"/>
+                </p>
+            </t>
+        </template>
+
+        <template id="scanner_move_input_product_id" name="scanner_move_input_product_id">
+
+            <t t-if="data.get('step') and data['step'].action_variable == 'product_id'">
+                <t t-if="data.get('warning')">
+                    <input
+                            type="text"
+                            id="product_id"
+                            name="product_id"
+                            class="input-warning"
+                            t-att-placeholder="data.get('warning')"
+                    />
+
+                </t>
+                <t t-else="">
+                    <input
+                            type="text"
+                            id="product_id"
+                            name="product_id"
+                            class="input-green"
+                            t-att-placeholder="data['step'].action_message or ''"
+                    />
+                </t>
+             <div t-if="data.get('message')"
+              id="wizard"
+              class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:max-h-64"
+            ></div>
+            </t>
+
+            <t t-else="">
+                <p
+                        type="text"
+                        id="product_id"
+                        name="product_id"
+                        class="input-default"
+                >
+                    <t t-out="data.get('product_id') and (data['product_id'].default_code + ' ' + data['product_id'].name) or 'Product'"/>
+                </p>
+            </t>
+        </template>
+
+        <template id="scanner_move_input_quantity" name="scanner_move_input_quantity">
+
+            <t t-if="data.get('step') and data['step'].action_variable == 'quantity'">
+                <t t-if="data.get('warning')">
+                    <input
+                            type="number"
+                            id="quantity"
+                            name="quantity"
+                            class="input-warning"
+                            t-att-placeholder="data.get('warning')"
+                    />
+
+                </t>
+                <t t-else="">
+                    <input
+                            type="number"
+                            id="quantity"
+                            name="quantity"
+                            class="input-green"
+                            t-att-placeholder="data['step'].action_message or ''"
+                    />
+                </t>
+            <div t-if="data.get('message')"
+              id="wizard"
+              class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:max-h-64"
+            ></div>
+
+            </t>
+
+            <t t-else="">
+                <p
+                        type="text"
+                        id="quantity"
+                        name="quantity"
+                        class="input-default"
+                >
+                    <t t-out="data.get('quantity') and data['quantity'] or 'Quantity'"/>
+                </p>
+            </t>
+        </template>
+
+        <template id="scanner_move_input_location_dest_id" name="scanner_move_input_location_dest_id">
+
+            <t t-if="data.get('step') and data['step'].action_variable == 'location_dest_id'">
+                <t t-if="data.get('warning')">
+                    <input
+                            type="text"
+                            id="location_dest_id"
+                            name="location_dest_id"
+                            class="input-warning"
+                            t-att-placeholder="data.get('warning')"
+                    />
+
+                </t>
+                <t t-else="">
+                    <input
+                            type="text"
+                            id="location_dest_id"
+                            name="location_dest_id"
+                            class="input-green"
+                            t-att-placeholder="data['step'].action_message or ''"
+                    />
+                </t>
+            <div t-if="data.get('message')"
+              id="wizard"
+              class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:max-h-64"
+            ></div>
+            </t>
+
+            <t t-else="">
+                <p
+                        type="text"
+                        id="location_dest_id"
+                        name="location_dest_id"
+                        class="input-default"
+                >
+                    <t t-out="data.get('location_dest_id') and data['location_dest_id'].name or 'Destination location'"/>
+                </p>
+            </t>
+        </template>
+
+    </data>
+</odoo>
