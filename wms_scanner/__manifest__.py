@@ -23,6 +23,7 @@
         'views/menu.xml',
 
         'views/wms_scanner_menu_template.xml',
+        'views/wms_scanner_input_fields_template.xml',
         'views/wms_scanner_scenario_info_template.xml',
         'views/wms_scanner_scenario_move_template.xml',
 
