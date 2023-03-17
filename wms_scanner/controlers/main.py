@@ -62,17 +62,12 @@ class WmsController(http.Controller):
         # get the scanner response
         qweb_data = self.get_qweb_data()
         response = dict(request.params) or {}
-        print("-------request.params-------", response)
 
         if not response:
             # first time go to main menu
             qweb_data = self.main_menu()
 
-        if response.get('function'):
-            qweb_data = self.main_menu()
-            self.session_function(response)
-
-        elif response.get('menu'):
+        if response.get('menu'):
             if not response['menu'].isdigit() or int(response['menu']) <= 0:
                 # main menu (menu=0) or not defined, go to main menu
                 qweb_data = self.main_menu()
@@ -103,18 +98,6 @@ class WmsController(http.Controller):
             qweb_data = self.main_menu()
 
         return qweb_data or {}
-
-    def session_function(self, response):
-        "Specific menu function"
-        if response.get('function'):
-            if response['function'] == 'wms':
-                # Return to Odoo
-                return request.redirect(location='/web')
-
-            elif response['function'] == 'logout':
-                # Return to login page
-                request.session.logout()
-                return request.redirect(location='/web')
 
     def qweb_debug(self, data):
         "Debug information, return data in html"

@@ -10,9 +10,19 @@ menuToggle.addEventListener("click", function () {
   main.classList.toggle("brightness-50");
 });
 
-window.addEventListener('DOMContentLoaded', function() {
-  document.querySelector("form input:first-child").focus()
-});
+
+
+function FocusScan() {
+    var scan = document.getElementById("scan");
+
+    if (scan != document.activeElement) {
+        scan.focus();
+        }
+    }
+
+document.addEventListener('keydown', FocusScan);
+window.addEventListener('DOMContentLoaded', FocusScan);
+
 
 // const emplacement = document.querySelector("#emplacement");
 

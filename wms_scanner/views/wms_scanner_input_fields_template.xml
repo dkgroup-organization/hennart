@@ -7,7 +7,7 @@
                 <t t-if="data.get('warning')">
                     <input
                             type="text"
-                            id="location_origin_id"
+                            id="scan"
                             name="location_origin_id"
                             class="input-warning"
                             t-att-placeholder="data.get('warning')"
@@ -17,7 +17,7 @@
                 <t t-else="">
                     <input
                             type="text"
-                            id="location_origin_id"
+                            id="scan"
                             name="location_origin_id"
                             class="input-green"
                             t-att-placeholder="data['step'].action_message or ''"
@@ -47,7 +47,7 @@
                 <t t-if="data.get('warning')">
                     <input
                             type="text"
-                            id="product_id"
+                            id="scan"
                             name="product_id"
                             class="input-warning"
                             t-att-placeholder="data.get('warning')"
@@ -57,7 +57,7 @@
                 <t t-else="">
                     <input
                             type="text"
-                            id="product_id"
+                            id="scan"
                             name="product_id"
                             class="input-green"
                             t-att-placeholder="data['step'].action_message or ''"
@@ -87,7 +87,7 @@
                 <t t-if="data.get('warning')">
                     <input
                             type="number"
-                            id="quantity"
+                            id="scan"
                             name="quantity"
                             class="input-warning"
                             t-att-placeholder="data.get('warning')"
@@ -97,7 +97,7 @@
                 <t t-else="">
                     <input
                             type="number"
-                            id="quantity"
+                            id="scan"
                             name="quantity"
                             class="input-green"
                             t-att-placeholder="data['step'].action_message or ''"
@@ -128,7 +128,7 @@
                 <t t-if="data.get('warning')">
                     <input
                             type="text"
-                            id="location_dest_id"
+                            id="scan"
                             name="location_dest_id"
                             class="input-warning"
                             t-att-placeholder="data.get('warning')"
@@ -138,7 +138,7 @@
                 <t t-else="">
                     <input
                             type="text"
-                            id="location_dest_id"
+                            id="scan"
                             name="location_dest_id"
                             class="input-green"
                             t-att-placeholder="data['step'].action_message or ''"

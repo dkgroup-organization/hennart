@@ -8,7 +8,7 @@
                 <body class="font-poppins duration-500 min-h-screen">
                     <t t-call="wms_scanner.scanner_menu_body_header"/>
                     <t t-call="wms_scanner.scanner_move_body_main"/>
-                    <script src="wms_scanner/static/src/js/script.js"/>
+                    <t t-call="wms_scanner.scanner_script_js"/>
                 </body>
             </html>
         </template>
