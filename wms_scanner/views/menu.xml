@@ -6,7 +6,7 @@
             <field name="url">/scanner?menu=0</field>
         </record>
 
-    <menuitem id="menu_wms" sequence="50" name="WMS"/>
+    <menuitem id="menu_wms" sequence="50" name="WMS" web_icon="wms_scanner,static/description/icon.svg"/>
         <menuitem id="menu_wms_scanner" parent="menu_wms" sequence="190" name="Scanner" action="action_url_scanner"/>
 
     <menuitem id="menu_wms_configuration" parent="stock.menu_stock_config_settings" sequence="100" name="Scanner"/>

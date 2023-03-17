@@ -8,7 +8,7 @@
                 <body class="font-poppins duration-500 min-h-screen">
                     <t t-call="wms_scanner.scanner_menu_body_header"/>
                     <t t-call="wms_scanner.scanner_information_body_main"/>
-                    <script src="wms_scanner/static/src/js/script.js"/>
+                    <t t-call="wms_scanner.scanner_script_js"/>
                 </body>
             </html>
         </template>
@@ -42,6 +42,7 @@
                                 <t t-if="data.get('warning')">
                                     <input
                                             type="text"
+                                            id="scan"
                                             name="scan"
                                             class="input-warning"
                                             t-att-placeholder="data.get('warning')"
@@ -50,6 +51,7 @@
                                 <t t-else="">
                                     <input
                                             type="text"
+                                            id="scan"
                                             name="scan"
                                             class="input-green"
                                             t-att-placeholder="data['step'].action_message or ''"

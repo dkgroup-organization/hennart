@@ -32,9 +32,9 @@ class WmsMenu(models.Model):
         help='Sequence order.')
     image_file = fields.Char(
         string='Image filename',
-        default='construction.jpg')
+        default='infos.svg')
     menu_type = fields.Selection(
-        [('menu', 'Sub Menu'), ('scenario', 'Scenario'), ('logout', 'Logout'), ('wms', 'Return to WMS')],
+        [('menu', 'Menu'), ('scenario', 'Scenario')],
         string="Action",
         default="menu")
     scenario_id = fields.Many2one(
@@ -84,8 +84,8 @@ class WmsMenu(models.Model):
     def _compute_menu_href(self):
         "return the href of this menu"
         for menu in self:
-            if menu.menu_type in ['menu', 'logout', 'wms', 'scanner']:
-                menu.href = '?menu=%s' % (menu.id)
+            if menu.menu_type == 'menu':
+                menu.href = '?menu=%s' % (menu.id or 0)
             elif menu.menu_type == 'scenario':
                 menu.href = '?scenario=%s' % (menu.scenario_id.id or 0)
             else:
