@@ -9,10 +9,10 @@
       <field name="arch" type="xml">
         <xpath expr="//field[@name='origin']" position="before">
           <field name="number_of_packages"/>
-
           <field name="nb_container"/>
           <field name="nb_pallet"/>
-
+          <field name="nb_pallet_europe"/>
+          <field name="nb_pallet_perdu"/>
 
         </xpath>
       </field>
