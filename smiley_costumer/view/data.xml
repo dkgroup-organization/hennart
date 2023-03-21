@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+<data>
+<record id="images_easy_sale_add_datas" model="images.easy.sale">
+
+            <field file="smiley_costumer/static/img/smiley_vert.png" name="image_light_green" type="base64" />
+              <field file="smiley_costumer/static/img/smiley_rouge.png" name="image_light_red" type="base64" />
+                <field file="smiley_costumer/static/img/smiley_orange.png" name="image_light_orange" type="base64" />
+
+
+        </record>
+
+          </data>
+
+</openerp>
