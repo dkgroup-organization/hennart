@@ -1,0 +1,344 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* export_compta
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 14.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-09-20 14:43+0000\n"
+"PO-Revision-Date: 2022-09-20 14:43+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: export_compta
+#: model:ir.model,name:export_compta.model_account_account
+msgid "Account"
+msgstr "Compte"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__move_ids
+#: model_terms:ir.ui.view,arch_db:export_compta.account_export_history_form
+msgid "Account move"
+msgstr "Pièce comptable"
+
+#. module: export_compta
+#: model_terms:ir.actions.act_window,help:export_compta.action_wizard_account_move_line
+msgid "Add a new tag"
+msgstr "Ajouter une nouvelle étiquette"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__attachment_id
+msgid "Attachment"
+msgstr "Pièce jointe"
+
+#. module: export_compta
+#: model:ir.model.fields.selection,name:export_compta.selection__account_export_moveline__journal_type__bank
+msgid "Bank"
+msgstr "Banque"
+
+#. module: export_compta
+#: model:ir.model.fields.selection,name:export_compta.selection__account_export_moveline__journal_type__cash
+msgid "Cash"
+msgstr "Espèce"
+
+#. module: export_compta
+#: model_terms:ir.ui.view,arch_db:export_compta.view_wizard_account_move_line
+msgid "Close"
+msgstr "Fermer"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__company_id
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__company_id
+msgid "Company"
+msgstr "Société"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_move_line__compte_tiers
+msgid "Compte tiers"
+msgstr "Compte tiers"
+
+#. module: export_compta
+#: model:ir.ui.menu,name:export_compta.menu_export_compta_configuration
+msgid "Configuration"
+msgstr ""
+
+#. module: export_compta
+#: model_terms:ir.ui.view,arch_db:export_compta.view_bank_inherit_res_partner
+msgid "Configuration SAGE"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.model,name:export_compta.model_res_partner
+msgid "Contact"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__content
+msgid "Content"
+msgstr "Contenu"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__create_uid
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__create_date
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__date
+msgid "Date"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__name
+msgid "Description"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_account__display_name
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__display_name
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__display_name
+#: model:ir.model.fields,field_description:export_compta.field_account_journal__display_name
+#: model:ir.model.fields,field_description:export_compta.field_account_move__display_name
+#: model:ir.model.fields,field_description:export_compta.field_account_move_line__display_name
+#: model:ir.model.fields,field_description:export_compta.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: export_compta
+#: model:ir.model.fields.selection,name:export_compta.selection__account_export_moveline__journal_type__general
+msgid "Divers"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__date_to
+msgid "End Date"
+msgstr "Date de fin"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_bank_statement_line__export_id
+#: model:ir.model.fields,field_description:export_compta.field_account_move__export_id
+#: model:ir.model.fields,field_description:export_compta.field_account_move_line__export_id
+#: model:ir.model.fields,field_description:export_compta.field_account_payment__export_id
+#: model:ir.ui.menu,name:export_compta.menu_export_compta_export
+#: model_terms:ir.ui.view,arch_db:export_compta.view_wizard_account_move_line
+msgid "Export"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.ui.menu,name:export_compta.menu_export_history
+msgid "Export History"
+msgstr "Historique des exports"
+
+#. module: export_compta
+#: model:ir.model,name:export_compta.model_account_export_history
+#: model_terms:ir.ui.view,arch_db:export_compta.account_export_history_form
+#: model_terms:ir.ui.view,arch_db:export_compta.account_export_history_tree
+msgid "Export history"
+msgstr "Historique des exports"
+
+#. module: export_compta
+#: model:ir.actions.act_window,name:export_compta.action_wizard_account_move_line
+#: model:ir.ui.menu,name:export_compta.menu_wizard_account_move_line
+msgid "Export move line"
+msgstr "Export des écritures"
+
+#. module: export_compta
+#: model:ir.model,name:export_compta.model_account_export_moveline
+msgid "Export move line."
+msgstr "Export des écritures"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__attachment_id
+msgid "File"
+msgstr "Fichier"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__attachment_datas
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__attachment_datas
+msgid "File Content (base64)"
+msgstr "Contenu du fichier"
+
+#. module: export_compta
+#: model:ir.actions.act_window,name:export_compta.action_account_export_history
+msgid "Historique Export"
+msgstr "Historique des exports"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_account__id
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__id
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__id
+#: model:ir.model.fields,field_description:export_compta.field_account_journal__id
+#: model:ir.model.fields,field_description:export_compta.field_account_move__id
+#: model:ir.model.fields,field_description:export_compta.field_account_move_line__id
+#: model:ir.model.fields,field_description:export_compta.field_res_partner__id
+msgid "ID"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.ui.menu,name:export_compta.menu_export_compta_import
+msgid "Import"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.actions.act_window,name:export_compta.action_journal_export_compta
+#: model:ir.model,name:export_compta.model_account_journal
+#: model:ir.ui.menu,name:export_compta.menu_journal_export_compta
+msgid "Journal"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.model,name:export_compta.model_account_move
+msgid "Journal Entry"
+msgstr "Pièce comptable"
+
+#. module: export_compta
+#: model:ir.model,name:export_compta.model_account_move_line
+msgid "Journal Item"
+msgstr "Écriture comptable"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__journal_type
+msgid "Journal type"
+msgstr "Type de journal"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_account____last_update
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history____last_update
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline____last_update
+#: model:ir.model.fields,field_description:export_compta.field_account_journal____last_update
+#: model:ir.model.fields,field_description:export_compta.field_account_move____last_update
+#: model:ir.model.fields,field_description:export_compta.field_account_move_line____last_update
+#: model:ir.model.fields,field_description:export_compta.field_res_partner____last_update
+msgid "Last Modified on"
+msgstr "Dernière modification le"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__write_uid
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__write_uid
+msgid "Last Updated by"
+msgstr "Dernière modification le"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__write_date
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__write_date
+msgid "Last Updated on"
+msgstr "Dernière modification le"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__content
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__message
+msgid "Message"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_history__attachment_name
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__attachment_name
+#: model_terms:ir.ui.view,arch_db:export_compta.view_partner_export_compta
+msgid "Name"
+msgstr "Nom"
+
+#. module: export_compta
+#: model:ir.actions.act_window,name:export_compta.action_partner_export_compta
+#: model:ir.ui.menu,name:export_compta.menu_partner_export_compta
+msgid "Partner"
+msgstr "Client/fournisseur"
+
+#. module: export_compta
+#: model:ir.model.fields.selection,name:export_compta.selection__account_export_moveline__journal_type__purchase
+msgid "Purchase"
+msgstr "Achat"
+
+#. module: export_compta
+#: model:ir.ui.menu,name:export_compta.menu_export_compta
+msgid "SAGE"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_account__export_code
+#: model:ir.model.fields,field_description:export_compta.field_account_journal__export_code
+msgid "SAGE code"
+msgstr "Code SAGE"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_res_partner__third_account_customer
+#: model:ir.model.fields,field_description:export_compta.field_res_users__third_account_customer
+msgid "SAGE compte tiers client"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_res_partner__third_account_supplier
+#: model:ir.model.fields,field_description:export_compta.field_res_users__third_account_supplier
+msgid "SAGE compte tiers fournisseur"
+msgstr ""
+
+#. module: export_compta
+#: model:ir.model.fields.selection,name:export_compta.selection__account_export_moveline__journal_type__sale
+msgid "Sales"
+msgstr "Ventes"
+
+#. module: export_compta
+#: model:ir.model.fields,field_description:export_compta.field_account_export_moveline__date_from
+msgid "Start Date"
+msgstr "Date de début"
+
+#. module: export_compta
+#: code:addons/export_compta/wizard/format_sap.py:0
+#, python-format
+msgid "There is no Partner code SAP (move.line.id: %d): %s"
+msgstr "Il n'y a pas de code tiers (move.line.id: %d): %s"
+
+#. module: export_compta
+#: code:addons/export_compta/wizard/format_sap.py:0
+#, python-format
+msgid "There is no account key SAP (move.id: %d) when trying to export"
+msgstr "Il n'y a pas de clef de compte pour l'export (move.id: %d)"
+
+#. module: export_compta
+#: code:addons/export_compta/models/account_move.py:0
+#, python-format
+msgid ""
+"This list of account do not have export code. Please, complete the "
+"configuration:\n"
+msgstr "Cette liste de comptes généraux n'a pas de correspondance de compte pour l'export. Merci de la completer"
+
+#. module: export_compta
+#: code:addons/export_compta/models/account_move.py:0
+#, python-format
+msgid ""
+"This list of partner have no tiers account. Please, complete the "
+"configuration:\n"
+msgstr "Cette liste de clients ou de fournisseurs n'a pas de compte Tiers de configurés pour l'export. Merci de completer la configuration"
+
+#. module: export_compta
+#: code:addons/export_compta/wizard/format_sap.py:0
+#, python-format
+msgid "This taxes has no SAP code to export"
+msgstr "Cette taxe n'a pas de code pour l'export"
+
+#. module: export_compta
+#: code:addons/export_compta/wizard/format_sap.py:0
+#, python-format
+msgid "Too many taxes for account move (id: %d) trying to export"
+msgstr "Trop de taxes sont affectées sur cette pièce comptable (id: %d), elle ne peut pas être exportée"
+
+#. module: export_compta
+#: model:ir.actions.act_window,name:export_compta.action_account_export_compta
+#: model:ir.ui.menu,name:export_compta.menu_account_export_compta
+msgid "account"
+msgstr "compte"
+
+#. module: export_compta
+#: model_terms:ir.ui.view,arch_db:export_compta.view_wizard_account_move_line
+msgid "export"
+msgstr ""

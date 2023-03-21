@@ -103,7 +103,10 @@ class WmsScenarioStep(models.Model):
             return res
 
         scan = self.get_scanner_response()
-        if not scan:
+
+        if not (scan and data):
+            pass
+        elif not scan:
             data['warning'] = _('The barcode is empty')
         elif not action_variable:
             data['warning'] = _('This scenario is currently under construction.'
