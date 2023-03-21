@@ -6,6 +6,7 @@
     'version': '16.0.1',
     'category': 'Base',
     'summary': 'WMS packaging and UOS',
+'license': 'AGPL-3',
     'description': """
 This module contains the customization packaging
 

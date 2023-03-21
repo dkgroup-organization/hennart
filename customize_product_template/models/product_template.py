@@ -1,42 +1,44 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-# For copyright and license notices, see __openerp__.py file in module root
-# directory
-##############################################################################
 
 
-from odoo import api, fields, models, _, Command
-from odoo.addons.base.models.decimal_precision import DecimalPrecision
+from odoo import api, fields, models, _
 
 
-class Product_area(models.Model):
+class ProductArea(models.Model):
     _name = 'product.area'
+    _description = "Geographical area"
     name = fields.Char(string='Name', required=True, translate=True)
-    
-class Product_allergen(models.Model):
+
+
+class ProductAllergen(models.Model):
     _name = 'product.allergen'
+    _description = "Allergenic component "
     name = fields.Char(string='Name', required=True, translate=True)
-    
-class Product_ingredient(models.Model):
+
+
+class ProductIngredient(models.Model):
     _name = 'product.ingredient'
+    _description = "Ingredient"
     name = fields.Char(string='Name', required=True, translate=True)
-    
-class Product_specificity(models.Model):
+
+
+class ProductSpecificity(models.Model):
     _name = 'product.specificity'
+    _description = "Spécificity"
     name = fields.Char(string='Name', required=True, translate=True)
     
     
-class Product_tempalte(models.Model):
+class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     code_ean_prix = fields.Char('Code EAN Prix', size=12)
     code_ean_poids = fields.Char('Code EAN Poids', size=12)
     code_DUN14 = fields.Char('Code DUN14', size=14)
     not_solded = fields.Boolean(string='No longer sold')
-    origine = fields.Char('Origine', size=128, select=True)
+    origine = fields.Char('Origin', size=128)
     area = fields.Many2one(string='Area', comodel_name='product.area')
     ingredient = fields.Many2many('product.ingredient', 'ingredient_rel', string="Ingredient")
-    allergen = fields.Many2many( 'product.allergen', 'allereg_reel',string="Allergen" )
+    allergen = fields.Many2many('product.allergen', 'allereg_reel', string="Allergen" )
     production_specificity = fields.Many2many('product.specificity','specifit_reel', string="Production specifity",
                                               help='define some spécificity like OGM, IGP, farmer, presence of GMO')
     specificity_milk = fields.Selection(
@@ -112,13 +114,13 @@ class Product_tempalte(models.Model):
     use_date = fields.Boolean(string='DDM : Best before Date')
 
     # volume = fields.Float(string='Volume',help='The volume in m3')
-    to_weight = fields.Boolean(string='a peser')
-    tare = fields.Float(string='Tare',help='Tare')
+    to_weight = fields.Boolean(string='to weight')
+    tare = fields.Float(string='Tare', help='Tare')
     weight_net = fields.Float(string='Net Weight',help='The net weight in Kg.')
-    format_etiquette =  fields.Char('Format d\'etiquette', size=128,select=True)
-    to_label = fields.Boolean(string='a etiqueter')
-    gestion_affinage = fields.Boolean(string='Gestion de l affinage')
-    to_personnalize = fields.Boolean(string='Specifique au client')
+    format_etiquette =  fields.Char('Format d\'etiquette', size=128)
+    to_label = fields.Boolean(string='to label')
+    gestion_affinage = fields.Boolean(string='Refining management')
+    to_personnalize = fields.Boolean(string='Customer specifity')
 
 
 

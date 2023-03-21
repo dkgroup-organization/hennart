@@ -31,6 +31,7 @@ class Quality(models.Model):
     _description = "Qualité"
     name = fields.Char(string="Name", required=True)
 
+
 class Preparation(models.Model):
     _name = "preparation.claim"
     _description = "Préparation"
@@ -42,16 +43,17 @@ class avaris_trans(models.Model):
     _description = "Avaris Transport"
     name = fields.Char(string="Name", required=True)
 
+
 class saisie_cmde(models.Model):
     _name = "saisie.claim"
     _description = "saisie de Commande"
     name = fields.Char(string="Name", required=True)
 
+
 class diverss(models.Model):
     _name = "divers.claim"
     _description = "Divers"
     name = fields.Char(string="Name", required=True)
-
 
 
 class CrmClaim(models.Model):

@@ -5,6 +5,7 @@
     "version" : "16.0",
     "depends": ["delivery", "sale"],
     "author" : "Abdelghani KHALIDI DK Group",
+    'license': 'AGPL-3',
     "description": """
     smiley costumer:
     """,

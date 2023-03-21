@@ -6,6 +6,7 @@
     'version': '16.0.1',
     'category': 'Base',
     'summary': 'product packaging and UOS',
+    "license": "AGPL-3",
     'description': """
 This module contains the customization packaging and uos management.
 secondary Unit of sale is used to invoice in kg.

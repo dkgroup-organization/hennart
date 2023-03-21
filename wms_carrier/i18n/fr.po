@@ -1,14 +1,14 @@
-# Translation of OpenERP Server.
+# Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* wms_carrier
+# 	* wms_carrier
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenERP Server 7.0\n"
+"Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-03 10:13+0000\n"
-"PO-Revision-Date: 2016-10-03 10:13+0000\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2023-03-21 12:00+0000\n"
+"PO-Revision-Date: 2023-03-21 12:00+0000\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,284 +16,440 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: wms_carrier
-#: selection:delivery.carrier.order,state:0
+#: model:ir.actions.report,print_report_name:wms_carrier.action_report_delivery_carrier_order
+msgid "'Bon de Transport - %s' % (object.name)"
+msgstr ""
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid ""
+"<br/>\n"
+"                      europe:"
+msgstr ""
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid ""
+"<br/>\n"
+"                   Heure de départ:\n"
+"                     <br/>"
+msgstr ""
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid ""
+"<br/>\n"
+"                   Température:"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Adresse"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields.selection,name:wms_carrier.selection__delivery_carrier_order__state__assigned
 msgid "Available"
-msgstr "Disponible"
+msgstr ""
 
 #. module: wms_carrier
-#: selection:delivery.carrier.order,state:0
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Bon de livraison"
+msgstr ""
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Bon de transport"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields.selection,name:wms_carrier.selection__delivery_carrier_order__state__cancel
 msgid "Cancelled"
-msgstr "Annuler"
+msgstr ""
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,carrier_id:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__carrier_id
 msgid "Carrier"
-msgstr "Transporteur"
+msgstr ""
 
 #. module: wms_carrier
-#: code:_description:0
-#: view:delivery.carrier.order:0
+#: model:ir.actions.report,name:wms_carrier.action_report_delivery_carrier_order
 #: model:ir.model,name:wms_carrier.model_delivery_carrier_order
-#, python-format
+#: model_terms:ir.ui.view,arch_db:wms_carrier.delivery_carrier_order_form_view
+#: model_terms:ir.ui.view,arch_db:wms_carrier.delivery_carrier_order_tree_view
 msgid "Carrier Order"
 msgstr "Bon de transport"
 
 #. module: wms_carrier
 #: model:ir.actions.act_window,name:wms_carrier.delivery_carrier_order_action
+#: model:ir.model.fields,field_description:wms_carrier.field_stock_picking__carrier_order_id
 #: model:ir.ui.menu,name:wms_carrier.delivery_carrier_order_menu
-#: field:stock.picking,carrier_order_id:0
-#: field:stock.picking.out,carrier_order_id:0
 msgid "Carrier order"
 msgstr "Bon de transport"
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,note:0
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Colis"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__note
 msgid "Comment"
-msgstr "Commentaire"
+msgstr ""
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,content:0
-msgid "Content of export"
-msgstr "Contenu du fichier EDI"
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Container"
+msgstr ""
 
 #. module: wms_carrier
-#: help:delivery.carrier.order,date_expected:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,help:wms_carrier.field_delivery_carrier_order__date_expected
 msgid "Date"
-msgstr "Date"
+msgstr ""
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,date_expected:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__date_delivered
+msgid "Date Delivered"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__date_expected2
+msgid "Date Expected2"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__date_expected
 msgid "Date expected"
-msgstr "Date prévue"
+msgstr ""
 
 #. module: wms_carrier
-#: help:delivery.carrier.order,date_done:0
+#: model:ir.model.fields,help:wms_carrier.field_delivery_carrier_order__date_done
 msgid "Date of Completion"
-msgstr "Date de réalisation"
+msgstr ""
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,date_done:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__date_done
 msgid "Date of Transfer"
-msgstr "Date du transfert"
+msgstr ""
 
 #. module: wms_carrier
-#: view:delivery.carrier.order:0
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Date:"
+msgstr ""
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.delivery_carrier_order_form_view
 msgid "Delivery Information"
-msgstr "Information"
+msgstr ""
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,picking_ids:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__picking_ids
 msgid "Delivery Order"
-msgstr "Bon de livraison"
+msgstr ""
 
 #. module: wms_carrier
-#: code:_description:0
-#: model:ir.model,name:wms_carrier.model_stock_picking_out
-#, python-format
-msgid "Delivery Orders"
-msgstr "Bons de livraisons"
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__display_name
+msgid "Display Name"
+msgstr ""
 
 #. module: wms_carrier
-#: view:delivery.carrier.order:0
-#: selection:delivery.carrier.order,state:0
+#: model:ir.model.fields.selection,name:wms_carrier.selection__delivery_carrier_order__state__done
+#: model_terms:ir.ui.view,arch_db:wms_carrier.delivery_carrier_order_form_view
 msgid "Done"
-msgstr "Terminé"
+msgstr ""
 
 #. module: wms_carrier
-#: selection:delivery.carrier.order,state:0
+#: model:ir.model.fields.selection,name:wms_carrier.selection__delivery_carrier_order__state__draft
 msgid "Draft"
-msgstr "Brouillion"
+msgstr ""
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,driver_name:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__driver_name
 msgid "Driver name"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__edi_done
+msgid "EDI Already sending"
+msgstr ""
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.delivery_carrier_order_form_view
+msgid "Export"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__hour_expected
+msgid "Hour expected"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__id
+msgid "ID"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,help:wms_carrier.field_delivery_carrier_order__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,help:wms_carrier.field_delivery_carrier_order__message_has_error
+#: model:ir.model.fields,help:wms_carrier.field_delivery_carrier_order__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__message_main_attachment_id
+msgid "Main Attachment"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Nb Palettes prises:"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_stock_picking__nb_pallet_perdu
+msgid "Nb Pallets Perdu"
+msgstr "Nb palette perdues"
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__nb_pallet_perdu
+msgid "Nb Pallets Perdus"
+msgstr "Nb palettes perdues"
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_stock_picking__nb_pallet_europe
+msgid "Nb Pallets europe"
+msgstr "Nb palettes europes"
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__nb_pallet_europe
+msgid "Nb Pallets europes"
+msgstr "Nb palettes europes"
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__nb_pallet_ground
+msgid "Nb Pallets on Ground"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__nb_container
+msgid "Nb container"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__nb_line
+msgid "Nb line"
+msgstr "Nb ligne"
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__number_of_packages
+#: model:ir.model.fields,field_description:wms_carrier.field_stock_picking__number_of_packages
+msgid "Nb packages"
+msgstr ""
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Nb palettes au sol:"
+msgstr ""
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid ""
+"Nb palettes ramenées:\n"
+"                       \n"
+"                      <br/>\n"
+"                      perdu:"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__nb_pallet
+msgid "Nb pallet"
+msgstr "Nb palette"
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__nb_picking
+msgid "Nb picking"
+msgstr "Nombre de bon de livraison"
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Nom du chauffeur:"
 msgstr "Nom du chauffeur"
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,edi_done:0
-msgid "EDI Already sending"
-msgstr "EDI envoyé"
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
 
 #. module: wms_carrier
-#: view:delivery.carrier.order:0
-msgid "Export"
-msgstr "Export EDI"
-
-#. module: wms_carrier
-#: view:delivery.carrier.order:0
-msgid "Export Information"
-msgstr "Information"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,message_follower_ids:0
-msgid "Followers"
-msgstr "Abonnés"
-
-#. module: wms_carrier
-#: help:delivery.carrier.order,message_summary:0
-msgid "Holds the Chatter summary (number of messages, ...). This summary is directly in html format in order to be inserted in kanban views."
-msgstr "Résumé."
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,hour_expected:0
-msgid "Hour expected"
-msgstr "Heure prévue"
-
-#. module: wms_carrier
-#: help:delivery.carrier.order,message_unread:0
-msgid "If checked new messages require your attention."
-msgstr "Si coché, ce message requière votre attention."
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,message_is_follower:0
-msgid "Is a Follower"
-msgstr "Abonnés"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,message_ids:0
-msgid "Messages"
-msgstr "Messages"
-
-#. module: wms_carrier
-#: help:delivery.carrier.order,message_ids:0
-msgid "Messages and communication history"
-msgstr "Messages et historique des communications"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,nb_pallet_in:0
-msgid "Nb Pallets In"
-msgstr "Nb Palettes Ramenées"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,nb_pallet_out:0
-msgid "Nb Pallets Out"
-msgstr "Nb Palettes prises"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,nb_pallet_ground:0
-msgid "Nb Pallets on Ground"
-msgstr "Nb Palettes au sol"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,nb_container:0
-msgid "Nb container"
-msgstr "Nb containers"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,nb_line:0
-msgid "Nb line"
-msgstr "Nb lignes"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,number_of_packages:0
-msgid "Nb packages"
-msgstr "Nb Colis"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,nb_pallet:0
-msgid "Nb pallet"
-msgstr "Nb pallet"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,nb_picking:0
-msgid "Nb picking"
-msgstr "Nb de Bon de livraison"
-
-#. module: wms_carrier
-#: field:stock.picking.out,nb_container:0
+#: model:ir.model.fields,field_description:wms_carrier.field_stock_picking__nb_container
 msgid "Number of container"
-msgstr "Nb de containers"
+msgstr ""
 
 #. module: wms_carrier
-#: field:stock.picking,nb_pallet:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,help:wms_carrier.field_delivery_carrier_order__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,help:wms_carrier.field_delivery_carrier_order__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_stock_picking__nb_pallet
 msgid "Number of palet"
-msgstr "Nb de palettes"
+msgstr "Nombre de palette"
 
 #. module: wms_carrier
-#: field:stock.picking.out,nb_pallet:0
-msgid "Number of pallet"
-msgstr "Nb de palettes"
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Palette"
+msgstr ""
 
 #. module: wms_carrier
-#: view:delivery.carrier.order:0
+#: model_terms:ir.ui.view,arch_db:wms_carrier.delivery_carrier_order_form_view
 msgid "Picking"
-msgstr "Bons de livraison"
+msgstr ""
 
 #. module: wms_carrier
-#: code:_description:0
-#: model:ir.model,name:wms_carrier.model_stock_picking
-#, python-format
-msgid "Picking List"
-msgstr "Opération de manutention"
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Poids:"
+msgstr ""
 
 #. module: wms_carrier
-#: view:delivery.carrier.order:0
-msgid "Send EDI"
-msgstr "Envoie EDI"
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Pois"
+msgstr "Poids"
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,state:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: wms_carrier
+#: model_terms:ir.ui.view,arch_db:wms_carrier.report_delivery_carrier_order
+msgid "Signature"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__state
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,message_summary:0
-msgid "Summary"
-msgstr "Résumé"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,temperature:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__temperature
 msgid "Temperature"
-msgstr "Temperature"
+msgstr ""
 
 #. module: wms_carrier
-#: view:delivery.carrier.order:0
+#: model_terms:ir.ui.view,arch_db:wms_carrier.delivery_carrier_order_form_view
 msgid "Total"
-msgstr "Total"
+msgstr ""
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,message_unread:0
-msgid "Unread Messages"
-msgstr "Messages non lus"
+#: model:ir.model,name:wms_carrier.model_stock_picking
+msgid "Transfer"
+msgstr "Transfert"
 
 #. module: wms_carrier
-#: selection:delivery.carrier.order,state:0
+#: model:ir.model.fields.selection,name:wms_carrier.selection__delivery_carrier_order__state__confirmed
 msgid "Waiting"
-msgstr "Attendre"
+msgstr "En attente"
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,warehouse_id:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__warehouse_id
 msgid "Warehouse"
 msgstr "Entrepôt"
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,weight:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,help:wms_carrier.field_delivery_carrier_order__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: wms_carrier
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__weight
 msgid "Weight"
 msgstr "Poids"
 
 #. module: wms_carrier
-#: field:delivery.carrier.order,timeline_id:0
-msgid "day timeline"
-msgstr "Période"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,name:0
+#: model:ir.model.fields,field_description:wms_carrier.field_delivery_carrier_order__name
 msgid "description"
-msgstr "description"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,save_as:0
-#: field:delivery.carrier.order,save_name:0
-msgid "save as"
-msgstr "sauvegarder sous..."
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,date_delivered:0
-msgid "unknown"
-msgstr "Inconnu"
-
-#. module: wms_carrier
-#: field:delivery.carrier.order,week_id:0
-msgid "week timeline"
-msgstr "week timeline"
-
+msgstr ""

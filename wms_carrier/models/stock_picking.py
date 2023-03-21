@@ -1,17 +1,6 @@
 
-from odoo import models
-from odoo import fields ,api
-from odoo import _
-import openerp.addons.decimal_precision as dp
-from odoo import SUPERUSER_ID
-from odoo import netsvc
-import unicodedata
-import time
-import datetime
-from dateutil.relativedelta import relativedelta
-import pytz
-import base64
-import os
+from odoo import models, fields ,api
+
 
 class stock_picking(models.Model):
     _inherit = "stock.picking"

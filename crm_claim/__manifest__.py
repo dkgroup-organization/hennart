@@ -11,7 +11,7 @@
     "website": "https://github.com/OCA/crm",
     "license": "AGPL-3",
     "summary": "Track your customers/vendors claims and grievances.",
-    "depends": ["crm", "mail"],
+    "depends": ["sale", "account", "crm", "mail"],
     "data": [
         "security/ir.model.access.csv",
         "security/crm_claim_security.xml",
