@@ -38,7 +38,6 @@ class SaleOrderLine(models.Model):
                 else:
                     line.product_uos_qty = line.product_uom_qty
 
-
     def _convert_to_tax_base_line_dict(self):
         """ Convert the current record to a dictionary in order to use the generic taxes computation method
         defined on account.tax.

@@ -41,7 +41,6 @@ class WmsScenario(models.Model):
         comodel_name='wms.scenario.step',
         inverse_name='scenario_id',
         string='Scenario',
-        ondelete='cascade',
         help='Step of the scenario.')
     warehouse_ids = fields.Many2many(
         comodel_name='stock.warehouse',
@@ -58,7 +57,6 @@ class WmsScenario(models.Model):
         string='Company',
         required=True,
         default=lambda self: self.env.user.company_id.id,
-        ondelete='restrict',
         help='Company to be used on this scenario.')
     group_ids = fields.Many2many(
         comodel_name='res.groups',

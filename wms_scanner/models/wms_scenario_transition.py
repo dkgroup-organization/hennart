@@ -26,19 +26,16 @@ class ScannerScenarioTransition(models.Model):
     sequence = fields.Integer(
         string='Sequence',
         default=0,
-        required=False,
         help='Sequence order.')
     from_id = fields.Many2one(
         comodel_name='wms.scenario.step',
         string='From',
         required=True,
-        ondelete='cascade',
         help='Step which launches this transition.')
     to_id = fields.Many2one(
         comodel_name='wms.scenario.step',
         string='To',
         required=True,
-        ondelete='cascade',
         help='Step which is reached by this transition.')
     condition = fields.Char(
         string='Condition',
@@ -52,6 +49,5 @@ class ScannerScenarioTransition(models.Model):
         required=False,
         related="from_id.scenario_id",
         store=True,
-        ondelete='cascade',
         readonly=True)
 

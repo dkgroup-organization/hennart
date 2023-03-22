@@ -1,17 +1,9 @@
 
-from odoo import models
-from odoo import fields ,api
-from odoo import _
-import openerp.addons.decimal_precision as dp
-from odoo import SUPERUSER_ID
-from odoo import netsvc
-import unicodedata
+
+from odoo import models, fields ,api, _
 import time
 import datetime
-from dateutil.relativedelta import relativedelta
-import pytz
-import base64
-import os
+
 
 class delivery_carrier_order(models.Model):
 
@@ -115,10 +107,10 @@ class delivery_carrier_order(models.Model):
     edi_done = fields.Boolean('EDI Already sending')
     carrier_id = fields.Many2one("delivery.carrier", "Carrier")
     date_done = fields.Datetime('Date of Transfer', index=True, help="Date of Completion")
-    date_expected = fields.Datetime('Date expected', index=True, help="Date", widget="date", readonly=True)
-    date_delivered = fields.Date(compute="_update_info", method=True )
+    date_expected = fields.Datetime('Date expected', index=True, help="Date", readonly=True)
+    date_delivered = fields.Date(compute="_update_info")
     date_expected2 = fields.Date(compute="compute_date_exep", store=True )
-    hour_expected = fields.Float('Hour expected', widget="float_time")
+    hour_expected = fields.Float('Hour expected')
     name = fields.Char('description')
     warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse', required=True, states={'done': [('readonly', True)]})
     picking_ids = fields.One2many('stock.picking', 'carrier_order_id', 'Delivery Order')
@@ -131,7 +123,7 @@ class delivery_carrier_order(models.Model):
                         ], 'Status', index=True)
 
   
-    weight = fields.Float(compute="_update_info", string='Weight', digits=dp.get_precision('Stock Weight'))
+    weight = fields.Float(compute="_update_info", string='Weight')
     nb_line = fields.Integer(compute="_update_info", string='Nb line',)
     nb_picking = fields.Integer(compute="_update_info", string='Nb picking',)
     number_of_packages = fields.Integer(compute="_update_info", string='Nb packages')

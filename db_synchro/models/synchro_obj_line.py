@@ -75,5 +75,5 @@ class BaseSynchroObjLine(models.Model):
         for obj in list(group_obj.keys()):
             remote_values = obj.remote_read(group_obj[obj])
             obj.write_local_value(remote_values)
-
+            #_logger.info('synchro:\n%s' % remote_values)
 
