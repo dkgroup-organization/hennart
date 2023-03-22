@@ -1,22 +1,14 @@
 
 
-import openerp.addons.decimal_precision as dp
-from odoo import SUPERUSER_ID
-from odoo import netsvc
-import unicodedata
-import time
+
 import datetime
-from dateutil.relativedelta import relativedelta
-import pytz
-import base64
-from odoo import api,fields,models,_
-import odoo.addons.decimal_precision as dp
+from odoo import api, fields, models, _
+
 from datetime import date
 from datetime import datetime
-import time
 
 
-class res_partner(models.Model):
+class ResPartner(models.Model):
     _inherit = "res.partner"
 
 
@@ -27,7 +19,6 @@ class res_partner(models.Model):
         current_date = str(today_date)
 
         for partner in self:
-
             partner.late_paiement = 0
             if partner.is_company:
                  if partner.invoice_ids: 
@@ -37,6 +28,7 @@ class res_partner(models.Model):
                         delay = int((today_date - invoice_id.invoice_date_due).days)
                         if partner.late_paiement < delay:
                             partner.late_paiement = delay
+
     @api.depends('late_paiement')
     def _image_late_paiement(self):
         for partner in self:
@@ -48,25 +40,16 @@ class res_partner(models.Model):
             if not param_customer_ids:
                 partner.image_late_paiement = False
             else:
-                    image_late_paiement_obj = self.env['images.easy.sale'].search([(1,'=',1)],limit=1)
+                image_late_paiement_obj = self.env['images.easy.sale'].search([(1,'=',1)],limit=1)
 
-                    if param_customer_ids.level == 'red':
-                        partner.image_late_paiement = image_late_paiement_obj.image_light_red
-                    elif param_customer_ids.level == 'orange':
-                        partner.image_late_paiement = image_late_paiement_obj.image_light_orange
-                    else:
-                        partner.image_late_paiement = image_late_paiement_obj.image_light_green
+                if param_customer_ids.level == 'red':
+                    partner.image_late_paiement = image_late_paiement_obj.image_light_red
+                elif param_customer_ids.level == 'orange':
+                    partner.image_late_paiement = image_late_paiement_obj.image_light_orange
+                else:
+                    partner.image_late_paiement = image_late_paiement_obj.image_light_green
 
     image_late_paiement = fields.Binary(compute="_image_late_paiement", string='Image for late paiement')
     late_paiement = fields.Integer(compute="_update_info", string='Late paiement',store=True)
-
-
-
-
-
-class sale_order(models.Model):
-    _inherit = "sale.order"
-
-    image_late = fields.Binary(related="partner_id.image_late_paiement", string='Image for late paiement')
 
 
