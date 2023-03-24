@@ -2,7 +2,7 @@
 
 import time
 import logging
-# import threading
+import datetime
 from odoo import api, fields, models
 from odoo.models import MAGIC_COLUMNS
 from . import odoo_proxy
@@ -221,11 +221,10 @@ class BaseSynchroObj(models.Model):
             remote_values = obj.remote_read(remote_ids)
             if obj.model_id.model == 'product.product':
                 obj.load_remote_product(remote_values)
+            elif obj.model_id.model == 'product.template':
+                obj.load_remote_product_template(remote_values)
             else:
                 obj.write_local_value(remote_values)
-
-            if obj.model_id.model == 'product.template':
-                obj.load_remote_product_template(remote_values)
 
             obj.synchronize_date = fields.Datetime.now()
 
@@ -349,14 +348,14 @@ class BaseSynchroObj(models.Model):
         remote_ids = remote_obj.search(remote_domain + domain)
         return remote_ids
 
-    def read_groupby_ids(self, groupby_field, groupby_domain=[]):
+    def read_groupby_ids(self, groupby_field, groupby_groupby=[], groupby_domain=[]):
         "Return list of remote ids by domain filter"
         self.ensure_one()
         remote_odoo = odoo_proxy.RPCProxy(self.server_id)
         remote_obj = remote_odoo.get(self.model_name)
         remote_domain = eval(self.domain) + groupby_domain
 
-        read_groupby = remote_obj.read_group(remote_domain, [groupby_field], [groupby_field])
+        read_groupby = remote_obj.read_group(remote_domain, [groupby_field], [groupby_groupby])
         response = []
         for item in read_groupby:
             if item.get(groupby_field):
@@ -645,27 +644,70 @@ class BaseSynchroObj(models.Model):
         line_ids = self.env['synchro.obj.line'].search([('obj_id', '=', self.id)])
         return line_ids.mapped('remote_id')
 
-    def update_synchronize_date(self):
-        """ Update the value of synchronize date"""
-        for obj in self:
-            condition = [('error', '=', False), ('obj_id', '=', obj.id)]
-            line_ids = obj.line_id.search(condition, limit=1, order='update_date')
-            if line_ids:
-                obj.synchronize_date = line_ids[0].update_date
+    def update_remote_write_date(self, limit=10000):
+        """ approximate last remote write, used for the old import """
+        now = fields.Datetime.now()
 
-    def update_line(self):
-        """ Update the values by checking write_date on remote object"""
-        self.update_synchronize_date()
-        new_date = fields.Datetime.now()
+        def remove_write_date_under(obj, last_date, remote_ids):
+            """ Check write"""
+            write_date = last_date.strftime('%Y-%m-%d %H:%M:00')
+            remote_update_ids = obj.remote_search([('id', 'in', remote_ids), ('write_date', '<', write_date)])
+            condition_update = [('remote_id', 'in', remote_update_ids), ('obj_id', '=', obj.id)]
+            line_ids = obj.line_id.search(condition_update)
+            line_ids.write({'remote_write_date': write_date})
+            return list(set(remote_ids) - set(remote_update_ids))
+
         for obj in self:
-            condition = [('write_date', '>', obj.synchronize_date)]
-            last_obj_writing_ids = obj.remote_search(condition)
-            for line in obj.line_id:
-                if line.remote_id not in last_obj_writing_ids:
-                    line.update_date = new_date
-                elif obj.auto_update:
+            condition = [('remote_write_date', '=', False), ('remote_id', '!=', 0), ('obj_id', '=', obj.id)]
+
+            remote_ids = obj.line_id.search(condition, limit=limit).mapped('remote_id')
+            for nb_day in [360, 180, 60, 30, 14, 7, 2, 1]:
+                if not remote_ids:
+                    break
+                last_date = now - datetime.timedelta(days=nb_day)
+                remote_ids = remove_write_date_under(obj, last_date, remote_ids)
+
+            for hour in [12, 6, 2, 1]:
+                if not remote_ids:
+                    break
+                last_date = now - datetime.timedelta(hours=hour)
+                remote_ids = remove_write_date_under(obj, last_date, remote_ids)
+
+    def get_last_update(self, delta_min=10, delta_max=60, limit=50):
+        """ scan last hours modification, wait delta_max minute before update"""
+        self.update_remote_write_date()
+        date_now = fields.Datetime.now()
+        date_max = date_now - datetime.timedelta(minutes=delta_max)
+        date_min = date_now - datetime.timedelta(minutes=delta_min)
+
+        for obj in self:
+            write_date_max = date_max.strftime('%Y-%m-%d %H:%M:00')
+            write_date_min = date_min.strftime('%Y-%m-%d %H:%M:00')
+            remote_update_ids = obj.remote_search([('write_date', '>', write_date_max),
+                                                   ('write_date', '<', write_date_min)])
+            for remote_id in remote_update_ids:
+                local_id = obj.get_local_id(remote_id)
+
+                if local_id:
+                    line_ids = self.env['synchro.obj.line'].search(
+                        [('obj_id', '=', obj.id), ('local_id', '=', local_id)])
+                    line = line_ids[0]
+                    if not line.remote_write_date:
+                        line.remote_write_date = line.update_date.replace(second=0, microsecond=0)
+                    elif line.remote_write_date < date_min:
+                        line.remote_write_date = date_min
+
+            # Update past delta_max
+            sql = "select id from synchro_obj_line where obj_id = %s and remote_write_date > update_date" % obj.id
+            self.env.cr.execute(sql)
+            result_sql = self.env.cr.fetchall()
+            if len(result_sql) > limit:
+                result_sql = result_sql[:50]
+
+            for row in result_sql:
+                line_id = row[0]
+                line = self.env['synchro.obj.line'].browse(line_id)
+                if line.remote_write_date > line.update_date and line.remote_write_date < date_max:
                     line.update_values()
-        self.update_synchronize_date()
-
-
-
+                    print('----------', line.description)
+                    line.remote_write_date = line.update_date.replace(second=0, microsecond=0)

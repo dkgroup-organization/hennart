@@ -74,8 +74,8 @@
 		            Auto Refresh (<span t-out="interval"/> Seconds)
 		        </t>
 		        <t t-else="">
-		        	<p class="m-0">Single Click: Refresh View</li>
-	        		<p class="m-0">Double Click: Auto Refresh</li>
+		        	<li class="m-0">Single Click: Refresh View</li>
+	        		<li class="m-0">Double Click: Auto Refresh</li>
 		        </t>
             </p>
             <p t-else="" class="m-0">
