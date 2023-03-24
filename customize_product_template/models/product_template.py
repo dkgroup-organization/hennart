@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models, tools, _
 
 
 class ProductArea(models.Model):
@@ -31,6 +31,13 @@ class ProductSpecificity(models.Model):
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
+    @tools.ormcache()
+    def _get_default_uos_id(self):
+        return self.env.ref('uom.product_uom_unit')
+
+    uos_id = fields.Many2one('uom.uom', string='Unit of Sale',
+                             default=_get_default_uos_id, required=True,
+                             help="Default unit of Sale used for invoicing.")
     code_ean_prix = fields.Char('Code EAN Prix', size=12)
     code_ean_poids = fields.Char('Code EAN Poids', size=12)
     code_DUN14 = fields.Char('Code DUN14', size=14)
@@ -116,11 +123,16 @@ class ProductTemplate(models.Model):
     # volume = fields.Float(string='Volume',help='The volume in m3')
     to_weight = fields.Boolean(string='to weight')
     tare = fields.Float(string='Tare', help='Tare')
-    weight_net = fields.Float(string='Net Weight',help='The net weight in Kg.')
+    weight_gross = fields.Float(string='Gross Weight',help='The gross weight in Kg.')
     format_etiquette =  fields.Char('Format d\'etiquette', size=128)
     to_label = fields.Boolean(string='to label')
     gestion_affinage = fields.Boolean(string='Refining management')
     to_personnalize = fields.Boolean(string='Customer specifity')
+
+    # WEB description
+    web_historic = fields.Html('Historic')
+    web_manufacture = fields.Html('Manufacture')
+    web_tasting = fields.Html('Tasting')
 
 
 

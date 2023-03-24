@@ -7,21 +7,64 @@
             <field name="priority">20</field>
             <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="arch" type="xml">
-                <field name="categ_id" position="after">
-                    <field name="code_ean_prix"/>
-                    <field name="code_ean_poids"/>
-                    <field name="code_DUN14"/>
-                </field>
 
-                <group name="sale" position="inside">
-                    <group>
-                        <field name="not_solded"/>
-                    </group>
-                </group>
-
-                <xpath expr="//group[@name='group_lots_and_weight']" position="attributes">
+                <page name="general_information" position="attributes">
                     <attribute name="invisible">1</attribute>
-                </xpath>
+                </page>
+
+                <div name="options" position="inside">
+                    <field name="default_code"/>
+                </div>
+                <div name="options" position="inside">
+                        <span class="d-inline-block">
+                            <field name="not_solded"/>
+                            <label for="not_solded"/>
+                        </span>
+                </div>
+
+                <page name="general_information" position="before">
+                    <page name="information" string="Information">
+                        <group>
+                            <group>
+                                <field name="uos_id"/>
+                                <field name="list_price"/>
+                                <field name="weight"/>
+                            </group>
+                            <group>
+                                <field name="type_milk"/>
+                                <field name="heat_treatment_milk"/>
+                                <field name="specificity_milk"/>
+                                <field name="origine"/>
+                            </group>
+                        </group>
+                        <group string="Description" name="web_description">
+                            <field name="web_historic"/>
+                            <field name="web_manufacture"/>
+                            <field name="web_tasting"/>
+                        </group>
+                        <group>
+                           <field name="ingredient" widget="many2many_tags"/>
+                            <field name="allergen" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="barcode"/>
+                                <field name="code_DUN14"/>
+                            </group>
+                            <group>
+                                <field name="code_ean_prix"/>
+                                <field name="code_ean_poids"/>
+                            </group>
+                        </group>
+
+
+
+
+
+
+                    </page>
+                </page>
+
 
                 <xpath expr="//group[@name='expiry_and_lots']" position="inside">
                     <field name="life_date"/>
@@ -34,7 +77,7 @@
                         <field name="to_weight"/>
                         <field name="tare"/>
                         <field name="weight"/>
-                        <field name="weight_net"/>
+                        <field name="weight_gross"/>
                     </group>
                 </xpath>
 
@@ -57,17 +100,10 @@
                     <page name="description" string="Description">
                         <group>
                             <group name="description33" string="Description">
-                                <field name="origine"/>
                                 <field name="area"/>
-                                <field name="ingredient" widget="many2many_tags"/>
-                                <field name="allergen" widget="many2many_tags"/>
                                 <field name="production_specificity" widget="many2many_tags"/>
-                                <field name="specificity_milk"/>
-                                <field name="heat_treatment_milk"/>
                                 <field name="rennet"/>
                                 <field name="salting"/>
-                                <field name="pate_molle"/>
-                                <field name="type_milk"/>
                             </group>
 
                             <group name="milk_fat" string="milk Fat">

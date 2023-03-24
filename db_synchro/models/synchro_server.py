@@ -1,9 +1,9 @@
 # See LICENSE file for full copyright and licensing details.
 
 import logging
-from odoo import api, fields, models
-from odoo.tools.translate import _
+from odoo import api, fields, models, _
 from . import synchro_data
+import datetime
 
 OPTIONS_OBJ = synchro_data.OPTIONS_OBJ
 
@@ -95,7 +95,8 @@ class BaseSynchroServer(models.Model):
                     ('server_id', '=', self.id)])
 
         if not obj_company_ids:
-            raise Warning(_('''There is no company to migrate. Please add one on mapping'''))
+            obj_company_ids = self.migrate_obj('res.company')
+            obj_company_ids.get_local_id(1)
 
         company_ids = []
         for obj in obj_company_ids:
@@ -179,59 +180,9 @@ class BaseSynchroServer(models.Model):
             obj_vals = partner_obj.remote_read(remote_child_ids)
             partner_obj.write_local_value(obj_vals)
 
-
-    def migrate_simple_product(self, remote_ids):
-        """ Migrate product with no variant"""
-        self.ensure_one()
-
-        product_obj = self.get_obj('product.product')
-        product_tmpl_obj = self.get_obj('product.template')
-
-        remote_values = product_obj.remote_read(remote_ids)
-
-        for remote_value in remote_values:
-
-            remote_tmpl_id = remote_value.get('product_tmpl_id')
-            remote_id = remote_value.get('id')
-
-            # Check if the product is already migrate
-            if product_obj.get_local_id(remote_id, no_create=True, no_search=True):
-                continue
-
-            # if not, create product
-            else:
-                product_tmpl_local_id = product_tmpl_obj.get_local_id(remote_tmpl_id[0])
-                product_tmpl_local = self.env['product.template'].browse(product_tmpl_local_id)
-
-                local_product_id = product_tmpl_local.product_variant_id.id
-
-                condition = [
-                    ('remote_id', '=', remote_id),
-                    ('obj_id', '=', product_obj.id)]
-                local_ids = self.env['synchro.obj.line'].search(condition)
-                if local_ids:
-                    if local_ids[0].local_id != local_product_id:
-                        local_ids[0].local_id = local_product_id
-                else:
-                    vals_line = {
-                        'obj_id': product_obj.id,
-                        'remote_id': remote_id,
-                        'local_id': local_product_id}
-                    local_ids.create(vals_line)
-
-                product_obj.write_local_value([remote_value])
-
-    def get_user_password(self):
-        """ test the password copy"""
-        for server in self:
-            user_obj = server.get_obj('res.users')
-            remote_ids = user_obj.get_synchronazed_remote_ids()
-            remote_values = user_obj.remote_read(remote_ids, remote_fields=['login', 'password'])
-
     @api.model
     def cron_migrate(self):
         """ Scheduled migration"""
-
         for server in self.search([]):
             obj_ids = server.obj_ids.search([('state', '=', 'synchronise')], order='sequence')
             for obj in obj_ids:
@@ -239,6 +190,14 @@ class BaseSynchroServer(models.Model):
                     server.migrate_partner()
                 else:
                     obj.load_remote_record()
+    @api.model
+    def cron_update(self):
+        """ Schedule update, check if older line have to be updated """
+        for server in self.search([]):
+            obj_ids = server.obj_ids.search([('state', 'in', ['synchronise', 'auto']),
+                                             ('auto_update', '=', True)], order='sequence')
+            for obj in obj_ids:
+                obj.get_last_update()
 
     @api.model
     def cron_migrate_invoices(self):
