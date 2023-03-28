@@ -198,33 +198,57 @@ class BaseSynchroObj(models.Model):
         for obj in self:
             obj.line_id.unlink()
 
-    def load_remote_record(self, limit=50):
-        "Load remote record"
+    def load_remote_record(self, limit=50, max_ids_filter=10000):
+        """Load remote record:
+        limit is the max number of new creation in one time
+        max_ids_filter is the max range of id to scan in one time"""
+
         limit = self.env.context.get('limit', 0) or limit
 
         for obj in self:
             already_ids = obj.get_synchronazed_remote_ids()
-            domain = [('id', 'not in', already_ids)]
+            already_ids.sort()
 
-            remote_domain = eval(obj.domain)
-            if remote_domain:
-                domain += remote_domain
+            list_already_ids = []
+            while already_ids:
+                if len(already_ids) > max_ids_filter:
+                    list_already_ids.append(already_ids[:max_ids_filter])
+                    already_ids = already_ids[max_ids_filter:]
+                else:
+                    list_already_ids.append(already_ids)
+                    already_ids = []
 
-            remote_ids = obj.remote_search(domain)
-            remote_ids.sort()
+            remote_domain = eval(obj.domain) or []
+            for j_domain in list(range(len(list_already_ids))):
+                # j_domain
+                domain = [('id', 'not in', list_already_ids[j_domain])]
 
-            if limit and limit < 0:
-                pass
-            elif limit and len(remote_ids) > limit:
-                remote_ids = remote_ids[:limit]
+                if len(list_already_ids) > 1:
+                    if j_domain == 0:
+                        domain.append(('id', '<=', list_already_ids[0][-1]))
+                    elif j_domain == len(list_already_ids) - 1:
+                        domain.append(('id', '>', list_already_ids[j_domain - 1][-1]))
+                    else:
+                        domain.append(('id', '<=', list_already_ids[j_domain][-1]))
+                        domain.append(('id', '>', list_already_ids[j_domain - 1][-1]))
 
-            remote_values = obj.remote_read(remote_ids)
-            if obj.model_id.model == 'product.product':
-                obj.load_remote_product(remote_values)
-            elif obj.model_id.model == 'product.template':
-                obj.load_remote_product_template(remote_values)
-            else:
-                obj.write_local_value(remote_values)
+                if remote_domain:
+                    domain += remote_domain
+                remote_ids = obj.remote_search(domain)
+                remote_ids.sort()
+
+                if limit and limit < 0:
+                    pass
+                elif limit and len(remote_ids) > limit:
+                    remote_ids = remote_ids[:limit]
+
+                remote_values = obj.remote_read(remote_ids)
+                if obj.model_id.model == 'product.product':
+                    obj.load_remote_product(remote_values)
+                elif obj.model_id.model == 'product.template':
+                    obj.load_remote_product_template(remote_values)
+                else:
+                    obj.write_local_value(remote_values)
 
             obj.synchronize_date = fields.Datetime.now()
 
@@ -310,7 +334,6 @@ class BaseSynchroObj(models.Model):
 
             if not obj.child_ids:
                 obj.check_childs()
-
             res |= obj
 
             if not obj.child_ids and obj.level != 1:
@@ -318,7 +341,6 @@ class BaseSynchroObj(models.Model):
             else:
                 for obj_child in obj.child_ids:
                     res |= deeper_sequence(obj_child, res=res)
-
                 obj.level = max(obj.child_ids.mapped('level') or [0]) + 1
 
             return res
@@ -709,5 +731,4 @@ class BaseSynchroObj(models.Model):
                 line = self.env['synchro.obj.line'].browse(line_id)
                 if line.remote_write_date > line.update_date and line.remote_write_date < date_max:
                     line.update_values()
-                    print('----------', line.description)
                     line.remote_write_date = line.update_date.replace(second=0, microsecond=0)
