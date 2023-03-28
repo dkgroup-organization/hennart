@@ -26,11 +26,11 @@
             </xpath>
 
             <xpath expr="//field[@name='discount']" position="after">
-                <!-- <field name="product_packaging" optional="hide"/> -->
-                <!-- <field name="prodlot_id" optional="hide"/> -->
+                <field name="product_packaging" optional="hide"/>
+                <field name="prodlot_id" optional="hide"/>
                 <field name="lot" optional="hide"/>
                 <field name="weight" optional="hide"/>
-                <!-- <field name="weight_uom_id" optional="hide"/> -->
+                <field name="weight_uom_id" optional="hide"/>
                 <field name="cadeau" optional="hide"/>
                 <field name="cost_price" optional="hide"/>
                 <field name="discount1" optional="hide"/>
@@ -40,7 +40,7 @@
                 <field name="number_of_pack" optional="hide"/>
                 <field name="number_of_unit" optional="hide"/>
                 <field name="promotion" optional="hide"/>
-                <!-- <field name="uom_id" optional="hide"/> -->
+				<field name="product_uos" optional="hide"/>
                 <field name="uom_qty" optional="hide"/>
                 <field name="type" optional="hide"/>
                 <field name="initial_price" optional="hide"/>
