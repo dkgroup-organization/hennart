@@ -13,7 +13,7 @@ class AccountMoveLine(models.Model):
         )
 
     prodlot_id = fields.Many2one(
-        'stock.production.lot',
+        'stock.lot',
         string='Production lot',
         )
     
@@ -22,7 +22,7 @@ class AccountMoveLine(models.Model):
     weight = fields.Float()
 
     weight_uom_id = fields.Many2one(
-        'product.uom',
+        'uom.uom',
         string='U',
         )
     
@@ -45,11 +45,6 @@ class AccountMoveLine(models.Model):
     number_of_unit = fields.Float(string='Nb unit')
 
     promotion = fields.Float(string='Promo %')
-
-    uom_id = fields.Many2one(
-        'product.uom',
-        string='U',
-        )
     
     uom_qty = fields.Float(string="Qty")
 
@@ -58,3 +53,5 @@ class AccountMoveLine(models.Model):
     initial_price = fields.Float(string='Price')
 
     histo_cost_price = fields.Float()
+
+    product_uos = fields.Many2one('uom.uom', string="Udv")
