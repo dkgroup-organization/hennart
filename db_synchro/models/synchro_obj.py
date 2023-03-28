@@ -709,5 +709,4 @@ class BaseSynchroObj(models.Model):
                 line = self.env['synchro.obj.line'].browse(line_id)
                 if line.remote_write_date > line.update_date and line.remote_write_date < date_max:
                     line.update_values()
-                    print('----------', line.description)
                     line.remote_write_date = line.update_date.replace(second=0, microsecond=0)
