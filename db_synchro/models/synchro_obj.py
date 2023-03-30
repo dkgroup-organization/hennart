@@ -219,36 +219,38 @@ class BaseSynchroObj(models.Model):
                     already_ids = []
 
             remote_domain = eval(obj.domain) or []
+            remote_ids = []
             for j_domain in list(range(len(list_already_ids))):
                 # j_domain
                 domain = [('id', 'not in', list_already_ids[j_domain])]
 
                 if len(list_already_ids) > 1:
                     if j_domain == 0:
+                        # first
                         domain.append(('id', '<=', list_already_ids[0][-1]))
                     elif j_domain == len(list_already_ids) - 1:
+                        # last
                         domain.append(('id', '>', list_already_ids[j_domain - 1][-1]))
                     else:
                         domain.append(('id', '<=', list_already_ids[j_domain][-1]))
                         domain.append(('id', '>', list_already_ids[j_domain - 1][-1]))
 
-                if remote_domain:
-                    domain += remote_domain
-                remote_ids = obj.remote_search(domain)
-                remote_ids.sort()
+                remote_ids = obj.remote_search(domain + remote_domain) or []
 
                 if limit and limit < 0:
                     pass
                 elif limit and len(remote_ids) > limit:
+                    remote_ids.sort()
                     remote_ids = remote_ids[:limit]
+                    break
 
-                remote_values = obj.remote_read(remote_ids)
-                if obj.model_id.model == 'product.product':
-                    obj.load_remote_product(remote_values)
-                elif obj.model_id.model == 'product.template':
-                    obj.load_remote_product_template(remote_values)
-                else:
-                    obj.write_local_value(remote_values)
+            remote_values = obj.remote_read(remote_ids)
+            if obj.model_id.model == 'product.product':
+                obj.load_remote_product(remote_values)
+            elif obj.model_id.model == 'product.template':
+                obj.load_remote_product_template(remote_values)
+            else:
+                obj.write_local_value(remote_values)
 
             obj.synchronize_date = fields.Datetime.now()
 
@@ -370,14 +372,16 @@ class BaseSynchroObj(models.Model):
         remote_ids = remote_obj.search(remote_domain + domain)
         return remote_ids
 
-    def read_groupby_ids(self, groupby_field, groupby_groupby=[], groupby_domain=[]):
+    def read_groupby_ids(self, groupby_field, groupby_domain=None):
         "Return list of remote ids by domain filter"
+        if groupby_domain is None:
+            groupby_domain = []
         self.ensure_one()
         remote_odoo = odoo_proxy.RPCProxy(self.server_id)
         remote_obj = remote_odoo.get(self.model_name)
         remote_domain = eval(self.domain) + groupby_domain
 
-        read_groupby = remote_obj.read_group(remote_domain, [groupby_field], [groupby_groupby])
+        read_groupby = remote_obj.read_group(remote_domain, [groupby_field], [groupby_field])
         response = []
         for item in read_groupby:
             if item.get(groupby_field):
@@ -729,6 +733,6 @@ class BaseSynchroObj(models.Model):
             for row in result_sql:
                 line_id = row[0]
                 line = self.env['synchro.obj.line'].browse(line_id)
-                if line.remote_write_date > line.update_date and line.remote_write_date < date_max:
+                if line.update_date < line.remote_write_date < date_max:
                     line.update_values()
                     line.remote_write_date = line.update_date.replace(second=0, microsecond=0)

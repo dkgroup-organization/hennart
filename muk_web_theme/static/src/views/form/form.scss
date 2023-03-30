@@ -48,3 +48,25 @@
 		border-color: $gray-600 !important;
 	}
 }
+.o_horizontal_separator {
+font-size: medium;
+color: $o-brand-primary;
+}
+.o_inner_group2 {
+    border: 2px solid $o-brand-primary;
+    border-radius: 10px;
+    padding: 2rem;
+	width: 49%;
+}
+
+o_form_view {
+    row-gap: 0rem;
+}
+
+.o_inner_group {
+    row-gap: 0rem  !important;
+}
+
+.o_group2 {
+gap: 1rem;
+}

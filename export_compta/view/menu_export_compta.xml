@@ -1,12 +1,11 @@
 <?xml version="1.0" ?>
 <openerp>
 <data>
-    <menuitem id="menu_export_compta" parent="account_accountant.menu_accounting" name="SAGE" sequence="39"/>
+    <menuitem id="menu_export_compta" parent="account.menu_finance" name="SAGE" sequence="39"/>
 
     <menuitem id="menu_export_compta_export" parent="menu_export_compta" name="Export" sequence="30"/>
     <menuitem id="menu_export_compta_import" parent="menu_export_compta" name="Import" sequence="40"/>
     <menuitem id="menu_export_compta_configuration" parent="menu_export_compta" name="Configuration" sequence="50"/>
-
 
 </data>
 </openerp>

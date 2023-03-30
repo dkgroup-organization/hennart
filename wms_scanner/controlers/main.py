@@ -9,8 +9,8 @@ import markupsafe
 
 _logger = logging.getLogger(__name__)
 
-SRC_PATH = 'wms_scanner/static/src'
-IMG_PATH = SRC_PATH + '/static/src/img/'
+SRC_PATH = 'wms_scanner/'
+IMG_PATH = SRC_PATH + 'static/src/img/'
 IMG_FLAG = {'fr_FR': 'flag-fr.jpg', 'en_US': 'flag-gb.jpg', 'nl_BE': 'flag-be.jpg', 'de_DE': 'flag-de.jpg'}
 
 

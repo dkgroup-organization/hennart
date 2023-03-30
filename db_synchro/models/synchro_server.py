@@ -190,6 +190,7 @@ class BaseSynchroServer(models.Model):
                     server.migrate_partner()
                 else:
                     obj.load_remote_record()
+
     @api.model
     def cron_update(self):
         """ Schedule update, check if older line have to be updated """

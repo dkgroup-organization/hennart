@@ -10,12 +10,11 @@
     "website": "https://dkgroup.fr",
     "maintainer": "DK group",
     "images": [],
-    "depends": ["account", "sale", "sale_stock", "product_expiry"],
+    "depends": ["account", "sale", "sale_stock", "stock", "product_expiry", "product"],
     "data": [
         'security/ir.model.access.csv',
         "views/product_template.xml",
-
-
+        "views/product_category.xml",
     ],
     "installable": True,
 }

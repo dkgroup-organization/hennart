@@ -35,6 +35,12 @@ class ProductTemplate(models.Model):
     def _get_default_uos_id(self):
         return self.env.ref('uom.product_uom_unit')
 
+    tracking = fields.Selection(related="categ_id.tracking", store=True)
+    type = fields.Selection(related="categ_id.type", store=True)
+    detailed_type = fields.Selection(related="categ_id.detailed_type", store=True)
+    use_expiration_date = fields.Boolean(related="categ_id.use_expiration_date", store=True)
+
+    route_ids = fields.Many2many(default=False)
     uos_id = fields.Many2one('uom.uom', string='Unit of Sale',
                              default=_get_default_uos_id, required=True,
                              help="Default unit of Sale used for invoicing.")
@@ -102,6 +108,8 @@ class ProductTemplate(models.Model):
         ],
         string='Type milk')
 
+
+
     matiere_grasse = fields.Char('Fat', size=12)
     fat_in_product = fields.Float(string='Fat in product (%)')
     fat_in_dry_matter = fields.Float(
@@ -134,8 +142,7 @@ class ProductTemplate(models.Model):
     web_manufacture = fields.Html('Manufacture')
     web_tasting = fields.Html('Tasting')
 
-
-
-
-
+    def no_route_ids(self):
+        """ update all route_ids"""
+        self.route_ids = False
 
