@@ -11,7 +11,6 @@ from datetime import datetime
 class ResPartner(models.Model):
     _inherit = "res.partner"
 
-
     @api.depends('invoice_ids')
     def _update_info(self):
         account_invoice_object = self.env['account.move']
@@ -31,16 +30,28 @@ class ResPartner(models.Model):
 
     @api.depends('late_paiement')
     def _image_late_paiement(self):
+
+        image_late_paiement_obj = self.env['images.easy.sale'].search([(1, '=', 1)], limit=1)
+        self._update_info()
+
         for partner in self:
-            partner._update_info()
+
+            if partner.late_paiement_ok:
+                partner.image_late_paiement = image_late_paiement_obj.image_light_green
+                continue
+
+            if partner.parent_id and not partner.is_company:
+                partner.image_late_paiement = partner.parent_id.image_late_paiement
+                continue
+
             i = partner.late_paiement
             param_customer_ids = self.env['param.late.paiement'].search([('partner_id', '=', partner.id), ('limit1', '<=', i), ('limit2', '>=', i)])
             if not param_customer_ids:
                 param_customer_ids = self.env['param.late.paiement'].search([('partner_id', '=', False),('limit1', '<=',i),('limit2', '>=', i)],limit=1)
+
             if not param_customer_ids:
-                partner.image_late_paiement = False
+                partner.image_late_paiement = image_late_paiement_obj.image_light_green
             else:
-                image_late_paiement_obj = self.env['images.easy.sale'].search([(1,'=',1)],limit=1)
 
                 if param_customer_ids.level == 'red':
                     partner.image_late_paiement = image_late_paiement_obj.image_light_red
@@ -49,7 +60,12 @@ class ResPartner(models.Model):
                 else:
                     partner.image_late_paiement = image_late_paiement_obj.image_light_green
 
+            if not partner.image_late_paiement and partner.is_company:
+                partner.image_late_paiement = image_late_paiement_obj.image_light_green
+
     image_late_paiement = fields.Binary(compute="_image_late_paiement", string='Image for late paiement')
-    late_paiement = fields.Integer(compute="_update_info", string='Late paiement',store=True)
+    late_paiement = fields.Integer(compute="_update_info", string='Late paiement', store=True)
+    late_paiement_ok = fields.Boolean("Paiement ok", help="Paiement managed by Comptability service (always green)")
+
 
 

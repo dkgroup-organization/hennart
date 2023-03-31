@@ -9,6 +9,7 @@
                 <header>
                     <button name="update_field" string="initialyse" type="object" class="oe_highlight"/>
                     <button name="update_remote_field" string="Update remote" type="object" class="oe_highlight"/>
+                    <button name="button_update_all" string="Update all local" type="object"/>
                     <field name="state" widget="statusbar" options="{'clickable': '1'}"/>
                 </header>
                 <sheet>
@@ -109,6 +110,8 @@
                                 </tree>
                             </field>
                             <button name="unlink_mapping" string="Reset mapping" type="object"/>
+
+
                         </page>
                     </notebook>
                 </sheet>
