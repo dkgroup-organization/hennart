@@ -150,7 +150,10 @@ class BaseSynchroObj(models.Model):
                         check_avoid_ids |= self.env['synchro.obj.avoid'].create(field_value)
                     else:
                         check_avoid_ids |= avoid_ids
-            (obj.avoid_ids - check_avoid_ids).unlink()
+
+            for line_fields in (obj.avoid_ids - check_avoid_ids):
+                if not line_fields.field_id:
+                    line_fields.unlink()
 
             # load pre-configuration default value fields, see synchro_data.py
             dic_option = obj.get_default_option()
@@ -700,7 +703,10 @@ class BaseSynchroObj(models.Model):
                 remote_ids = remove_write_date_under(obj, last_date, remote_ids)
 
     def get_last_update(self, delta_min=10, delta_max=60, limit=50):
-        """ scan last hours modification, wait delta_max minute before update"""
+        """ scan last hours modification, wait delta_max minute before update
+            - Update all record when the update date < remote write date
+            update with by batch of value : limit"""
+
         self.update_remote_write_date()
         date_now = fields.Datetime.now()
         date_max = date_now - datetime.timedelta(minutes=delta_max)
@@ -724,15 +730,23 @@ class BaseSynchroObj(models.Model):
                         line.remote_write_date = date_min
 
             # Update past delta_max
-            sql = "select id from synchro_obj_line where obj_id = %s and remote_write_date > update_date" % obj.id
+            sql = "select id from synchro_obj_line where obj_id = %s" % obj.id
+            sql += " and remote_write_date > update_date order by remote_write_date"
+            if limit > 0:
+                sql += " limit %s" % limit
             self.env.cr.execute(sql)
             result_sql = self.env.cr.fetchall()
-            if len(result_sql) > limit:
-                result_sql = result_sql[:50]
 
             for row in result_sql:
-                line_id = row[0]
-                line = self.env['synchro.obj.line'].browse(line_id)
+                line = self.env['synchro.obj.line'].browse(row[0])
                 if line.update_date < line.remote_write_date < date_max:
                     line.update_values()
                     line.remote_write_date = line.update_date.replace(second=0, microsecond=0)
+
+    def button_update_all(self):
+        """ Change the update_date to trigger a new update by function get_last_update"""
+        self.update_remote_write_date()
+        for obj in self:
+            update_date = datetime.datetime(2000, 1, 1)
+            obj.line_id.write({'update_date': update_date})
+
