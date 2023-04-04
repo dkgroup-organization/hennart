@@ -208,3 +208,12 @@ class BaseSynchroServer(models.Model):
             obj_ids = server.obj_ids.search([('model_name', '=', 'account.invoice')])
             for obj in obj_ids:
                 obj.load_remote_record()
+
+    @api.model
+    def cron_migrate_invoice_lines(self):
+        """ Scheduled migration for invoices"""
+
+        for server in self.search([]):
+            obj_ids = server.obj_ids.search([('model_name', '=', 'account.invoice.line')])
+            for obj in obj_ids:
+                obj.load_remote_record()
