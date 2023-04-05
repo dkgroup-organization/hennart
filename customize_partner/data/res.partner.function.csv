@@ -1,0 +1,9 @@
+id,name,code
+email_delivery,delivery,email_delivery
+email_accounting,accounting,email_accounting
+email_director,director,email_director
+email_vendor,vendor,email_vendor
+email_sale,sale,email_sale
+email_quality,quality,email_quality
+email_department_manager,Department manager,email_department_manager
+email_other,other,email_other

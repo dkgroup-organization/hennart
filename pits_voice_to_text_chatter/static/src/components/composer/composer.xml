@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2019 - Present PIT Solutions AG. (<https://www.pitsolutions.ch/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://www.webshopextension.com/en/licence-agreement/ -->
+<templates xml:space="preserve">
+    <t t-inherit="mail.Composer" t-inherit-mode="extension">
+        <xpath expr="//button[hasclass('o_Composer_buttonEmojis')]" position="after">
+             <button
+                     class="o_Composer_button o_Composer_buttonMicrophone o_ComposerTextInput_textarea o_Composer_toolButton btn btn-light border-0 rounded-pill bg-view voice-recording-button"
+                     t-on-click="composerView.onClickButtonMicrophone">
+                    <i class="fa fa-microphone" role="img" aria-label="Microphone"/>
+                </button>
+        </xpath>
+        <xpath
+                expr="//div[hasclass('o_Composer_coreFooter')]" position="inside">
+                <p class="info"></p>
+        </xpath>
+    </t>
+</templates>

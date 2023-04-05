@@ -221,6 +221,9 @@ class BaseSynchroObj(models.Model):
                     list_already_ids.append(already_ids)
                     already_ids = []
 
+            if len(list_already_ids) == 0:
+                list_already_ids.append([])
+
             remote_domain = eval(obj.domain) or []
             remote_ids = []
             for j_domain in list(range(len(list_already_ids))):
@@ -671,7 +674,7 @@ class BaseSynchroObj(models.Model):
         "return all remote id"
         self.ensure_one()
         line_ids = self.env['synchro.obj.line'].search([('obj_id', '=', self.id)])
-        return line_ids.mapped('remote_id')
+        return line_ids and line_ids.mapped('remote_id') or []
 
     def update_remote_write_date(self, limit=10000):
         """ approximate last remote write, used for the old import """
@@ -686,24 +689,37 @@ class BaseSynchroObj(models.Model):
             line_ids.write({'remote_write_date': write_date})
             return list(set(remote_ids) - set(remote_update_ids))
 
+        def last_update(obj, remote_update_ids, last_date):
+            condition_update = [('remote_id', 'in', remote_update_ids), ('obj_id', '=', obj.id)]
+            line_ids = obj.line_id.search(condition_update)
+            line_ids.write({'remote_write_date': last_date})
+
         for obj in self:
             condition = [('remote_write_date', '=', False), ('remote_id', '!=', 0), ('obj_id', '=', obj.id)]
-
             remote_ids = obj.line_id.search(condition, limit=limit).mapped('remote_id')
-            for nb_day in [360, 180, 60, 30, 14, 7, 2, 1]:
-                if not remote_ids:
-                    break
-                last_date = now - datetime.timedelta(days=nb_day)
-                remote_ids = remove_write_date_under(obj, last_date, remote_ids)
 
-            for hour in [12, 6, 2, 1]:
-                if not remote_ids:
-                    break
-                last_date = now - datetime.timedelta(hours=hour)
-                remote_ids = remove_write_date_under(obj, last_date, remote_ids)
+            while remote_ids:
+                for nb_day in [360, 180, 60, 30, 14, 7, 2, 1]:
+                    if not remote_ids:
+                        break
+                    last_date = now - datetime.timedelta(days=nb_day)
+                    remote_ids = remove_write_date_under(obj, last_date, remote_ids)
+
+                for hour in [12, 6, 2, 1]:
+                    if not remote_ids:
+                        break
+                    last_date = now - datetime.timedelta(hours=hour)
+                    remote_ids = remove_write_date_under(obj, last_date, remote_ids)
+
+                if remote_ids:
+                    last_update(obj, remote_ids, now)
+
+                remote_ids = obj.line_id.search(condition, limit=limit).mapped('remote_id')
 
     def get_last_update(self, delta_min=10, delta_max=60, limit=50):
-        """ scan last hours modification, wait delta_max minute before update
+        """ scan last hours modification,
+        wait delta_min minute before scan (lets the user writing)
+        wait delta_max minute before update the local values (by default 1 hour)
             - Update all record when the update date < remote write date
             update with by batch of value : limit"""
 

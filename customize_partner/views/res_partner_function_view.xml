@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_partner_function" model="ir.ui.view">
+            <field name="name">res.partner.function</field>
+            <field name="model">res.partner.function</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_partner_function" model="ir.actions.act_window">
+            <field name="name">Partner function</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner.function</field>
+            <field name="view_mode">tree</field>
+        </record>
+        
+        <menuitem id="menu_partner_function"
+                  action="action_partner_function"
+                  parent="menu_partner_add_config"
+                  sequence="10"/>
+    </data>
+</odoo>
