@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_partner_custom" model="ir.ui.view">
+            <field name="name">res.partner.add</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//div[@name='div_address']/../.." position="inside">
+                    <field name="is_company" invisible="1"/>
+                    <field name="email_function" widget="many2many_tags" attrs="{'invisible': [('is_company','=', True)]}"/>
+                </xpath>
+
+                <notebook position="inside">
+                    <page string="email">
+                        <group string="Functions" attrs="{'invisible': [('is_company','=', True)]}">
+                            <field name="email_function" widget="many2many_tags"/>
+                        </group>
+                        <group string="Email function" attrs="{'invisible': [('is_company','!=', True)]}">
+                            <field name="email_delivery"/>
+                            <field name="email_invoice"/>
+                            <field name="email_director"/>
+                            <field name="email_vendor"/>
+                            <field name="email_sale"/>
+                            <field name="email_quality"/>
+                            <field name="email_department_manager"/>
+                            <field name="email_other"/>
+                        </group>
+                    </page>
+                </notebook>
+
+            </field>
+        </record>
+
+        <record id="view_partner_simple_custom" model="ir.ui.view">
+            <field name="name">res.partner.add</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_simple_form"/>
+            <field name="arch" type="xml">
+                <field name="function" position="after">
+                    <field name="email_function" create="0" widget="many2many_tags" attrs="{'invisible': [('is_company','=', True)]}"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_partner_tree_custom" model="ir.ui.view">
+            <field name="name">res.partner.tree.add</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+
+                <field name="display_name" position="before">
+                    <field name="id" optional="hide"/>
+                </field>
+
+                <field name="email" position="after">
+                    <field name="email_delivery" optional="hide"/>
+                    <field name="email_invoice" optional="hide"/>
+                    <field name="email_director" optional="hide"/>
+                    <field name="email_vendor" optional="hide"/>
+                    <field name="email_sale" optional="hide"/>
+                    <field name="email_quality" optional="hide"/>
+                    <field name="email_department_manager" optional="hide"/>
+                    <field name="email_other" optional="hide"/>
+                </field>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

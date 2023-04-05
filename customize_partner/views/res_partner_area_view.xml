@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_partner_area" model="ir.ui.view">
+            <field name="name">res.partner.area</field>
+            <field name="model">res.partner.area</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_partner_area" model="ir.actions.act_window">
+            <field name="name">Partner area</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.partner.area</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+        <menuitem id="menu_partner_add_config"
+                  name="Partner"
+                  parent="sale.menu_sale_config"
+                  sequence="100"/>
+
+        <menuitem id="menu_partner_area"
+                  action="action_partner_area"
+                  parent="menu_partner_add_config"
+                  sequence="10"/>
+    </data>
+</odoo>

@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_it_config_settings" model="ir.ui.view">
+            <field name="name">account settings</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority">10</field>
+            <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+
+                <div name="fiscal_localization_setting_container" position="inside">
+                    <div class="col-12 o_setting_box">
+                        <div class="o_setting_left_pane"/>
+                        <div class="o_setting_right_pane">
+                            <span class="o_form_label">Customization</span>
+                            <span class="fa fa-lg fa-building-o" title="Customization of account."
+                                  aria-label="Customization of account."
+                                  groups="base.group_multi_company" role="img"/>
+                            <div class="text-muted">
+                                Specific configuration for customer.
+                            </div>
+                            <div class="content-group">
+
+                                <div class="mt8">
+                                    <button name="button_update_account"
+                                            string="Update account code"
+                                            icon="fa-arrow-right"
+                                            class="btn-link"
+                                            type="object"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

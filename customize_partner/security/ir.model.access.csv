@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_partner_area,model_res_partner_area,model_res_partner_area,base.group_system,1,1,1,1
+access_partner_function,model_res_partner_function,model_res_partner_function,base.group_system,1,1,1,1
+
