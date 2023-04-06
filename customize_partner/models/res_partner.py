@@ -82,7 +82,8 @@ class ResPartner(models.Model):
                         'email': email,
                     })
                 function_ids = self.env['res.partner.function'].search([('code', 'in', dic_email[email])])
-                contact_ids.write({'email_function': [(6, 0, function_ids.ids)]})
+                contact_vals = {'email_function': [(6, 0, function_ids.ids)]}
+                contact_ids.write(contact_vals)
 
     @api.onchange('name')
     def onchange_name(self):
@@ -91,9 +92,10 @@ class ResPartner(models.Model):
         self.name = only_ascii.upper()
 
     # Sale data
-    sale_area = fields.Many2one('res.partner.sale', string="Sale area")
+    sale_area = fields.Many2one('res.partner.area', string="Sale area")
     discount_weight = fields.Float('Discount weight (kg)')
     typology_id = fields.Many2one('res.partner.typology', string='Typology')
+
 
     # email data
     v7_function = fields.Char('V7 save function value', compute="get_function", store=True)
@@ -111,21 +113,24 @@ class ResPartner(models.Model):
     # preparation data
     print_picking = fields.Boolean('Print Delivery', default=True, help="Print Delivery at the end of preparation")
     print_picking2 = fields.Boolean('Print Delivery with price', default=True, help="Print Delivery with price at the end of preparation")
-    print_picking_nb = fields.Float('Number of picking copy', default=1)
+
     print_invoice = fields.Boolean('Print Invoice', default=True, help="Print Invoice at the end of preparation")
-    paper_invoice = fields.Boolean('Invoice paper by mail', default=True, help="Send paper invoice by physical mail")
-    print_invoice_nb = fields.Float('Number of invoice copy', default=1)
-    email_invoice = fields.Boolean('Send invoice pdf by email', default=False)
-    invoice_auto = fields.Boolean('Automatic invoice validation', default=False,
-            help="The invoice is automatically created and validated at the end of preparation")
+    paper_invoice = fields.Boolean('Paper invoice by mail', default=False, help="Send paper invoice by physical mail")
+    email_invoice = fields.Boolean('Automatic email pdf invoice', default=False)
+    invoice_auto = fields.Boolean('Automatic validation', default=True,
+            help="The invoice is automatically validated at the end of preparation")
     no_invoice_auto = fields.Boolean('Manual Invoice', default=False,
             help="The invoice is not automaticaly created, so it's possible to group the delivery in one invoice or don't invoice some partner")
 
     # Carrier and export
+    incoterm_id = fields.Many2one('account.incoterms', 'Incoterm',
+                                  help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")
     incoterm_contact_id = fields.Many2one('res.partner', string="Incoterm contact")
     incoterm_city = fields.Char("Incoterm City")
     carrier_zone = fields.Char("Carrier zone")
     oeri_code = fields.Char("OERI code")
+
+
 
 
     def button_update_partner(self):

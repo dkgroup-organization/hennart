@@ -1,7 +1,4 @@
-
-
-from odoo import _, api, fields, models
-from odoo.tools import float_compare
+from odoo import fields, models
 
 
 class AccountMove(models.Model):
@@ -20,6 +17,4 @@ class AccountMove(models.Model):
     account_id = fields.Many2one(
         'account.account',
         string='Account',
-        )
-
-    
+    )

@@ -5,22 +5,73 @@
         <record id="view_partner_custom" model="ir.ui.view">
             <field name="name">res.partner.add</field>
             <field name="model">res.partner</field>
+            <field name="priority">25</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='active_lang_count']/../field[@name='lang']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//group[@name='sale']/field[@name='user_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//span[@name='address_name']/../field[@name='vat']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//span[@name='address_name']/../field[@name='vat']" position="after">
+                    <field name="typology_id" options="{'no_create': True, 'no_open': True}"/>
+                    <field name="carrier_zone" options="{'no_create': True, 'no_open': True}"/>
+                </xpath>
+                <xpath expr="//group[@name='sale']/field[@name='user_id']" position="after">
+                    <field name="sale_area" options="{'no_create': True, 'no_open': True}"/>
+                </xpath>
+                <xpath expr="//group[@name='sale']/field[@name='property_delivery_carrier_id']" position="before">
+                    <field name="discount_weight"/>
+                </xpath>
+                <xpath expr="//group[@name='sale']/field[@name='property_delivery_carrier_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
 
                 <xpath expr="//div[@name='div_address']/../.." position="inside">
                     <field name="is_company" invisible="1"/>
                     <field name="email_function" widget="many2many_tags" attrs="{'invisible': [('is_company','=', True)]}"/>
                 </xpath>
 
+                <group name="fiscal_information" position="inside">
+                    <field name="incoterm_id"/>
+                    <field name="incoterm_contact_id"/>
+                    <field name="incoterm_city"/>
+                    <field name="oeri_code"/>
+
+                </group>
+
                 <notebook position="inside">
+                    <page string="preparation" name="preparation">
+                        <group>
+                            <group string="Preparation">
+                                <field name="print_picking"/>
+                                <field name="print_picking2"/>
+                                <field name="print_invoice"/>
+                            </group>
+                            <group string="Invoice">
+                                <field name="lang"/>
+                                <field name="no_invoice_auto"/>
+                                <field name="invoice_auto"/>
+                                <field name="email_invoice"/>
+                                <field name="email_accounting" attrs="{'invisible': [('email_invoice','!=', True)]}"/>
+                                <field name="paper_invoice"/>
+                                <field name="print_invoice" string="Print invoice at end of preparation"/>
+                            </group>
+                        </group>
+                    </page>
+
                     <page string="email">
                         <group string="Functions" attrs="{'invisible': [('is_company','=', True)]}">
                             <field name="email_function" widget="many2many_tags"/>
                         </group>
                         <group string="Email function" attrs="{'invisible': [('is_company','!=', True)]}">
                             <field name="email_delivery"/>
-                            <field name="email_invoice"/>
+                            <field name="email_accounting"/>
                             <field name="email_director"/>
                             <field name="email_vendor"/>
                             <field name="email_sale"/>
@@ -29,6 +80,7 @@
                             <field name="email_other"/>
                         </group>
                     </page>
+
                 </notebook>
 
             </field>
@@ -57,7 +109,7 @@
 
                 <field name="email" position="after">
                     <field name="email_delivery" optional="hide"/>
-                    <field name="email_invoice" optional="hide"/>
+                    <field name="email_accounting" optional="hide"/>
                     <field name="email_director" optional="hide"/>
                     <field name="email_vendor" optional="hide"/>
                     <field name="email_sale" optional="hide"/>

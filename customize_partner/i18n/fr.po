@@ -1,0 +1,385 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* customize_partner
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-04-06 14:48+0000\n"
+"PO-Revision-Date: 2023-04-06 14:48+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__email_invoice
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__email_invoice
+msgid "Automatic email pdf invoice"
+msgstr "Envoie automatique d'email avec pdf"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__invoice_auto
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__invoice_auto
+msgid "Automatic validation"
+msgstr "Validation automatique"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__carrier_zone
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__carrier_zone
+msgid "Carrier zone"
+msgstr "Zone du transporteur"
+
+#. module: customize_partner
+#: model:ir.model,name:customize_partner.model_res_partner
+msgid "Contact"
+msgstr "Contact"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_area__create_uid
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_function__create_uid
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_typology__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_area__create_date
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_function__create_date
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_typology__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: customize_partner
+#: model:res.partner.function,name:customize_partner.email_department_manager
+msgid "Department manager"
+msgstr "Chef de rayon"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__discount_weight
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__discount_weight
+msgid "Discount weight (kg)"
+msgstr "Poids pour la remise (kg)"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_area__display_name
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_function__display_name
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_typology__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__email_sale
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__email_sale
+msgid "Email Sale"
+msgstr "Email du commercial"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__email_accounting
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__email_accounting
+msgid "Email accounting"
+msgstr "Email de la comptabilité"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__email_delivery
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__email_delivery
+msgid "Email delivery"
+msgstr "Email de la logistique"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__email_department_manager
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__email_department_manager
+msgid "Email department manager"
+msgstr "Email du Chef de rayon"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__email_director
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__email_director
+msgid "Email director"
+msgstr "Email du directeur"
+
+#. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "Email function"
+msgstr "Email par fonction"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__email_other
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__email_other
+msgid "Email other"
+msgstr "Email autre"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__email_quality
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__email_quality
+msgid "Email quality"
+msgstr "Email de la qualité"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__email_vendor
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__email_vendor
+msgid "Email vendor"
+msgstr "Email du commercial"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__function
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__function
+msgid "Function"
+msgstr "Fonction"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__email_function
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__email_function
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "Functions"
+msgstr "Fonctions"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_area__id
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_function__id
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_typology__id
+msgid "ID"
+msgstr "ID"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__incoterm_id
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__incoterm_id
+msgid "Incoterm"
+msgstr "Incoterm"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__incoterm_city
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__incoterm_city
+msgid "Incoterm City"
+msgstr "Ville de l'INCOTERM"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__incoterm_contact_id
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__incoterm_contact_id
+msgid "Incoterm contact"
+msgstr "Représentant Incoterm"
+
+#. module: customize_partner
+#: model:ir.model.fields,help:customize_partner.field_res_partner__incoterm_id
+#: model:ir.model.fields,help:customize_partner.field_res_users__incoterm_id
+msgid ""
+"International Commercial Terms are a series of predefined commercial terms "
+"used in international transactions."
+msgstr ""
+
+#. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "Invoice"
+msgstr "Facture"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_area____last_update
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_function____last_update
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_typology____last_update
+msgid "Last Modified on"
+msgstr "Dernière modification le "
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_area__write_uid
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_function__write_uid
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_typology__write_uid
+msgid "Last Updated by"
+msgstr "Dernière mise à jour le"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_area__write_date
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_function__write_date
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_typology__write_date
+msgid "Last Updated on"
+msgstr "Dernière mise à jour le"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__no_invoice_auto
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__no_invoice_auto
+msgid "Manual Invoice"
+msgstr "Facturation manuelle"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__oeri_code
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__oeri_code
+msgid "OERI code"
+msgstr "OERI code"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__paper_invoice
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__paper_invoice
+msgid "Paper invoice by mail"
+msgstr "Facture papier par courrier"
+
+#. module: customize_partner
+#: model:ir.ui.menu,name:customize_partner.menu_partner_add_config
+msgid "Partner"
+msgstr "Client"
+
+#. module: customize_partner
+#: model:ir.actions.act_window,name:customize_partner.action_partner_area
+#: model:ir.ui.menu,name:customize_partner.menu_partner_area
+msgid "Partner area"
+msgstr "Secteur commerciale"
+
+#. module: customize_partner
+#: model:ir.actions.act_window,name:customize_partner.action_partner_function
+#: model:ir.ui.menu,name:customize_partner.menu_partner_function
+msgid "Partner function"
+msgstr "Fonction"
+
+#. module: customize_partner
+#: model:ir.model,name:customize_partner.model_res_partner_function
+msgid "Partner function list"
+msgstr "List des fonctions"
+
+#. module: customize_partner
+#: model:ir.model,name:customize_partner.model_res_partner_typology
+msgid "Partner typology"
+msgstr "Typologies de clients"
+
+#. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "Preparation"
+msgstr "Préparation"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__print_picking
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__print_picking
+msgid "Print Delivery"
+msgstr "Imprimer le bon de livraison"
+
+#. module: customize_partner
+#: model:ir.model.fields,help:customize_partner.field_res_partner__print_picking
+#: model:ir.model.fields,help:customize_partner.field_res_users__print_picking
+msgid "Print Delivery at the end of preparation"
+msgstr "Imprimer le bon de livraison en fin de préparation"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__print_picking2
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__print_picking2
+msgid "Print Delivery with price"
+msgstr "Imprimer un bon de livraison valorisé"
+
+#. module: customize_partner
+#: model:ir.model.fields,help:customize_partner.field_res_partner__print_picking2
+#: model:ir.model.fields,help:customize_partner.field_res_users__print_picking2
+msgid "Print Delivery with price at the end of preparation"
+msgstr "Imprimer un bon de livraison valorisé en fin de préparation"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__print_invoice
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__print_invoice
+msgid "Print Invoice"
+msgstr "Imprimer une facture"
+
+#. module: customize_partner
+#: model:ir.model.fields,help:customize_partner.field_res_partner__print_invoice
+#: model:ir.model.fields,help:customize_partner.field_res_users__print_invoice
+msgid "Print Invoice at the end of preparation"
+msgstr "Imprimer une facture en fin de préparation"
+
+#. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "Print invoice at end of preparation"
+msgstr "Imprimer une facture en fin de préparation"
+
+#. module: customize_partner
+#: model:ir.model,name:customize_partner.model_res_partner_area
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__sale_area
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__sale_area
+msgid "Sale area"
+msgstr "Secteur commercial"
+
+#. module: customize_partner
+#: model:ir.model.fields,help:customize_partner.field_res_partner__paper_invoice
+#: model:ir.model.fields,help:customize_partner.field_res_users__paper_invoice
+msgid "Send paper invoice by physical mail"
+msgstr "Envoie d'une facture papier par courrier"
+
+#. module: customize_partner
+#: model:ir.model.fields,help:customize_partner.field_res_partner__invoice_auto
+#: model:ir.model.fields,help:customize_partner.field_res_users__invoice_auto
+msgid "The invoice is automatically validated at the end of preparation"
+msgstr "La facture est validée automatiquement en fin de préparation"
+
+#. module: customize_partner
+#: model:ir.model.fields,help:customize_partner.field_res_partner__no_invoice_auto
+#: model:ir.model.fields,help:customize_partner.field_res_users__no_invoice_auto
+msgid ""
+"The invoice is not automaticaly created, so it's possible to group the "
+"delivery in one invoice or don't invoice some partner"
+msgstr "La facture n'est pas créé en fin de préparation. Il est ainsi possible de facturer plusieurs bon de livraison"
+"ou de ne pas facturer un bon de livraison"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__typology_id
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__typology_id
+msgid "Typology"
+msgstr "Typologie"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__v7_function
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__v7_function
+msgid "V7 save function value"
+msgstr ""
+
+#. module: customize_partner
+#: model:res.partner.function,name:customize_partner.email_accounting
+msgid "accounting"
+msgstr "comptabilité"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_function__code
+msgid "code"
+msgstr "code"
+
+#. module: customize_partner
+#: model:res.partner.function,name:customize_partner.email_delivery
+msgid "delivery"
+msgstr "Livraison"
+
+#. module: customize_partner
+#: model:res.partner.function,name:customize_partner.email_director
+msgid "director"
+msgstr "directeur"
+
+#. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "email"
+msgstr "email"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_area__name
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_function__name
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner_typology__name
+msgid "name"
+msgstr "nom"
+
+#. module: customize_partner
+#: model:res.partner.function,name:customize_partner.email_other
+msgid "other"
+msgstr "autre"
+
+#. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "preparation"
+msgstr "préparation"
+
+#. module: customize_partner
+#: model:res.partner.function,name:customize_partner.email_quality
+msgid "quality"
+msgstr "qualité"
+
+#. module: customize_partner
+#: model:res.partner.function,name:customize_partner.email_sale
+msgid "sale"
+msgstr "vente"
+
+#. module: customize_partner
+#: model:res.partner.function,name:customize_partner.email_vendor
+msgid "vendor"
+msgstr "commercial"
+

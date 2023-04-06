@@ -2,7 +2,6 @@
 
 
 from odoo import api, fields, models
-import unicodedata
 
 
 class ResPartnerFunction(models.Model):
@@ -31,7 +30,7 @@ class ResPartnerArea(models.Model):
 
 
 class ResPartnerTypology(models.Model):
-    """ Sale area of the partner """
+    """ Sale typology of the partner """
     _name = "res.partner.typology"
     _description = "Partner typology"
 

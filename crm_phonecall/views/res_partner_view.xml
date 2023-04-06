@@ -31,8 +31,8 @@
             <page name="sales_purchases" position="after">
                 <page string="Appointment" attrs="{'invisible': [('is_company','=',False)]}">
                     <group>
-                        <field name="user_id"/>
-                        <field name="user2_id"/>
+                        <field name="user_id" widget="many2one_avatar_user" domain="[('share', '=', False)]"/>
+                        <field name="user2_id" widget="many2one_avatar_user" domain="[('share', '=', False)]"/>
                     </group>
                     <newline/>
                     <div>
