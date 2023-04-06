@@ -8,7 +8,7 @@
     "author": "Odoo S.A., Tecnativa, Odoo Community Association (OCA), DK Group",
     "website": "https://github.com/dkgroup-organization/hennart",
     "license": "AGPL-3",
-    "depends": ["crm", "calendar", "delivery", "sale"],
+    "depends": ["crm", "calendar", "delivery", "sale", "account"],
     "data": [
         "security/crm_security.xml",
         "security/ir.model.access.csv",
