@@ -6,12 +6,31 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='company_id']" position="before">
-                
-                
-                    <field name="commitment_date" string="Date entrepôt"/>
-                       <field name="date_delivered" string="Date de livraison Client" />
 
+                <xpath expr="//field[@name='company_id']" position="before">
+                    <field name="commitment_date" string="Date entrepôt"/>
+                    <field name="date_delivered" string="Date de livraison Client"/>
+                </xpath>
+
+                <!-- Custom lines view -->
+                <xpath expr="//field[@name='order_line']//tree//field[@name='name']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']//tree//field[@name='tax_id']" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_uom']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_qty']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
               
            </field>
