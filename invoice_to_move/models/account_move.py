@@ -18,3 +18,20 @@ class AccountMove(models.Model):
         'account.account',
         string='Account',
     )
+    
+    payment_state = fields.Selection(
+        selection=[
+            ('not_paid', 'Not Paid'),
+            ('in_payment', 'In Payment'),
+            ('paid', 'Paid'),
+            ('partial', 'Partially Paid'),
+            ('reversed', 'Reversed'),
+            ('invoicing_legacy', 'Invoicing App Legacy'),
+        ],
+        string="Payment Status",
+        # compute='_compute_payment_state', 
+        store=True, 
+        readonly=False,
+        copy=False,
+        tracking=True,
+    )
