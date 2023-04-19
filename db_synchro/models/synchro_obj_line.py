@@ -78,3 +78,6 @@ class BaseSynchroObjLine(models.Model):
             obj.write_local_value(remote_values)
             #_logger.info('synchro:\n%s' % remote_values)
 
+
+
+
