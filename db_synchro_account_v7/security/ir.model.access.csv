@@ -1,6 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-acces_account_invoice,acces_account_invoice,model_account_invoice,base.group_erp_manager,1,1,1,1
-acces_account_invoice_line,acces_account_invoice_line,model_account_invoice_line,base.group_erp_manager,1,1,1,1
-acces_account_invoice_tax,acces_account_invoice_tax,model_account_invoice_tax,base.group_erp_manager,1,1,1,1
-acces_account_voucher,acces_account_voucher,model_account_voucher,base.group_erp_manager,1,1,1,1
-access_synchro_obj_depend,access_synchro_obj_depend,model_synchro_obj_depend,base.group_user,1,0,0,0 
