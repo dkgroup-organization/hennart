@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_form_mrp_bom_custom" model="ir.ui.view">
+            <field name="name">mrp.bom</field>
+            <field name="model">mrp.bom</field>
+            <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='code']/../p" position="replace">
+                    <p colspan="2" class="oe_grey oe_edit_only">
+                        Use type kit when you declare the content of a package.
+                        <br/>
+                    </p>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

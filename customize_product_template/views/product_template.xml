@@ -3,8 +3,8 @@
     <data>
 
 
-        <record id="view_form_product_template_remove_variant" model="ir.ui.view">
-            <field name="name">product.template.add.fileds</field>
+        <!--<record id="view_form_product_template_remove_variant" model="ir.ui.view">
+            <field name="name">product.template.add.fields</field>
             <field name="model">product.template</field>
             <field name="priority">9</field>
             <field name="inherit_id" ref="product.product_template_only_form_view"/>
@@ -12,7 +12,7 @@
                 <field name="default_code" position="replace"/>
                 <field name="barcode" position="replace"/>
             </field>
-        </record>
+        </record>-->
 
         <record id="view_form_product_template_add_fileds" model="ir.ui.view">
             <field name="name">product.template.add.fileds</field>
@@ -62,7 +62,8 @@
                                 <field name="type_milk"/>
                                 <field name="heat_treatment_milk"/>
                                 <field name="specificity_milk"/>
-                                <field name="origine"/>
+                                <field name="region"/>
+                                <field name="department"/>
                             </group>
                         </group>
                         <group string="Description" name="web_description">
@@ -82,6 +83,7 @@
                                 <field name="nv_energy_kj"/>
                                 <field name="nv_energy_kc"/>
                                 <field name="nv_fat"/>
+                                <field name="fat_in_dry_matter"/>
                                 <field name="nv_saturated_fatty_acids"/>
                                 <field name="nv_carbohydrates"/>
                                 <field name="nv_sugars"/>
@@ -90,12 +92,6 @@
                             </group>
                         </group>
                         <group>
-                            <group name="milk_fat" string="milk Fat">
-                                <field name="matiere_grasse"/>
-                                <field name="fat_in_product"/>
-                                <field name="fat_in_dry_matter"/>
-                                <field name="whole_milk"/>
-                            </group>
                             <group string="Codification">
                                 <field name="barcode"/>
                                 <field name="code_DUN14"/>
@@ -110,7 +106,7 @@
                                 <field name="volume"/>
                                 <field name="to_weight"/>
                                 <field name="tare"/>
-                                <field name="weight"/>
+                                <field name="weight" string="Net weight"/>
                                 <field name="weight_gross"/>
                             </group>
                             <group string="Dates">
@@ -137,6 +133,21 @@
 
                     </page>
                 </page>
+                
+                <field name="property_account_income_id" position="after">
+                    <field name="taxes_id" widget="many2many_tags"
+                           context="{'default_type_tax_use':'sale', 'search_default_sale': 1, 'search_default_service': type == 'service', 'search_default_goods': type == 'consu'}"/>
+                </field>
+                <field name="property_account_expense_id" position="after">
+                    <field name="supplier_taxes_id" widget="many2many_tags"
+                           context="{'default_type_tax_use':'purchase', 'search_default_purchase': 1, 'search_default_service': type == 'service', 'search_default_goods': type == 'consu'}"/>
+                </field>
+                <group name="accounting" position="after">
+                    <group string="Declaration DEB/DES">
+                        <field name="hs_code_id"/>
+                        <field name="origin_country_id" options="{'no_create': True}"/>
+                    </group>
+                </group>
 
             </field>
         </record>

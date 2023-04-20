@@ -35,6 +35,7 @@ class ProductTemplate(models.Model):
     def _get_default_uos_id(self):
         return self.env.ref('uom.product_uom_unit')
 
+    @api.depends('categ_id.tracking', 'categ_id.type', 'categ_id.detailed_type', 'categ_id.use_expiration_date')
     def update_categ_value(self):
         """ Update value based on categ value"""
         for product in self:
@@ -47,7 +48,7 @@ class ProductTemplate(models.Model):
                 product.tracking = 'none'
                 product.type = 'product'
                 product.detailed_type = 'product'
-                product.use_expiration_date = True
+                product.use_expiration_date = False
 
     tracking = fields.Selection([
         ('serial', 'By Unique Serial Number'),
@@ -78,7 +79,9 @@ class ProductTemplate(models.Model):
     code_ean_poids = fields.Char('Code EAN Poids', size=12)
     code_DUN14 = fields.Char('Code DUN14', size=14)
     not_solded = fields.Boolean(string='No longer sold')
-    origine = fields.Char('Origin', size=128)
+    region = fields.Char('Region')
+    department = fields.Char('Department')
+
     area = fields.Many2one(string='Area', comodel_name='product.area')
     ingredient = fields.Many2many('product.ingredient', 'ingredient_rel', string="Ingredient")
     allergen = fields.Many2many('product.allergen', 'allereg_reel', string="Allergen" )
@@ -99,7 +102,6 @@ class ProductTemplate(models.Model):
             ('tray', 'Tray'),
             ('craft', 'Craft'),
             ('other', 'Other'),
-
         ],
         string='Technical family')
     heat_treatment_milk = fields.Selection(
@@ -138,27 +140,19 @@ class ProductTemplate(models.Model):
         ],
         string='Type milk')
 
-
-
-    matiere_grasse = fields.Char('Fat', size=12)
-    fat_in_product = fields.Float(string='Fat in product (%)')
-    fat_in_dry_matter = fields.Float(
-        string='Fat in dry matter (%)') 
-    whole_milk = fields.Boolean(string='Whole milk')
-
-    nv_energy_kj = fields.Float(string=' Energy (Kj)')
-    nv_energy_kc = fields.Float(string=' Energy (Kcal)')
-    nv_fat = fields.Float(string='FAT (g)')
-    nv_saturated_fatty_acids = fields.Float(string='Saturated fatty acids (g)')
-    nv_carbohydrates = fields.Float(string='Carbohydrates (g)')
-    nv_sugars = fields.Float(string='Sugars (g)')
-    nv_protein = fields.Float(string=' Protein (g)')
-    nv_salt = fields.Float(string='Salt (g)')
+    nv_energy_kj = fields.Char(string=' Energy (Kj)')
+    nv_energy_kc = fields.Char(string=' Energy (Kcal)')
+    nv_fat = fields.Char(string='FAT (g)')
+    fat_in_dry_matter = fields.Char(string='Fat in dry matter (%)')
+    nv_saturated_fatty_acids = fields.Char(string='Saturated fatty acids (g)')
+    nv_carbohydrates = fields.Char(string='Carbohydrates (g)')
+    nv_sugars = fields.Char(string='Sugars (g)')
+    nv_protein = fields.Char(string=' Protein (g)')
+    nv_salt = fields.Char(string='Salt (g)')
 
     life_date = fields.Boolean(string='DLC : End of Life Date')
     use_date = fields.Boolean(string='DDM : Best before Date')
 
-    # volume = fields.Float(string='Volume',help='The volume in m3')
     to_weight = fields.Boolean(string='to weight')
     tare = fields.Float(string='Tare', help='Tare')
     weight_gross = fields.Float(string='Gross Weight',help='The gross weight in Kg.')
