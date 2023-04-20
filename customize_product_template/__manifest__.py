@@ -10,11 +10,18 @@
     "website": "https://dkgroup.fr",
     "maintainer": "DK group",
     "images": [],
-    "depends": ["account", "sale", "sale_stock", "stock", "product_expiry", "product"],
+    "depends": ["account", "sale", "sale_stock", "stock", "product_expiry",
+                "product", "mrp", "product_harmonized_system"],
     "data": [
-        'security/ir.model.access.csv',
+        "data/product_data.xml",
+
         "views/product_template.xml",
         "views/product_category.xml",
+        "views/res_config_view.xml",
+        "views/mrp_bom_view.xml",
+
+        "security/ir.model.access.csv",
+        "security/ir.rule.xml",
     ],
     "installable": True,
 }
