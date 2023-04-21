@@ -10,16 +10,16 @@ from odoo import api, fields, models, _
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    weight = fields.Float('weight', compute="compute_uos_qty")
-    product_uos = fields.Many2one('uom.uom', compute="compute_uos_qty")
-    product_uos_qty = fields.Float('Sale Qty', compute="compute_uos_qty")
+    weight = fields.Float('weight', compute="compute_uos")
+    product_uos = fields.Many2one('uom.uom', compute="compute_uos")
+    product_uos_qty = fields.Float('Sale Qty', compute="compute_uos")
 
     def _compute_customer_lead(self):
         """ The customer lead is more complexe in this project, It depend on location of customer """
         self.customer_lead = 0.0
 
     @api.depends('product_id', 'product_uom_qty', 'state')
-    def compute_uos_qty(self):
+    def compute_uos(self):
         """ compute the value of uos"""
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
 
@@ -40,7 +40,7 @@ class SaleOrderLine(models.Model):
                 if line.product_id.uos_id == uom_weight:
                     line.product_uos_qty = line.weight
                 else:
-                    line.product_uos_qty = line.product_uom_qty
+                    line.product_uos_qty = line.product_uom_qty * line.product_id.package_quantity
 
     def _convert_to_tax_base_line_dict(self):
         """ Convert the current record to a dictionary in order to use the generic taxes computation method

@@ -7,16 +7,26 @@ from odoo import api, fields, models, tools, _
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    package_quantity = fields.Float("Package quantity", compute="compute_package")
-    package_product_id = fields.Many2one("product.product", string="Package product", compute="compute_package")
+    base_product_id = fields.Many2one("product.product", string="Unit product",
+                                        compute="compute_base_product", store=True)
+    base_unit_count = fields.Float('Unit Count', related='product_tmpl_id.base_unit_count', store=True,
+        help="Number of unit in the package.")
+    base_unit_price = fields.Float("Price Per Unit",  related='product_tmpl_id.base_unit_price',
+        help="Price of unit in the package.")
+    base_unit_name = fields.Char(compute='_compute_base_unit_name', related='product_tmpl_id.base_unit_name',
+                                 help='Displays the custom unit for the products if defined or the selected unit of measure otherwise.')
 
-    def compute_package(self):
-        """ Update type value"""
+    @api.depends('base_product_tmpl_id')
+    def compute_base_product(self):
         for product in self:
-            if product.bom_ids:
+            if not product.id:
+                product.base_product_id = False
+            elif product.bom_ids:
                 bom = product.bom_ids[0]
-                product.package_quantity = bom.package_quantity
-                product.package_product_id = bom.package_product_id
+                product.base_product_id = bom.base_product_id
             else:
-                product.package_quantity = 1.0
-                product.package_product_id = product
+                product.base_product_id = False
+
+    def _get_base_unit_price(self, price):
+        self.ensure_one()
+        return self.base_unit_price
