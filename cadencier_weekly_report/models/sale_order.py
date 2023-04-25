@@ -36,14 +36,14 @@ class SaleOrder(models.Model):
 
                 # If there is data for the product, create a table to display the quantity sold by week
                 if qty_by_week:
-                    cadence_table = '<table style="border-collapse: collapse; border: 1px solid black; width: 100%; table-layout: fixed;"><tr style="border: 1px solid black;">'
+                    cadence_table = '<table style="border-collapse: collapse; width: 100%; table-layout: fixed;"><tr>'
                     for week in range(1, 14):
                         qty = qty_by_week.get('{}'.format(week), '')
                         if qty != '':
                             qty_str = str(int(qty))
-                            cadence_table += '<td style="border: 1px solid black; width:7.6%; font-weight: bold; text-align: center; padding: 5px;">{}</td>'.format(qty_str)
+                            cadence_table += '<td style="border-left: 1px solid black; width:7.6%; font-weight: bold; text-align: center; padding: 5px;">{}</td>'.format(qty_str)
                         else:
-                            cadence_table += '<td style="border: 1px solid black; width:7.6%; padding: 5px;"></td>'
+                            cadence_table += '<td style="border-left: 1px solid black; width:7.6%; padding: 5px;"></td>'
                     cadence_table += '</tr></table>'
 
                     # Create a history line record for the product with the quantity sold by week

@@ -361,12 +361,12 @@ class BaseSynchroObj(models.Model):
         for obj in self:
             obj.sequence = 1000 * obj.level + len(obj.child_ids)
 
-    def remote_read(self, remote_ids, remote_fields=[]):
+    def remote_read(self, remote_ids, remote_fields=[], remote_context={}):
         "read the value of the remote object filter on remote_ids"
         self.ensure_one()
         remote_odoo = odoo_proxy.RPCProxy(self.server_id)
         remote_fields = remote_fields or self.field_ids.mapped('name')
-        remote_value = remote_odoo.get(self.model_name).read(remote_ids, remote_fields)
+        remote_value = remote_odoo.get(self.model_name).read(remote_ids, remote_fields, remote_context)
         return remote_value
 
     def remote_search(self, domain=[]):

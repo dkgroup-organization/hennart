@@ -25,6 +25,10 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_template_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_id']"
                        position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -40,8 +44,11 @@
                 </xpath>
 
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
-                    <field name="product_uos_qty" string="qty"/>
-                    <field name="product_uos" string="Udv"/>
+                    <field name="product_uos_qty" string="Qty"/>
+                    <field name="product_uos_price" string="price"/>
+                    <field name="product_uos" string="u"/>
+                    <field name="cadence"/>
+
                 </xpath>
 
             </field>
