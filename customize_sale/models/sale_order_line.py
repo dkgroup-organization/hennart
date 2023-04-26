@@ -22,20 +22,25 @@ class SaleOrderLine(models.Model):
         """ get the sale frequency of the product"""
 
         for line in self:
-
+            date_start = line.order_id.date_delivered or datetime.today()
+            date_start = date_start - timedelta(days=date_start.weekday())  # monday
             date_from = datetime.today() - timedelta(weeks=13)
-            order_lines = self.env['sale.order.line'].search([
+            condition = [
+                ('product_id', '=', line.product_id.id),
                 ('order_id.partner_id', '=', line.order_id.partner_id.id),
-                ('order_id.date_order', '>=', date_from.date())
-            ])
+                ('order_id.date_order', '<=', date_start.date()),
+                ('order_id.date_order', '>=', date_from.date()),
+                ('order_id.state', '!=', 'cancel')
+            ]
+            order_lines = self.env['sale.order.line'].search(condition)
             product = line.product_id
 
             qty_by_week = {}
             # Loop through the past 13 weeks
             if product:
                 for week in range(1, 14):
-                    date_to = datetime.today() - timedelta(weeks=week - 1)
-                    date_from = datetime.today() - timedelta(weeks=week)
+                    date_to = date_start - timedelta(weeks=week - 1)
+                    date_from = date_start - timedelta(weeks=week)
                     # Get the quantity sold for the product for the current week
                     qty = sum(order_lines.filtered(lambda l: l.product_id.id == product.id and date_from.date() <= l.order_id.date_order.date() <= date_to.date()).mapped(
                         'product_uom_qty'))
