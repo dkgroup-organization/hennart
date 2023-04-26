@@ -40,7 +40,7 @@ class RPCProxyOne(object):
                                                         self.uid,
                                                         self.server.password,
                                                         self.ressource, name,
-                                                        *args)
+                                                        *args, **kwargs)
 
 
 class RPCProxy(object):

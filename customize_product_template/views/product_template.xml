@@ -2,8 +2,7 @@
 <odoo>
     <data>
 
-
-        <!--<record id="view_form_product_template_remove_variant" model="ir.ui.view">
+        <record id="view_form_product_template_remove_variant" model="ir.ui.view">
             <field name="name">product.template.add.fields</field>
             <field name="model">product.template</field>
             <field name="priority">9</field>
@@ -12,7 +11,7 @@
                 <field name="default_code" position="replace"/>
                 <field name="barcode" position="replace"/>
             </field>
-        </record>-->
+        </record>
 
         <record id="view_form_product_template_add_fileds" model="ir.ui.view">
             <field name="name">product.template.add.fileds</field>
@@ -56,6 +55,17 @@
                             <group>
                                 <field name="uos_id"/>
                                 <field name="list_price"/>
+                                <label for="base_unit_count" string="Pack"
+                                       attrs="{'invisible': [('base_unit_count','=', 1)]}"/>
+                                <div attrs="{'invisible': [('base_unit_count','=', 1)]}">
+                                    pack of
+                                    <field name="base_unit_count" class="oe_inline"/>
+                                    (
+                                    <field name="base_unit_price" class="oe_inline"/>
+                                    /<field name="base_unit_name" class="oe_inline"/>)
+                                </div>
+                                <field name="base_unit_price"
+                                       attrs="{'invisible': ['|', ('base_unit_count','=', 1), ('uos_id', '!=', 1)]}"/>
                                 <field name="weight"/>
                             </group>
                             <group>
@@ -133,7 +143,7 @@
 
                     </page>
                 </page>
-                
+
                 <field name="property_account_income_id" position="after">
                     <field name="taxes_id" widget="many2many_tags"
                            context="{'default_type_tax_use':'sale', 'search_default_sale': 1, 'search_default_service': type == 'service', 'search_default_goods': type == 'consu'}"/>

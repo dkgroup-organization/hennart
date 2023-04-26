@@ -11,7 +11,7 @@
     "maintainer": "DK group",
     "images": [],
     "depends": ["account", "sale", "sale_stock", "stock", "product_expiry",
-                "product", "mrp", "product_harmonized_system"],
+                "product", "mrp", "product_harmonized_system", "website_sale"],
     "data": [
         "data/product_data.xml",
 

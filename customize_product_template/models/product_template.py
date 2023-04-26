@@ -166,6 +166,53 @@ class ProductTemplate(models.Model):
     web_manufacture = fields.Html('Manufacture')
     web_tasting = fields.Html('Tasting')
 
+    base_unit_count = fields.Float('Unit Count', compute="compute_package", inverse=False, store=True, default=1.0,
+        help="Number of unit in the package.")
+
+    base_unit_price = fields.Float("Price Per Unit", compute="compute_package", store=True, default=0.0,
+        help="Price of unit in the package.")
+    # inverse='_set_base_unit_price'
+
+    base_product_tmpl_id = fields.Many2one("product.template", string="Unit product",
+                                        compute="compute_package", store=True)
+
+    base_unit_name = fields.Char(compute='_compute_base_unit_name',
+                                 help='Displays the custom unit for the products if defined or the selected unit of measure otherwise.')
+
+    @api.depends('list_price', 'uos_id', 'bom_ids', 'bom_ids.base_unit_count')
+    def compute_package(self):
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+
+        for product in self:
+            if not product.id:
+                product.base_unit_count = 1.0
+                product.base_product_tmpl_id = False
+                product.base_unit_price = 0.0
+            else:
+                if product.bom_ids:
+                    # Case when there is a package
+                    bom = product.bom_ids[0]
+                    product.base_unit_count = bom.base_unit_count or 1.0
+                    product.base_product_tmpl_id = bom.base_product_id.product_tmpl_id or False
+                else:
+                    product.base_unit_count = 1.0
+                    product.base_product_tmpl_id = False
+
+                if product.uos_id == uom_weight:
+                    # Case when the price in kg
+                    product.base_unit_price = product.list_price
+                else:
+                    product.base_unit_price = product.list_price / (product.base_unit_count or 1.0)
+
+    def _get_base_unit_price(self, price):
+        self.ensure_one()
+        return self.base_unit_price
+
+    @api.depends('uos_id', 'base_unit_id.name')
+    def _compute_base_unit_name(self):
+        for template in self:
+            template.base_unit_name = template.base_unit_id.name or template.uos_id.name
+
     def no_route_ids(self):
         """ update all route_ids"""
         self.route_ids = False
