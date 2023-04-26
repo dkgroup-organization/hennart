@@ -11,6 +11,7 @@ from odoo.fields import Command
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
+    default_code = fields.Char('Code', related="product_id.default_code", store=True)
     weight = fields.Float('weight', compute="compute_uos", store=True)
     product_uos = fields.Many2one('uom.uom', compute="compute_uos", store=True)
     product_uos_qty = fields.Float('Sale Qty', compute="compute_uos", store=True)
@@ -28,7 +29,7 @@ class SaleOrderLine(models.Model):
             condition = [
                 ('product_id', '=', line.product_id.id),
                 ('order_id.partner_id', '=', line.order_id.partner_id.id),
-                ('order_id.date_order', '<=', date_start.date()),
+                ('order_id.date_order', '<', date_start.date()),
                 ('order_id.date_order', '>=', date_from.date()),
                 ('order_id.state', '!=', 'cancel')
             ]
@@ -38,7 +39,7 @@ class SaleOrderLine(models.Model):
             qty_by_week = {}
             # Loop through the past 13 weeks
             if product:
-                for week in range(1, 14):
+                for week in range(0, 12):
                     date_to = date_start - timedelta(weeks=week - 1)
                     date_from = date_start - timedelta(weeks=week)
                     # Get the quantity sold for the product for the current week
@@ -49,7 +50,7 @@ class SaleOrderLine(models.Model):
                         qty_by_week['{}'.format(week)] = qty
 
                     # If there is data for the product, create a table to display the quantity sold by week
-
+            print('qty_by_week\n', qty_by_week)
             cadence_table = '<table style="border-collapse: collapse; width: 100%; table-layout: fixed;"><tr>'
             style_td = "border-left: 1px solid grey; width:7.6%; padding-left: 5px; padding-right: 5px;"
             style_text = " font-weight: bold; text-align: center;"
@@ -67,7 +68,7 @@ class SaleOrderLine(models.Model):
         """ The customer lead is more complexe in this project, It depend on location of customer """
         self.customer_lead = 0.0
 
-    @api.depends('product_id', 'product_uom_qty', 'state')
+    @api.depends('product_id', 'product_uom_qty', 'price_unit', 'state')
     def compute_uos(self):
         """ compute the value of uos"""
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
@@ -94,7 +95,7 @@ class SaleOrderLine(models.Model):
                         line.product_uos_qty = line.weight
                         line.product_uos_price = line.price_unit
                     else:
-                        line.product_uos_qty = line.product_uom_qty * line.product_id.base_unit_count
+                        line.product_uos_qty = line.product_uom_qty * (line.product_id.base_unit_count or 1.0)
                         line.product_uos_price = line.price_unit / (line.product_id.base_unit_count or 1.0)
 
     def _convert_to_tax_base_line_dict(self):
@@ -116,23 +117,6 @@ class SaleOrderLine(models.Model):
             price_subtotal=self.price_subtotal,
         )
         return res
-
-    @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id')
-    def _compute_amount(self):
-        """
-        Compute the amounts of the SO line.
-        """
-        for line in self:
-            tax_results = self.env['account.tax']._compute_taxes([line._convert_to_tax_base_line_dict()])
-            totals = list(tax_results['totals'].values())[0]
-            amount_untaxed = totals['amount_untaxed']
-            amount_tax = totals['amount_tax']
-
-            line.update({
-                'price_subtotal': amount_untaxed,
-                'price_tax': amount_tax,
-                'price_total': amount_untaxed + amount_tax,
-            })
 
     @api.depends('state', 'price_reduce', 'product_id', 'untaxed_amount_invoiced', 'qty_delivered', 'product_uom_qty')
     def _compute_untaxed_amount_to_invoice(self):
