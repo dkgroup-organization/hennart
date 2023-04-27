@@ -49,8 +49,7 @@ class SaleOrderLine(models.Model):
                     if qty != 0:
                         qty_by_week['{}'.format(week)] = qty
 
-                    # If there is data for the product, create a table to display the quantity sold by week
-            print('qty_by_week\n', qty_by_week)
+            # If there is data for the product, create a table to display the quantity sold by week
             cadence_table = '<table style="border-collapse: collapse; width: 100%; table-layout: fixed;"><tr>'
             style_td = "border-left: 1px solid grey; width:7.6%; padding-left: 5px; padding-right: 5px;"
             style_text = " font-weight: bold; text-align: center;"
@@ -127,6 +126,7 @@ class SaleOrderLine(models.Model):
             Note: Draft invoice are ignored on purpose, the 'to invoice' amount should
             come only from the SO lines.
         """
+        # TODO: Change the code with the add of uos price and qty
         for line in self:
             amount_to_invoice = 0.0
             if line.state in ['sale', 'done']:
@@ -138,6 +138,7 @@ class SaleOrderLine(models.Model):
                 price_subtotal = 0.0
                 uom_qty_to_consider = line.qty_delivered if line.product_id.invoice_policy == 'delivery' else line.product_uom_qty
                 price_reduce = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+                # TODO: change the price_subtotal computation
                 price_subtotal = price_reduce * uom_qty_to_consider
                 if len(line.tax_id.filtered(lambda tax: tax.price_include)) > 0:
                     # As included taxes are not excluded from the computed subtotal, `compute_all()` method
@@ -173,6 +174,7 @@ class SaleOrderLine(models.Model):
         :param optional_values: any parameter that should be added to the returned invoice line
         :rtype: dict
         """
+        # TODO: change the quantity and price_unit by uos_id (kg or unit)
         self.ensure_one()
         res = {
             'display_type': self.display_type or 'product',
