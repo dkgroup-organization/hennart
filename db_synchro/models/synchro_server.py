@@ -137,6 +137,20 @@ class BaseSynchroServer(models.Model):
         bank_ids = bank_obj.remote_search([])
         for bank_id in bank_ids:
             bank_obj.get_local_id(bank_id)
+            
+    def migrate_stock(self):
+        "migrate stock quant"
+        for server in self.search([]):
+
+            obj_ids = server.obj_ids.search([('model_name', '=', 'stock_product_by_location_tracking_prodlot')])
+            for obj in obj_ids:
+                obj.line_id.unlink()
+
+            quants = self.env['stock.quant'].search([])
+            for quant in quants:
+                quant.quantity = 0
+
+            obj.load_remote_record(limit=-1)
 
     def migrate_partner(self, limit=50):
         """ partner migration, look after active and used partner, don't load unused partner"""

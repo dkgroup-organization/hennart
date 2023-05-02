@@ -40,14 +40,17 @@
             <field name="server_version"/>
           </group>
               </page>
-              <page string="migration">
-
-          <group string="Initialisation" name="initialisation">
-          <button name="migrate_base" string="Migrate Base" type="object"/>
-
-          </group>
-
-
+              
+		  <page string="migration">
+			<group string="Initialisation" name="initialisation">
+				<button name="migrate_base" string="Migrate Base" type="object"/>
+			</group>
+          </page>
+		  
+		  <page string="stock migration">
+            <group string="MIGRATE STOCK" name="migrate">
+              <button name="migrate_stock" string="Migrate Stock" type="object"/>
+            </group>
           </page>
 
           </notebook>

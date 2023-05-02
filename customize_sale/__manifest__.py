@@ -14,6 +14,7 @@
     "data": [
         "views/sale_order_view.xml",
         "views/sale_order_view.xml",
+        "views/stock_lot.xml",
 
     ],
     "installable": True,
