@@ -32,7 +32,7 @@
                 </field>
 
                 <group name="partner_details" position="inside">
-                    <field name="origin"/>
+                    <field name="client_order_ref"/>
                 </group>
 
                 <field name="payment_term_id" position="replace"/>
