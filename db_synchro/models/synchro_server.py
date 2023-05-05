@@ -150,7 +150,8 @@ class BaseSynchroServer(models.Model):
             for quant in quants:
                 quant.quantity = 0
 
-            obj.load_remote_record(limit=-1)
+            if len(obj_ids) == 1:
+                obj_ids[0].load_remote_record(limit=-1)
 
     def migrate_partner(self, limit=50):
         """ partner migration, look after active and used partner, don't load unused partner"""

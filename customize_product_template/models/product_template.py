@@ -35,11 +35,20 @@ class ProductTemplate(models.Model):
     def _get_default_uos_id(self):
         return self.env.ref('uom.product_uom_unit')
 
-    @api.depends('categ_id.tracking', 'categ_id.type', 'categ_id.detailed_type', 'categ_id.use_expiration_date')
+    @api.depends('bom_ids', 'categ_id.tracking', 'categ_id.type', 'categ_id.detailed_type', 'categ_id.use_expiration_date')
     def update_categ_value(self):
         """ Update value based on categ value"""
         for product in self:
-            if product.categ_id:
+            if product.bom_ids:
+                if product.bom_ids[0].type == "phantom":
+                    product.type = "consu"
+                    product.detailed_type = "consu"
+                else:
+                    product.type = "product"
+                    product.detailed_type = "product"
+                product.use_expiration_date = product.categ_id.use_expiration_date
+
+            elif product.categ_id:
                 product.tracking = product.categ_id.tracking
                 product.type = product.categ_id.type
                 product.detailed_type = product.categ_id.detailed_type
