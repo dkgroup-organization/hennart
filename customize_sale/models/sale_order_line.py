@@ -41,8 +41,6 @@ class SaleOrderLine(models.Model):
         for line in self:
             line.qty_to_deliver = line.product_uom_qty - line.qty_delivered
 
-
-
     @api.depends('product_id')
     def compute_cadence(self):
         """ get the sale frequency of the product"""
