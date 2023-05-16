@@ -25,7 +25,6 @@ class SaleOrderLine(models.Model):
     def _compute_display_qty_widget(self):
         """ Always display product in stock with kit and bom"""
         for line in self:
-            print()
             if line.state != 'draft':
                 line.display_qty_widget = False
             elif line.product_id.bom_ids:
@@ -41,9 +40,7 @@ class SaleOrderLine(models.Model):
         for line in self:
             line.qty_to_deliver = line.product_uom_qty - line.qty_delivered
 
-
-
-    @api.depends('product_id')
+    @api.depends('product_id', 'order_id.partner_id', 'order_id.date_delivered')
     def compute_cadence(self):
         """ get the sale frequency of the product"""
 
@@ -53,12 +50,13 @@ class SaleOrderLine(models.Model):
             date_from = datetime.today() - timedelta(weeks=13)
             condition = [
                 ('product_id', '=', line.product_id.id),
-                ('order_id.partner_id', '=', line.order_id.partner_id.id),
-                ('order_id.date_order', '<', date_start.date()),
-                ('order_id.date_order', '>=', date_from.date()),
-                ('order_id.state', '!=', 'cancel')
+                ('move_id.partner_id', '=', line.order_id.partner_id.id),
+                ('move_id.invoice_date', '<', date_start.date()),
+                ('move_id.invoice_date', '>=', date_from.date()),
+                ('move_id.state', '!=', 'cancel'),
+                ('move_id.move_type', '=', 'out_invoice'),
             ]
-            order_lines = self.env['sale.order.line'].search(condition)
+            invoice_lines = self.env['account.move.line'].search(condition)
             product = line.product_id
 
             qty_by_week = {}
@@ -68,8 +66,8 @@ class SaleOrderLine(models.Model):
                     date_to = date_start - timedelta(weeks=week - 1)
                     date_from = date_start - timedelta(weeks=week)
                     # Get the quantity sold for the product for the current week
-                    qty = sum(order_lines.filtered(lambda l: l.product_id.id == product.id and date_from.date() <= l.order_id.date_order.date() <= date_to.date()).mapped(
-                        'product_uom_qty'))
+                    qty = sum(invoice_lines.filtered(lambda l: l.product_id.id == product.id and date_from.date() <= l.move_id.invoice_date.date() <= date_to.date()).mapped(
+                        'uom_qty'))
                     # If the quantity is not zero, add it to the quantity by week dictionary
                     if qty != 0:
                         qty_by_week['{}'.format(week)] = qty
@@ -92,10 +90,6 @@ class SaleOrderLine(models.Model):
         """ The customer lead is more complexe in this project, It depends on location of customer: 1, 2 or 3 days """
         self.customer_lead = 0.0
 
-
-
-
-
     @api.depends('product_id', 'product_uom_qty', 'price_unit', 'state')
     def compute_uos(self):
         """ compute the value of uos"""
@@ -112,19 +106,17 @@ class SaleOrderLine(models.Model):
                 line.product_uos_price = 0.0
             else:
                 line.product_uos = line.product_id.uos_id
+                line.product_uos_price = line.price_unit
 
                 if line.product_id.type == 'service' or line.is_delivery or line.display_type or line.is_downpayment:
                     line.weight = 0.0
                     line.product_uos_qty = line.product_uom_qty
-                    line.product_uos_price = line.price_unit
                 else:
                     line.weight = line.product_id.weight * line.product_uom_qty
                     if line.product_id.uos_id == uom_weight:
                         line.product_uos_qty = line.weight
-                        line.product_uos_price = line.price_unit
                     else:
                         line.product_uos_qty = line.product_uom_qty * (line.product_id.base_unit_count or 1.0)
-                        line.product_uos_price = line.price_unit / (line.product_id.base_unit_count or 1.0)
 
     @api.depends(
         'product_id', 'customer_lead', 'product_uom_qty', 'product_uom', 'order_id.commitment_date',
@@ -224,7 +216,8 @@ class SaleOrderLine(models.Model):
             Note: Draft invoice are ignored on purpose, the 'to invoice' amount should
             come only from the SO lines.
         """
-        # TODO: Change the code with the add of uos price and qty
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+
         for line in self:
             amount_to_invoice = 0.0
             if line.state in ['sale', 'done']:
@@ -236,8 +229,14 @@ class SaleOrderLine(models.Model):
                 price_subtotal = 0.0
                 uom_qty_to_consider = line.qty_delivered if line.product_id.invoice_policy == 'delivery' else line.product_uom_qty
                 price_reduce = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-                # TODO: change the price_subtotal computation
-                price_subtotal = price_reduce * uom_qty_to_consider
+
+                if line.product_id.uos_id == uom_weight:
+                    uos_qty_to_consider = uom_qty_to_consider * line.weight
+                else:
+                    uos_qty_to_consider = uom_qty_to_consider * (line.product_id.base_unit_count or 1.0)
+
+                price_subtotal = price_reduce * uos_qty_to_consider
+
                 if len(line.tax_id.filtered(lambda tax: tax.price_include)) > 0:
                     # As included taxes are not excluded from the computed subtotal, `compute_all()` method
                     # has to be called to retrieve the subtotal without them.
@@ -245,7 +244,7 @@ class SaleOrderLine(models.Model):
                     price_subtotal = line.tax_id.compute_all(
                         price_reduce,
                         currency=line.currency_id,
-                        quantity=uom_qty_to_consider,
+                        quantity=uos_qty_to_consider,
                         product=line.product_id,
                         partner=line.order_id.partner_shipping_id)['total_excluded']
                 inv_lines = line._get_invoice_lines()
@@ -254,10 +253,15 @@ class SaleOrderLine(models.Model):
                     # remaining amount to invoice
                     amount = 0
                     for l in inv_lines:
-                        if len(l.tax_ids.filtered(lambda tax: tax.price_include)) > 0:
-                            amount += l.tax_ids.compute_all(l.currency_id._convert(l.price_unit, line.currency_id, line.company_id, l.date or fields.Date.today(), round=False) * l.quantity)['total_excluded']
+                        if line.product_id.uos_id == uom_weight:
+                            uos_qty = l.weight
                         else:
-                            amount += l.currency_id._convert(l.price_unit, line.currency_id, line.company_id, l.date or fields.Date.today(), round=False) * l.quantity
+                            uos_qty = l.quantity * (l.product_id.base_unit_count or 1.0)
+
+                        if len(l.tax_ids.filtered(lambda tax: tax.price_include)) > 0:
+                            amount += l.tax_ids.compute_all(l.currency_id._convert(l.price_unit, line.currency_id, line.company_id, l.date or fields.Date.today(), round=False) * uos_qty)['total_excluded']
+                        else:
+                            amount += l.currency_id._convert(l.price_unit, line.currency_id, line.company_id, l.date or fields.Date.today(), round=False) * uos_qty
 
                     amount_to_invoice = max(price_subtotal - amount, 0)
                 else:

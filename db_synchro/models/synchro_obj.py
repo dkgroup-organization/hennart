@@ -759,10 +759,19 @@ class BaseSynchroObj(models.Model):
                     line.update_values()
                     line.remote_write_date = line.update_date.replace(second=0, microsecond=0)
 
-    def button_update_all(self):
+    def button_update_all(self, limit=50):
         """ Change the update_date to trigger a new update by function get_last_update"""
         self.update_remote_write_date()
         for obj in self:
-            update_date = datetime.datetime(2000, 1, 1)
-            obj.line_id.write({'update_date': update_date})
+            list_line = self.env[obj.line_id._name]
+            for line in obj.line_id:
+                if not list_line:
+                    list_line = line
+                elif len(list_line) < limit:
+                    list_line |= line
+                else:
+                    list_line |= line
+                    list_line.update_values()
+                    list_line = self.env[obj.line_id._name]
+
 
