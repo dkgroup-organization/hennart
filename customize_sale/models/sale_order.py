@@ -49,33 +49,35 @@ class SaleOrder(models.Model):
     def onchange_partner_id_cadence(self, date_order=None):
         # Clear the history lines when the partner is changed
         # If the partner is not null, get the order lines for the past 13 weeks
+        nb_week = 13
 
         self.ensure_one()
         line_vals = []
-        res = {}
-        today = datetime.today()
+        res = self.onchange_partner_id_dates()
+        commitment_date = res.get('commitment_date') or datetime.today()
 
         if self.state == 'draft' and self.partner_id:
-            date_start = today - timedelta(days=today.weekday())  # monday
-            date_from = date_start - timedelta(weeks=13)
-            order_lines = self.env['sale.order.line'].search([
-                ('order_id.partner_id', '=', self.partner_id.id),
-                ('order_id.date_order', '<=', date_start.date()),
-                ('order_id.date_order', '>=', date_from.date()),
-                ('order_id.state', '!=', 'cancel')
+            date_start = commitment_date - timedelta(days=commitment_date.weekday())  # monday
+            date_from = date_start - timedelta(weeks=nb_week)
+            order_lines = self.env['account.move.line'].search([
+                ('move_id.partner_id', 'child_of', self.partner_id.id),
+                ('move_id.invoice_date', '<=', date_start),
+                ('move_id.invoice_date', '>=', date_from),
+                ('move_id.move_type', '=', 'out_invoice'),
+                ('move_id.state', '!=', 'cancel')
             ])
             # Get the product ids of the order lines
             product_ids = order_lines.mapped('product_id') - self.order_line.mapped('product_id')
             for product in product_ids:
-                line_vals.append(Command.create({
-                    'product_id': product.id,
-                    'product_template_id': product.product_tmpl_id.id,
-                    'product_uom_qty': 0.0,
-                }))
+                if product.sale_ok:
+                    line_vals.append(Command.create({
+                        'product_id': product.id,
+                        'product_template_id': product.product_tmpl_id.id,
+                        'product_uom_qty': 0.0,
+                    }))
         if line_vals:
             res = {'order_line': line_vals}
 
-        res.update(self.onchange_partner_id_dates())
-        self.with_context(display_default_code=False).update(res)
+        self.update(res)
 
 

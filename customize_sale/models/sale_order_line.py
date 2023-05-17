@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-##############################################################################
-# For copyright and license notices, see __openerp__.py file in module root
-# directory
-##############################################################################
 
 from odoo import api, fields, models, _
 from datetime import datetime, timedelta
@@ -45,14 +41,14 @@ class SaleOrderLine(models.Model):
         """ get the sale frequency of the product"""
 
         for line in self:
-            date_start = line.order_id.date_delivered or datetime.today()
+            date_start = line.order_id.date_delivered or datetime.now()
             date_start = date_start - timedelta(days=date_start.weekday())  # monday
-            date_from = datetime.today() - timedelta(weeks=13)
+            date_from = datetime.now() - timedelta(weeks=13)
             condition = [
                 ('product_id', '=', line.product_id.id),
-                ('move_id.partner_id', '=', line.order_id.partner_id.id),
-                ('move_id.invoice_date', '<', date_start.date()),
-                ('move_id.invoice_date', '>=', date_from.date()),
+                ('move_id.partner_id', 'child_of', line.order_id.partner_id.id),
+                ('move_id.invoice_date', '<', date_start),
+                ('move_id.invoice_date', '>=', date_from),
                 ('move_id.state', '!=', 'cancel'),
                 ('move_id.move_type', '=', 'out_invoice'),
             ]
@@ -66,7 +62,7 @@ class SaleOrderLine(models.Model):
                     date_to = date_start - timedelta(weeks=week - 1)
                     date_from = date_start - timedelta(weeks=week)
                     # Get the quantity sold for the product for the current week
-                    qty = sum(invoice_lines.filtered(lambda l: l.product_id.id == product.id and date_from.date() <= l.move_id.invoice_date.date() <= date_to.date()).mapped(
+                    qty = sum(invoice_lines.filtered(lambda l: l.product_id.id == product.id and date_from.date() <= l.move_id.invoice_date <= date_to.date()).mapped(
                         'uom_qty'))
                     # If the quantity is not zero, add it to the quantity by week dictionary
                     if qty != 0:

@@ -40,13 +40,25 @@
                     <field name="payment_term_id"/>
                 </field>
 
+                <group name="sale_shipping" position="inside">
+                 <field name="carrier_id"/>
+                </group>
+
+                <xpath expr="//button[@name='action_open_delivery_wizard']/.." position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <button name="action_open_delivery_wizard" position="replace"/>
+                <button name="action_open_delivery_wizard" position="replace"/>
+                <button name="action_open_delivery_wizard" position="replace"/>
+
                 <xpath expr="//field[@name='order_line']" position="attributes">
                     <attribute name="context">{'display_default_code': False}</attribute>
                 </xpath>
 
 
                 <xpath expr="//field[@name='order_line']/tree" position="replace">
-                    <tree string="Sales Order Lines" editable="bottom">
+                    <tree string="Sales Order Lines" editable="bottom" limit="200">
 
                         <field name="sequence" widget="handle"/>
                         <!-- We do not display the type because we don't want the user to be bothered with that information if he has no section or note. -->
@@ -70,7 +82,7 @@
                                decoration-info="(not display_type and invoice_status == 'to invoice')"
                                decoration-bf="(not display_type and invoice_status == 'to invoice')"
                                context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom, 'company_id': parent.company_id}"/>
-                        <widget name="qty_at_date_widget" width="20px" readonly="1"/>
+
                         <field name="discount" string="Disc.%" optional="show"/>
                         <field name="qty_delivered"
                                decoration-info="(not display_type and invoice_status == 'to invoice')"
@@ -85,6 +97,7 @@
                                optional="show"/>
                         <field name="qty_to_invoice" invisible="1"/>
 
+                        <widget name="qty_at_date_widget" width="20px" readonly="1"/>
                         <field name="virtual_available_at_date" string="Stock" readonly="1"/>
 
                         <field name="cadence" attrs="{'column_invisible': [('parent.state', '!=', 'draft')]}"/>
@@ -117,17 +130,7 @@
                         <field name="price_tax" invisible="1"/>
                         <field name="company_id" invisible="1"/>
 
-                        <field name="qty_available_today"/>
-                        <field name="free_qty_today"/>
-                        <field name="scheduled_date"/>
-                        <field name="forecast_expected_date"/>
-                        <field name="warehouse_id"/>
-                        <field name="move_ids"/>
-                        <field name="qty_to_deliver"/>
-                        <field name="is_mto"/>
-                        <field name="display_qty_widget"/>
-
-                        <!--<field name="qty_available_today" invisible="1"/>
+                        <field name="qty_available_today" invisible="1"/>
                         <field name="free_qty_today" invisible="1"/>
                         <field name="scheduled_date" invisible="1"/>
                         <field name="forecast_expected_date" invisible="1"/>
@@ -135,8 +138,7 @@
                         <field name="move_ids" invisible="1"/>
                         <field name="qty_to_deliver" invisible="1"/>
                         <field name="is_mto" invisible="1"/>
-                        <field name="display_qty_widget" invisible="1"/>-->
-
+                        <field name="display_qty_widget" invisible="1"/>
 
                     </tree>
 
