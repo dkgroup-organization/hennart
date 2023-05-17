@@ -35,3 +35,15 @@ class AccountMove(models.Model):
         copy=False,
         tracking=True,
     )
+    
+    picking_ref = fields.Many2one('stock.picking', 
+                                  compute='_compute_picking_id', 
+                                  string='Bon de livraison',)
+                                  
+    
+    def _compute_picking_id(self):
+        for move in self:
+            order = self.env['sale.order'].search([('name', '=', move.invoice_origin)], limit=1)
+            if order and order.picking_ids:
+                pickings = order.picking_ids.filtered(lambda p: p.state == 'done')
+                move.picking_ref = pickings[0]
