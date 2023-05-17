@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="external_layout_boxed_inherits" inherit_id="web.external_layout_boxed">
+        <xpath expr="//div[1]" position="replace">
+            <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+                <div class="o_boxed_header">
+                <div class="row mb8">
+                    <div class="col-3">
+                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+                    </div>
+                    <div class="col-8 mb4">
+                        <div class="mt0 h4" style="color: black; font-weight: bold !important;">HENNART FRERES</div>
+                        <div class="mt0 h4" style="color: black; font-weight: bold !important;">ZI du Château - 8, rue Gutenberg - F 62 220 CARVIN</div>
+                        <div name="company_address" class="mb4">
+                            <div>SAS au capital de 531123 € - RC ARRAS 92B557 - SIRET: 318 166 352 00027</div>
+                            <div>Code APE: 4633Z    N° TVA: FR 56 318 166 352    N° EORI: FR31816635200027</div>
+                            <div>IBAN: FR76 3000-4005-1800-0251-2100-612 - BIC: BNPAFRPPNFE</div>
+                            <div>03.21.74.82.00 contact@hennart-fr.com http://www.hennart-fr.com</div>
+                            <br> </br>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <style>
+                            .circle {
+                                display: inline-block;
+                                width: 70px;
+                                height: 50px;
+                                border: 2px solid black;
+                                border-radius: 50%;
+                                background-color: white;
+                                text-align: center;
+                                vertical-align: middle;
+                                line-height: 1.5;
+                            }
+
+                            .circle span,strong {
+                                display: block;
+                                font-size: 10px;
+                                font-weight: bold !important;
+                            }
+                        </style>
+
+                        <div class="circle">
+                            <span>FR</span>
+                            <span>62.215.030</span>
+                            <span><strong>CE</strong></span>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

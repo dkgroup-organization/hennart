@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="sale_order_portal_content_inherits" inherit_id="sale.sale_order_portal_content">
+        <!-- Add th -->
+        <xpath expr="//thead[@class='bg-100']//tr//th[2]" position="after">
+            <th class="text-end">Uos Qty</th>
+            <th class="text-end">Uos</th>
+        </xpath>
+
+        <xpath expr="//thead[@class='bg-100']//tr//th[5]" position="after">
+            <th class="text-end">Weight</th>
+        </xpath>
+
+
+        <xpath expr="//tbody[@class='sale_tbody']//tr//td[2]" position="after">
+            <td id="product_uos_qty" class="text-end">
+                <span t-field="line.product_uos_qty"/>
+            </td>
+            <td id="product_uos" class="text-end">
+                <span t-field="line.product_uos"/>
+            </td>
+        </xpath>
+
+        <xpath expr="//tbody[@class='sale_tbody']//tr//td[5]" position="after">
+            <td id="weight" class="text-end">
+                <span t-field="line.weight"/>
+            </td>
+        </xpath>
+    </template>
+
+</odoo>
