@@ -35,7 +35,6 @@
                         </group>
                         <group/>
                     </group>
-
                 </div>
 
                 <div name="options" position="inside">
@@ -53,20 +52,20 @@
                     <page name="information" string="Information">
                         <group>
                             <group>
-                                <field name="uos_id"/>
                                 <field name="list_price"/>
+                                 <field name="uos_id"/>
+                                <field name="weight"/>
                                 <label for="base_unit_count" string="Pack"
                                        attrs="{'invisible': [('base_unit_count','=', 1)]}"/>
                                 <div attrs="{'invisible': [('base_unit_count','=', 1)]}">
-                                    pack of
-                                    <field name="base_unit_count" class="oe_inline"/>
+                                    Pack of
+                                    <field name="base_unit_count" class="oe_inline" readonly="1"/> : (
+                                    <field name="base_product_tmpl_id" class="oe_inline" readonly="1"/>)
                                     (
-                                    <field name="base_unit_price" class="oe_inline"/>
-                                    /<field name="base_unit_name" class="oe_inline"/>)
+                                    <field name="base_unit_price" class="oe_inline" readonly="1"/>
+                                    /<field name="base_unit_name" class="oe_inline" readonly="1"/>)
                                 </div>
-                                <field name="base_unit_price"
-                                       attrs="{'invisible': ['|', ('base_unit_count','=', 1), ('uos_id', '!=', 1)]}"/>
-                                <field name="weight"/>
+                                <field name="base_package_price"/>
                             </group>
                             <group>
                                 <field name="type_milk"/>
