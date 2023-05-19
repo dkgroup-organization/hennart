@@ -18,35 +18,24 @@
 
                         <div id="informations" class="row mt-4 mb-4">
                             <div class="col-auto col-3 mw-100 mb-2" t-if="o.invoice_date" name="invoice_date" style="border: 1px solid black !important;">
-                                <t t-if="o.move_type == 'out_invoice'"><strong>Date:</strong></t>
-                                <t t-elif="o.move_type == 'out_refund'"><strong>Date:</strong></t>
-                                <t t-elif="o.move_type == 'out_receipt'"><strong>Date:</strong></t>
-                                <t t-else=""><strong>Date:</strong></t>
-                                <p class="m-0" t-field="o.invoice_date"/>
+                                <strong style ="margin-left: 10px !important;">Date:</strong>
+                                <p style ="margin-left: 10px !important;" t-field="o.invoice_date"/>
                             </div>
                             <div class="col-auto col-3 mw-100 mb-2" t-if="o.invoice_date_due and o.move_type == 'out_invoice' and o.state == 'posted'" name="due_date" style="border: 1px solid black !important;">
-                                <strong>Date d'échéance:</strong>
-                                <p class="m-0" t-field="o.invoice_date_due"/>
+                                <strong style ="margin-left: 10px !important;">Date d'échéance:</strong>
+                                <p style ="margin-left: 10px !important;" t-field="o.invoice_date_due"/>
                             </div>
-                            <div class="col-auto col-3 mw-100 mb-2" t-if="o.invoice_origin" name="origin" style="border: 1px solid black !important;">
-                                <strong>Source:</strong>
-                                <p class="m-0" t-field="o.invoice_origin"/>
-                            </div>
-                            <div class="col-auto col-3 mw-100 mb-2" t-if="o.picking_ref" name="picking_ref" style="border: 1px solid black !important;">
-                                <strong>Livraison:</strong>
-                                <p class="m-0" t-field="o.picking_ref"/>
+                            <div class="col-auto col-3 mw-100 mb-2" t-if="o.partner_id" name="partner_id" style="border: 1px solid black !important;">
+                                <strong style ="margin-left: 10px !important;">Livraison:</strong>
+                                <p style ="margin-left: 10px !important;" t-field="o.partner_id"/>
                             </div>
                             <div class="col-auto col-3 mw-100 mb-2" t-if="o.partner_id.ref" name="customer_ref" style="border: 1px solid black !important;">
-                                <strong>Référence client:</strong>
-                                <p class="m-0" t-field="o.partner_id.ref"/>
+                                <strong style ="margin-left: 10px !important;">Référence client:</strong>
+                                <p style ="margin-left: 10px !important;" t-field="o.partner_id.ref"/>
                             </div>
                             <div class="col-auto col-3 mw-100 mb-2" t-if="o.partner_id.ref" name="client_code" style="border: 1px solid black !important;"> 
-                                <strong>Client:</strong>
-                                <p class="m-0" t-field="o.partner_id.ref"/>
-                            </div>
-                            <div class="col-auto col-3 mw-100 mb-2" t-if="o.ref" name="reference" style="border: 1px solid black !important;">
-                                <strong>Reference:</strong>
-                                <p class="m-0" t-field="o.ref"/>
+                                <strong style ="margin-left: 10px !important;">Client:</strong>
+                                <p style ="margin-left: 10px !important;" t-field="o.partner_id.ref"/>
                             </div>
                         </div>
 
@@ -89,7 +78,10 @@
                                                 <span t-field="line.quantity"/>
                                                 <!-- <span t-field="line.product_uom_id" groups="uom.group_uom"/> -->
                                             </td>
-                                            <td name="account_invoice_line_name"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
+                                            <td name="account_invoice_line_name">
+                                                <span t-field="line.product_id.name"/><br></br>
+                                                <p t-if="line.prodlot_id" style="font-size: 10px;">Lot: <span t-field="line.prodlot_id.name"/> <span t-field="line.prodlot_id.life_date"/></p>
+                                            </td>
                                             <td name="colis_de"><span t-if="line.product_id.base_unit_count > 1" t-field="line.product_id.base_unit_count"/></td>
                                             <td name="unite">
                                                 <span t-field="line.uom_qty"/>
@@ -102,7 +94,7 @@
                                                 <span class="text-nowrap" t-field="line.discount"/>
                                             </td>
                                             <!-- a changer le nom du champ pour le prix net et mettre un champ calculé -->
-                                            <td name="prix_net"><span t-field="line.initial_price" /></td>
+                                            <td name="prix_net"><span t-field="line.price_net" /></td>
                                             <td t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                                 <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_ids))" id="line_tax_ids"/>
                                             </td>
@@ -176,13 +168,49 @@
                         </div>
                     </div>
 
+                    <p t-if="o.invoice_date_due" name="invoice_date_due" style="font-weight: bold !important;">
+                        <strong>Due date: </strong><span t-field="o.invoice_date_due"/>
+                    </p>
 
-                    <div>
-                        <p><span t-field="o.company_id.invoice_text"/></p>
+                    <span t-field="o.company_id.invoice_footer_text"/>
+
+
+                    <div id="informations" class="row mt-4 mb-4" style="text-align: center !important;">
+                        <div class="col-auto col-3 mw-100 mb-2" name="due_date" style="border: 1px solid black !important;">
+                            <strong>Transporteur:</strong>
+                            <p class="m-0" t-field="o.picking_ids[0].carrier_id" t-if="o.picking_ids"/>
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" name="partner_id" style="border: 1px solid black !important;">
+                            <strong>Nb colis:</strong>
+                            <p class="m-0" t-field="o.picking_ids[0].number_of_packages"  t-if="o.picking_ids"/>
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" name="customer_ref" style="border: 1px solid black !important;">
+                            <strong>Nb containers:</strong>
+                            <p class="m-0" t-field="o.picking_ids[0].nb_container" t-if="o.picking_ids"/>
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" name="client_code" style="border: 1px solid black !important;"> 
+                            <strong>Nb palettes:</strong>
+                            <p class="m-0" t-field="o.picking_ids[0].nb_pallet" t-if="o.picking_ids"/>
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" name="client_code" style="border: 1px solid black !important;"> 
+                            <strong>Poids:</strong>
+                            <p class="m-0" t-field="o.picking_ids[0].weight" t-if="o.picking_ids"/>
+                        </div>
+                        <div class="col-auto col-3 mw-100 mb-2" name="client_code" style="border: 1px solid black !important;"> 
+                            <strong>Poids brut:</strong>
+                            <p class="m-0" t-field="o.picking_ids[0].shipping_weight" t-if="o.picking_ids"/>
+                        </div>
                     </div>
 
+                    
             </xpath>
 
+
+
+
+            <xpath expr="//div[@name='comment']" position="replace">
+                
+            </xpath>
 
     </template>
 

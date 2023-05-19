@@ -55,3 +55,13 @@ class AccountMoveLine(models.Model):
     histo_cost_price = fields.Float()
 
     product_uos = fields.Many2one('uom.uom', string="Udv")
+    
+    price_net = fields.Float(
+        string='Prix net',
+        compute='_compute_price_net'
+    )
+
+    @api.depends('price_unit', 'discount')
+    def _compute_price_net(self):
+        for line in self:
+            line.price_net = line.price_unit - (line.price_unit * line.discount / 100)

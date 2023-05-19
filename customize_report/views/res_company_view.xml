@@ -9,7 +9,12 @@
 
                 <xpath expr="//page[@name='general_info']" position="after">
                     <page string="Report Text" name="general_info">
-                        <field name="invoice_text"/>
+                        <group name="header_text" string="Header Text">
+                            <field name="invoice_header_text"/>
+                        </group>
+                        <group name="footer_text" string="Footer Text">
+                            <field name="invoice_footer_text"/>
+                        </group>
                     </page>
                 </xpath>
 
