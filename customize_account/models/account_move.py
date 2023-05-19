@@ -36,14 +36,17 @@ class AccountMove(models.Model):
         tracking=True,
     )
     
-    picking_ref = fields.Many2one('stock.picking', 
-                                  compute='_compute_picking_id', 
-                                  string='Bon de livraison',)
-                                  
-    
-    def _compute_picking_id(self):
-        for move in self:
-            order = self.env['sale.order'].search([('name', '=', move.invoice_origin)], limit=1)
-            if order and order.picking_ids:
-                pickings = order.picking_ids.filtered(lambda p: p.state == 'done')
-                move.picking_ref = pickings[0]
+    picking_ids = fields.Many2many('stock.picking', string='Pickings', compute='_compute_picking_ids')
+
+    @api.depends('invoice_line_ids.sale_line_ids.order_id')
+    def _compute_picking_ids(self):
+        for invoice in self:
+            order_ids = invoice.invoice_line_ids.mapped('sale_line_ids.order_id')
+            picking_ids = self.env['stock.picking'].search([
+                ('sale_id', 'in', order_ids.ids),
+                ('state', '=', 'done')
+            ])
+            if picking_ids:
+                invoice.picking_ids = picking_ids
+            else:
+                invoice.picking_ids = False
