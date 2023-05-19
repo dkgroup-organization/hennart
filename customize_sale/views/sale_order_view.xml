@@ -59,7 +59,6 @@
                     <attribute name="context">{'display_default_code': False}</attribute>
                 </xpath>
 
-
                 <xpath expr="//field[@name='order_line']/tree" position="replace">
                     <tree string="Sales Order Lines" editable="bottom" limit="200">
 
@@ -119,7 +118,7 @@
                         <field name="product_uos" width="20px" string="U"/>
                         <field name="product_uos_price" width="50px" string="Price"/>
 
-                        <field name="weight" width="50px" sum="Total" optional="show"/>
+                        <field name="weight" width="50px" sum="Total" optional="hide"/>
 
                         <field name="tax_id" widget="many2many_tags" options="{'no_create': True}"
                                domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id), ('country_id', '=', parent.tax_country_id)]"
