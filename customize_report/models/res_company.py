@@ -4,7 +4,12 @@ class ResCompanyInherits(models.Model):
     _inherit = 'res.company'
 
     
-    invoice_text = fields.Text(
-        string='Invoice Text',
+    invoice_header_text = fields.Text(
+        string='Invoice Header Text',
+    )
+
+    invoice_footer_text = fields.Text(
+        string='Invoice Footer Text',
+        translate=True,
     )
     

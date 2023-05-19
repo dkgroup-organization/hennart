@@ -9,15 +9,18 @@
                         <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
                     </div>
                     <div class="col-8 mb4">
-                        <div class="mt0 h4" style="color: black; font-weight: bold !important;">HENNART FRERES</div>
-                        <div class="mt0 h4" style="color: black; font-weight: bold !important;">ZI du Château - 8, rue Gutenberg - F 62 220 CARVIN</div>
-                        <div name="company_address" class="mb4">
+                        <div class="mt0 h5" style="color: black; font-weight: bold !important;">HENNART FRERES</div>
+                        <div class="mt0 h5" style="color: black; font-weight: bold !important;">ZI du Château - 8, rue Gutenberg - F 62 220 CARVIN</div>
+
+                        <span t-field="company.invoice_header_text"/>
+
+                        <!-- <div name="company_address" class="mb4">
                             <div>SAS au capital de 531123 € - RC ARRAS 92B557 - SIRET: 318 166 352 00027</div>
                             <div>Code APE: 4633Z    N° TVA: FR 56 318 166 352    N° EORI: FR31816635200027</div>
                             <div>IBAN: FR76 3000-4005-1800-0251-2100-612 - BIC: BNPAFRPPNFE</div>
                             <div>03.21.74.82.00 contact@hennart-fr.com http://www.hennart-fr.com</div>
                             <br> </br>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="col-2">
                         <style>
