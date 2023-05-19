@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="report_saleorder_document_inherits" inherit_id="sale.report_saleorder_document">
+        <!-- Add th -->
+        <xpath expr="//th[@name='th_quantity']" position="after">
+            <th name="th_product_uos_qty" class="text-end">Uos Qty</th>
+            <th name="th_product_uos" class="text-end">Uos</th>
+        </xpath>
+
+        <xpath expr="//th[@name='th_priceunit']" position="after">
+            <th name="th_weight" class="text-end">Weight</th>
+        </xpath>
+
+        <!-- Add Td -->
+        <xpath expr="//td[@name='td_quantity']" position="after">
+            <td name="td_product_uos_qty" class="text-end">
+                <span t-field="line.product_uos_qty"/>
+            </td>
+            <td name="td_product_uos" class="text-end">
+                <span t-field="line.product_uos"/>
+            </td>
+        </xpath>
+
+        <xpath expr="//td[@name='td_priceunit']" position="after">
+            <td name="td_weight" class="text-end">
+                <span t-field="line.weight"/>
+            </td>
+        </xpath>
+    </template>
+
+</odoo>
