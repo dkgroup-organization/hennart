@@ -24,9 +24,12 @@
                     <attribute name="options">{'no_create': True}</attribute>
                     <attribute name="domain">[('is_company', '=', True)]</attribute>
                 </field>
-                <field name="partner_invoice_id" position="attributes">
-                    <attribute name="domain">[('parent_id', '=', partner_id)]</attribute>
-                </field>
+
+                <xpath expr="//page[@name='other_information']//field[@name='partner_invoice_id']"
+                       position="attributes">
+                    <attribute name="domain">[('id', 'child_of', partner_id)]</attribute>
+                    <attribute name="options">{'no_create': True}</attribute>
+                </xpath>
                 <field name="partner_shipping_id" position="attributes">
                     <attribute name="domain">[('parent_id', '=', partner_id)]</attribute>
                 </field>
@@ -41,7 +44,7 @@
                 </field>
 
                 <group name="sale_shipping" position="inside">
-                 <field name="carrier_id"/>
+                    <field name="carrier_id"/>
                 </group>
 
                 <xpath expr="//button[@name='action_open_delivery_wizard']/.." position="attributes">
@@ -55,7 +58,6 @@
                 <xpath expr="//field[@name='order_line']" position="attributes">
                     <attribute name="context">{'display_default_code': False}</attribute>
                 </xpath>
-
 
                 <xpath expr="//field[@name='order_line']/tree" position="replace">
                     <tree string="Sales Order Lines" editable="bottom" limit="200">
@@ -84,6 +86,7 @@
                                context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom, 'company_id': parent.company_id}"/>
 
                         <field name="discount" string="Disc.%" optional="show"/>
+                        <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}" optional="hide"/>
                         <field name="qty_delivered"
                                decoration-info="(not display_type and invoice_status == 'to invoice')"
                                decoration-bf="(not display_type and invoice_status == 'to invoice')" string="Delivered"
@@ -107,7 +110,7 @@
                         <field name="customer_lead" invisible="1"/>
                         <field name="product_packaging_qty" invisible="1"/>
                         <field name="product_packaging_id" invisible="1"/>
-                        <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}" optional="hide"/>
+
 
                         <field name="is_downpayment" invisible="1"/>
 
@@ -115,7 +118,7 @@
                         <field name="product_uos" width="20px" string="U"/>
                         <field name="product_uos_price" width="50px" string="Price"/>
 
-                        <field name="weight" width="50px" sum="Total" optional="show"/>
+                        <field name="weight" width="50px" sum="Total" optional="hide"/>
 
                         <field name="tax_id" widget="many2many_tags" options="{'no_create': True}"
                                domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id), ('country_id', '=', parent.tax_country_id)]"
@@ -140,7 +143,7 @@
                         <field name="is_mto" invisible="1"/>
                         <field name="display_qty_widget" invisible="1"/>
 
-                        
+
                     </tree>
 
                 </xpath>

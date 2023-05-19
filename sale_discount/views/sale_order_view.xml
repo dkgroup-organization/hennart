@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        
+        <record id="view_order_form_inherits" model="ir.ui.view">
+        <field name="name">sale.order.form.inherits</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <group name="sale_total" position="before">
+                <group class="oe_left">
+                    <field name="total_weight" readonly="1"/>
+                </group>
+            </group>
+        </field>
+        </record>
+
+        <record id="sale_order_view_form_inherit_sale_loyalty_inherits" model="ir.ui.view">
+        <field name="name">sale_loyalty.form.inherits</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_loyalty.sale_order_view_form_inherit_sale_loyalty"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_open_reward_wizard']" position="replace">
+                <field name="discount_unlocked" invisible="1"/>
+                <button name="call_discount_activation" string="Remises" type="object"
+                attrs="{'invisible': [('discount_unlocked', '=', False)], 'readonly': [('discount_unlocked', '=', False)]}"
+                class="btn btn-success" states="{'invisible': [('discount_unlocked', '=', False)], 'readonly': [('discount_unlocked', '=', False)]}" style="background-color:green !important; color:red !important;"/>
+            </xpath>
+        </field>
+        </record>
+
+
+    </data>
+</odoo>
