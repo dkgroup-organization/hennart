@@ -15,20 +15,18 @@ class SaleOrderInherit(models.Model):
 
     def _get_discount_product(self):
         for order in self:
-            discount_product = self.env['product.pricelist.discount'].search([
-                ('pricelist_id.id', '=', order.pricelist_id.id),
-                # ('partner_id', '=', self.partner_id.id),
-                # ('end_date', '>=', self.date_order)
-            ])
+
+            discount_product = self.env['product.pricelist.discount'].search(
+                [('partner_id', '=', self.partner_id.id)], order="logistical_weight DESC")
+            if not discount_product:
+                discount_product = self.env['product.pricelist.discount'].search(
+                    [('pricelist_id.id', '=', order.pricelist_id.id)], order="logistical_weight DESC")
 
             if discount_product:
                 for discount in discount_product:
                     if order.total_weight >= discount.logistical_weight:
                         return discount
-                    else:
-                        return False
-            else:
-                return False
+            return False
 
     def _apply_discount_product(self, discount):
         if self.total_weight >= discount.logistical_weight:

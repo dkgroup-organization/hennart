@@ -10,13 +10,12 @@
     "website": "https://dkgroup.fr",
     "maintainer": "DK group",
     "images": [],
-    "depends": ["sale", "product_uos_pack", "sale_loyalty"],
+    "depends": ["sale", "customize_sale", "sale_loyalty"],
     "data": [
         "views/product_pricelist_discount_view.xml",
         "security/ir.model.access.csv",
         "views/sale_order_view.xml",
         "views/product_product_view.xml",
-
     ],
     "installable": True,
 }

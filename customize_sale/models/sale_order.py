@@ -64,6 +64,7 @@ class SaleOrder(models.Model):
                 ('move_id.invoice_date', '<=', date_start),
                 ('move_id.invoice_date', '>=', date_from),
                 ('move_id.move_type', '=', 'out_invoice'),
+                ('product_id.type', 'in', ['product', 'consu']),
                 ('move_id.state', '!=', 'cancel')
             ])
             # Get the product ids of the order lines
@@ -76,8 +77,9 @@ class SaleOrder(models.Model):
                         'product_uom_qty': 0.0,
                     }))
         if line_vals:
-            res = {'order_line': line_vals}
+            res.update({'order_line': line_vals})
 
+        print('---------res------', res)
         self.update(res)
 
 

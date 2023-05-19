@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
-        
 
         <record id="product_pricelist_discount_view_tree" model="ir.ui.view">
             <field name="name">product.pricelist.discount.view.tree</field>
             <field name="model">product.pricelist.discount</field>
             <field name="arch" type="xml">
-                <tree string="Logistical discount" editable="top">
-                    <field name="date_start"/>
-                    <field name="date_end"/>
+                <tree string="Logistical discount" editable="bottom">
+                    <!--<field name="date_start"/>-->
                     <field name="name"/>
                     <field name="pricelist_id"/>
                     <field name="partner_id"/>
@@ -21,18 +19,16 @@
         </record>
 
         <record id="product_pricelist_discount_action" model="ir.actions.act_window">
-            <field name="name">Pricelist discount</field>
+            <field name="name">Logistical discount</field>
             <field name="res_model">product.pricelist.discount</field>
             <field name="view_mode">tree</field>
         </record>
 
         <menuitem
             id="discount_menu"
-            name="Remises"
+            name="Logistical Discount"
             action="product_pricelist_discount_action"
             parent="sale.menu_sale_config"
             sequence="10"/>
-
-
     </data>
 </odoo>
