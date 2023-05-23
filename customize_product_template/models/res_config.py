@@ -14,3 +14,8 @@ class ResConfigSettings(models.TransientModel):
         """ Update all line"""
         all_line_ids = self.env['mrp.bom.linev7'].search([])
         all_line_ids.update_bom_line()
+
+    def button_update_product(self):
+        """ Update all product"""
+        all_ids = self.env['product.template'].search([])
+        all_ids.update_categ_value()

@@ -35,50 +35,25 @@ class ProductTemplate(models.Model):
     def _get_default_uos_id(self):
         return self.env.ref('uom.product_uom_unit')
 
-    @api.depends('bom_ids', 'categ_id.tracking', 'categ_id.type', 'categ_id.detailed_type', 'categ_id.use_expiration_date')
+    @api.depends('categ_id.tracking', 'categ_id.type', 'categ_id.detailed_type', 'categ_id.use_expiration_date')
     def update_categ_value(self):
         """ Update value based on categ value"""
         for product in self:
-            if product.bom_ids:
-                if product.bom_ids[0].type == "phantom":
-                    product.type = "consu"
-                    product.detailed_type = "consu"
-                else:
-                    product.type = "product"
-                    product.detailed_type = "product"
-                product.use_expiration_date = product.categ_id.use_expiration_date
-
-            elif product.categ_id:
+            if product.categ_id:
                 product.tracking = product.categ_id.tracking
-                product.type = product.categ_id.type
+                product.type = product.categ_id.detailed_type
                 product.detailed_type = product.categ_id.detailed_type
                 product.use_expiration_date = product.categ_id.use_expiration_date
             else:
-                product.tracking = 'none'
+                product.tracking = 'lot'
                 product.type = 'product'
                 product.detailed_type = 'product'
-                product.use_expiration_date = False
+                product.use_expiration_date = True
 
-    tracking = fields.Selection([
-        ('serial', 'By Unique Serial Number'),
-        ('lot', 'By Lots'),
-        ('none', 'No Tracking')],
-        string="Tracking",  compute="update_categ_value", store=True,
-        help="Ensure the traceability of a storable product in your warehouse.")
-
-    type = fields.Selection([
-        ('product', 'Product'),
-        ('consu', 'Consumable'),
-        ('service', 'Service')],
-        string="type", compute="update_categ_value", store=True)
-
-    detailed_type = fields.Selection([
-        ('product', 'Product'),
-        ('consu', 'Consumable'),
-        ('service', 'Service')],
-        string="type",  compute="update_categ_value", store=True)
-
-    use_expiration_date = fields.Boolean(string="Use expiration date", compute="update_categ_value", store=True)
+    tracking = fields.Selection(compute="update_categ_value", store=True, precompute=True)
+    type = fields.Selection(compute="update_categ_value", store=True, precompute=True)
+    detailed_type = fields.Selection(compute="update_categ_value", store=True, precompute=True)
+    use_expiration_date = fields.Boolean(compute="update_categ_value", store=True, precompute=True)
 
     route_ids = fields.Many2many(default=False)
     uos_id = fields.Many2one('uom.uom', string='Unit of Sale',

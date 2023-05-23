@@ -27,9 +27,21 @@
                                             class="btn-link"
                                             type="object"/>
                                 </div>
+
+                                <div class="mt8">
+                                    <button name="button_update_product"
+                                            string="Update product"
+                                            icon="fa-arrow-right"
+                                            class="btn-link"
+                                            type="object"/>
+                                </div>
+
                             </div>
+
+
                         </div>
                     </div>
+
                 </div>
             </field>
         </record>
