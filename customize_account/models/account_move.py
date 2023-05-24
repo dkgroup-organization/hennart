@@ -36,9 +36,8 @@ class AccountMove(models.Model):
         tracking=True,
     )
     
-    picking_ids = fields.Many2many('stock.picking', string='Pickings', compute='_compute_picking_ids')
+    picking_ids = fields.Many2many('stock.picking', string='Pickings')
 
-    @api.depends('invoice_line_ids.sale_line_ids.order_id')
     def _compute_picking_ids(self):
         for invoice in self:
             order_ids = invoice.invoice_line_ids.mapped('sale_line_ids.order_id')
