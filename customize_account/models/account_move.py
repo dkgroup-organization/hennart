@@ -38,7 +38,7 @@ class AccountMove(models.Model):
     
     picking_ids = fields.Many2many('stock.picking', string='Pickings')
 
-    def _compute_picking_ids(self):
+    def compute_picking_ids(self):
         for invoice in self:
             order_ids = invoice.invoice_line_ids.mapped('sale_line_ids.order_id')
             picking_ids = self.env['stock.picking'].search([
