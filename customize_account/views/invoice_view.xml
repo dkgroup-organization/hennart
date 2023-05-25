@@ -1,84 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <record id="account_move_view_form" model="ir.ui.view">
-        <field name="name">dk_group.account.view_move_form</field>
+    <record id="account_move_view_form_extend" model="ir.ui.view">
+        <field name="name">dk_group.account.invoice_view_form</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form" />
         <field name="arch" type="xml">
-            <xpath expr="//page[@name='other_info']" position="after">
-				<page id="other_tab_v7" string="Infos V7" name="infos_v7">
-                    <group>
-                        <group>
-                            <field name="picking_id"/>
-                            <field name="incoterm_port"/>
-                            <field name="incoterm_date"/>
-                            <field name="payment_method_id"/>
-                        </group>
-                        <group>
-                            <field name="total_ht"/>
-                            <field name="total_tva"/>
-                            <field name="total_ttc"/>
-                            <field name="piece_comptable"/>
-                            <field name="account_id"/>
-                        </group>
-                    </group>
-                </page>
-            </xpath>
 
-            <xpath expr="//field[@name='discount']" position="after">
-                <field name="product_packaging" optional="hide"/>
-                <field name="prodlot_id" optional="hide"/>
-                <field name="lot" optional="hide"/>
-                <field name="weight" optional="hide"/>
-                <field name="weight_uom_id" optional="hide"/>
-                <field name="cadeau" optional="hide"/>
-                <field name="cost_price" optional="hide"/>
-                <field name="discount1" optional="hide"/>
-                <field name="discount2" optional="hide"/>
-                <field name="margin" optional="hide"/>
-                <field name="margin_percent" optional="hide"/>
-                <field name="number_of_pack" optional="hide"/>
-                <field name="number_of_unit" optional="hide"/>
-                <field name="promotion" optional="hide"/>
-				<field name="product_uos" optional="hide"/>
-                <field name="uom_qty" optional="hide"/>
-                <field name="type" optional="hide"/>
-                <field name="initial_price" optional="hide"/>
-                <field name="histo_cost_price" optional="hide"/>
-            </xpath>
-
-            <xpath expr="//field[@name='partner_id']" position="after">
-				<field name="fiscal_position_id"/>
-                <field name="invoice_incoterm_id"/>
-                <field name="incoterm_port"/>
-                <field name="incoterm_date"/>
-				
-                <label for="picking_ids"/>
+            <xpath expr="//field[@name='partner_shipping_id']" position="after">
+				<label for="picking_ids"/>
                 <div class="o_row">
                     <field name="picking_ids" widget="many2many_tags" readonly="0"/>
                     <button name="compute_picking_ids" type="object" icon="fa-refresh"/>
                 </div>
-            </xpath>
-
-            <xpath expr="//div[@class='o_td_label']//label[@for='invoice_payment_term_id']" position="replace">
-            </xpath>
-            <xpath expr="//div[@class='d-flex']//field[@name='invoice_payment_term_id']" position="replace">
-            </xpath>
-
-            <xpath expr="//field[@name='payment_reference']" position="replace">
-            </xpath>
-
-            <xpath expr="//group[@id='header_right_group']//div[3]" position="before">
-                <field name="account_id"/>
-            </xpath>
-
-            <xpath expr="//field[@name='narration']" position="before">
-				<field name="invoice_payment_term_id"/>
-                <field name="payment_method_id"/>
-            </xpath>
-			
-			<xpath expr="//field[@name='partner_id']" position="after">
-				<field name="payment_state" readonly="0"/>
             </xpath>
 
         </field>
