@@ -13,6 +13,7 @@
     "depends": ["account", "account_usability", "sale"],
     "data": [
         "views/res_config_view.xml",
+        "views/invoice_view.xml",
 
 
     ],
