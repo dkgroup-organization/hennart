@@ -21,7 +21,7 @@ class ScannerScenarioTransition(models.Model):
     # ===========================================================================
     name = fields.Char(
         string='Name',
-        required=True,
+        compute="compute_name",
         help='Name of the transition.')
     sequence = fields.Integer(
         string='Sequence',
@@ -51,3 +51,9 @@ class ScannerScenarioTransition(models.Model):
         store=True,
         readonly=True)
 
+    @api.depends('from_id', 'to_id', 'condition')
+    def compute_name(self):
+        """ compute name"""
+        for transition in self:
+            transition.name = "[%s -> %s] %s" % (transition.from_id.sequence,
+                                                 transition.to_id.sequence, transition.condition)

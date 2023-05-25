@@ -28,6 +28,7 @@ class WmsScenarioStep(models.Model):
          ('scan_text', 'Enter Text'),
          ('scan_model', 'Scan model'),
          ('scan_info', 'Scan search'),
+         ('scan_multi', 'Scan multi'),
          ],
         string="Scanner", default="no_scan", required=True)
     action_model = fields.Many2one('ir.model', string="Model to scan")
@@ -64,11 +65,22 @@ class WmsScenarioStep(models.Model):
             if step.action_scanner == 'scan_model':
                 name += "scan %s " % (step.action_model.model or '?')
             else:
-                name += "scan %s " % (step.action_scanner)
+                name += "%s " % (step.action_scanner)
 
             if step.action_variable:
-                name += "to var: %s " % (step.action_variable)
+                name += " -> %s " % (step.action_variable)
             step.name = name
+
+    @api.onchange('action_variable')
+    def onchange_action_variable(self):
+        """ Return formated action variable, list separed by space"""
+        self.ensure_one()
+        action_variable = self.action_variable
+        action_variable = action_variable.strip().lower()
+
+        for replace_char in [('-', '_'), (',', ' '), (';', ' '), ('   ', ' '), ('  ', ' '), ('  ', ' ')]:
+            action_variable = action_variable.replace(replace_char[0], replace_char[1])
+        self.action_variable = action_variable
 
     def get_scanner_response(self):
         "get the response of the scanner, only one scan by session"
@@ -87,9 +99,6 @@ class WmsScenarioStep(models.Model):
         action_variable = self.action_variable
         action_model = self.action_model
 
-        if action_scanner in ['no_scan']:
-            return data
-
         def is_alphanumeric(scan):
             "check the scan string"
             res = True
@@ -99,7 +108,10 @@ class WmsScenarioStep(models.Model):
                     break
             return res
 
-        scan = self.get_scanner_response()
+        if action_scanner in ['no_scan']:
+            return data
+        else:
+            scan = self.get_scanner_response()
 
         if not (scan and data):
             pass
@@ -118,6 +130,9 @@ class WmsScenarioStep(models.Model):
                 data[action_variable] = quantity
             except:
                 data['warning'] = _('Please, enter a numeric value')
+
+        elif action_scanner == 'scan_multi':
+            data = self.scan_multi(data, scan)
 
         elif action_scanner in ['scan_model', 'scan_info']:
             models_ids = action_model
@@ -139,10 +154,20 @@ class WmsScenarioStep(models.Model):
 
                 if data.get(action_variable):
                     break
+
+            if action_scanner == "scan_info" and not data.get(action_variable):
+                data = self.scan_multi(data)
+
             if not data.get(action_variable):
                 data['warning'] = _('The barcode is unknow')
         else:
             data['warning'] = _('The barcode is unknow')
+        return data
+
+    def scan_multi(self, data, scan):
+        """Function to return value when the scan is custom:
+        This function need to be personalized"""
+        self.ensure_one()
         return data
 
     def read_scan_duplicate(self, data):
@@ -185,13 +210,13 @@ class WmsScenarioStep(models.Model):
         if self.python_code:
             localdict = {'data': data.copy()}
             safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
-            return localdict.get('data')
-        else:
-            return data
+            data = localdict.get('data')
+        return data
 
     def execute_transition(self, data):
         """ compute the step"""
         self.ensure_one()
+        # Check transition
         for transition in self.out_transition_ids:
             if not transition.condition:
                 continue
@@ -200,5 +225,17 @@ class WmsScenarioStep(models.Model):
             if eval:
                 data['step'] = transition.to_id
                 break
-        return data
+        # Check default transition
+        if data.get('step') and data['step'] == self and self.action_variable:
+            # In this case, check a default transition, if all the variables are completed, go to next step
+            list_var = (self.action_variable).split(' ')
+            all_ok = True
+            for variable in list_var:
+                if not data.get(variable):
+                    all_ok = False
+                    break
+            if all_ok:
+                next_step = self.search([('sequence', '>', self.sequence)])
+                data['step'] = next_step and next_step[0] or self
 
+        return data

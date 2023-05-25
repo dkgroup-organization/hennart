@@ -15,6 +15,7 @@ class ProductProduct(models.Model):
     base_unit_name = fields.Char('Name', compute="compute_base_product", store=True)
     lst_price = fields.Float("Product price", compute="compute_base_product", store=True)
 
+    # default_code <= 6
 
     @api.depends('product_tmpl_id')
     def compute_base_product(self):
