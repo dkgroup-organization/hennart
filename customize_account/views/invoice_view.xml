@@ -52,7 +52,7 @@
                 <field name="invoice_incoterm_id"/>
                 <field name="incoterm_port"/>
                 <field name="incoterm_date"/>
-                <field name="picking_id"/>
+                <field name="picking_ids" widget="many2many_tags" placeholder="Press btn to load BL's"/>
             </xpath>
 
             <xpath expr="//div[@class='o_td_label']//label[@for='invoice_payment_term_id']" position="replace">
