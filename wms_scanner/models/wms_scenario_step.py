@@ -156,7 +156,7 @@ class WmsScenarioStep(models.Model):
                     break
 
             if action_scanner == "scan_info" and not data.get(action_variable):
-                data = self.scan_multi(data)
+                data = self.scan_multi(data, scan, action_variable)
 
             if not data.get(action_variable):
                 data['warning'] = _('The barcode is unknow')

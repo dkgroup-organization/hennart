@@ -32,7 +32,7 @@ class Stock_lot(models.Model):
         """ define the barcode of lot
         the barcode is composite with:
         5 char: product code
-        7 char: stock.lot.id
+        8 char: stock.lot.id
         1 char: product code type
         6 char: expiration date
         6 char: weight
@@ -50,7 +50,7 @@ class Stock_lot(models.Model):
             label_dlc_new = label_dlc.strftime("%d%m%y")
             label_dlc_old = label_dlc.strftime("%d%m%Y")
 
-            lot.barcode = product_code[:5] + str(lot.id).zfill(7) + product_code[5] + label_dlc_new + '000000'
+            lot.barcode = product_code[:5] + str(lot.id).zfill(8) + product_code[5] + label_dlc_new + '000000'
 
             if lot.temp_old_barcode:
                 lot.barcode_ext = lot.temp_old_barcode

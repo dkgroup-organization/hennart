@@ -12,7 +12,7 @@
     'application': True,
     'installable': True,
     'depends': [
-        'wms_scanner', 'customize_product_template'
+        'wms_scanner', 'customize_product_template', 'customize_report', 'customize_partner'
     ],
     'data': [
         "views/stock_lot_view.xml"
