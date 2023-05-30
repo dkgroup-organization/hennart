@@ -27,9 +27,9 @@ class WmsScenarioStep(models.Model):
         """Function to return value when the scan is custom:
         lot production construction code
         5 char: product code
-        8 char: stock.lot.id
+        8 char: stock.lot.id or lot name
         1 char: product code end
-        6 char: expiration date
+        6-8 char: expiration date
         6 char: weight
         """
         self.ensure_one()
@@ -39,24 +39,29 @@ class WmsScenarioStep(models.Model):
         # 53201523101X01012020000000 -26 espera: no id , external production [11]
         # 532010004459X010120000000 -25 old id - [:5][5:12][12][13:19][19:]
         # 0101300066036B090320000000 -26 new_id [13]
-        weight = scan[-6:]
-        product_code = scan[:5]
+
+
         lot_id = 0
 
-        if len(scan) == 24:
-            affinage = 11
-            weight = weight[:3] + '.' + weight[3:]
-        elif len(scan) == 25:
-            affinage = 12
-        elif len(scan) == 26:
-            if scan[11].isdigit():
-                affinage = 13
-                lot_id = int(scan[5:affinage])
-            else:
-                affinage = 11
+        # detection of date
+        if scan[-10:-8] == '20':
+            # specificity of ESPERA machine
+            date = scan[-14:-6]
+            affinage = -15
+        else:
+            date = scan[-12:-6]
+            affinage = -13
 
-        if scan[affinage] != "X":
+        # construction of the product code
+        product_code = scan[:5]
+        if scan[affinage] != 'X':
             product_code += scan[affinage]
+
+        # get the weight
+        weight = scan[-6:]
+        if len(scan) == 24 and weight != '000000':
+            # specificity of DIGI machine
+            weight = weight[:3] + '.' + weight[3:]
 
         try:
             weight_kg = float(weight)
@@ -66,6 +71,7 @@ class WmsScenarioStep(models.Model):
             weight_kg = 0.0
 
         # lot
+        lot_name = scan[5:affinage]
         if lot_id:
             lot_ids = self.env['stock.lot'].search([('id', '=', lot_id)])
             if len(lot_ids) == 1:
