@@ -11,6 +11,7 @@ class MrpBomLinev7(models.Model):
                         |  product_parent_id
     """
     _name = 'mrp.bom.linev7'
+    _description = "importation bom configuration"
 
     product_parent_id = fields.Many2one('product.product', string="Product parent")
     product_id = fields.Many2one('product.product', string="Product line")

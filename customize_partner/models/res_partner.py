@@ -9,11 +9,8 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     def get_function(self):
-        """ Save old V7 value"""
+        """ Save function"""
         for partner in self:
-            if not partner.v7_function:
-                partner.v7_function = partner.function or '?'
-
             function_txt = ""
             for function in partner.email_function:
                 function_txt += " %s" % function.name
@@ -98,7 +95,7 @@ class ResPartner(models.Model):
 
 
     # email data
-    v7_function = fields.Char('V7 save function value', compute="get_function", store=True)
+    v7_function = fields.Char('V7 save function value')
     function = fields.Char('Function', compute="get_function")
     email_delivery = fields.Char('Email delivery', compute='get_function_email', inverse="put_function_email", store=True)
     email_accounting = fields.Char('Email accounting', compute='get_function_email', inverse="put_function_email", store=True)

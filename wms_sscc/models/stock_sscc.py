@@ -1,17 +1,6 @@
 
 from odoo import models
 from odoo import fields ,api
-from odoo import _
-import openerp.addons.decimal_precision as dp
-from odoo import SUPERUSER_ID
-from odoo import netsvc
-import unicodedata
-import time
-import datetime
-from dateutil.relativedelta import relativedelta
-import pytz
-import base64
-import os
 import math
 
 def ean_checksum(eancode):
@@ -33,8 +22,6 @@ class stock_sscc(models.Model):
     _description = "SSCC Label"
     _order = "name"
 
-    
-
     @api.depends('serial','cnuf','identifier')
     def _update_info(self):
 
@@ -49,7 +36,6 @@ class stock_sscc(models.Model):
     prefixe = fields.Char('PREFIXE', default='0')
     cnuf = fields.Char('CNUF',default='7002221')
     serial = fields.Char('SERIAL',default='/')
-    
 
     @api.model
     def create(self, vals):
