@@ -62,10 +62,7 @@ class WmsScenarioStep(models.Model):
         """ Compute the name of the step"""
         for step in self:
             name = "%s: " % (step.sequence)
-            if step.action_scanner == 'scan_model':
-                name += "scan %s " % (step.action_model.model or '?')
-            else:
-                name += "%s " % (step.action_scanner)
+            name += "%s " % (step.action_scanner)
 
             if step.action_variable:
                 name += " -> %s " % (step.action_variable)
@@ -73,7 +70,7 @@ class WmsScenarioStep(models.Model):
 
     @api.onchange('action_variable')
     def onchange_action_variable(self):
-        """ Return formated action variable, list separed by space"""
+        """ Return formated action variable, list separated by space"""
         self.ensure_one()
         action_variable = self.action_variable
         action_variable = action_variable.strip().lower()
@@ -166,7 +163,7 @@ class WmsScenarioStep(models.Model):
 
     def scan_multi(self, data, scan):
         """Function to return value when the scan is custom:
-        This function need to be personalized"""
+        This function need to be personalized by customer module"""
         self.ensure_one()
         return data
 
@@ -225,17 +222,4 @@ class WmsScenarioStep(models.Model):
             if eval:
                 data['step'] = transition.to_id
                 break
-        # Check default transition
-        if data.get('step') and data['step'] == self and self.action_variable:
-            # In this case, check a default transition, if all the variables are completed, go to next step
-            list_var = (self.action_variable).split(' ')
-            all_ok = True
-            for variable in list_var:
-                if not data.get(variable):
-                    all_ok = False
-                    break
-            if all_ok:
-                next_step = self.search([('sequence', '>', self.sequence)])
-                data['step'] = next_step and next_step[0] or self
-
         return data

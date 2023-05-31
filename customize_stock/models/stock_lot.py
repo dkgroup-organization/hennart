@@ -13,11 +13,13 @@ class Stock_lot(models.Model):
                                  default=lambda self: self.env.company)
 
     date = fields.Date(string='Date de création')
+    ref = fields.Char('Internal Reference', compute="put_ref", readonly=False, index=True, store=True,
+                      help="Internal reference with incremente index ")
     life_date = fields.Date(string='Date limite de consommation')
-    temp_old_barcode = fields.Char(string='Temp Old Barcode 1')
-    temp2_old_barcode = fields.Char(string='Temp Old Barcode 2')
-    barcode = fields.Char(string='Barcode', compute="get_barcode", store=True)
-    barcode_ext = fields.Char(string='Barcode (external)', compute="get_barcode", store=True)
+    temp_old_barcode = fields.Char(string='migration Barcode 1', index=True)
+    temp2_old_barcode = fields.Char(string='migration Barcode 2', index=True)
+    barcode = fields.Char(string='Barcode', compute="get_barcode", store=True, index=True)
+    barcode_ext = fields.Char(string='Barcode (external)', compute="get_barcode", store=True, index=True)
 
     @api.constrains('name', 'ref', 'product_id', 'company_id')
     def _check_unique_lot(self):
@@ -35,15 +37,26 @@ class Stock_lot(models.Model):
         if error_message_lines:
             raise ValidationError(_('The combination of serial number and product must be unique across a company.\nFollowing combination contains duplicates:\n') + '\n'.join(error_message_lines))
 
+    @api.depends('name')
     def put_ref(self):
         """ Write ref on lot"""
         for lot in self:
-            if not lot.ref:
-                # Search doubloon
-                lot_ids = self.search([('name', '=', lot.name)])
-                suffix = '-' + str(len(lot_ids)).zfill(2)
-                lot.ref = lot.name + suffix
+            # Search doubloon, format name
+            format_name = ''.join(filter(str.isalnum, lot.name))
+            format_name = format_name.upper().zfill(6)
+            ref_index = 1
+            for another_lot in self.search([('ref', '=ilike', format_name + '-%%')]):
+                ref = another_lot.ref.split('-')
+                if len(ref) == 2 and ref[1].isnumeric() and int(ref[1]) >= ref_index:
+                    ref_index = int(ref[1]) + 1
+            lot.ref = lot.name + "-" + "{}".format(ref_index).zfill(2)
 
+    @api.onchange('name')
+    def onchange_name(self):
+        """ change ref"""
+        self.put_ref()
+
+    @api.depends('ref', 'expiration_date', 'product_id')
     def get_barcode(self):
         """ define the barcode of lot
         the barcode is composite with:
@@ -66,7 +79,7 @@ class Stock_lot(models.Model):
             label_dlc_new = label_dlc and label_dlc.strftime("%d%m%y") or '000000'
             label_dlc_old = label_dlc and label_dlc.strftime("%d%m%Y") or '000000'
 
-            lot.barcode = product_code[:5] + str(lot.id).zfill(8) + product_code[5] + label_dlc_new + '000000'
+            lot.barcode = product_code[:5] + '-' + str(lot.id).zfill(7) + product_code[5] + label_dlc_new + '000000'
 
             if lot.temp_old_barcode:
                 lot.barcode_ext = lot.temp_old_barcode

@@ -1,18 +1,7 @@
 
 from odoo import models
 from odoo import fields ,api
-from odoo import _
-import openerp.addons.decimal_precision as dp
-from odoo import SUPERUSER_ID
-from odoo import netsvc
-import unicodedata
-import time
-import datetime
-from dateutil.relativedelta import relativedelta
-import pytz
-import base64
-import os
-import math
+
 
 class stock_picking(models.Model):
     _inherit = "stock.picking"
@@ -31,6 +20,7 @@ class stock_picking(models.Model):
         override_write = super(stock_picking,self).write(values)
         self.update_sscc()
         return override_write
+
     # @api.onchange('nb_sscc_label')
     def update_sscc(self):
         for picking in self:
