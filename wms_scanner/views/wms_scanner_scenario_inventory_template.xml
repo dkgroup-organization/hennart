@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <template id="scanner_scenario_inventory" name="scanner_scenario_inventory">
+            <html>
+                <t t-call="wms_scanner.scanner_html_head"/>
+                <body class="font-poppins duration-500 min-h-screen">
+                    <t t-call="wms_scanner.scanner_menu_body_header"/>
+                    <t t-call="wms_scanner.scanner_inventory_body_main"/>
+                    <t t-call="wms_scanner.scanner_script_js"/>
+                </body>
+            </html>
+        </template>
+
+        <template id="scanner_inventory_body_main" name="scanner_inventory_body_main">
+            <main class="relative">
+
+                <section id="move">
+                    <div class="container mx-auto px-5 pb-5 relative">
+                        <div class="flex items-center gap-2.5 mb-10 landscape:mb-6">
+                            <svg
+                                    width="40"
+                                    height="40"
+                                    viewBox="0 0 30 30"
+                                    xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                        class="fill-blue-500"
+                                        d="M13.75 26.25H6.25C5.5625 26.25 4.97375 26.0054 4.48375 25.5163C3.99458 25.0263 3.75 24.4375 3.75 23.75V6.25C3.75 5.5625 3.99458 4.97375 4.48375 4.48375C4.97375 3.99458 5.5625 3.75 6.25 3.75H11.4688C11.6979 3.02083 12.1458 2.42167 12.8125 1.9525C13.4792 1.48417 14.2083 1.25 15 1.25C15.8333 1.25 16.5783 1.48417 17.235 1.9525C17.8908 2.42167 18.3333 3.02083 18.5625 3.75H23.75C24.4375 3.75 25.0263 3.99458 25.5163 4.48375C26.0054 4.97375 26.25 5.5625 26.25 6.25V12.5H23.75V6.25H21.25V7.5C21.25 8.1875 21.0054 8.77583 20.5163 9.265C20.0263 9.755 19.4375 10 18.75 10H11.25C10.5625 10 9.97417 9.755 9.485 9.265C8.995 8.77583 8.75 8.1875 8.75 7.5V6.25H6.25V23.75H13.75V26.25ZM19.375 21.4062L25.5625 15.2188C25.7917 14.9896 26.0833 14.875 26.4375 14.875C26.7917 14.875 27.0833 14.9896 27.3125 15.2188C27.5417 15.4479 27.6562 15.7396 27.6562 16.0938C27.6562 16.4479 27.5417 16.7396 27.3125 16.9688L20.25 24.0312C20 24.2812 19.7083 24.4062 19.375 24.4062C19.0417 24.4062 18.75 24.2812 18.5 24.0312L14.9375 20.4688C14.7083 20.2396 14.5938 19.9479 14.5938 19.5938C14.5938 19.2396 14.7083 18.9479 14.9375 18.7188C15.1667 18.4896 15.4583 18.375 15.8125 18.375C16.1667 18.375 16.4583 18.4896 16.6875 18.7188L19.375 21.4062ZM15 6.25C15.3542 6.25 15.6513 6.13 15.8913 5.89C16.1304 5.65083 16.25 5.35417 16.25 5C16.25 4.64583 16.1304 4.34875 15.8913 4.10875C15.6513 3.86958 15.3542 3.75 15 3.75C14.6458 3.75 14.3492 3.86958 14.11 4.10875C13.87 4.34875 13.75 4.64583 13.75 5C13.75 5.35417 13.87 5.65083 14.11 5.89C14.3492 6.13 14.6458 6.25 15 6.25Z"
+                                        fill="#9DB2CE"
+                                />
+                            </svg>
+                            <h1>Inventory</h1>
+                        </div>
+
+                        <form class="flex flex-col items-center gap-[30px] landscape:gap-3 landscape:w-[49%]"
+                              method="post">
+                            <t t-call="wms_scanner.scanner_move_input_location_origin_id"/>
+                            <t t-call="wms_scanner.scanner_move_input_product_id"/>
+                            <t t-call="wms_scanner.scanner_move_input_quantity"/>
+                            <button type="submit" class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">Valid</button>
+                        </form>
+                    </div>
+                </section>
+            </main>
+        </template>
+
+    </data>
+</odoo>

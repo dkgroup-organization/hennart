@@ -23,7 +23,9 @@ class WmsScenarioStep(models.Model):
         string='Name', compute="compute_name",
         store=True)
     action_scanner = fields.Selection(
-        [('no_scan', 'No scan'),
+        [('start', 'Start scenario, no scan'),
+         ('routing', 'Routing choice, no scan'),
+         ('no_scan', 'Message, no scan'),
          ('scan_quantity', 'Enter quantity'),
          ('scan_text', 'Enter Text'),
          ('scan_model', 'Scan model'),
@@ -33,7 +35,7 @@ class WmsScenarioStep(models.Model):
         string="Scanner", default="no_scan", required=True)
     action_model = fields.Many2one('ir.model', string="Model to scan")
     action_variable = fields.Char(string='Input name', default='scan')
-    action_message = fields.Char(string='Input Placeholder')
+    action_message = fields.Char(string='Input Placeholder', translate=True)
     step_qweb = fields.Char(
         string='QWEB Template',
         help="Use a specific QWEB template at this step")
@@ -57,6 +59,13 @@ class WmsScenarioStep(models.Model):
         help='Python code to execute.')
     scenario_notes = fields.Text(related='scenario_id.notes')
 
+    def init_data(self, data={}):
+        """ reinit the data of this step"""
+        new_data = {}
+        new_data['step'] = data.get('step') or self
+        new_data['scenario'] = new_data['step'].scenario_id
+        return new_data
+
     @api.depends('sequence', 'action_scanner', 'action_variable')
     def compute_name(self):
         """ Compute the name of the step"""
@@ -70,7 +79,7 @@ class WmsScenarioStep(models.Model):
 
     @api.onchange('action_variable')
     def onchange_action_variable(self):
-        """ Return formated action variable, list separated by space"""
+        """ Return formated action variable"""
         self.ensure_one()
         action_variable = self.action_variable
         action_variable = action_variable.strip().lower()
@@ -105,7 +114,7 @@ class WmsScenarioStep(models.Model):
                     break
             return res
 
-        if action_scanner in ['no_scan']:
+        if action_scanner in ['start', 'no_scan', 'routing']:
             return data
         else:
             scan = self.get_scanner_response()
@@ -124,7 +133,10 @@ class WmsScenarioStep(models.Model):
         elif action_scanner == 'scan_quantity':
             try:
                 quantity = float(scan)
-                data[action_variable] = quantity
+                if quantity > 0.0:
+                    data[action_variable] = quantity
+                else:
+                    data['warning'] = _('Please, enter a positive value')
             except:
                 data['warning'] = _('Please, enter a numeric value')
 
@@ -156,9 +168,9 @@ class WmsScenarioStep(models.Model):
                 data = self.scan_multi(data, scan, action_variable)
 
             if not data.get(action_variable):
-                data['warning'] = _('The barcode is unknow')
+                data['warning'] = _('The barcode is unknown')
         else:
-            data['warning'] = _('The barcode is unknow')
+            data['warning'] = _('The barcode is unknown')
         return data
 
     def scan_multi(self, data, scan):
@@ -175,13 +187,18 @@ class WmsScenarioStep(models.Model):
         return data
 
     def execute_step(self, data):
-        """ compute the step"""
+        """ compute the step:
+        there are 3 actions: scan - compute - choice next step"""
         self.ensure_one()
-        data = self.read_scan(data)
+        if self.action_scanner not in ['start', 'routing', 'no_scan']:
+            data = self.read_scan(data)
         if not data.get('warning'):
             data = self.execute_code(data)
             if not data.get('warning'):
                 data = self.execute_transition(data)
+                if not data.get('warning') and data.get('step') and data['step'] != self and \
+                        data['step'].action_scanner == 'routing':
+                    data = data['step'].execute_step(data)
         data = self.info_message(data)
         return data
 
@@ -205,7 +222,10 @@ class WmsScenarioStep(models.Model):
         "Eval the python code"
         self.ensure_one()
         if self.python_code:
-            localdict = {'data': data.copy()}
+            localdict = {
+                'object': self,
+                'env': self.env,
+                'data': data.copy()}
             safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
             data = localdict.get('data')
         return data
@@ -222,4 +242,9 @@ class WmsScenarioStep(models.Model):
             if eval:
                 data['step'] = transition.to_id
                 break
+
+        if not data.get('warning') and self.action_scanner == 'routing' and (
+                not data.get('step') or data['step'] == self):
+            data['warning'] = _('The program is frozen in step: {}'.format(self.name))
+
         return data

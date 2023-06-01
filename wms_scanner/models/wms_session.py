@@ -6,7 +6,7 @@ import json
 from odoo.http import request
 
 # Reserved variable term in data
-DATA_RESERVED_NAME = ['user', 'warning', 'scan', 'function', 'message', 'button']
+DATA_RESERVED_NAME = ['user', 'warning', 'scan', 'function', 'message', 'button', 'result']
 
 
 class WmsSession(models.Model):
@@ -86,7 +86,6 @@ class WmsSession(models.Model):
                 data[data_key[6:]] = request.env[data_value[0]].browse(data_value[1])
             else:
                 data[data_key] = data_value
-
         return data
 
 

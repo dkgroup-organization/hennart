@@ -22,7 +22,6 @@
                             <field name="active" widget="boolean_button"
                                    options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
                         </button>
-                        <!--<button name="open_diagram" type="object" string="Diagram" class="oe_stat_button" icon="fa-code-fork"/>-->
                     </div>
                     <group colspan="4" col="4">
                         <field name="name"/>
@@ -37,8 +36,7 @@
                                 <tree string="Step">
                                     <field name="sequence" widget="handled"/>
                                     <field name="name"/>
-                                    <field name="action_scanner"/>
-                                    <field name="action_variable"/>
+                                    <field name="python_code"/>
                                     <field name="scenario_id" invisible="1"/>
                                     <field name="out_transition_ids" widget="many2many_tags"/>
 
@@ -55,12 +53,17 @@
                                                 <field name="action_model"
                                                        attrs="{'invisible':[('action_scanner','!=', 'scan_model')]}"/>
                                                 <field name="action_variable"
-                                                       attrs="{'invisible':[('action_scanner','==', 'none')]}"/>
+                                                       attrs="{'invisible':[('action_scanner','in', ['none', 'start', 'routing'])]}"/>
                                                 <field name="action_message"
-                                                       attrs="{'invisible':[('action_scanner','==', 'none')]}"/>
+                                                       attrs="{'invisible':[('action_scanner','in', ['none', 'start', 'routing'])]}"/>
                                                 <field name="scenario_id" invisible="1"/>
                                             </group>
                                             <separator string="Enter the python code here" colspan="4"/>
+                                            <div>
+                                                <p>You can use the object: object and env to acces to all functions and environment</p>
+                                                <p>Some name variables is used by the system in data:</p>
+                                                <p>user, warning, scan, function, message, button, result</p>
+                                            </div>
                                             <field name="python_code" colspan="4" nolabel="1" widget="ace"
                                                    options="{'mode': 'python'}"/>
                                         </page>
@@ -119,14 +122,14 @@
                                 <field name="scenario_qweb"/>
                             </group>
                         </page>
-                        <page string="Warehouses">
-                            <field name="warehouse_ids" nolabel="1" colspan="4"/>
-                        </page>
+
                         <page string="Security">
                             <group colspan="2" col="2">
+                                <separator string="Allowed Warehouse" colspan="1"/>
+                                <field name="warehouse_ids" nolabel="1" colspan="4"/>
                                 <separator string="Allowed Users" colspan="1"/>
-                                <separator string="Allowed Users Groups" colspan="1"/>
                                 <field name="user_ids" nolabel="1"/>
+                                <separator string="Allowed Users Groups" colspan="1"/>
                                 <field name="group_ids" nolabel="1"/>
                             </group>
                         </page>
@@ -153,27 +156,6 @@
             </search>
         </field>
     </record>
-    <!--<record id="view_wms_scenario_diagram" model="ir.ui.view">
-        <field name="name">wms.scenario.diagram</field>
-        <field name="model">wms.scenario</field>
-        <field name="arch" type="xml">
-            <diagram_plus>
-
-                <node object="wms.scenario.step"
-                      bg_color_field="bg_color"
-                      fg_color_field="fg_color">
-
-                </node>
-                <arrow object="wms.scenario.transition" 
-                       source="from_id" 
-                       destination="to_id" 
-                       label="['name']">
-
-                </arrow>
-
-            </diagram_plus>
-        </field>
-    </record>-->
 
     <record model="ir.actions.act_window" id="act_open_wms_scenario_view">
         <field name="name">Scanner Scenario</field>
