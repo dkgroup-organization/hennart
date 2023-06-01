@@ -68,7 +68,7 @@ class WmsScenarioStep(models.Model):
             # lot
             lot_name = scan[5:affinage]
             # by convention new lot_id start with '-'
-            if lot_name[5] == '-' and lot_name[1:].isnumeric():
+            if (lot_name[0] == '-') and lot_name[1:].isnumeric():
                 lot_id = int(lot_name[1:])
                 lot_ids = self.env['stock.lot'].search([('id', '=', lot_id)])
                 if len(lot_ids) == 1:
@@ -108,4 +108,21 @@ class WmsScenarioStep(models.Model):
             if action_variable:
                 data[action_variable] = data.get('lot_id') or data.get('product_id') or "?"
 
+        return data
+
+    @api.model
+    def write_inventory(self, data):
+        """ At the en of inventory process
+        write the inventory line
+        input: data = {
+            location_origin_id: ...
+            product_id:
+            lot_id:
+            quantity:
+            }
+        output: data update {'result' : True}
+
+                    """
+
+        data.update({'result': True})
         return data
