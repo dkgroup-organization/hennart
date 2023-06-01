@@ -1,0 +1,52 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="purchase_promotion_tree_view">
+            <field name="name">purchase.promotion.tree</field>
+            <field name="model">purchase.promotion</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="supplier_id"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="product_id"/>
+                    <field name="name"/>
+                    <field name="discount"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_purchase_promotion_filter" model="ir.ui.view">
+            <field name="name">purchase.promotion.select</field>
+            <field name="model">purchase.promotion</field>
+            <field name="arch" type="xml">
+                <search string="Search Promotion">
+                    <field name="product_id"/>
+                    <field name="supplier_id"/>
+                    <separator/>
+                    <filter icon="terp-document-new" string="Now" name="now" domain="[('date_start','&lt;=', time.strftime('%Y-%m-%d')),('date_end','&gt;=', time.strftime('%Y-%m-%d'))]"/>
+
+                    <group expand='0' string='Group by...'>
+                        <filter string="Product" name="groupby_product"  context="{'group_by' : 'product_id'}"/>
+                       <filter string="Supplier" name="groupby_supplier" context="{'group_by' : 'supplier_id'}"/>
+                </group>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_purchase_promotion">
+            <field name="name">Promotions</field>
+            <field name="res_model">purchase.promotion</field>
+            <field name="binding_view_types">tree</field>
+            <field name="context">{"search_default_now":1}</field>
+        </record>
+
+        <menuitem
+                name="Promotions"
+                id="menu_purchase_promotion"
+                parent="purchase.menu_purchase_config"
+                action="action_purchase_promotion"
+                sequence="10"
+        />
+    </data>
+</odoo>

@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_purchase_promotion,access_purchase_promotion,model_purchase_promotion,,1,1,1,1
+access_import_promotion,access_import_promotion,model_import_promotion,,1,1,1,1
