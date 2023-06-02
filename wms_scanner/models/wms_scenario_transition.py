@@ -55,5 +55,5 @@ class ScannerScenarioTransition(models.Model):
     def compute_name(self):
         """ compute name"""
         for transition in self:
-            transition.name = "[%s -> %s] %s" % (transition.from_id.sequence,
+            transition.name = "[{} -> {}] {}".format(transition.from_id.sequence,
                                                  transition.to_id.sequence, transition.condition)
