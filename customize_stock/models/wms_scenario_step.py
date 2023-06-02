@@ -31,7 +31,7 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
 
         # Detect the old barcode (reference used by V7) 24 or 25 or 26 length
-        # 53201523101X010120000000  -24 DIGI machine frais emballé [11]
+        # 53201523101X010120000000  -24 DIGI machine frais emballé [11], la date est inversé
         # 53201523101X01012020000000 -26 espera: no id , external production [11]
         # 532010004459X010120000000 -25 old id - [:5][5:12][12][13:19][19:]
         # 01013-0066036B090320000000 -26 new_id [13]
@@ -80,7 +80,9 @@ class WmsScenarioStep(models.Model):
                 old_barcode = scan[:-6] + "000000"
                 for barcode_field in ['barcode_ext', 'temp_old_barcode', 'temp2_old_barcode']:
                     lot_ids = self.env['stock.lot'].search([(barcode_field, '=', old_barcode)])
-                    if lot_ids:
+                    if len(lot_ids) > 1:
+                        data['warning'] = _("There is more than one lot with the same name and date: {}".format(old_barcode))
+                    elif lot_ids:
                         data['lot_id'] = lot_ids[0]
                         data['product_id'] = lot_ids[0].product_id
                         break
@@ -121,8 +123,9 @@ class WmsScenarioStep(models.Model):
             quantity:
             }
         output: data update {'result' : True}
+        """
 
-                    """
+
 
         data.update({'result': True})
         return data
