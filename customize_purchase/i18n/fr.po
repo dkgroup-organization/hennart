@@ -1,0 +1,380 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* customize_purchase
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0-20230328\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-05-29 10:26+0000\n"
+"PO-Revision-Date: 2023-05-29 10:26+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: customize_purchase
+#: model:ir.model.fields.selection,name:customize_purchase.selection__import_promotion__year__2023
+msgid "2023"
+msgstr ""
+
+#. module: customize_purchase
+#: model:ir.model.fields.selection,name:customize_purchase.selection__import_promotion__year__2024
+msgid "2024"
+msgstr ""
+
+#. module: customize_purchase
+#: model:ir.model.fields.selection,name:customize_purchase.selection__product_supplierinfo__type__add
+msgid "Add discount"
+msgstr "Ajouter les remises et les promotions"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__year
+msgid "Annee"
+msgstr "Année"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo__base_price
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_order_line__base_price
+msgid "Base price"
+msgstr "Prix unitaire"
+
+#. module: customize_purchase
+#: model_terms:ir.ui.view,arch_db:customize_purchase.import_promotion_form_view
+msgid "Cancel"
+msgstr "Annuler"
+
+#. module: customize_purchase
+#: model:ir.model.fields.selection,name:customize_purchase.selection__product_supplierinfo__type__discount
+msgid "Cascade discount"
+msgstr "Cascader les remises et les promotions"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__name
+msgid "Comment"
+msgstr "Commentaire"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__create_uid
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__create_date
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__data
+msgid "Data"
+msgstr ""
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__date
+msgid "Date"
+msgstr ""
+
+#. module: customize_purchase
+#. odoo-python
+#: code:addons/customize_purchase/wizard/import_promotion.py:0
+#, python-format
+msgid ""
+"Date overlap: date %s au %s\n"
+" for %s %s"
+msgstr ""
+"Chevauchement de dates : date %s au %s\n"
+" pour %s %s"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__discount
+msgid "Discount"
+msgstr "Promo (%)"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_order_line__discount
+msgid "Discount (%)"
+msgstr "Promo (%)"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo__discount1
+msgid "Discount 1"
+msgstr "R1"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo__discount2
+msgid "Discount 2"
+msgstr "R2"
+
+#. module: customize_purchase
+#: model:ir.model.constraint,message:customize_purchase.constraint_purchase_order_line_maximum_discount
+msgid "Discount must be lower than 100%."
+msgstr "La promotion doit être inférieure à 100 %."
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__display_name
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__date_end
+msgid "End Date"
+msgstr "Date de fin"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__file_name
+msgid "File name"
+msgstr "Nom de fichier"
+
+#. module: customize_purchase
+#: model_terms:ir.ui.view,arch_db:customize_purchase.view_purchase_promotion_filter
+msgid "Group by..."
+msgstr "Grouper par..."
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__id
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__id
+msgid "ID"
+msgstr ""
+
+#. module: customize_purchase
+#: model_terms:ir.ui.view,arch_db:customize_purchase.import_promotion_form_view
+msgid "Import"
+msgstr "Importer"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__file
+msgid "Import File"
+msgstr "Importer le fichier"
+
+#. module: customize_purchase
+#: model:ir.actions.act_window,name:customize_purchase.action_import_promotion
+msgid "Import Promotion"
+msgstr "Importation Promotion"
+
+#. module: customize_purchase
+#: model:ir.ui.menu,name:customize_purchase.menu_import_promotion
+#: model_terms:ir.ui.view,arch_db:customize_purchase.import_promotion_form_view
+msgid "Import promotion"
+msgstr "Importation Promotion"
+
+#. module: customize_purchase
+#. odoo-python
+#: code:addons/customize_purchase/wizard/import_promotion.py:0
+#, python-format
+msgid ""
+"Incorrect value: %s\n"
+" for %s %s"
+msgstr ""
+"Valeur incorrecte: %s\n"
+" pour %s %s"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo__product_uos
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_order_line__product_uos
+msgid "Invoicing unit"
+msgstr "Unité de facturation"
+
+#. module: customize_purchase
+#: model:ir.model.fields,help:customize_purchase.field_product_supplierinfo__packaging
+msgid ""
+"It specifies attributes of packaging like type, quantity of packaging,etc."
+msgstr ""
+"Il spécifie les attributs de l'emballage comme le type, la quantité "
+"d'emballage, etc."
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion____last_update
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion____last_update
+msgid "Last Modified on"
+msgstr "Dernière modification le"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__write_uid
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__write_uid
+msgid "Last Updated by"
+msgstr "Dernière mise à jour par"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__write_date
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__write_date
+msgid "Last Updated on"
+msgstr "Dernière mise à jour le"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__name
+msgid "Name"
+msgstr "Nom"
+
+#. module: customize_purchase
+#: model_terms:ir.ui.view,arch_db:customize_purchase.view_purchase_promotion_filter
+msgid "Now"
+msgstr "Aujourd'hui"
+
+#. module: customize_purchase
+#: model_terms:ir.ui.view,arch_db:customize_purchase.purchase_order_form_view_inherit
+msgid "Number of packages"
+msgstr "Nbre de colis"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo__packaging
+msgid "Packaging"
+msgstr "Unité logistique"
+
+#. module: customize_purchase
+#: model_terms:ir.ui.view,arch_db:customize_purchase.purchase_order_form_view_inherit
+msgid "Packing"
+msgstr "Colisage"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo__price
+msgid "Price"
+msgstr "Prix"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__product_id
+#: model_terms:ir.ui.view,arch_db:customize_purchase.view_purchase_promotion_filter
+msgid "Product"
+msgstr "Produit"
+
+#. module: customize_purchase
+#: model:ir.model,name:customize_purchase.model_product_packaging
+msgid "Product Packaging"
+msgstr "Emballage des produits"
+
+#. module: customize_purchase
+#: model:ir.actions.act_window,name:customize_purchase.action_purchase_promotion
+#: model:ir.ui.menu,name:customize_purchase.menu_purchase_promotion
+msgid "Promotions"
+msgstr ""
+
+#. module: customize_purchase
+#: model:ir.model,name:customize_purchase.model_purchase_order
+msgid "Purchase Order"
+msgstr "Commande fournisseur"
+
+#. module: customize_purchase
+#: model:ir.model,name:customize_purchase.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Ligne de commande d'achat"
+
+#. module: customize_purchase
+#: model:ir.model,name:customize_purchase.model_purchase_promotion
+msgid "Purchase Promotion"
+msgstr "Promotion d'achat"
+
+#. module: customize_purchase
+#: model_terms:ir.ui.view,arch_db:customize_purchase.purchase_order_form_view_inherit
+msgid "Purchase price"
+msgstr "Prix d'achat"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_order_line__discount1
+msgid "R1 %"
+msgstr ""
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_order_line__discount2
+msgid "R2 %"
+msgstr ""
+
+#. module: customize_purchase
+#: model_terms:ir.ui.view,arch_db:customize_purchase.view_purchase_promotion_filter
+msgid "Search Promotion"
+msgstr "Rechercher Promotion"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__date_start
+msgid "Starting Date"
+msgstr "Date de début"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_order_line__max_qty
+msgid "Stock"
+msgstr ""
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__supplier_id
+#: model_terms:ir.ui.view,arch_db:customize_purchase.view_purchase_promotion_filter
+msgid "Supplier"
+msgstr "Fournisseur"
+
+#. module: customize_purchase
+#: model:ir.model,name:customize_purchase.model_product_supplierinfo
+msgid "Supplier Pricelist"
+msgstr "Liste de prix du fournisseur"
+
+#. module: customize_purchase
+#: model:ir.model.fields,help:customize_purchase.field_product_supplierinfo__price
+msgid "The price to purchase a product"
+msgstr "Le prix d'achat d'un produit"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo__type
+msgid "Type of supplier info"
+msgstr "Informations sur le type de fournisseur"
+
+#. module: customize_purchase
+#. odoo-python
+#: code:addons/customize_purchase/wizard/import_promotion.py:0
+#, python-format
+msgid "Unknown product code %s"
+msgstr "Code produit inconnu %s"
+
+#. module: customize_purchase
+#. odoo-python
+#: code:addons/customize_purchase/wizard/import_promotion.py:0
+#, python-format
+msgid "Unknown vendor code %s"
+msgstr "Code fournisseur inconnu %s"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_order__warehouse_date
+msgid "Warehouse date"
+msgstr "Date d'entrepôt"
+
+#. module: customize_purchase
+#. odoo-python
+#: code:addons/customize_purchase/wizard/import_promotion.py:0
+#, python-format
+msgid "Wrong week: week %s\n"
+msgstr "Mauvaise semaine: semaine %s\n"
+
+#. module: customize_purchase
+#: model:ir.model.fields.selection,name:customize_purchase.selection__import_promotion__date__dd/mm/yyyy
+msgid "dd/mm/yyyy"
+msgstr ""
+
+#. module: customize_purchase
+#: model:ir.model.fields.selection,name:customize_purchase.selection__import_promotion__date__ddmmyy
+msgid "ddmmyy"
+msgstr ""
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__example_id
+msgid "example file"
+msgstr "Fichier d'exemple"
+
+#. module: customize_purchase
+#: model:ir.model,name:customize_purchase.model_import_promotion
+msgid "import.promotion"
+msgstr ""
+
+#. module: customize_purchase
+#: model:ir.model.fields.selection,name:customize_purchase.selection__import_promotion__date__mm/dd/yyyy
+msgid "mm/dd/yyyy"
+msgstr ""
+
+#. module: customize_purchase
+#: model:ir.model.fields.selection,name:customize_purchase.selection__import_promotion__date__yyyy-mm-dd
+msgid "yyyy-mm-dd"
+msgstr ""
+
+#. module: customize_purchase
+#: model:ir.model.fields.selection,name:customize_purchase.selection__import_promotion__date__yyyymmdd
+msgid "yyyymmdd"
+msgstr ""

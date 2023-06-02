@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="purchase_order_form_view_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.form.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_qty']" position="before">
+                    <field name="max_qty"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_uom'][last()]" position="attributes">
+                    <attribute name="string">U</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_qty']" position="attributes">
+                    <attribute name="string">Number of packages</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_id']" position="attributes">
+                    <attribute name="string">Packing</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_id']" position="after">
+                    <field name="weight" sum="Weight"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree//field[@name='price_unit']" position="attributes">
+                    <attribute name="string">Purchase price</attribute>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree//field[@name='taxes_id']" position="before">
+                    <field name="product_uos"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']//tree//field[@name='price_unit']" position="before">
+                    <field name="base_price" readonly="1"/>
+                    <field name="discount1" readonly="1"/>
+                    <field name="discount2"  readonly="1"/>
+                    <field name="discount"/>
+                </xpath>
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

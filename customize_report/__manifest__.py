@@ -14,5 +14,6 @@
         "views/sale_portal_report.xml",
         "views/sale_report.xml",
         "views/res_company_view.xml",
+        "views/report_purchasequotation_document_inherit.xml",
     ],
 }
