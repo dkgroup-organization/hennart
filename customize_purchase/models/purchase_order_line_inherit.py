@@ -37,11 +37,8 @@ class PurchaseOrderLineInherit(models.Model):
                                                                     ('date_end', '>=', planned_date)])
                 if promotions.discount:
                     line.write({'discount': promotions.discount})
-
                 else:
                     line.write({'discount': 0.0})
-
-
 
     @api.depends("discount","weight")
     def _compute_amount(self):
@@ -57,10 +54,12 @@ class PurchaseOrderLineInherit(models.Model):
         price_reduce = self.price_unit
         quantity = self.product_qty
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
-        if(self.product_uos.id == uom_weight):
+        if self.product_uos == uom_weight:
             quantity = self.weight * self.product_qty
         if self.discount:
+            # TODO Where is the link with R& R2 adn Promo?
             price_reduce = price_reduce * (1 - (self.discount / 100.0))
+
         return self.env['account.tax']._convert_to_tax_base_line_dict(
             self,
             partner=self.order_id.partner_id,
@@ -98,7 +97,6 @@ class PurchaseOrderLineInherit(models.Model):
             base_price=base_price)
         return res
 
-
     @api.depends('product_id')
     def get_price(self):
         for line in self:
@@ -116,7 +114,7 @@ class PurchaseOrderLineInherit(models.Model):
                 if (seller.product_name):
                     line.name = seller.product_name
                 if (seller.product_uos):
-                    line.product_uos =seller.product_uos.id
+                    line.product_uos = seller.product_uos
                 else:
                     line.product_uos = line.product_id.uom_po_id
             else:
