@@ -3,3 +3,4 @@
 
 from . import wms_scenario_step
 from . import stock_lot
+from . import res_config

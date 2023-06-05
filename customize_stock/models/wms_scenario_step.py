@@ -114,7 +114,7 @@ class WmsScenarioStep(models.Model):
 
     @api.model
     def write_inventory(self, data):
-        """ At the en of inventory process
+        """ At the end of inventory process
         write the inventory line
         input: data = {
             location_origin_id: ...
@@ -122,10 +122,49 @@ class WmsScenarioStep(models.Model):
             lot_id:
             quantity:
             }
-        output: data update {'result' : True}
+        output: data add {'result' : True}
         """
+        if data.get('location_origin_id') and data.get('product_id') and data.get('quantity'):
+            inventory_vals = {
+                'product_id': data['product_id'].id,
+                'location_id': data['location_origin_id'].id,
+                'inventory_quantity': data['quantity'],
+                'user_id': self.env.user.id,
+            }
+            condition = [
+                ('product_id', '=', data['product_id'].id),
+                ('location_id', '=', data['location_origin_id'].id),
+            ]
 
+            if data['product_id'].tracking == 'lot' and data.get('lot_id'):
+                inventory_vals['lot_id'] = data['lot_id'].id
+                condition.append(('lot_id', '=', data['lot_id'].id))
+            else:
+                data['warning'] = "This product need a lot number"
+                data['result'] = False
+                return data
 
-
-        data.update({'result': True})
+            quant_ids = self.env['stock.quant'].search(condition)
+            if quant_ids:
+                quant_ids[0].inventory_quantity = data['quantity']
+                quant_ids[0].user_id = self.env.user
+                quant_ids[0].action_apply_inventory()
+                data = self.init_data(data)
+                data.update({'result': True})
+            else:
+                new_inventory = self.env['stock.quant'].create(inventory_vals)
+                new_inventory.action_apply_inventory()
+                data = self.init_data(data)
+                data.update({'result': True})
+        else:
+            data['result'] = False
         return data
+
+    @api.model
+    def init_data(self, data):
+        """ return init data"""
+        new_data = {
+            'step': data['step'],
+            'scenario': data['step'].scenario_id,
+        }
+        return new_data
