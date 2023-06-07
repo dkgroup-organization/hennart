@@ -248,3 +248,12 @@ class WmsScenarioStep(models.Model):
             data['warning'] = _('The program is frozen in step: {}'.format(self.name))
 
         return data
+
+    def get_default_location(self, warehouse=None):
+        """ Get default location like output input preparation production"""
+        warehouse = warehouse or self.env.ref('stock.warehouse0')
+        location_ids = self.env['stock.location']
+        location_ids |= warehouse.wh_input_stock_loc_id
+        location_ids |= warehouse.wh_output_stock_loc_id
+        location_ids |= warehouse.wh_pack_stock_loc_id
+        return location_ids

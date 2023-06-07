@@ -12,4 +12,6 @@
     <menuitem id="menu_wms_configuration" parent="stock.menu_stock_config_settings" sequence="100" name="Scanner"/>
         <menuitem id="menu_wms_menu" parent="menu_wms_configuration" sequence="10" action="act_open_wms_menu_view"/>
         <menuitem id="menu_wms_scenario" parent="menu_wms_configuration" sequence="20" action="act_open_wms_scenario_view"/>
+        <menuitem id="menu_wms_session" parent="menu_wms_configuration" sequence="30" action="act_open_wms_session_view"/>
+
 </odoo>
