@@ -24,6 +24,7 @@ class WmsSession(models.Model):
     end_date = fields.Datetime('End Date')
     user_id = fields.Many2one('res.users', 'User')
     data = fields.Char('data')
+    message = fields.Char('log last message')
     warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse', default=_default_warehouse)
 
     state = fields.Selection(string='Status', selection=[
@@ -54,19 +55,21 @@ class WmsSession(models.Model):
         """ save current session data in json format"""
         for session in self:
             session_data = {}
+            session_message = {}
 
             for key in list(data.keys()):
                 if key in DATA_RESERVED_NAME:
-                    # Don't save this objects
-                    continue
-
-                if hasattr(data[key], '_name') and hasattr(data[key], 'ids'):
-                    # Odoo model name
-                    session_data['model.' + key] = (data[key]._name, data[key].ids)
+                    # Don't save this objects, juste log for debug
+                    session_message.update({key: "{}".format(data[key])})
                 else:
-                    session_data.update({key: data[key]})
+                    if hasattr(data[key], '_name') and hasattr(data[key], 'ids'):
+                        # Odoo model name
+                        session_data['model.' + key] = (data[key]._name, data[key].ids)
+                    else:
+                        session_data.update({key: data[key]})
 
             session.data = json.dumps(session_data)
+            session.message = json.dumps(session_message)
 
     def init_data(self):
         """ Initialise data"""

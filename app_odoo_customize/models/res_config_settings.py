@@ -509,7 +509,7 @@ class ResConfigSettings(models.TransientModel):
         return self.remove_app_data(to_removes, seqs)
 
     def remove_all_biz(self):
-        self.remove_account()
+        #self.remove_account()
         self.remove_quality()
         self.remove_inventory()
         self.remove_purchase()

@@ -149,13 +149,13 @@ class WmsScenarioStep(models.Model):
                 quant_ids[0].inventory_quantity = data['quantity']
                 quant_ids[0].user_id = self.env.user
                 quant_ids[0].action_apply_inventory()
-                data = self.init_data(data)
-                data.update({'result': True})
             else:
                 new_inventory = self.env['stock.quant'].create(inventory_vals)
                 new_inventory.action_apply_inventory()
-                data = self.init_data(data)
-                data.update({'result': True})
+            data = self.init_data(data)
+            data.update({
+                'result': True,
+                'message': 'The inventory is done'})
         else:
             data['result'] = False
         return data

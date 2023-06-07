@@ -71,4 +71,6 @@
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_wms_menu_form"/>
     </record>
+
+
 </odoo>

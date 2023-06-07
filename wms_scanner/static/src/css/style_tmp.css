@@ -14,3 +14,8 @@
   color: #300000;
   
 }
+
+.landscape\:mb-6 {
+    margin-top: -2rem;
+}
+
