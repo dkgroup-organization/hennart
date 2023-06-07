@@ -33,18 +33,27 @@ except ImportError:
 class ImportPromotion(models.TransientModel):
     _name = 'import.promotion'
 
-    file = fields.Binary('Import File', required=True)
+    file = fields.Binary('Import File')
     name = fields.Char('Name')
     date = fields.Selection(FORMAT_DATE, string="Date")
     year = fields.Selection(FORMAT_ANNEE, string='Annee')
     example_id = fields.Many2one('ir.attachment','example file')
     file_name = fields.Char('File name')
+    message = fields.Html("Message")
 
     def week_info(self,year,week):
         startdate = datetime.date(int(year),1,1)+relativedelta(weeks=+week)
         enddate = startdate + datetime.timedelta(days=6)
         data = {'date_start':startdate.strftime('%Y-%m-%d 00:00:00'),'date_end':enddate.strftime('%Y-%m-%d 00:00:00')}
         return data
+
+
+    def action_export_file(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_url',
+            'url':  '/web/content/%s' % self.example_id.id
+        }
 
 
     @api.model
@@ -68,87 +77,113 @@ class ImportPromotion(models.TransientModel):
         return rec
 
     def action_valide(self):
-        book = xlrd.open_workbook(file_contents=base64.b64decode(self.file) or b'')
-        sheets = book.sheet_names()
-        sheet = sheets[0]
-        sheet = book.sheet_by_name(sheet)
-        rows = []
-        week_start = 3
-        week_end = 54
-        # emulate Sheet.get_rows for pre-0.9.4
-        for row in map(sheet.row, range(1,sheet.nrows)):
-            values = []
-            if (not row[0].value) or (not row[1].value) or str(row[0].value) == 'False' or str(row[1].value) == 'False':
-                continue
-            code_product = str(row[1].value).strip()
-            code_supplier = str(row[0].value).strip()
-            _logger.info("value et row %s" %(row))
+        self.ensure_one()
+        if(not self.file):
 
-            if len(code_product) == 4:
-                code_product = '0' + code_product
-            if code_product[-1] in ['A', 'B', 'C', 'D', 'E', 'F', 'G',
-                                    'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'] and len(code_product) == 5:
-                code_product = '0' + code_product
+            self.message ='<div class="alert alert-danger" role="alert"> Veuillez saisir le fichier xlsx </div>'
+            return {
+                'name': 'Same title',
+                'view_mode': 'form',
+                'view_id': False,
+                'res_model': self._name,
+                'domain': [],
+                'context': dict(self._context, active_ids=self.ids),
+                'type': 'ir.actions.act_window',
+                'target': 'new',
+                'res_id': self.id,
+            }
+            #return
+        elif(not self.year):
+            self.message = '<div class="alert alert-danger" role="alert"> Veuillez sélectionner l\'année </div>'
+            return {
+                'name': 'Same title',
+                'view_mode': 'form',
+                'view_id': False,
+                'res_model': self._name,
+                'domain': [],
+                'context': dict(self._context, active_ids=self.ids),
+                'type': 'ir.actions.act_window',
+                'target': 'new',
+                'res_id': self.id,
+            }
 
-            product_id = self.env['product.product'].search([('default_code', '=', code_product)], limit=1)
-            if not product_id:
-                raise ValidationError(_('Unknown product code %s' % (code_product)))
-            # partner
-            supplier_id = self.env['res.partner'].search([('ref', '=', code_supplier)], limit=1)
-            if not supplier_id:
-                raise ValidationError(
-                    _('Unknown vendor code %s' % (code_supplier)))
+        elif(self.file and self.message):
+            self.message = False
+            book = xlrd.open_workbook(file_contents=base64.b64decode(self.file) or b'')
+            sheets = book.sheet_names()
+            sheet = sheets[0]
+            sheet = book.sheet_by_name(sheet)
+            rows = []
+            week_start = 3
+            week_end = 54
+            # emulate Sheet.get_rows for pre-0.9.4
+            for row in map(sheet.row, range(1, sheet.nrows)):
+                values = []
+                if (not row[0].value) or (not row[1].value) or str(row[0].value) == 'False' or str(
+                        row[1].value) == 'False':
+                    continue
+                code_product = str(row[1].value).strip()
+                code_supplier = str(row[0].value).strip()
+                if len(code_product) == 4:
+                    code_product = '0' + code_product
+                if code_product[-1] in ['A', 'B', 'C', 'D', 'E', 'F', 'G',
+                                        'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P'] and len(code_product) == 5:
+                    code_product = '0' + code_product
 
-            # part add or write promotion
+                product_id = self.env['product.product'].search([('default_code', '=', code_product)], limit=1)
+                if not product_id:
+                    raise ValidationError(_('Unknown product code %s' % (code_product)))
+                # partner
+                supplier_id = self.env['res.partner'].search([('ref', '=', code_supplier)], limit=1)
+                if not supplier_id:
+                    raise ValidationError(_('Unknown vendor code %s' % (code_supplier)))
 
-            for week_number in range(week_start, week_end + 1):
-                if row[week_number].value:
-                    try:
-                        promo_value = float(row[week_number].value)
-                    except:
-                        raise ValidationError(
-                            _('Incorrect value: %s\n for %s %s' % (
-                                row[week_number], code_supplier,
-                                code_product)))
+                for week_number in range(week_start, week_end + 1):
+                    if row[week_number].value:
+                        try:
+                            promo_value = float(row[week_number].value)
+                        except:
+                            raise ValidationError(
+                                _('Incorrect value: %s\n for %s %s' % (
+                                    row[week_number], code_supplier,
+                                    code_product)))
 
-                    week_info = self.week_info(self.year, (int(week_number) - 3))
-                    if not week_info:
-                        raise ValidationError(
-                            _('Wrong week: week %s\n' % (week_number)))
+                        week_info = self.week_info(self.year, (int(week_number) - 3))
+                        if not week_info:
+                            raise ValidationError(_('Wrong week: week %s\n' % (week_number)))
 
-                    vals_promo = {'supplier_id': supplier_id.id, 'product_id': product_id.id}
-                    condition = [('supplier_id', '=', supplier_id.id), ('product_id', '=', product_id.id)]
+                        vals_promo = {'supplier_id': supplier_id.id, 'product_id': product_id.id}
+                        condition = [('supplier_id', '=', supplier_id.id), ('product_id', '=', product_id.id)]
 
-                    date_start = week_info['date_start']
-                    date_end = week_info['date_end']
+                        date_start = week_info['date_start']
+                        date_end = week_info['date_end']
 
-                    vals_promo['date_start'] = date_start
-                    vals_promo['date_end'] = date_end
-                    vals_promo['discount'] = promo_value
+                        vals_promo['date_start'] = date_start
+                        vals_promo['date_end'] = date_end
+                        vals_promo['discount'] = promo_value
 
-                    # chevauchement
-                    condition1 = condition + [('date_start', '<', date_start), ('date_end', '>=', date_start)]
-                    condition2 = condition + [('date_start', '<=', date_end), ('date_end', '>', date_end)]
-                    condition3 = condition + [('date_start', '>', date_start), ('date_end', '<', date_end)]
+                        # chevauchement
+                        condition1 = condition + [('date_start', '<', date_start), ('date_end', '>=', date_start)]
+                        condition2 = condition + [('date_start', '<=', date_end), ('date_end', '>', date_end)]
+                        condition3 = condition + [('date_start', '>', date_start), ('date_end', '<', date_end)]
 
-                    for check_condition in [condition1, condition2, condition3]:
-                        promo_ids = self.env['purchase.promotion'].search(check_condition)
+                        for check_condition in [condition1, condition2, condition3]:
+                            promo_ids = self.env['purchase.promotion'].search(check_condition)
+                            if promo_ids:
+                                raise ValidationError(
+                                    _('Date overlap: date %s au %s\n for %s %s' % (date_start, date_end,
+                                                                                   code_supplier,
+                                                                                   code_product)))
+
+                        # Create or rewrite
+                        condition_final = condition + [('date_start', '=', date_start), ('date_end', '=', date_end)]
+                        promo_ids = self.env['purchase.promotion'].search(condition_final)
                         if promo_ids:
-                            raise ValidationError(_('Date overlap: date %s au %s\n for %s %s' % (date_start, date_end,
-                                                                                                 code_supplier,
-                                                                                                 code_product)))
+                            promo_ids.write({'discount': promo_value})
+                        else:
+                            self.env['purchase.promotion'].create(vals_promo)
 
-                    # Create or rewrite
-                    condition_final = condition + [('date_start', '=', date_start), ('date_end', '=', date_end)]
-                    promo_ids = self.env['purchase.promotion'].search(condition_final)
-                    if promo_ids:
-                        promo_ids.write({'discount': promo_value})
-                    else:
-                        self.env['purchase.promotion'].create(vals_promo)
-
-
-
-        return True
+        #return True
 
 
     def from_data(self):
@@ -161,36 +196,40 @@ class ImportPromotion(models.TransientModel):
         date_end = "%s-12-31" % (year)
         promotions_ids = self.env['purchase.promotion'].search(
             [('date_start', '>=', date_start), ('date_end', '<=', date_end)])
+        price_purchase = self.env['product.supplierinfo'].search([])
         result = {}
         partner = {}
-        for promotion in promotions_ids:
-            if promotion.supplier_id.ref not in list(result.keys()):
-                result[promotion.supplier_id.ref] = {}
-                partner[promotion.supplier_id.ref] = promotion.supplier_id.name
-            if promotion.product_id.default_code not in list(result[promotion.supplier_id.ref].keys()):
-                result[promotion.supplier_id.ref][promotion.product_id.default_code] = promotion.product_id.name
-        _logger.info("=======> result : %s" %(result))
-        _logger.info("=======> partner : %s" %(partner))
+        products = []
+        for promotion in price_purchase:
+            if promotion.partner_id.ref not in list(result.keys()):
+                result[promotion.partner_id.ref] = []
+                partner[promotion.partner_id.ref] = promotion.partner_id.name
+            if promotion.product_tmpl_id.default_code not in products:
+                products.append((promotion.product_tmpl_id.default_code))
+                data = {'default_code':promotion.product_tmpl_id.default_code,'name':promotion.product_tmpl_id.name,'id':promotion.product_tmpl_id.id,'partner_id':promotion.partner_id.id,'partner_name':promotion.partner_id.name}
+                result[promotion.partner_id.ref].append(data)
         rows=[]
         list_partner = list(result.keys())
-        #list_partner.sort()
         for ref_partner in list_partner:
-            list_product = list(result[ref_partner].keys())
-            #list_product.sort()
+            list_product = result[ref_partner]
             for code_product in list_product:
-                rows.append((ref_partner if ref_partner else '',code_product if code_product else '', '%s [%s]' %(result[ref_partner][code_product],partner[ref_partner])))
-                # content += '"%s";"%s";"%s [%s]"' % (ref_partner if ref_partner else '',
-                #                                     code_product if code_product else '', result[ref_partner][code_product],
-                #                                     partner[ref_partner]) + ';' * len_header + '\n'
-        _logger.info("====> rows %s" %(rows))
+                _logger.info("=======> code_product %s" %(code_product))
+                condition = [('supplier_id', '=', code_product['partner_id']), ('product_id', '=', code_product['id'])]
+                data= [ref_partner if ref_partner else '',code_product['default_code'] if code_product['default_code'] else '', '%s [%s]' %(code_product['partner_name'],ref_partner)]
+                week_data = []
+                for week in range(1, 54):
+                    week_info = self.week_info(year, (week))
+                    condition_final = condition + [('date_start', '=', week_info['date_start']), ('date_end', '=', week_info['date_end'])]
+                    promotion = self.env['purchase.promotion'].search(condition_final,limit=1)
+                    promo = promotion.discount if promotion else ''
+                    week_data.insert(week-1,promo)
+                data.extend(week_data)
+                rows.append(data)
         with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             for row_index, row in enumerate(rows):
                 for cell_index, cell_value in enumerate(row):
                     _logger.info("====> cell value for %s " %(cell_value))
-                    # if isinstance(cell_value, (list, tuple)):
-                    #     cell_value = pycompat.to_text(cell_value)
                     xlsx_writer.write_cell(row_index + 1, cell_index, cell_value)
 
-        _logger.info("==========> return writer :%s" % xlsx_writer.value)
         return xlsx_writer.value
 

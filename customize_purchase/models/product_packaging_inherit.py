@@ -10,9 +10,7 @@ class ProductPackagingInherit(models.Model):
     @api.model_create_multi
     def create(self, values_list):
         for vals in values_list:
-            _logger.info("vals to create %s" %(vals))
             if 'name' not in vals or not vals['name']:
-                _logger.info("create record %s" %vals)
                 p_name = vals['barcode'] and '[' + vals['barcode'] + '] ' or ''
                 type = self.env['stock.package.type'].browse(vals['package_type_id'])
                 p_name += type.name

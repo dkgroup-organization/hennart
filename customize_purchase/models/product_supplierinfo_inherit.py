@@ -12,6 +12,7 @@ class ProductSupplierinfoInherit(models.Model):
         required=True, help="The price to purchase a product")
     packaging = fields.Many2one('product.packaging', 'Packaging',help="It specifies attributes of packaging like type, quantity of packaging,etc.")
     product_uos = fields.Many2one("uom.uom", string="Invoicing unit")
+    promotion = fields.Float("Promo %", digits='Discount')
 
     @api.onchange('type','discount1','discount2','base_price')
     def _get_price(self):
