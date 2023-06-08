@@ -54,25 +54,26 @@ class PurchaseOrderLineInherit(models.Model):
         :return: A python dictionary.
         """
         self.ensure_one()
-        price_reduce = self.price_unit
         quantity = self.product_qty
+        subtotal = self.price_subtotal
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
-        if(self.product_uos.id == uom_weight):
+        _logger.info("=====> uom weight %s" %(uom_weight))
+        if(self.product_uos.id == uom_weight.id):
             quantity = self.weight * self.product_qty
         if self.discount:
-            price_reduce = price_reduce * (1 - (self.discount / 100.0))
+            line_discount_price_unit = self.price_unit * (1 - (self.discount / 100.0))
+            subtotal = quantity * line_discount_price_unit
         return self.env['account.tax']._convert_to_tax_base_line_dict(
             self,
             partner=self.order_id.partner_id,
             currency=self.order_id.currency_id,
             product=self.product_id,
             taxes=self.taxes_id,
-            price_unit=price_reduce,
+            price_unit=self.price_unit,
             quantity=quantity,
             discount=self.discount,
-            price_subtotal=self.price_subtotal,
+            price_subtotal=subtotal,
         )
-
 
     # def _prepare_account_move_line(self, move=False):
     #     rec = super(PurchaseOrderLineInherit, self)._prepare_account_move_line(move=False)
@@ -118,7 +119,7 @@ class PurchaseOrderLineInherit(models.Model):
                 if (seller.product_uos):
                     line.product_uos =seller.product_uos.id
                 else:
-                    line.product_uos = line.product_id.uom_po_id
+                    line.product_uos = line.product_id.uom_po_id.id
             else:
                 line.discount1 = line.discount2 = line.base_price = 0.0
                 line.product_uos = line.product_id.uom_po_id
