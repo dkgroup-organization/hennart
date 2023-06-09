@@ -186,16 +186,14 @@ class ImportPromotion(models.TransientModel):
         #return True
 
 
-    def from_data(self):
+    def from_data(self,year=False):
         fields = ['CODE_FOURNISSEUR','CODE_PRODUIT','DESCRIPTION(facultatif)']
         for week in range(1, 54):
             fields.append(str(week))
-
-        year = ANNEE + 1
-        date_start = "%s-01-01" % (year - 1)
-        date_end = "%s-12-31" % (year)
-        promotions_ids = self.env['purchase.promotion'].search(
-            [('date_start', '>=', date_start), ('date_end', '<=', date_end)])
+        if(not year):
+            year = ANNEE + 1
+        date_start_p = "%s-01-01 00:00:00" % (year-1)
+        date_end_p = "%s-12-31 23:59:59" % (year)
         price_purchase = self.env['product.supplierinfo'].search([])
         result = {}
         partner = {}
@@ -213,22 +211,20 @@ class ImportPromotion(models.TransientModel):
         for ref_partner in list_partner:
             list_product = result[ref_partner]
             for code_product in list_product:
-                _logger.info("=======> code_product %s" %(code_product))
-                condition = [('supplier_id', '=', code_product['partner_id']), ('product_id', '=', code_product['id'])]
-                data= [ref_partner if ref_partner else '',code_product['default_code'] if code_product['default_code'] else '', '%s [%s]' %(code_product['partner_name'],ref_partner)]
-                week_data = []
-                for week in range(1, 54):
-                    week_info = self.week_info(year, (week))
-                    condition_final = condition + [('date_start', '=', week_info['date_start']), ('date_end', '=', week_info['date_end'])]
-                    promotion = self.env['purchase.promotion'].search(condition_final,limit=1)
-                    promo = promotion.discount if promotion else ''
-                    week_data.insert(week-1,promo)
-                data.extend(week_data)
+                condition = [('supplier_id', '=', code_product['partner_id']), ('product_id', '=', code_product['id']),('date_start', '!=', False),('date_start', '>=', date_start_p),('date_end', '!=', False), ('date_end', '<=', date_end_p)]
+                promotion_ids = self.env['purchase.promotion'].search(condition)
+                data= [ref_partner if ref_partner else '',code_product['default_code'] if code_product['default_code'] else '', '%s [%s]' %(code_product['name'],code_product['partner_name'])]
+                for i in range(2, 55):
+                    data.append('')
+                if(promotion_ids):
+                    for promo in promotion_ids:
+                        date_week = promo.date_start.date()
+                        week = date_week.isocalendar()[1]
+                        data[week +2] =  promo.discount if promo.discount else ''
                 rows.append(data)
         with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             for row_index, row in enumerate(rows):
                 for cell_index, cell_value in enumerate(row):
-                    _logger.info("====> cell value for %s " %(cell_value))
                     xlsx_writer.write_cell(row_index + 1, cell_index, cell_value)
 
         return xlsx_writer.value
