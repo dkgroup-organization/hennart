@@ -31,7 +31,7 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
 
         # Detect the old barcode (reference used by V7) 24 or 25 or 26 length
-        # 53201523101X010120000000  -24 DIGI machine frais emballé [11]
+        # 53201523101X010120000000  -24 DIGI machine frais emballé [11], la date est inversé
         # 53201523101X01012020000000 -26 espera: no id , external production [11]
         # 532010004459X010120000000 -25 old id - [:5][5:12][12][13:19][19:]
         # 01013-0066036B090320000000 -26 new_id [13]
@@ -80,7 +80,9 @@ class WmsScenarioStep(models.Model):
                 old_barcode = scan[:-6] + "000000"
                 for barcode_field in ['barcode_ext', 'temp_old_barcode', 'temp2_old_barcode']:
                     lot_ids = self.env['stock.lot'].search([(barcode_field, '=', old_barcode)])
-                    if lot_ids:
+                    if len(lot_ids) > 1:
+                        data['warning'] = _("There is more than one lot with the same name and date: {}".format(old_barcode))
+                    elif lot_ids:
                         data['lot_id'] = lot_ids[0]
                         data['product_id'] = lot_ids[0].product_id
                         break
@@ -112,7 +114,7 @@ class WmsScenarioStep(models.Model):
 
     @api.model
     def write_inventory(self, data):
-        """ At the en of inventory process
+        """ At the end of inventory process
         write the inventory line
         input: data = {
             location_origin_id: ...
@@ -120,9 +122,49 @@ class WmsScenarioStep(models.Model):
             lot_id:
             quantity:
             }
-        output: data update {'result' : True}
+        output: data add {'result' : True}
+        """
+        if data.get('location_origin_id') and data.get('product_id') and data.get('quantity'):
+            inventory_vals = {
+                'product_id': data['product_id'].id,
+                'location_id': data['location_origin_id'].id,
+                'inventory_quantity': data['quantity'],
+                'user_id': self.env.user.id,
+            }
+            condition = [
+                ('product_id', '=', data['product_id'].id),
+                ('location_id', '=', data['location_origin_id'].id),
+            ]
 
-                    """
+            if data['product_id'].tracking == 'lot' and data.get('lot_id'):
+                inventory_vals['lot_id'] = data['lot_id'].id
+                condition.append(('lot_id', '=', data['lot_id'].id))
+            else:
+                data['warning'] = "This product need a lot number"
+                data['result'] = False
+                return data
 
-        data.update({'result': True})
+            quant_ids = self.env['stock.quant'].search(condition)
+            if quant_ids:
+                quant_ids[0].inventory_quantity = data['quantity']
+                quant_ids[0].user_id = self.env.user
+                quant_ids[0].action_apply_inventory()
+            else:
+                new_inventory = self.env['stock.quant'].create(inventory_vals)
+                new_inventory.action_apply_inventory()
+            data = self.init_data(data)
+            data.update({
+                'result': True,
+                'message': 'The inventory is done'})
+        else:
+            data['result'] = False
         return data
+
+    @api.model
+    def init_data(self, data):
+        """ return init data"""
+        new_data = {
+            'step': data['step'],
+            'scenario': data['step'].scenario_id,
+        }
+        return new_data

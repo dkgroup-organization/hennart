@@ -68,8 +68,8 @@
                                                    options="{'mode': 'python'}"/>
                                         </page>
                                         <page string="Transition out">
-                                            <separator string="Outgoing transitions" colspan="4"/>
-                                            <field name="out_transition_ids" colspan="4" nolabel="1">
+                                            <separator string="Outgoing transitions"/>
+                                            <field name="out_transition_ids" nolabel="1">
                                                 <tree string="Transition">
                                                     <field name="sequence"/>
                                                     <field name="name"/>
@@ -77,34 +77,14 @@
                                                     <field name="condition"/>
                                                 </tree>
                                                 <form string="Transition">
-                                                    <group colspan="4" col="4">
-                                                        <field name="name"/>
+                                                    <field name="name"/>
+                                                    <group>
+
                                                         <field name="sequence"/>
                                                         <field name="to_id"
                                                                domain="[('scenario_id','=', parent.scenario_id)]"/>
-                                                        <field name="condition" colspan="4"/>
-                                                        <newline/>
-                                                    </group>
-                                                </form>
-                                            </field>
-                                        </page>
-                                        <page string="Transition In">
-                                            <separator string="Incoming transitions" colspan="4"/>
-                                            <field name="in_transition_ids" colspan="4" nolabel="1">
-                                                <tree string="Transition">
-                                                    <field name="sequence"/>
-                                                    <field name="name"/>
-                                                    <field name="from_id"/>
-                                                    <field name="condition"/>
-                                                </tree>
-                                                <form string="Transition">
-                                                    <group colspan="4" col="4">
-                                                        <field name="name" colspan="4"/>
-                                                        <field name="sequence"/>
-                                                        <field name="from_id"
-                                                               domain="[('scenario_id','=', parent.scenario_id)]"/>
-                                                        <field name="condition" colspan="4"/>
-                                                        <newline/>
+                                                        <field name="condition"/>
+
                                                     </group>
                                                 </form>
                                             </field>

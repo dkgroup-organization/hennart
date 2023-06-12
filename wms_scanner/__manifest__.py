@@ -19,15 +19,16 @@
 
         
         'views/wms_scenario.xml',
+        'views/wms_session.xml',
         'views/wms_menu.xml',
         'views/menu.xml',
 
+        'views/wms_scanner_image_template.xml',
         'views/wms_scanner_menu_template.xml',
         'views/wms_scanner_input_fields_template.xml',
         'views/wms_scanner_scenario_info_template.xml',
         'views/wms_scanner_scenario_move_template.xml',
         'views/wms_scanner_scenario_inventory_template.xml',
-
 
         'views/wms_scanner_zxing_template.xml',
         'views/wms_scanner_zxing2_template.xml',

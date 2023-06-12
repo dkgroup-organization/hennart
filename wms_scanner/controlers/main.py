@@ -9,17 +9,14 @@ import markupsafe
 
 _logger = logging.getLogger(__name__)
 
-SRC_PATH = 'wms_scanner/'
-IMG_PATH = SRC_PATH + 'static/src/img/'
-IMG_FLAG = {'fr_FR': 'flag-fr.jpg', 'en_US': 'flag-gb.jpg', 'nl_BE': 'flag-be.jpg', 'de_DE': 'flag-de.jpg'}
-
 
 class WmsController(http.Controller):
 
     @http.route(['/scanner'], type='http', auth='user', redirect='/web/login?redirect=%2Fscanner', csrf=False)
     def index(self, debug=False, **k):
         """ the main core of the scanner:
-            - in first the possibility to have multiple session opened for a user, so 1 login for many scanner but only one session by scanner
+            - in first the possibility to have multiple session opened for a user,
+                    so 1 login for many scanner but only one session by scanner
             - in second a workflow analyse by session open, so a storage of data workflow by opened session.
             - in third a qweb render to return simple HTML page, so an internal odoo reading and accessing data,
             """
@@ -31,43 +28,43 @@ class WmsController(http.Controller):
         # Get session data
         session = request.env['wms.session'].get_session()
         data = session.get_data()
-        print("-------session.get_data()-------\n", data)
 
         # Analyse response, complete data, create qweb_data
         qweb_data = self.analyse_response(data)
 
+        # Render QWEB to html
+        res = self.render_QWEB(qweb_data)
+
         # save session data
         session.save_data(qweb_data.get('data', {}))
-        print("-------session.save_data()-------\n", qweb_data.get('data', {}))
 
-        # Render QWEB to html, return response to client
-        res = self.render_QWEB(qweb_data)
+        # Return html response to client
         return res
 
-    def main_menu(self):
-        """ Return to main menu """
-        qweb_data = self.get_qweb_data()
-        qweb_data['menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
-        return qweb_data
-
-    def get_qweb_data(self):
+    def init_qweb_data(self):
         """ Add standard information to data"""
         qweb_data = {}
         qweb_data['user'] = request.env['res.users'].browse(request.uid)
         qweb_data['header_menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
         return qweb_data
 
+    def main_menu(self):
+        """ Return to main menu """
+        qweb_data = self.init_qweb_data()
+        qweb_data['menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])
+        return qweb_data
+
     def analyse_response(self, data):
         """Analyse response"""
         # get the scanner response
-        qweb_data = self.get_qweb_data()
+        qweb_data = self.init_qweb_data()
         response = dict(request.params) or {}
 
         if not response:
             # first time go to main menu
             qweb_data = self.main_menu()
 
-        if response.get('menu'):
+        elif response.get('menu'):
             if not response['menu'].isdigit() or int(response['menu']) <= 0:
                 # main menu (menu=0) or not defined, go to main menu
                 qweb_data = self.main_menu()

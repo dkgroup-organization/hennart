@@ -58,6 +58,7 @@ class SaleOrderLine(models.Model):
             qty_by_week = {}
             # Loop through the past 13 weeks
             if product:
+                pack = product.base_unit_count if product.base_unit_count> 0.0 else 1
                 for week in range(0, 12):
                     date_to = date_start - timedelta(weeks=week - 1)
                     date_from = date_start - timedelta(weeks=week)
@@ -66,7 +67,7 @@ class SaleOrderLine(models.Model):
                         'uom_qty'))
                     # If the quantity is not zero, add it to the quantity by week dictionary
                     if qty != 0:
-                        qty_by_week['{}'.format(week)] = qty
+                        qty_by_week['{}'.format(week)] = qty / pack
 
             # If there is data for the product, create a table to display the quantity sold by week
             cadence_table = '<table style="border-collapse: collapse; width: 100%; table-layout: fixed;"><tr>'

@@ -1,27 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
-        <template id="scanner_input_message" name="scanner_input_message">
-            <div t-if="data.get('message')" id="wizard"
-                 class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:max-h-64"
-            >
-                <t t-out="data.get('message')"/>
-            </div>
-        </template>
-
-        <template id="scanner_button_default_location" name="scanner_button_default_location">
-            <div
-                    class="flex flex-col gap-6 w-72 landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5"
-            >
-                <t t-foreach="data['step'].get_default_location()" t-as="default_location">
-                    <a class="input-select"
-                       t-att-href="'./scanner?scenario=' + str(data['scenario'].id) + '&amp;scan=' + default_location.barcode">
-                        <t t-esc="default_location.name"/>
-                    </a>
-                </t>
-            </div>
-        </template>
-
         <template id="scanner_move_input_location_origin_id" name="scanner_move_input_location_origin_id">
 
             <t t-if="data.get('step') and data['step'].action_variable == 'location_origin_id'">
@@ -33,6 +12,7 @@
                             class="input-warning"
                             t-att-placeholder="data.get('warning')"
                     />
+
                 </t>
                 <t t-else="">
                     <input
@@ -43,8 +23,13 @@
                             t-att-placeholder="data['step'].action_message or ''"
                     />
                 </t>
-                <t t-call="wms_scanner.scanner_button_default_location"/>
+                <div t-if="data.get('message')" id="wizard"
+                     class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:max-h-64"
+                >
+                    <t t-out="data.get('message')"/>
+                </div>
             </t>
+
             <t t-else="">
                 <p
                         type="text"
@@ -79,7 +64,13 @@
                             t-att-placeholder="data['step'].action_message or ''"
                     />
                 </t>
+                <div t-if="data.get('message')" id="wizard"
+                     class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:max-h-64"
+                >
+                    <t t-out="data.get('message')"/>
+                </div>
             </t>
+
             <t t-else="">
                 <p
                         type="text"
@@ -118,6 +109,12 @@
                             t-att-placeholder="data['step'].action_message or ''"
                     />
                 </t>
+                <div t-if="data.get('message')" id="wizard"
+                     class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:max-h-64"
+                >
+                    <t t-out="data.get('message')"/>
+                </div>
+
             </t>
 
             <t t-else="">
@@ -154,7 +151,11 @@
                             t-att-placeholder="data['step'].action_message or ''"
                     />
                 </t>
-                <t t-call="wms_scanner.scanner_button_default_location"/>
+                <div t-if="data.get('message')" id="wizard"
+                     class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:max-h-64"
+                >
+                    <t t-out="data.get('message')"/>
+                </div>
             </t>
 
             <t t-else="">
