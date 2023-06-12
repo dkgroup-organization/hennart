@@ -2,17 +2,25 @@
 <odoo>
     <data>
         <template id="scanner_input_message" name="scanner_input_message">
-            <div t-if="data.get('message')" id="wizard"
+            <div id="wizard"
+                 t-if="data.get('message') or (data.get('step') and data['step'].action_variable in ['location_origin_id', 'location_dest_id'])"
                  class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:max-h-64"
             >
-                <t t-out="data.get('message')"/>
+
+                <p  t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
+                 <t  t-out="data.get('message')"/>
+              </p>
+                <t t-if="data.get('step') and data['step'].action_variable in ['location_origin_id', 'location_dest_id']"
+                    t-call="wms_scanner.scanner_button_default_location"/>
             </div>
         </template>
 
         <template id="scanner_button_default_location" name="scanner_button_default_location">
-            <div
+            <!--<div
                     class="flex flex-col gap-6 w-72 landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5"
-            >
+            >-->
+            <div>
+                <p>Defaults locations</p>
                 <t t-foreach="data['step'].get_default_location()" t-as="default_location">
                     <a class="input-select"
                        t-att-href="'./scanner?scenario=' + str(data['scenario'].id) + '&amp;scan=' + default_location.barcode">
@@ -23,7 +31,6 @@
         </template>
 
         <template id="scanner_move_input_location_origin_id" name="scanner_move_input_location_origin_id">
-
             <t t-if="data.get('step') and data['step'].action_variable == 'location_origin_id'">
                 <t t-if="data.get('warning')">
                     <input
@@ -43,7 +50,7 @@
                             t-att-placeholder="data['step'].action_message or ''"
                     />
                 </t>
-                <t t-call="wms_scanner.scanner_button_default_location"/>
+
             </t>
             <t t-else="">
                 <p
@@ -154,7 +161,7 @@
                             t-att-placeholder="data['step'].action_message or ''"
                     />
                 </t>
-                <t t-call="wms_scanner.scanner_button_default_location"/>
+                <!--<t t-call="wms_scanner.scanner_button_default_location"/>-->
             </t>
 
             <t t-else="">
