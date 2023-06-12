@@ -82,7 +82,7 @@ class ImportPromotion(models.TransientModel):
 
             self.message ='<div class="alert alert-danger" role="alert"> Veuillez saisir le fichier xlsx </div>'
             return {
-                'name': 'Same title',
+                'name': _('Import promotion'),
                 'view_mode': 'form',
                 'view_id': False,
                 'res_model': self._name,
@@ -96,7 +96,7 @@ class ImportPromotion(models.TransientModel):
         elif(not self.year):
             self.message = '<div class="alert alert-danger" role="alert"> Veuillez sélectionner l\'année </div>'
             return {
-                'name': 'Same title',
+                'name': _('Import promotion'),
                 'view_mode': 'form',
                 'view_id': False,
                 'res_model': self._name,
@@ -107,7 +107,7 @@ class ImportPromotion(models.TransientModel):
                 'res_id': self.id,
             }
 
-        elif(self.file and self.message):
+        elif(self.file):
             self.message = False
             book = xlrd.open_workbook(file_contents=base64.b64decode(self.file) or b'')
             sheets = book.sheet_names()
@@ -123,6 +123,7 @@ class ImportPromotion(models.TransientModel):
                         row[1].value) == 'False':
                     continue
                 code_product = str(row[1].value).strip()
+                code_product = code_product.split('.')[0]
                 code_supplier = str(row[0].value).strip()
                 if len(code_product) == 4:
                     code_product = '0' + code_product
@@ -223,9 +224,9 @@ class ImportPromotion(models.TransientModel):
                         data[week +2] =  promo.discount if promo.discount else ''
                 rows.append(data)
         with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
+            xlsx_writer.worksheet.set_column(3, 56, 6)
             for row_index, row in enumerate(rows):
                 for cell_index, cell_value in enumerate(row):
-                    xlsx_writer.write_cell(row_index + 1, cell_index, cell_value)
+                    xlsx_writer.write_cell(row_index + 1, cell_index, str(cell_value))
 
         return xlsx_writer.value
-
