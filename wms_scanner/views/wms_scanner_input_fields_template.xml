@@ -22,7 +22,7 @@
             <div>
                 <p>Defaults locations</p>
                 <t t-foreach="data['step'].get_default_location()" t-as="default_location">
-                    <a class="input-select"
+                    <a class="input-select mb-1"
                        t-att-href="'./scanner?scenario=' + str(data['scenario'].id) + '&amp;scan=' + default_location.barcode">
                         <t t-esc="default_location.name"/>
                     </a>
