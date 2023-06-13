@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="printer_view_form" model="ir.ui.view">
+      <field name="name">barcode.printer.form</field>
+      <field name="model">barcodes.printers</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+        <form string="Barcode printer" version="7.0">
+          <sheet>
+            <group >
+              <field  name="printer_id" select="1"/>
+              <field  name="system_name" readonly="1"/>
+              <field  name="name" select="1"/>
+              <field name="barcode"/>
+              <field name="company_id" groups="base.group_multi_company" widget="selection"/>
+              <button  string="Print test page" type="object" name="print_test_page"/>
+            </group>
+
+          </sheet>
+        </form>
+      </field>
+    </record>
+    <record id="printer_view_tree" model="ir.ui.view">
+      <field name="name">barcode.printer.tree</field>
+      <field name="model">barcodes.printers</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+        <tree string="Barcode printer">
+          <field name="system_name" invisible="1"/>
+          <field name="printer_id"/>
+          <field name="name" select="1"/>
+          <field name="barcode"/>
+        </tree>
+      </field>
+    </record>
+    <record id="printer_view_search" model="ir.ui.view">
+      <field name="name">barcode.printer.search</field>
+      <field name="model">barcodes.printers</field>
+      <field name="type">search</field>
+      <field name="arch" type="xml">
+        <search string="Barcode printer">
+          <field name="name"/>
+        </search>
+      </field>
+    </record>
+    <record model="ir.actions.act_window" id="action_barcode_printer_view">
+      <field name="name">Barcodes Printers</field>
+      <field name="res_model">barcodes.printers</field>
+      <field name="view_mode">form,tree</field>
+      <field name="view_id" ref="printer_view_tree"/>
+      <field name="context">{}</field>
+      <field name="search_view_id" ref="printer_view_search"/>
+    </record>
+    <menuitem id="main_menu_root" name="Industrial Barcode Labels" parent="stock.menu_stock_root" sequence="20"/>
+    <menuitem action="action_barcode_printer_view" name="Barcodes Printers" id="menu_action_barcodes_printers" parent="main_menu_root" sequence="1"/>
+  </data>
+</openerp>

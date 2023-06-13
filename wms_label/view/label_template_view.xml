@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>                        
+	<record model="ir.ui.view" id="labels_templates_form">
+            <field name="name">labels.templates.form</field>
+            <field name="model">labels.templates</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Labels templates" version="7.0">
+                	<sheet>
+                		<group >
+                    		<field name="name" required="1" />
+                    		<field name="model_id" />
+                    		<field name="company_id" groups="base.group_multi_company" widget="selection"/>
+                    		<field name="label_zpl" />
+                    		<field name="barcode_printer_id"/>
+                   		</group>
+<button string="Print test" type="object" name="button_print"/>
+                    		<field name="res_id" />
+                   	</sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="labels_templates_tree">
+            <field name="name">labels.templates.tree</field>
+            <field name="model">labels.templates</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Labels templates">
+                    <field name="name"/>                  
+                    <field name="model_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_label_template_tree_all">
+            <field name="name">Labels templates</field>
+            <field name="res_model">labels.templates</field>
+            <field name="view_mode">form,tree</field>
+            <field name="view_id" ref="labels_templates_tree" />
+        </record>
+
+        <menuitem id="menu_label_templates" parent="main_menu_root" action="action_label_template_tree_all"
+                  sequence="20"/>
+
+    </data>
+</openerp> 

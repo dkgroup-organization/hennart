@@ -1,0 +1,3 @@
+id,name,model_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_barcodes_printers,barcodes_printers,model_barcodes_printers,True,True,True,True
+access_labels_templates,labels_templates,model_labels_templates,True,True,True,True

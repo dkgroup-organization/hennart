@@ -1,0 +1,4 @@
+id,name,model_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_label_stock_move,label_stock_move,model_label_stock_move,True,True,True,True
+access_label_picking,label_picking,model_label_picking,True,True,True,True
+access_label_container,label_container,model_label_container,True,True,True,True
