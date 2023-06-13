@@ -12,8 +12,10 @@
                     <field name="pricelist_id"/>
                     <field name="partner_id"/>
                     <field name="logistical_weight"/>
-                    <field name="logistical_discount"/>
-                    <field name="product_discount_id"/>
+                    <field name="discount_choice"/>
+                    <field name="logistical_discount" attrs="{'readonly': [('discount_choice', '=', 'pricelist_discount')]}"/>
+                    <field name="product_discount_id" attrs="{'readonly': [('discount_choice', '=', 'pricelist_discount')]}"/>
+                    <field name="reduced_pricelist_id" attrs="{'readonly': [('discount_choice', '=', 'product_discount')]}"/>
                 </tree>
             </field>
         </record>

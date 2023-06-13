@@ -30,26 +30,30 @@ class SaleOrderInherit(models.Model):
 
     def _apply_discount_product(self, discount):
         if self.total_weight >= discount.logistical_weight:
-            product_id = discount.product_discount_id
-            discount_percent = discount.logistical_discount
-            max_subtotal_tax, subtotal = self._get_max_subtotal_tax()
+            # raise UserError('test1')
+            if discount.discount_choice == 'product_discount':
+                product_id = discount.product_discount_id
+                discount_percent = discount.logistical_discount
+                max_subtotal_tax, subtotal = self._get_max_subtotal_tax()
 
-            line_values = {
-                'order_id': self._origin.id,
-                'product_id': product_id.id,
-                'name': product_id.name,
-                'product_uom_qty': 1,
-                'price_unit': -1 * (subtotal * (discount_percent / 100)),
-            }
-            if max_subtotal_tax:
-                line_values['tax_id'] = [(6, 0, [max_subtotal_tax.id])]
+                line_values = {
+                    'order_id': self._origin.id,
+                    'product_id': product_id.id,
+                    'name': product_id.name,
+                    'product_uom_qty': 1,
+                    'price_unit': -1 * (subtotal * (discount_percent / 100)),
+                }
+                if max_subtotal_tax:
+                    line_values['tax_id'] = [(6, 0, [max_subtotal_tax.id])]
 
-            if self._origin.id:
-                line_values['order_id'] = self._origin.id
-                self.env['sale.order.line'].sudo().create(line_values)
-            else:
-                order_line = self.order_line.update(line_values)
-                self.order_line += order_line
+                if self._origin.id:
+                    line_values['order_id'] = self._origin.id
+                    self.env['sale.order.line'].sudo().create(line_values)
+                else:
+                    order_line = self.order_line.update(line_values)
+                    self.order_line += order_line
+            elif discount.discount_choice == 'pricelist_discount':
+                self.pricelist_id = discount.reduced_pricelist_id
 
     def _get_max_subtotal_tax(self):
         subtotal_by_tax = {}
