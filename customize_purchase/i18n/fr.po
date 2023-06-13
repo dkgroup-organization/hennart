@@ -157,8 +157,12 @@ msgid "Import Promotion"
 msgstr "Importation Promotion"
 
 #. module: customize_purchase
+#. odoo-python
+#: code:addons/customize_purchase/wizard/import_promotion.py:0
+#: code:addons/customize_purchase/wizard/import_promotion.py:0
 #: model:ir.ui.menu,name:customize_purchase.menu_import_promotion
 #: model_terms:ir.ui.view,arch_db:customize_purchase.import_promotion_form_view
+#, python-format
 msgid "Import promotion"
 msgstr "Importation Promotion"
 
