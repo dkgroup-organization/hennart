@@ -14,19 +14,19 @@ class SaleOrderInherit(models.Model):
             order.total_weight = sum(order.order_line.mapped('weight'))
 
     def _get_discount_product(self):
-        for order in self:
+        self.ensure_one()
 
+        discount_product = self.env['product.pricelist.discount'].search(
+            [('partner_id', '=', self.partner_id.id)], order="logistical_weight DESC")
+        if not discount_product:
             discount_product = self.env['product.pricelist.discount'].search(
-                [('partner_id', '=', self.partner_id.id)], order="logistical_weight DESC")
-            if not discount_product:
-                discount_product = self.env['product.pricelist.discount'].search(
-                    [('pricelist_id.id', '=', order.pricelist_id.id)], order="logistical_weight DESC")
+                [('pricelist_id.id', '=', self.pricelist_id.id)], order="logistical_weight DESC")
 
-            if discount_product:
-                for discount in discount_product:
-                    if order.total_weight >= discount.logistical_weight:
-                        return discount
-            return False
+        if discount_product:
+            for discount in discount_product:
+                if self.total_weight >= discount.logistical_weight:
+                    return discount
+        return False
 
     def _apply_discount_product(self, discount):
         if self.total_weight >= discount.logistical_weight:
@@ -54,6 +54,11 @@ class SaleOrderInherit(models.Model):
                     self.order_line += order_line
             elif discount.discount_choice == 'pricelist_discount':
                 self.pricelist_id = discount.reduced_pricelist_id
+                discount = self._get_discount_product()
+                if discount and discount.discount_choice == 'pricelist_discount':
+                    self._apply_discount_product(discount)
+                self._recompute_prices()
+                self._check_discount()
 
     def _get_max_subtotal_tax(self):
         subtotal_by_tax = {}
