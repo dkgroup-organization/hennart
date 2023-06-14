@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0-20230328\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-29 10:26+0000\n"
-"PO-Revision-Date: 2023-05-29 10:26+0000\n"
+"POT-Creation-Date: 2023-06-13 13:32+0000\n"
+"PO-Revision-Date: 2023-06-13 13:32+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -67,11 +67,6 @@ msgstr "Créé par"
 #: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__create_date
 msgid "Created on"
 msgstr "Créé le"
-
-#. module: customize_purchase
-#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__data
-msgid "Data"
-msgstr ""
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__date
@@ -210,6 +205,11 @@ msgid "Last Updated on"
 msgstr "Dernière mise à jour le"
 
 #. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__message
+msgid "Message"
+msgstr ""
+
+#. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__name
 msgid "Name"
 msgstr "Nom"
@@ -249,6 +249,11 @@ msgstr "Produit"
 #: model:ir.model,name:customize_purchase.model_product_packaging
 msgid "Product Packaging"
 msgstr "Emballage des produits"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo__promotion
+msgid "Promo %"
+msgstr ""
 
 #. module: customize_purchase
 #: model:ir.actions.act_window,name:customize_purchase.action_purchase_promotion
@@ -315,12 +320,17 @@ msgstr "Liste de prix du fournisseur"
 #. module: customize_purchase
 #: model:ir.model.fields,help:customize_purchase.field_product_supplierinfo__price
 msgid "The price to purchase a product"
-msgstr "Le prix d'achat d'un produit"
+msgstr "Le prix pour l'achat d'un article"
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo__type
 msgid "Type of supplier info"
 msgstr "Informations sur le type de fournisseur"
+
+#. module: customize_purchase
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_order_line__weight
+msgid "Unit Weight"
+msgstr "Poids unitaire"
 
 #. module: customize_purchase
 #. odoo-python
@@ -337,9 +347,10 @@ msgid "Unknown vendor code %s"
 msgstr "Code fournisseur inconnu %s"
 
 #. module: customize_purchase
-#: model:ir.model.fields,field_description:customize_purchase.field_purchase_order__warehouse_date
-msgid "Warehouse date"
-msgstr "Date d'entrepôt"
+#: model:ir.model.fields,field_description:customize_purchase.field_purchase_order_line__total_weight
+#: model_terms:ir.ui.view,arch_db:customize_purchase.purchase_order_form_view_inherit
+msgid "Weight"
+msgstr "Poids"
 
 #. module: customize_purchase
 #. odoo-python

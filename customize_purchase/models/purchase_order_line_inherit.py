@@ -6,13 +6,18 @@ _logger = logging.getLogger(__name__)
 
 class PurchaseOrderLineInherit(models.Model):
     _inherit = 'purchase.order.line'
+
+
+
     discount1 = fields.Float("R1 %",compute="get_price",store=True)
     discount2 = fields.Float("R2 %",compute="get_price",store=True)
     base_price = fields.Float("Base price",compute="get_price",store=True)
     discount = fields.Float(string="Discount (%)", editable=True)
     product_uos = fields.Many2one("uom.uom",string="Invoicing unit",readonly=True,compute="get_price",store=True)
     max_qty = fields.Float('Stock',compute="_get_stock")
-    weight = fields.Float('Weight',compute="get_price",store=True)
+    weight = fields.Float('Unit Weight',compute="get_price",store=True)
+    total_weight = fields.Float('Weight',compute="get_price",store=True)
+    #product_packaging_id = fields.Many2one(domain=_get_product_packaging_domain)
 
     @api.depends('product_id')
     def _get_stock(self):
@@ -23,7 +28,7 @@ class PurchaseOrderLineInherit(models.Model):
 
 
     ## part of discount managements
-    @api.onchange('product_id','order_id.partner_id','order_id.date_planned')
+    @api.onchange('product_id')
     def calculate_discount_percentage(self):
         if(self.order_id.date_order):
             vendor = self.order_id.partner_id
@@ -57,7 +62,6 @@ class PurchaseOrderLineInherit(models.Model):
         quantity = self.product_qty
         subtotal = self.price_subtotal
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
-        _logger.info("=====> uom weight %s" %(uom_weight))
         if(self.product_uos.id == uom_weight.id):
             quantity = self.weight * self.product_qty
         if self.discount:
@@ -100,10 +104,10 @@ class PurchaseOrderLineInherit(models.Model):
         return res
 
 
-    @api.depends('product_id')
+    @api.depends('product_id','product_qty')
     def get_price(self):
         for line in self:
-            if not line.product_id:
+            if line.order_id.state not in ['draft', 'sent'] or not line.product_id:
                 continue
             seller = line.product_id._select_seller(
                 partner_id=line.partner_id,
@@ -117,17 +121,31 @@ class PurchaseOrderLineInherit(models.Model):
                 if (seller.product_name):
                     line.name = seller.product_name
                 if (seller.product_uos):
-                    line.product_uos =seller.product_uos.id
+                    line.product_uos =seller.product_uos
                 else:
-                    line.product_uos = line.product_id.uom_po_id.id
+                    line.product_uos = line.product_id.uom_po_id
             else:
                 line.discount1 = line.discount2 = line.base_price = 0.0
                 line.product_uos = line.product_id.uom_po_id
-            line.weight = line.product_id.weight
+            weight = line.product_id.weight
+            line.weight = weight
+            line.total_weight = weight * line.product_qty
 
 
-
-
-
-
-
+    @api.depends('product_id', 'product_qty', 'product_uom')
+    def _compute_product_packaging_id(self):
+        for line in self:
+            # remove packaging if not match the product
+            if line.product_packaging_id.product_id != line.product_id:
+                line.product_packaging_id = False
+            # suggest biggest suitable packaging
+            if line.product_id and line.product_qty and line.product_uom:
+                seller = line.product_id._select_seller(
+                partner_id=line.partner_id,
+                quantity=line.product_qty,
+                date=line.order_id.date_order and line.order_id.date_order.date(),
+                uom_id=line.product_uom,)
+                if(seller and seller.packaging):
+                    line.product_packaging_id = seller.packaging
+                else:
+                    line.product_packaging_id = line.product_id.packaging_ids.filtered('purchase')._find_suitable_product_packaging(line.product_qty, line.product_uom) or line.product_packaging_id

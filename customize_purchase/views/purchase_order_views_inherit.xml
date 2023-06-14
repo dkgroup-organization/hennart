@@ -19,7 +19,7 @@
                     <attribute name="string">Packing</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_id']" position="after">
-                    <field name="weight" sum="Weight"/>
+                    <field name="total_weight" sum="Weight"/>
                 </xpath>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='price_unit']" position="attributes">
                     <attribute name="string">Purchase price</attribute>
