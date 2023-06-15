@@ -1,0 +1,33 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="stock_weight_device_tree_view">
+            <field name="name">stock_weight_device.tree</field>
+            <field name="model">stock.weight.device</field>
+            <field name="arch" type="xml">
+                <tree string="Weight Device" editable="bottom">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="barcode"/>
+                    <field name="address"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_stock_weight_device">
+            <field name="name">Weight Device</field>
+            <field name="res_model">stock.weight.device</field>
+            <field name="binding_view_types">tree</field>
+        </record>
+
+        <menuitem name="Weight management"
+                  id="menu_stock_weight"
+                  parent="stock.menu_stock_config_settings"
+                  sequence="55"/>
+        <menuitem name="Weight Device"
+                  id="menu_stock_weight_device"
+                  parent="menu_stock_weight"
+                  sequence="10"
+                  action="action_stock_weight_device"/>
+    </data>
+</odoo>

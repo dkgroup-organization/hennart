@@ -1,0 +1,276 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* customize_stock
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0-20230328\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-06-15 13:54+0000\n"
+"PO-Revision-Date: 2023-06-15 13:54+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/stock_lot.py:0
+#, python-format
+msgid " - Product: %s, Serial Number: %s"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__barcode
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__barcode
+msgid "Barcode"
+msgstr "Code barres"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__barcode_ext
+msgid "Barcode (external)"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields.selection,name:customize_stock.selection__stock_weight_value__state__cancel
+msgid "Cancelled"
+msgstr "Annulé"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__code
+msgid "Code"
+msgstr "Code"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__company_id
+msgid "Company"
+msgstr "Société"
+
+#. module: customize_stock
+#: model:ir.model,name:customize_stock.model_res_config_settings
+msgid "Config Settings"
+msgstr "Paramètres de config"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__create_uid
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__create_date
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__create_date
+msgid "Created on"
+msgstr "Created on"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__date
+msgid "Date de création"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__life_date
+msgid "Date limite de consommation"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__name
+msgid "Description"
+msgstr "Description"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__display_name
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__display_name
+msgid "Display Name"
+msgstr "Display Name"
+
+#. module: customize_stock
+#: model:ir.model.fields.selection,name:customize_stock.selection__stock_weight_value__state__done
+msgid "Done"
+msgstr "Fait"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__id
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__id
+msgid "ID"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__ref
+msgid "Internal Reference"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,help:customize_stock.field_stock_lot__ref
+msgid "Internal reference with incremente index "
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device____last_update
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value____last_update
+msgid "Last Modified on"
+msgstr "Dernière modification le"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__write_uid
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__write_uid
+msgid "Last Updated by"
+msgstr "Dernière mise à jour par"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__write_date
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__write_date
+msgid "Last Updated on"
+msgstr "Dernière mise à jour le"
+
+#. module: customize_stock
+#: model:ir.model,name:customize_stock.model_stock_lot
+msgid "Lot/Serial"
+msgstr "Lot/N° série"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__address
+msgid "Network address"
+msgstr "Adresse réseau"
+
+#. module: customize_stock
+#: model:ir.model.fields.selection,name:customize_stock.selection__stock_weight_value__state__draft
+msgid "New"
+msgstr "Nouveau"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__user_prepa_id
+msgid "Preparator"
+msgstr "Préparateur"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__product_id
+msgid "Product"
+msgstr "Produit"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__prodlot_id
+msgid "Production lot"
+msgstr "Lot de production"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__product_qty
+msgid "Quantity"
+msgstr "Quantité"
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/wms_scenario_step.py:0
+#, python-format
+msgid "Reading weight error:"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__picking_id
+msgid "Reference"
+msgstr "Référence"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__state
+msgid "Status"
+msgstr "Statut"
+
+#. module: customize_stock
+#: model:ir.model,name:customize_stock.model_wms_scenario_step
+msgid "Step for scenario"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__tare
+msgid "Tare Weight"
+msgstr "Tare"
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/stock_lot.py:0
+#, python-format
+msgid ""
+"The combination of serial number and product must be unique across a company.\n"
+"Following combination contains duplicates:\n"
+msgstr ""
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/wms_scenario_step.py:0
+#, python-format
+msgid "There is more than one lot with the same name and date: {}"
+msgstr ""
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/wms_scenario_step.py:0
+#, python-format
+msgid "This lot is removing."
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__weight
+msgid "Total Weight"
+msgstr "Total Weight"
+
+#. module: customize_stock
+#: model:ir.model.fields.selection,name:customize_stock.selection__stock_weight_value__type__1
+msgid "Type 1"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__name
+msgid "Weighing number"
+msgstr "Numéro de pesée"
+
+#. module: customize_stock
+#: model:ir.actions.act_window,name:customize_stock.action_stock_weight_device
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__device_id
+#: model:ir.ui.menu,name:customize_stock.menu_stock_weight_device
+#: model_terms:ir.ui.view,arch_db:customize_stock.stock_weight_device_tree_view
+msgid "Weight Device"
+msgstr "Appareil de poids"
+
+#. module: customize_stock
+#: model:ir.actions.act_window,name:customize_stock.action_stock_weight_value
+#: model:ir.ui.menu,name:customize_stock.menu_stock_weight_value
+msgid "Weight Value"
+msgstr "Valeur de poids"
+
+#. module: customize_stock
+#: model:ir.model,name:customize_stock.model_stock_weight_device
+msgid "Weight device"
+msgstr "Appareil de poids"
+
+#. module: customize_stock
+#: model:ir.ui.menu,name:customize_stock.menu_stock_weight
+msgid "Weight management"
+msgstr "Gestion du poids"
+
+#. module: customize_stock
+#: model:ir.model,name:customize_stock.model_stock_weight_value
+#: model_terms:ir.ui.view,arch_db:customize_stock.stock_weight_value_tree_view
+msgid "Weight value"
+msgstr "Valeur de poids"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__date
+msgid "date"
+msgstr "Date"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__temp_old_barcode
+msgid "migration Barcode 1"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__temp2_old_barcode
+msgid "migration Barcode 2"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__type
+msgid "type"
+msgstr "Type"

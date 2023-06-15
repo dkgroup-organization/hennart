@@ -15,7 +15,10 @@
         'wms_scanner', 'customize_product_template', 'customize_report', 'customize_partner'
     ],
     'data': [
-        "views/stock_lot_view.xml"
+        "security/ir.model.access.csv",
+        "views/stock_lot_view.xml",
+        "views/stock_weight_device_views.xml",
+        "views/stock_weight_value_views.xml",
 
     ],
     'demo': [
