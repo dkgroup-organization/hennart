@@ -12,7 +12,7 @@ class PurchaseOrderLineInherit(models.Model):
     discount1 = fields.Float("R1 %",compute="get_price",store=True)
     discount2 = fields.Float("R2 %",compute="get_price",store=True)
     base_price = fields.Float("Base price",compute="get_price",store=True)
-    discount = fields.Float(string="Discount (%)", editable=True)
+    discount = fields.Float(string="Discount (%)", editable=True,compute="calculate_discount_percentage",store=True,readonly=False)
     product_uos = fields.Many2one("uom.uom",string="Invoicing unit",readonly=True,compute="get_price",store=True)
     max_qty = fields.Float('Stock',compute="_get_stock")
     weight = fields.Float('Unit Weight',compute="get_price",store=True)
@@ -28,25 +28,22 @@ class PurchaseOrderLineInherit(models.Model):
 
 
     ## part of discount managements
-    @api.onchange('product_id')
+    @api.depends('product_id','date_planned')
     def calculate_discount_percentage(self):
-        if(self.order_id.date_order):
-            vendor = self.order_id.partner_id
-            planned_date = self.order_id.date_order.date()
-            for line in self:
-                if line.order_id.state not in ['draft', 'sent'] or not line.product_id:
-                    continue
-                promotions = self.env['purchase.promotion'].search([('product_id', '=', line.product_id.id),
-                                                                    ('supplier_id', '=', vendor.id),
-                                                                    ('date_start', '<=', planned_date),
-                                                                    ('date_end', '>=', planned_date)])
-                if promotions.discount:
-                    line.write({'discount': promotions.discount})
+        for line in self:
+            vendor = line.order_id.partner_id
+            planned_date = line.date_planned
+            if line.order_id.state not in ['draft', 'sent'] or not line.product_id or not planned_date:
+                continue
+            promotions = self.env['purchase.promotion'].search([('product_id', '=', line.product_id.id),
+                                                                ('supplier_id', '=', vendor.id),
+                                                                ('date_start', '<=', planned_date.date()),
+                                                                ('date_end', '>=', planned_date.date())])
+            if promotions.discount:
+                line.write({'discount': promotions.discount})
 
-                else:
-                    line.write({'discount': 0.0})
-
-
+            else:
+                line.write({'discount': 0.0})
 
     @api.depends("discount","weight")
     def _compute_amount(self):
@@ -87,10 +84,7 @@ class PurchaseOrderLineInherit(models.Model):
     #                 'product_packaging_qty': self.product_packaging_qty})
     #     return rec
 
-
-
     ## end part of discount management
-
 
     def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, company_id, supplier, po):
         res = super(PurchaseOrderLineInherit, self)._prepare_purchase_order_line(product_id,product_qty,product_uom,company_id,supplier,po)
