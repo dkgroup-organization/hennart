@@ -51,17 +51,17 @@ class delivery_carrier_order(models.Model):
     driver_name = fields.Char('Driver name')
     temperature = fields.Float('Temperature')
     note = fields.Text('Comment')
-    save_as = fields.Binary(compute="_get_content", method=True, string='save as')
-    save_name = fields.Char(compute="_update_info", method=True, size=32, string='save as',)
-    content = fields.Text(compute="_csv_content", method=True, string='Content of export')
+    save_as = fields.Binary(compute="_get_content", string='save as')
+    save_name = fields.Char(compute="_update_info", size=32, string='save as',)
+    content = fields.Text(compute="_csv_content", string='Content of export')
 
-    sscc_save_as = fields.Binary(compute="_get_content_sscc", method=True, string='save as')
-    sscc_save_name = fields.Char(compute="_update_info", method=True, size=32, string='save as')
-    sscc_content = fields.Text(compute="_csv_content_sscc3", method=True, string='Content of export')
+    sscc_save_as = fields.Binary(compute="_get_content_sscc", string='save as')
+    sscc_save_name = fields.Char(compute="_update_info",  size=32, string='save as')
+    sscc_content = fields.Text(compute="_csv_content_sscc3", string='Content of export')
 
-    chronopost_save_as = fields.Binary(compute="_get_content_chronopost", method=True, string='save as')
-    chronopost_save_name = fields.Char(compute="_update_info", method=True, size=62, string='save as')
-    chronopost_content = fields.Text(compute="_csv_content_chronopost", method=True, string='Content of export')
+    chronopost_save_as = fields.Binary(compute="_get_content_chronopost", string='save as')
+    chronopost_save_name = fields.Char(compute="_update_info", size=62, string='save as')
+    chronopost_content = fields.Text(compute="_csv_content_chronopost", string='Content of export')
 
 
     def _update_info(self):
@@ -111,7 +111,6 @@ class delivery_carrier_order(models.Model):
                 obj_current.save_as = base64.encodebytes((obj_current.content).encode('utf-8'))
             else:
                 obj_current.save_as = base64.encodebytes(mm.encode('utf-8'))
-
 
 
     def _csv_content(self):
@@ -254,12 +253,8 @@ class delivery_carrier_order(models.Model):
             else:
                 rec.date_expected2 = False
 
-
-
     def _csv_content_sscc3(self):
-        res = {}
-        context =  {}
-        data = {}
+       
         csv_return = '\r\n'
 
         def format_date(field_value):
@@ -509,7 +504,6 @@ class delivery_carrier_order(models.Model):
                 obj_current.chronopost_save_as = base64.encodebytes(mm.encode('utf-8'))
 
     def button_action_send(self):
-        context['active_ids'] = self.id
 
         message = self.env['mail.mail']
         template_obj = self.env['mail.template']
