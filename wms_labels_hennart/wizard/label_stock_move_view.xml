@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<openerp>
+<odoo>
   <data>
     <!-- wizard print label-->
     <record id="view_label_stock_move" model="ir.ui.view">
@@ -129,4 +129,4 @@
 
 
   </data>
-</openerp>
+</odoo>

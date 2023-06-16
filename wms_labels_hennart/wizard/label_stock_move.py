@@ -3,8 +3,6 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
-
-
 import time
 import datetime
 
@@ -20,10 +18,8 @@ class label_stock_move(models.TransientModel):
     _name = "label.stock.move"
     _description = "Print Label"
 
-
     nb_label = fields.Integer('Number of label')
     name = fields.Char('Product')
-
     lang = fields.Selection(_lang_get, 'Language')
     product_id = fields.Many2one('product.product', 'Product', required=True)
     prodlot_label = fields.Char('Label production lot')
@@ -53,10 +49,8 @@ class label_stock_move(models.TransientModel):
         res['weight_label'] = _('Net weight:')
         res['nb_label'] = 1
         res['weight'] = 0.0
-
         product = False
         prodlot = False
-
         #Get the value on stock move
         if self.env.context.get('active_id') and self.env.context.get("active_model") == 'stock.move.line':
             move = move_obj.browse(self.env.context.get('active_id'))
@@ -65,19 +59,12 @@ class label_stock_move(models.TransientModel):
                 prodlot = move.lot_id
 
             if move.picking_id and move.picking_id.picking_type_id.sequence_code == "out":
-                #Use the packing product
-                # if move.product_packaging and move.product_packaging.product_parent_id:
-                #     product = move.product_packaging.product_parent_id
-                # else:
                 product = move.product_id
                 #Use the weight
                 res['weight'] = move.move_id.weighed or 0.0
             else:
                 #picking in and internal
                 product = move.product_id
-
-            # res['nb_label'] = move.label
-
         #Get the value on prodlot
         if self.env.context.get('active_id') and self.env.context.get("active_model") == 'stock.lot':
             prodlot = prodlot_obj.browse(self.env.context.get('active_id'))
@@ -105,8 +92,6 @@ class label_stock_move(models.TransientModel):
                 res['date'] = prodlot.life_date
             elif prodlot.use_date:
                 res['date'] = prodlot.use_date
-
-            
             res['barcode'] = prodlot.barcode
             if res['weight']:
                 res['barcode'] = res['barcode'][:-6] + ("%.3f" % res['weight']).rjust(6, '0')
@@ -239,7 +224,6 @@ class label_picking(models.TransientModel):
         if self.env.context.get('active_id') and self.env.context.get("active_model") == 'stock.picking':
             for picking in obj_picking.browse(self.env.context.get('active_id')):
                 for move in picking.move_line_ids:
-                    #self.env.context.get('active_id') and context.get("active_model") and context["active_model"] == 'stock.move':
                     label_context = {
                         'active_model': 'stock.move.line',
                         'active_id': move.id,
@@ -286,9 +270,6 @@ class label_container(models.TransientModel):
 
         picking_obj = self.env['stock.picking']
         context = self.env.context
-        res = {}
-        #res['lang'] = context.get('lang', 'fr_FR')
-
         if self.env.context.get('active_id') and self.env.context.get("active_model") == 'stock.picking':
             picking = picking_obj.browse(self.env.context.get('active_id'))
             res['nb_container'] = context.get('nb_container') or 1
@@ -312,7 +293,6 @@ class label_container(models.TransientModel):
       picking_obj = self.env['stock.picking']
 
       for wizard in self:
-
         #Check the data integrity
         if not wizard.printer_id:
             raise UserError('Please, select a printer.')
