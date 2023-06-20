@@ -115,6 +115,7 @@ class WmsScenarioStep(models.Model):
             return res
 
         if action_scanner in ['start', 'no_scan', 'routing']:
+            # No scan needed
             return data
         else:
             scan = self.get_scanner_response()
@@ -190,8 +191,11 @@ class WmsScenarioStep(models.Model):
         """ compute the step:
         there are 3 actions: scan - compute - choice next step"""
         self.ensure_one()
+        original_data = data.copy()
+
         if self.action_scanner not in ['start', 'routing', 'no_scan']:
             data = self.read_scan(data)
+
         if not data.get('warning'):
             data = self.execute_code(data)
             if not data.get('warning'):
@@ -199,7 +203,17 @@ class WmsScenarioStep(models.Model):
                 if not data.get('warning') and data.get('step') and data['step'] != self and \
                         data['step'].action_scanner == 'routing':
                     data = data['step'].execute_step(data)
-        data = self.info_message(data)
+
+        if data.get('warning'):
+            # If warning, restore previous data.
+            logger.warning("Warning data: {}".format(data))
+            original_data['warning'] = data['warning']
+            data = original_data.copy()
+
+        message = self.info_message(data)
+        if message:
+            data["message"] = message
+
         return data
 
     def info_message(self, data):
@@ -214,9 +228,8 @@ class WmsScenarioStep(models.Model):
                         if hasattr(scan_model_id, field_name):
                             message += "<p>%s </p>" % (getattr(scan_model, field_name))
                     message += "<br/>"
-        if message:
-            data['message'] = markupsafe.Markup(message)
-        return data
+
+        return markupsafe.Markup(message)
 
     def execute_code(self, data={}):
         "Eval the python code"

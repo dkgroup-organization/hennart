@@ -222,21 +222,12 @@ class ImportPromotion(models.TransientModel):
                         week = date_week.isocalendar()[1]
                         data[week +2] =  promo.discount if promo.discount else ''
                 rows.append(data)
-        with ExportXlsxWriter2(fields, len(rows)) as xlsx_writer:
+        with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
+            xlsx_writer.worksheet.set_column(0, 1, 15)
+            xlsx_writer.worksheet.set_column(2, 2, 60)
+            xlsx_writer.worksheet.set_column(3, 56, 4)
             for row_index, row in enumerate(rows):
                 for cell_index, cell_value in enumerate(row):
                     xlsx_writer.write_cell(row_index + 1, cell_index, str(cell_value))
 
         return xlsx_writer.value
-
-
-class ExportXlsxWriter2(ExportXlsxWriter):
-    """ change column width
-    """
-    def write_header(self):
-        # Write main header
-        for i, fieldname in enumerate(self.field_names):
-            self.write(0, i, fieldname, self.header_style)
-        self.worksheet.set_column(0, 1, 15)  # around 220 pixels
-        self.worksheet.set_column(2, 2, 60)
-        self.worksheet.set_column(3, i, 4)

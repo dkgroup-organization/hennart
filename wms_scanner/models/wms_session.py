@@ -36,6 +36,11 @@ class WmsSession(models.Model):
         default='draft')
 
     @api.model
+    def get_reserved_var_name(self):
+        """ retrun the list of reserved variable name """
+        return DATA_RESERVED_NAME
+
+    @api.model
     def get_session(self):
         """ return curent session data"""
         cookie_sid = request.httprequest.cookies.get('session_id')

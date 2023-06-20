@@ -30,6 +30,3 @@ class PurchaseOrderInherit(models.Model):
                         line._product_id_change()
                         line._compute_price_unit_and_date_planned_and_name()
                         line.calculate_discount_percentage()
-
-
-
