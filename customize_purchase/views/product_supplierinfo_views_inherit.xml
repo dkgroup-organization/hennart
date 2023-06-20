@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//label[@for='price']" position="before">
                     <field name="type"/>
-                    <field name="base_price"/>
+                    <field name="base_price" string="Price base"/>
                    <field name="discount1" />
                     <field name="discount2" />
 
@@ -16,6 +16,19 @@
                 <xpath expr="//field[@name='company_id']" position="after">
                     <field name="packaging"/>
                     <field name="product_uos"/>
+
+                </xpath>
+                <xpath expr="//sheet" position="inside">
+                    <field name="pricelist_ids">
+                            <tree>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                                <field name="unit_price"/>
+                                <field name="discount1"/>
+                                <field name="discount2"/>
+                                <field name="price"/>
+                            </tree>
+                    </field>
 
                 </xpath>
             </field>

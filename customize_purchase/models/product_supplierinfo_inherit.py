@@ -13,6 +13,8 @@ class ProductSupplierinfoInherit(models.Model):
     packaging = fields.Many2one('product.packaging', 'Packaging',help="It specifies attributes of packaging like type, quantity of packaging,etc.")
     product_uos = fields.Many2one("uom.uom", string="Invoicing unit")
     promotion = fields.Float("Promo %", digits='Discount')
+    pricelist_ids = fields.One2many("pricelist.partnerinfo", "suppinfo_id", "Supplier Pricelist")
+
 
     @api.onchange('type','discount1','discount2','base_price')
     def _get_price(self):
@@ -21,6 +23,22 @@ class ProductSupplierinfoInherit(models.Model):
                 rec.price = rec.base_price * (1 - ((rec.discount1 + rec.discount2) / 100.0))
             else:
                 rec.price = rec.base_price * (1 - (rec.discount1 / 100.0)) * (1 - (rec.discount2 / 100.0))
+
+
+    def write(self, vals):
+        if 'price' in vals:
+            self.pricelist_ids=[(0, 0, {
+                'suppinfo_id':self.id,
+                'min_quantity':self.min_qty,
+                'price':self.price,
+                'date_start':self.date_start,
+                'date_end':self.date_end,
+                'unit_price':self.base_price,
+                'discount1':self.discount1,
+                'discount2': self.discount2,
+            })]
+        res = super(ProductSupplierinfoInherit, self).write(vals)
+        return res
 
 
 
