@@ -87,25 +87,6 @@ class WmsScenario(models.Model):
                         'to_id': step_news[trans.to_id.id]})
         return scenario_new
 
-    def open_diagram(self):
-        "open the diagram view"
-        self.ensure_one()
-        view_id = self.env.ref('wms_scanner.view_wms_scenario_diagram').id
-
-        action = {
-            'name': _('Scenario'),
-            'view_type': 'form',
-            'view_mode': 'diagram_plus',
-            "views": [[view_id, "diagram_plus"]],
-            'res_model': 'wms.scenario',
-            'res_id': self.id,
-            'type': 'ir.actions.act_window',
-            'target': 'current',
-            }
-        # not available at this time 2022-12
-        action = {}
-        return action
-
     def do_scenario(self, data):
         "execute the scenario"
         self.ensure_one()
