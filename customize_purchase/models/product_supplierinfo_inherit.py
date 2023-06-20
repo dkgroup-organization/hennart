@@ -13,7 +13,7 @@ class ProductSupplierinfoInherit(models.Model):
     packaging = fields.Many2one('product.packaging', 'Packaging',help="It specifies attributes of packaging like type, quantity of packaging,etc.")
     product_uos = fields.Many2one("uom.uom", string="Invoicing unit")
     promotion = fields.Float("Promo %", digits='Discount')
-    pricelist_ids = fields.One2many("pricelist.partnerinfo", "suppinfo_id", "Supplier Pricelist")
+    pricelist_ids = fields.One2many("product.supplierinfo.historic", "suppinfo_id", "Supplier Pricelist",readonly=True)
 
 
     @api.onchange('type','discount1','discount2','base_price')

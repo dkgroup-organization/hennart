@@ -2,7 +2,7 @@
 from odoo import fields, models, api
 
 class PricelistPartnerinfo(models.Model):
-    _name = 'pricelist.partnerinfo'
+    _name = 'product.supplierinfo.historic'
     _order = 'min_quantity asc'
     name = fields.Char('Description', size=64)
     suppinfo_id = fields.Many2one('product.supplierinfo', 'Partner Information', required=True, ondelete='cascade')

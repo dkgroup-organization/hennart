@@ -1,4 +1,4 @@
-from . import pricelist_partnerinfo
+from . import product_supplierinfo_historic
 from . import purchase_promotion
 from . import product_supplierinfo_inherit
 from . import purchase_order_inherit

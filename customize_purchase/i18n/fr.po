@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0-20230328\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-20 09:59+0000\n"
-"PO-Revision-Date: 2023-06-20 09:59+0000\n"
+"POT-Creation-Date: 2023-06-20 10:35+0000\n"
+"PO-Revision-Date: 2023-06-20 10:35+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -59,14 +59,14 @@ msgstr "Commentaire"
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__create_uid
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__create_uid
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__create_uid
 #: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__create_uid
 msgid "Created by"
 msgstr "Créé par"
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__create_date
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__create_date
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__create_date
 #: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__create_date
 msgid "Created on"
 msgstr "Créé le"
@@ -88,7 +88,7 @@ msgstr ""
 " pour %s %s"
 
 #. module: customize_purchase
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__name
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__name
 msgid "Description"
 msgstr ""
 
@@ -119,7 +119,7 @@ msgstr "La promotion doit être inférieure à 100 %."
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__display_name
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__display_name
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__display_name
 #: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__display_name
 msgid "Display Name"
 msgstr "Nom affiché"
@@ -130,7 +130,7 @@ msgid "End Date"
 msgstr "Date de fin"
 
 #. module: customize_purchase
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__date_end
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__date_end
 msgid "End date"
 msgstr "Date de fin"
 
@@ -146,7 +146,7 @@ msgstr "Grouper par..."
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__id
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__id
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__id
 #: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__id
 msgid "ID"
 msgstr ""
@@ -208,21 +208,21 @@ msgstr "Écriture comptable"
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_import_promotion____last_update
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo____last_update
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic____last_update
 #: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion____last_update
 msgid "Last Modified on"
 msgstr "Dernière modification le"
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__write_uid
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__write_uid
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__write_uid
 #: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__write_uid
 msgid "Last Updated by"
 msgstr "Dernière mise à jour par"
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__write_date
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__write_date
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__write_date
 #: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__write_date
 msgid "Last Updated on"
 msgstr "Dernière mise à jour le"
@@ -264,7 +264,7 @@ msgid "Packing"
 msgstr "Colisage"
 
 #. module: customize_purchase
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__suppinfo_id
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__suppinfo_id
 msgid "Partner Information"
 msgstr "Informations partenaire"
 
@@ -311,7 +311,7 @@ msgid "Purchase Order Line"
 msgstr "Ligne de commande d'achat"
 
 #. module: customize_purchase
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__price
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__price
 msgid "Purchase Price"
 msgstr "Prix d'achat"
 
@@ -326,20 +326,20 @@ msgid "Purchase price"
 msgstr "Prix d'achat"
 
 #. module: customize_purchase
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__min_quantity
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__min_quantity
 msgid "Quantity"
 msgstr "Quantité"
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_account_move_line__discount1
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__discount1
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__discount1
 #: model:ir.model.fields,field_description:customize_purchase.field_purchase_order_line__discount1
 msgid "R1 %"
 msgstr ""
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_account_move_line__discount2
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__discount2
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__discount2
 #: model:ir.model.fields,field_description:customize_purchase.field_purchase_order_line__discount2
 msgid "R2 %"
 msgstr ""
@@ -350,7 +350,7 @@ msgid "Search Promotion"
 msgstr "Rechercher Promotion"
 
 #. module: customize_purchase
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__date_start
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__date_start
 msgid "Start date"
 msgstr "Date de début"
 
@@ -377,14 +377,13 @@ msgid "Supplier Pricelist"
 msgstr "Liste de prix du fournisseur"
 
 #. module: customize_purchase
-#: model:ir.model.fields,help:customize_purchase.field_pricelist_partnerinfo__min_quantity
+#: model:ir.model.fields,help:customize_purchase.field_product_supplierinfo_historic__min_quantity
 msgid ""
 "The minimal quantity to trigger this rule, expressed in the supplier Unit of"
 " Measure if any or in the default Unit of Measure of the product otherrwise."
 msgstr ""
-"La quantité minimale pour déclencher cette règle, exprimée dans l'unité de "
-"mesure du fournisseur le cas échéant ou dans l'unité de mesure par défaut du"
-" produit dans le cas contraire."
+"La quantité minimale pour déclencher cette règle, exprimée dans l'unité de mesure du fournisseur"
+"le cas échéant ou dans l'unité de mesure par défaut du produit dans le cas contraire."
 
 #. module: customize_purchase
 #: model:ir.model.fields,help:customize_purchase.field_product_supplierinfo__price
@@ -392,13 +391,13 @@ msgid "The price to purchase a product"
 msgstr "Le prix pour l'achat d'un article"
 
 #. module: customize_purchase
-#: model:ir.model.fields,help:customize_purchase.field_pricelist_partnerinfo__price
+#: model:ir.model.fields,help:customize_purchase.field_product_supplierinfo_historic__price
 msgid ""
 "This price will be considered as a price for the supplier Unit of Measure if"
 " any or the default Unit of Measure of the product otherwise"
 msgstr ""
-"Ce prix sera considéré comme un prix pour l'unité de mesure du fournisseur "
-"sitout ou l'unité de mesure par défaut du produit sinon"
+"Ce prix sera considéré comme un prix pour l'unité de mesure du fournisseur si"
+"tout ou l'unité de mesure par défaut du produit sinon"
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo__type
@@ -411,7 +410,7 @@ msgid "Udv"
 msgstr ""
 
 #. module: customize_purchase
-#: model:ir.model.fields,field_description:customize_purchase.field_pricelist_partnerinfo__unit_price
+#: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__unit_price
 msgid "Unit Price"
 msgstr "Prix de base"
 
@@ -474,8 +473,8 @@ msgid "mm/dd/yyyy"
 msgstr ""
 
 #. module: customize_purchase
-#: model:ir.model,name:customize_purchase.model_pricelist_partnerinfo
-msgid "pricelist.partnerinfo"
+#: model:ir.model,name:customize_purchase.model_product_supplierinfo_historic
+msgid "product.supplierinfo.historic"
 msgstr ""
 
 #. module: customize_purchase

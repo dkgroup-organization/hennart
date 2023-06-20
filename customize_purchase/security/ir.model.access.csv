@@ -1,4 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_purchase_promotion,access_purchase_promotion,model_purchase_promotion,,1,1,1,1
 access_import_promotion,access_import_promotion,model_import_promotion,,1,1,1,1
-access_pricelist_partnerinfo,access_pricelist_partnerinfo,model_pricelist_partnerinfo,,1,1,1,1
+access_product_supplierinfo_historic,access_product_supplierinfo_historic,model_product_supplierinfo_historic,,1,1,1,1
