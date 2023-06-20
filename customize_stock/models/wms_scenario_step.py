@@ -5,6 +5,8 @@
 import logging
 from odoo import models, api, fields, _
 from odoo.exceptions import MissingError, UserError, ValidationError
+import time
+import datetime
 
 logger = logging.getLogger('wms_scanner')
 
@@ -159,6 +161,112 @@ class WmsScenarioStep(models.Model):
         else:
             data['result'] = False
         return data
+
+    
+    def check_product_location(self, data):
+
+        """
+        Vérifie que data contient location_origin_id, product_id,
+        qu'il y a bien des stock.quant correspondant
+        si le produit a un tracking par lot (la grande majorité des cas)
+        vérifie si data à lot_id est qu'il y a bien des quant correspondant
+        si un problème: "warning" à data avec un message
+       "This product {} is not registred in this location {}"
+       "This product {} need a production lot "
+        """
+        if data.get('location_origin_id') and data.get('product_id'):
+            condition = [
+                ('product_id', '=', data['product_id'].id),
+                ('location_id', '=', data['location_origin_id'].id)]
+        else:
+            data['warning'] = "This product {} is not registred in this location {}".format(data.get('product_id'),data.get('location_origin_id'))
+            data['result'] = False
+            return data
+
+        if data['product_id'].tracking == 'lot' and data.get('lot_id'):
+                condition.append(('lot_id', '=', data['lot_id'].id))
+        else:
+                data['warning'] = "This product need a lot number"
+                data['result'] = False
+                return data
+
+        quant_ids = self.env['stock.quant'].search(condition)
+        if quant_ids:
+            data['result'] = True
+            return data
+        else:
+            data['warning'] = "This product need a lot number"
+            data['result'] = False
+            return data
+
+    def check_product_qty(self, data):
+
+        """
+         Vérifie la quantité demandé:
+        "There is only {} quantity of the lot on the location."
+        """
+
+        if data.get('location_origin_id') and data.get('product_id') and data.get('quantity')>0:
+            condition = [
+                ('product_id', '=', data['product_id'].id),
+                ('location_id', '=', data['location_origin_id'].id),
+            ]
+        if data['product_id'].tracking == 'lot' and data.get('lot_id'):
+                condition.append(('lot_id', '=', data['lot_id'].id))
+
+        quant_ids = self.env['stock.quant'].search(condition)
+        if quant_ids[0].available_quantity < data['quantity']:
+            data['warning'] = "There is only {} quantity of the lot on the location.".format(quant_ids[0].available_quantity)
+            data['result'] = False
+            return data
+        else:
+           data['result'] = True
+           return data
+
+
+    @api.model
+    def move_product(self, data):
+        """
+        Recherche un internal picking pour l'utilisateur 1 par jour et par utilisateur pour les mouvements du scanner de la journée,
+        name = MV2023-06-08 {user.login) créer unle picking si pas dispo
+        créer le mouvement de stock avec les variables location_origin_id, product_id, lot_id, location_dest_id, quantity
+        si ok ajouter data['result'] = True
+        """
+        date_now = time.strftime('%Y-%m-%d')
+        location_origin_id = data.get('location_origin_id').id
+        location_dest_id = data.get('location_dest_id').id
+        product_id = data.get('product_id').id
+        uom_id = data.get('product_id').uom_id.id
+        quantity = data.get('quantity')
+        picking_name = "MV"+date_now+self.env.user.login
+        picking_type = self.env.ref('stock.picking_type_internal').id
+
+
+        picking_stock = self.env['stock.picking'].search([('name','=',picking_name)])
+        if not picking_stock:
+           picking_stock = self.env['stock.picking'].create({
+            'name': picking_name,
+            'location_id': location_origin_id,
+            'location_dest_id': location_dest_id,
+            'picking_type_id': picking_type,
+        })
+        move_stock = self.env['stock.move'].create({
+            'name': 'stock_move',
+            'location_id': location_origin_id,
+            'location_dest_id':  location_dest_id,
+            'product_id': product_id,
+            'product_uom': uom_id,
+            'product_uom_qty': quantity ,
+            'picking_id': picking_stock.id,
+        })
+
+        if move_stock:
+          data['result'] = True
+          return data
+        else:
+          data['warning'] = "There is only {} quantity of the lot on the location.".format(quant_ids[0].inventory_quantity)
+          data['result'] = False
+          return data
 
     @api.model
     def init_data(self, data):
