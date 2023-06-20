@@ -77,6 +77,8 @@ class ResPartner(models.Model):
                 for function in contact.email_function:
                     if function.code not in list(contact_function.keys()):
                         contact_function[function.code] = contact.email
+                    else:
+                        contact_function[function.code] += ',' + contact.email
 
             for code in ['email_delivery', 'email_accounting', 'email_director', 'email_vendor', 'email_sale',
                          'email_quality', 'email_department_manager', 'email_other']:
@@ -99,13 +101,19 @@ class ResPartner(models.Model):
                 }
             dic_email = {}
 
-            for code, email in dic_function.items():
-                if not email:
+            for code, list_email in dic_function.items():
+                if not list_email:
                     continue
-                elif not email in list(dic_email.keys()):
-                    dic_email[email] = []
-                if not code in dic_email[email]:
-                    dic_email[email].append(code)
+
+                # format list_email with comas separator
+                list_email = list_email.lower().strip().replace(' ', ',').replace(';', ',').replace(',,,', ',').replace(',,', ',').replace(',,', ',')
+                dic_function[code] = list_email
+
+                for email in list_email.split(','):
+                    if not email in list(dic_email.keys()):
+                        dic_email[email] = []
+                    if not code in dic_email[email]:
+                        dic_email[email].append(code)
 
             for email in list(dic_email.keys()):
 
@@ -123,6 +131,7 @@ class ResPartner(models.Model):
                 function_ids = self.env['res.partner.function'].search([('code', 'in', dic_email[email])])
                 contact_vals = {'email_function': [(6, 0, function_ids.ids)]}
                 contact_ids.write(contact_vals)
+            partner.update(dic_function)
 
     @api.onchange('name')
     def onchange_name(self):
