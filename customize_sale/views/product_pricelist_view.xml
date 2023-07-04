@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_product_pricelist_form_inherit_add_dates" model="ir.ui.view">
+            <field name="name">product.pricelist.form.add.dates</field>
+            <field name="model">product.pricelist</field>
+            <field name="inherit_id" ref="product.product_pricelist_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='pricelist_config']//group[@name='pricelist_discounts']" position="after">
+                    <group name="pricelist_dates" string="Dates">
+                        <field name="date_end"/>
+                        <field name="date_start"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
