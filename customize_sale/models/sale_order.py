@@ -11,7 +11,6 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     date_delivered = fields.Datetime("delivered date", help="Customer delivered date")
-    commitment_date = fields.Datetime("Warehouse date", help="The date when the delivery is available on warehouse")
 
     @api.model
     def timezone_2_utc(self, date, time, timezone="Europe/Paris"):
