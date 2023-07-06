@@ -244,6 +244,7 @@ class WmsScenarioStep(models.Model):
             new_line.move_id._action_done()
         except:
             data['warning'] = _("The move is not registered")
+            new_line = self.env['stock.move.line']
 
         if new_line.move_id.state == 'done':
             data = self.init_data(data)
