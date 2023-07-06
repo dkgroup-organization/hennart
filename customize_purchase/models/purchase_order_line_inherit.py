@@ -17,7 +17,6 @@ class PurchaseOrderLineInherit(models.Model):
     max_qty = fields.Float('Stock',compute="_get_stock")
     weight = fields.Float('Unit Weight',compute="get_price",store=True)
     total_weight = fields.Float('Weight',compute="get_price",store=True)
-    #product_packaging_id = fields.Many2one(domain=_get_product_packaging_domain)
 
     @api.depends('product_id')
     def _get_stock(self):
