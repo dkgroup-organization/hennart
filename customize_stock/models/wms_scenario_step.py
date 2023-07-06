@@ -276,3 +276,4 @@ class WmsScenarioStep(models.Model):
             'scenario': data['step'].scenario_id,
         }
         return new_data
+

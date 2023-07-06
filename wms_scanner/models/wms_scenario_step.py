@@ -236,8 +236,8 @@ class WmsScenarioStep(models.Model):
                                       ])
 
                         for field_name in listt:
-                          if hasattr(scan_model_id, field_name):
-                            message += "<p> %s </p>" % (getattr(scan_model, field_name))
+                            if hasattr(scan_model_id, field_name) and getattr(scan_model, field_name):
+                                message += "<p> %s </p>" % (getattr(scan_model, field_name))
 
                         if stock_quants:
                          message +=  " </br>"
@@ -247,9 +247,9 @@ class WmsScenarioStep(models.Model):
                          for quant in stock_quants:
                             message += "  <li> <p  > <b> Lieu :</b> %s </p>" % (quant.location_id.name)
                             if scan_model_id.tracking == 'lot':
-                               message += "<p  > <b> Lot :  </b> %s </p>" % (quant.lot_id.name)
+                               message += "<p  > <b> Lot :  </b> %s - %s</p>" % (quant.lot_id.name, quant.removal_date.strftime("%d/%m/%Y"))
                             message += "<p  > <b> Quantity:</b>  %s </p>" % (quant.quantity)
-                            message += "<p  >  <b>Date:</b>  %s </p>" % (quant.removal_date)
+                            #message += "<p  >  <b>Date:</b>  %s </p>" % (quant.removal_date.strftime("%m/%d/%Y"))
 
                             message +=  " </li>"
 
@@ -279,9 +279,9 @@ class WmsScenarioStep(models.Model):
                          for quant in stock_quants:
                             message += "<p> <li> <b> Product : %s </b> </p>" % (quant.product_id.name)
                             if quant.product_id.tracking == 'lot':
-                               message += "<p> <b> Lot :  </b> %s </p>" % (quant.lot_id.name)
+                               message += "<p  > <b> Lot :  </b> %s - %s</p>" % (quant.lot_id.name, quant.removal_date.strftime("%d/%m/%Y"))
                             message += "<p> <b> Quantity:</b>  %s </p>" % (quant.quantity)
-                            message += "<p>  <b>Date:</b>  %s </p>" % (quant.removal_date)
+                            #message += "<p>  <b>Date:</b>  %s </p>" % (quant.removal_date.removal_date)
 
                             message +=  " </li>"
 
@@ -308,7 +308,7 @@ class WmsScenarioStep(models.Model):
                             message += "<p> <li><b> Product : %s </b></p>" % (quant.product_id.name)
                             message += "<p> <b> Lieu :  </b> %s </p>" % (quant.location_id.name)
                             message += "<p> <b> Quantity:</b>  %s </p>" % (quant.quantity)
-                            message += "<p>  <b>Date:</b>  %s </p>" % (quant.removal_date)
+                            message += "<p>  <b>Date:</b>  %s </p>" % (quant.removal_date.removal_date)
 
                             message +=  " </li>"
 
