@@ -243,11 +243,12 @@ class WmsScenarioStep(models.Model):
             new_line = picking_stock.move_line_ids_without_package.create(move_line_vals)
             new_line.move_id._action_done()
         except:
-            data['warning'] = _("The move is not registered")
+            data['warning'] = _("Error, The move is not registered")
             new_line = self.env['stock.move.line']
 
         if new_line.move_id.state == 'done':
             data = self.init_data(data)
+            data['message'] = _("The move is registered")
             data['result'] = True
         else:
             data['result'] = False

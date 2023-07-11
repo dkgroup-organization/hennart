@@ -34,7 +34,8 @@
 
         <!-- BODY -->
         <template id="scanner_menu_body" name="scanner_menu_body">
-            <body class="font-poppins duration-500 min-h-screen">
+            <body class="font-poppins duration-500 min-h-screen"
+                  onload="document.documentElement.requestFullscreen()">
                 <t t-call="wms_scanner.scanner_menu_body_header"/>
                 <t t-call="wms_scanner.scanner_menu_body_main"/>
                 <t t-call="wms_scanner.scanner_script_js"/>
@@ -50,7 +51,7 @@
         </template>
 
         <template id="scanner_script_js" name="scanner_script_js">
-            <script src="wms_scanner/static/src/js/script2023_002.js"/>
+            <script src="wms_scanner/static/src/js/script2023_003.js"/>
         </template>
 
         <!-- BODY HEADER -->

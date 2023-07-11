@@ -44,6 +44,3 @@ window.addEventListener('DOMContentLoaded', FocusScan);
 //     emplacement.setAttribute("value", text);
 //   });
 // });
-
-/* View in fullscreen */
-//document.documentElement.openFullscreen()
