@@ -74,7 +74,7 @@ class ImportPriceList(models.TransientModel):
             attachment_vals = {'type': 'binary', 'name': binary_name, 'datas': binary_content}
             attachment_id = self.env['ir.attachment'].create(attachment_vals)
         rec.update({
-            'year': str(year),
+            'pricelist_id': self.pricelist_id,
             'example_id' : attachment_id.id,
         })
         return rec
@@ -95,14 +95,14 @@ class ImportPriceList(models.TransientModel):
         for row in range(1, sheet.nrows):
             product_code = sheet.cell_value(row, 0)
             list_price = sheet.cell_value(row, 1)
-            start_date_value = sheet.cell_value(row, 2)
-            end_date_value = sheet.cell_value(row, 3)
+            # start_date_value = sheet.cell_value(row, 2)
+            # end_date_value = sheet.cell_value(row, 3)
 
             if product_code and list_price:
                 product = product_ids.filtered(lambda p: p.default_code == product_code)[:1]
                 if product:
-                    start_date = xlrd.xldate_as_datetime(start_date_value, book.datemode) if start_date_value else None
-                    end_date = xlrd.xldate_as_datetime(end_date_value, book.datemode) if end_date_value else None
+                    # start_date = xlrd.xldate_as_datetime(start_date_value, book.datemode) if start_date_value else None
+                    # end_date = xlrd.xldate_as_datetime(end_date_value, book.datemode) if end_date_value else None
 
                     item_values = {
                         'pricelist_id': self.pricelist_id.id,
@@ -110,8 +110,8 @@ class ImportPriceList(models.TransientModel):
                         'fixed_price': list_price,
                         'compute_price': 'fixed',
                         'applied_on': '0_product_variant',
-                        'date_start': start_date.strftime('%Y-%m-%d 00:00:00') if start_date else False,
-                        'date_end': end_date.strftime('%Y-%m-%d 00:00:00') if end_date else False,
+                        # 'date_start': start_date.strftime('%Y-%m-%d 00:00:00') if start_date else False,
+                        # 'date_end': end_date.strftime('%Y-%m-%d 00:00:00') if end_date else False,
                     }
                     product_items.append(item_values)
 
@@ -127,24 +127,23 @@ class ImportPriceList(models.TransientModel):
 
 
     def from_data(self):
-        fields = ['product_code', 'list_price', 'start_date', 'end_date']
+        # fields = ['product_code', 'product_name', 'list_price', 'start_date', 'end_date']
+        fields = ['product_code', 'product_name', 'list_price']
 
-        product_prices = self.env['product.product'].search([])
         rows = []
 
-        pricelist_items = self.pricelist_id.item_ids
-        product_ids = pricelist_items.mapped('product_id')
-
         if self.pricelist_id:
+            product_ids = self.pricelist_id.item_ids.mapped('product_id')
             for product in product_ids:
                 if product.default_code:
-                    data = [str(product.default_code) if product.default_code else '', int(product.list_price)]
+                    item = self.pricelist_id.item_ids.filtered(lambda i: i.product_id == product)
+                    data = [str(product.default_code) if product.default_code else '', str(product.name), int(item.fixed_price)]
                     rows.append(data)
         else:
+            product_prices = self.env['product.product'].search([('default_code', '!=', False)])
             for product in product_prices:
-                if product.default_code:
-                    data = [str(product.default_code) if product.default_code else '', int(product.list_price)]
-                    rows.append(data)
+                data = [str(product.default_code), str(product.name), int(product.list_price)]
+                rows.append(data)
 
         with ExportXlsxWriter2(fields, len(rows)) as xlsx_writer:
             for row_index, row in enumerate(rows):
@@ -156,7 +155,7 @@ class ImportPriceList(models.TransientModel):
     @api.onchange('pricelist_id')
     def onchange_pricelist_id(self):
         self.default_get(self.fields_get())
-    
+            
 
 class ExportXlsxWriter2(ExportXlsxWriter):
     """ change column width
