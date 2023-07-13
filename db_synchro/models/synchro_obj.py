@@ -663,6 +663,7 @@ class BaseSynchroObj(models.Model):
             local_ids.write({
                     'local_id': local_id,
                     'description': '%s' % remote_value.get(self.search_field) or remote_value.get('name', '???'),
+                    'remote_write_date': fields.Datetime.now(),
                     'update_date': fields.Datetime.now(),
                     'error': error})
 
@@ -756,8 +757,8 @@ class BaseSynchroObj(models.Model):
             for row in result_sql:
                 line = self.env['synchro.obj.line'].browse(row[0])
                 if line.update_date < line.remote_write_date < date_max:
-                    line.update_values()
-                    line.remote_write_date = line.update_date.replace(second=0, microsecond=0)
+                    line.with_delay().update_values()
+                    # line.remote_write_date = line.update_date.replace(second=0, microsecond=0)
 
     def button_update_all(self, limit=50):
         """ Change the update_date to trigger a new update by function get_last_update"""
@@ -771,7 +772,7 @@ class BaseSynchroObj(models.Model):
                     list_line |= line
                 else:
                     list_line |= line
-                    list_line.update_values()
+                    list_line.with_delay().update_values()
                     list_line = self.env[obj.line_id._name]
 
 

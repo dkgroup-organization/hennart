@@ -10,7 +10,8 @@
     "website": "https://dkgroup.fr",
     "maintainer": "DK group",
     "images": [],
-    "depends": ["base", "sale"],
+    "depends": ["base", "sale", "queue_job"
+                ],
     "data": [
         "views/synchro_menu.xml",
         "views/synchro_server_view.xml",
