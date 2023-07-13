@@ -22,28 +22,58 @@
                     <field name="typology_id" options="{'no_create': True, 'no_open': True}"/>
                     <field name="carrier_zone" options="{'no_create': True, 'no_open': True}"/>
                 </xpath>
-                <xpath expr="//group[@name='sale']/field[@name='user_id']" position="after">
-                    <field name="sale_area" options="{'no_create': True, 'no_open': True}"/>
-                </xpath>
-                <xpath expr="//group[@name='sale']/field[@name='property_delivery_carrier_id']" position="before">
-                    <field name="discount_weight"/>
-                </xpath>
                 <xpath expr="//group[@name='sale']/field[@name='property_delivery_carrier_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
                 <xpath expr="//div[@name='div_address']/../.." position="inside">
                     <field name="is_company" invisible="1"/>
-                    <field name="email_function" widget="many2many_tags" attrs="{'invisible': [('is_company','=', True)]}"/>
+                    <field name="email_function" widget="many2many_tags"
+                           attrs="{'invisible': [('is_company','=', True)]}"/>
                 </xpath>
+                <group name="banks" position="before">
+                    <group string="Payment Terms">
+                    <field string="Payment Terms" name="property_payment_term_id"
+                           options="{'no_open': True, 'no_create': True}"
+                           groups="account.group_account_invoice,account.group_account_readonly"/>
 
-                <group name="fiscal_information" position="inside">
-                    <field name="incoterm_id"/>
-                    <field name="incoterm_contact_id"/>
-                    <field name="incoterm_city"/>
-                    <field name="oeri_code"/>
+                    <field string="Payment Terms supplier" name="property_supplier_payment_term_id"
+                           options="{'no_open': True, 'no_create': True}"
+                           groups="account.group_account_invoice,account.group_account_readonly"/>
+
+                    <field name="property_purchase_currency_id" options="{'no_create': True, 'no_open': True}"
+                           groups="base.group_multi_currency"/>
+                        <field name="payment_method_id"/>
+
+
+                        </group>
+<group/>
 
                 </group>
+                <group name="fiscal_information" position="replace"/>
+                <group name="banks" position="before">
+                    <group string="Information Fiscale" name="info_fiscal_account">
+
+                        <field name="property_account_position_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="incoterm_id"/>
+                        <field name="incoterm_contact_id"/>
+                        <field name="incoterm_city"/>
+                        <field name="oeri_code"/>
+                    </group>
+
+                </group>
+                <group name="misc" position="replace"/>
+                 <group name="banks" position="before">
+                <group name="misc" string="Divers">
+                                    <field name="company_registry" attrs="{'invisible': [('parent_id','!=',False)]}"/>
+                                    <field name="ref" string="Reference"/>
+                                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" attrs="{'readonly': [('parent_id', '!=', False)]}" force_save="1"/>
+                                     <field name="siret" attrs="{'invisible': [('is_company', '=', False)]}"/>
+                </group>
+                 </group>
+                <group name="sale" position="replace"/>
+
+
 
                 <notebook position="inside">
                     <page string="preparation" name="preparation">
@@ -52,17 +82,20 @@
                                 <field name="print_picking"/>
                                 <field name="print_picking2"/>
                                 <field name="print_invoice"/>
+                                <field name="label_forced"/>
+                                <field name="label_all_product"/>
+                                <field name="label_needed"/>
                             </group>
                             <group string="Invoice">
                                 <field name="lang"/>
-                                <field name="no_invoice_auto"/>
                                 <field name="invoice_auto"/>
                                 <field name="email_invoice"/>
                                 <field name="email_accounting" attrs="{'invisible': [('email_invoice','!=', True)]}"/>
                                 <field name="paper_invoice"/>
-                                <field name="print_invoice" string="Print invoice at end of preparation"/>
+
                             </group>
                         </group>
+
                     </page>
 
                     <page string="email">
@@ -94,7 +127,8 @@
             <field name="inherit_id" ref="base.view_partner_simple_form"/>
             <field name="arch" type="xml">
                 <field name="function" position="after">
-                    <field name="email_function" create="0" widget="many2many_tags" attrs="{'invisible': [('is_company','=', True)]}"/>
+                    <field name="email_function" create="0" widget="many2many_tags"
+                           attrs="{'invisible': [('is_company','=', True)]}"/>
                 </field>
             </field>
         </record>
@@ -122,6 +156,52 @@
 
             </field>
         </record>
+
+
+        <record id="view_partner_property_form" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="priority">25</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='property_payment_term_id']" position="replace">
+
+                </xpath>
+                <xpath expr="//field[@name='property_supplier_payment_term_id']" position="replace">
+
+                </xpath>
+            </field>
+        </record>
+        <record id="view_partner_property_form_inherit" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit</field>
+            <field name="model">res.partner</field>
+            <field name="priority">25</field>
+            <field name="inherit_id" ref="purchase.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='property_purchase_currency_id']" position="replace">
+
+                </xpath>
+            </field>
+        </record>
+        <record id="view_partner_crm_appointement_form_inherit" model="ir.ui.view">
+    <field name="name">res.partner.form.inherit</field>
+    <field name="model">res.partner</field>
+    <field name="priority">100</field>
+    <field name="inherit_id" ref="crm_phonecall.view_partner_crm_appointement_form"/>
+    <field name="arch" type="xml">
+        <field name="user2_id" position="after">
+             <field name="hour_delivery" widget="float_time"/>
+            <field name="team_id" invisible="1"/>
+                                <field name="sale_area" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="property_product_pricelist" groups="product.group_product_pricelist" attrs="{'invisible': [('is_company','=',False),('parent_id','!=',False)]}"/>
+                    <div name="parent_pricelists" groups="product.group_product_pricelist" colspan="2" attrs="{'invisible': ['|',('is_company','=',True),('parent_id','=',False)]}">
+                        <p>Pricelists are managed on <button name="open_commercial_entity" type="object" string="the parent company" class="oe_link"/></p>
+                    </div>
+
+        </field>
+
+    </field>
+</record>
 
     </data>
 </odoo>

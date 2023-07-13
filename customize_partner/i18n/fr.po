@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0\n"
+"Project-Id-Version: Odoo Server 16.0-20230328\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-06 14:48+0000\n"
-"PO-Revision-Date: 2023-04-06 14:48+0000\n"
+"POT-Creation-Date: 2023-07-13 14:56+0000\n"
+"PO-Revision-Date: 2023-07-13 14:56+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,6 +28,17 @@ msgid "Automatic validation"
 msgstr "Validation automatique"
 
 #. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "Cadence"
+msgstr ""
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__cadence
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__cadence
+msgid "Cadencier"
+msgstr ""
+
+#. module: customize_partner
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner__carrier_zone
 #: model:ir.model.fields,field_description:customize_partner.field_res_users__carrier_zone
 msgid "Carrier zone"
@@ -36,7 +47,7 @@ msgstr "Zone du transporteur"
 #. module: customize_partner
 #: model:ir.model,name:customize_partner.model_res_partner
 msgid "Contact"
-msgstr "Contact"
+msgstr ""
 
 #. module: customize_partner
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner_area__create_uid
@@ -69,6 +80,11 @@ msgstr "Poids pour la remise (kg)"
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner_typology__display_name
 msgid "Display Name"
 msgstr "Nom affiché"
+
+#. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "Divers"
+msgstr ""
 
 #. module: customize_partner
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner__email_sale
@@ -137,17 +153,23 @@ msgid "Functions"
 msgstr "Fonctions"
 
 #. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__hour_delivery
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__hour_delivery
+msgid "Hour delivery"
+msgstr "Heure de livraison"
+
+#. module: customize_partner
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner_area__id
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner_function__id
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner_typology__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: customize_partner
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner__incoterm_id
 #: model:ir.model.fields,field_description:customize_partner.field_res_users__incoterm_id
 msgid "Incoterm"
-msgstr "Incoterm"
+msgstr ""
 
 #. module: customize_partner
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner__incoterm_city
@@ -162,12 +184,19 @@ msgid "Incoterm contact"
 msgstr "Représentant Incoterm"
 
 #. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "Information Fiscale"
+msgstr ""
+
+#. module: customize_partner
 #: model:ir.model.fields,help:customize_partner.field_res_partner__incoterm_id
 #: model:ir.model.fields,help:customize_partner.field_res_users__incoterm_id
 msgid ""
 "International Commercial Terms are a series of predefined commercial terms "
 "used in international transactions."
 msgstr ""
+"Les termes commerciaux internationaux sont une série de termes commerciaux "
+"prédéfinisUtilisé dans les transactions internationales."
 
 #. module: customize_partner
 #: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
@@ -205,7 +234,7 @@ msgstr "Facturation manuelle"
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner__oeri_code
 #: model:ir.model.fields,field_description:customize_partner.field_res_users__oeri_code
 msgid "OERI code"
-msgstr "OERI code"
+msgstr ""
 
 #. module: customize_partner
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner__paper_invoice
@@ -242,8 +271,29 @@ msgstr "Typologies de clients"
 
 #. module: customize_partner
 #: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "Payment Terms"
+msgstr "Condition de paiement vente"
+
+#. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
+msgid "Payment Terms supplier"
+msgstr "Condition de paiement achat"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__payment_method_id
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__payment_method_id
+msgid "Payment method"
+msgstr "Mode de paiement"
+
+#. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
 msgid "Preparation"
 msgstr "Préparation"
+
+#. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_crm_appointement_form_inherit
+msgid "Pricelists are managed on"
+msgstr ""
 
 #. module: customize_partner
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner__print_picking
@@ -283,8 +333,8 @@ msgstr "Imprimer une facture en fin de préparation"
 
 #. module: customize_partner
 #: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
-msgid "Print invoice at end of preparation"
-msgstr "Imprimer une facture en fin de préparation"
+msgid "Reference"
+msgstr "Référence"
 
 #. module: customize_partner
 #: model:ir.model,name:customize_partner.model_res_partner_area
@@ -311,8 +361,9 @@ msgstr "La facture est validée automatiquement en fin de préparation"
 msgid ""
 "The invoice is not automaticaly created, so it's possible to group the "
 "delivery in one invoice or don't invoice some partner"
-msgstr "La facture n'est pas créé en fin de préparation. Il est ainsi possible de facturer plusieurs bon de livraison"
-"ou de ne pas facturer un bon de livraison"
+msgstr ""
+"La facture n'est pas créé en fin de préparation. Il est ainsi possible de "
+"facturer plusieurs bon de livraisonou de ne pas facturer un bon de livraison"
 
 #. module: customize_partner
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner__typology_id
@@ -334,7 +385,7 @@ msgstr "comptabilité"
 #. module: customize_partner
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner_function__code
 msgid "code"
-msgstr "code"
+msgstr ""
 
 #. module: customize_partner
 #: model:res.partner.function,name:customize_partner.email_delivery
@@ -349,7 +400,25 @@ msgstr "directeur"
 #. module: customize_partner
 #: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_custom
 msgid "email"
-msgstr "email"
+msgstr "Email"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__label_needed
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__label_needed
+msgid "label according to product sheet"
+msgstr "Étiquette selon fiche produit"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__label_forced
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__label_forced
+msgid "label all packages"
+msgstr "Étiqueter tous les colis"
+
+#. module: customize_partner
+#: model:ir.model.fields,field_description:customize_partner.field_res_partner__label_all_product
+#: model:ir.model.fields,field_description:customize_partner.field_res_users__label_all_product
+msgid "label all products"
+msgstr "Étiqueter tous les produits"
 
 #. module: customize_partner
 #: model:ir.model.fields,field_description:customize_partner.field_res_partner_area__name
@@ -379,7 +448,11 @@ msgid "sale"
 msgstr "vente"
 
 #. module: customize_partner
+#: model_terms:ir.ui.view,arch_db:customize_partner.view_partner_crm_appointement_form_inherit
+msgid "the parent company"
+msgstr ""
+
+#. module: customize_partner
 #: model:res.partner.function,name:customize_partner.email_vendor
 msgid "vendor"
 msgstr "commercial"
-
