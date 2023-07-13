@@ -177,6 +177,11 @@ class ResPartner(models.Model):
     incoterm_city = fields.Char("Incoterm City")
     carrier_zone = fields.Char("Carrier zone")
     oeri_code = fields.Char("OERI code")
+    label_forced = fields.Boolean('label all packages', default=False)
+    label_all_product = fields.Boolean('label all products', default=False)
+    label_needed = fields.Boolean('label according to product sheet', default=False)
+    hour_delivery = fields.Float('Hour delivery', default=0.0)
+    payment_method_id = fields.Many2one("account.payment.method", string="Payment method")
 
 
 
