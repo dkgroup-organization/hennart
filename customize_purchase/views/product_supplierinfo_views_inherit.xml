@@ -19,6 +19,8 @@
 
                 </xpath>
                 <xpath expr="//sheet" position="inside">
+                     <button string="Ajouter" type="object" name="add_priceinfo" class="oe_highlight"/>
+
                     <field name="pricelist_ids">
                             <tree>
                                 <field name="date_start"/>

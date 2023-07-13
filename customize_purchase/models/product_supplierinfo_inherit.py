@@ -25,20 +25,17 @@ class ProductSupplierinfoInherit(models.Model):
                 rec.price = rec.base_price * (1 - (rec.discount1 / 100.0)) * (1 - (rec.discount2 / 100.0))
 
 
-    def write(self, vals):
-        if 'price' in vals:
-            self.pricelist_ids=[(0, 0, {
-                'suppinfo_id':self.id,
-                'min_quantity':self.min_qty,
-                'price':self.price,
-                'date_start':self.date_start,
-                'date_end':self.date_end,
-                'unit_price':self.base_price,
-                'discount1':self.discount1,
-                'discount2': self.discount2,
-            })]
-        res = super(ProductSupplierinfoInherit, self).write(vals)
-        return res
+    def add_priceinfo(self):
+        self.pricelist_ids = [(0, 0, {
+            'suppinfo_id': self.id,
+            'min_quantity': self.min_qty,
+            'price': self.price,
+            'date_start': self.date_start,
+            'date_end': self.date_end,
+            'unit_price': self.base_price,
+            'discount1': self.discount1,
+            'discount2': self.discount2,
+        })]
 
 
 
