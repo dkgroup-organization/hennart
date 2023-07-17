@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
+
     cadence = fields.Html(string="Cadencier", compute="compute_cadence")
 
     def compute_cadence(self):

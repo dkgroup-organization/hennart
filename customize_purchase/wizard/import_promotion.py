@@ -33,6 +33,7 @@ except ImportError:
 
 class ImportPromotion(models.TransientModel):
     _name = 'import.promotion'
+    _description = "Import promotion"
 
     file = fields.Binary('Import File')
     name = fields.Char('Name')

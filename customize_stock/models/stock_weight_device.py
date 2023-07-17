@@ -6,11 +6,10 @@ class StockWeightDevice(models.Model):
     _name = "stock.weight.device"
     _description = "Weight device"
 
-    name = fields.Char('Description', required=True, select=True)
-    code = fields.Char('Code', select=True, size=8)
-    barcode = fields.Char('Barcode', select=True)
+    name = fields.Char('Description', required=True)
+    code = fields.Char('Code', index=True, size=8)
+    barcode = fields.Char('Barcode', index=True)
     address = fields.Char('Network address')
-
 
     def get_weight(self, ids=False, picking_id=False, product_id=False, product_qty=False):
         unique_id = ids and ids[0] or False

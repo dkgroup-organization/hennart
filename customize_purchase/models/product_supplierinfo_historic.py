@@ -3,7 +3,9 @@ from odoo import fields, models, api
 
 class PricelistPartnerinfo(models.Model):
     _name = 'product.supplierinfo.historic'
+    _description = "Historic of supplier price change"
     _order = 'min_quantity asc'
+
     name = fields.Char('Description', size=64)
     suppinfo_id = fields.Many2one('product.supplierinfo', 'Partner Information', required=True, ondelete='cascade')
     min_quantity = fields.Float('Quantity', required=True, help="The minimal quantity to trigger this rule, expressed in the supplier Unit of Measure if any or in the default Unit of Measure of the product otherrwise.")

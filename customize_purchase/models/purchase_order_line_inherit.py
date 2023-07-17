@@ -7,16 +7,14 @@ _logger = logging.getLogger(__name__)
 class PurchaseOrderLineInherit(models.Model):
     _inherit = 'purchase.order.line'
 
-
-
-    discount1 = fields.Float("R1 %",compute="get_price",store=True)
-    discount2 = fields.Float("R2 %",compute="get_price",store=True)
-    base_price = fields.Float("Base price",compute="get_price",store=True)
-    discount = fields.Float(string="Discount (%)", editable=True,compute="calculate_discount_percentage",store=True,readonly=False)
-    product_uos = fields.Many2one("uom.uom",string="Invoicing unit",readonly=True,compute="get_price",store=True)
-    max_qty = fields.Float('Stock',compute="_get_stock")
-    weight = fields.Float('Unit Weight',compute="get_price",store=True)
-    total_weight = fields.Float('Weight',compute="get_price",store=True)
+    discount1 = fields.Float("R1 %", compute="get_price", store=True)
+    discount2 = fields.Float("R2 %", compute="get_price", store=True)
+    base_price = fields.Float("Base price", compute="get_price", store=True)
+    discount = fields.Float(string="Discount (%)", compute="calculate_discount_percentage", store=True)
+    product_uos = fields.Many2one("uom.uom", string="Invoicing unit", compute="get_price", store=True)
+    max_qty = fields.Float('Stock', compute="_get_stock")
+    weight = fields.Float('Unit Weight', compute="get_price", store=True)
+    total_weight = fields.Float('Weight', compute="get_price", store=True)
 
     @api.depends('product_id')
     def _get_stock(self):

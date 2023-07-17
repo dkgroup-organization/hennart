@@ -757,7 +757,7 @@ class BaseSynchroObj(models.Model):
             for row in result_sql:
                 line = self.env['synchro.obj.line'].browse(row[0])
                 if line.update_date < line.remote_write_date < date_max:
-                    line.with_delay().update_values()
+                    line.update_values()
                     # line.remote_write_date = line.update_date.replace(second=0, microsecond=0)
 
     def button_update_all(self, limit=50):
@@ -772,7 +772,7 @@ class BaseSynchroObj(models.Model):
                     list_line |= line
                 else:
                     list_line |= line
-                    list_line.with_delay().update_values()
+                    list_line.update_values()
                     list_line = self.env[obj.line_id._name]
 
 

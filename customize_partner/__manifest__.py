@@ -17,7 +17,7 @@
         "views/res_partner_function_view.xml",
         "views/res_partner_view.xml",
 
-        "data/res.partner.function.csv",
+        #"data/res.partner.function.csv",
     ],
     "installable": True,
 

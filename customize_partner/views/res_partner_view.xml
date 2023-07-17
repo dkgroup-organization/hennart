@@ -31,26 +31,34 @@
                     <field name="email_function" widget="many2many_tags"
                            attrs="{'invisible': [('is_company','=', True)]}"/>
                 </xpath>
+
+                <group name="sale" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </group>
+                <group name="misc" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </group>
+                <group name="fiscal_information" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </group>
+
                 <group name="banks" position="before">
                     <group string="Payment Terms">
-                    <field string="Payment Terms" name="property_payment_term_id"
-                           options="{'no_open': True, 'no_create': True}"
-                           groups="account.group_account_invoice,account.group_account_readonly"/>
+                        <field string="Payment Terms" name="property_payment_term_id"
+                               options="{'no_open': True, 'no_create': True}"
+                               groups="account.group_account_invoice,account.group_account_readonly"/>
 
-                    <field string="Payment Terms supplier" name="property_supplier_payment_term_id"
-                           options="{'no_open': True, 'no_create': True}"
-                           groups="account.group_account_invoice,account.group_account_readonly"/>
+                        <field string="Payment Terms supplier" name="property_supplier_payment_term_id"
+                               options="{'no_open': True, 'no_create': True}"
+                               groups="account.group_account_invoice,account.group_account_readonly"/>
 
-                    <field name="property_purchase_currency_id" options="{'no_create': True, 'no_open': True}"
-                           groups="base.group_multi_currency"/>
+                        <field name="property_purchase_currency_id" options="{'no_create': True, 'no_open': True}"
+                               groups="base.group_multi_currency"/>
                         <field name="payment_method_id"/>
-
-
-                        </group>
-<group/>
-
+                    </group>
+                    <group/>
                 </group>
-                <group name="fiscal_information" position="replace"/>
+
                 <group name="banks" position="before">
                     <group string="Information Fiscale" name="info_fiscal_account">
 
@@ -62,18 +70,16 @@
                     </group>
 
                 </group>
-                <group name="misc" position="replace"/>
-                 <group name="banks" position="before">
-                <group name="misc" string="Divers">
-                                    <field name="company_registry" attrs="{'invisible': [('parent_id','!=',False)]}"/>
-                                    <field name="ref" string="Reference"/>
-                                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" attrs="{'readonly': [('parent_id', '!=', False)]}" force_save="1"/>
-                                     <field name="siret" attrs="{'invisible': [('is_company', '=', False)]}"/>
+
+                <group name="banks" position="before">
+                    <group name="misc" string="Divers">
+                        <field name="company_registry" attrs="{'invisible': [('parent_id','!=',False)]}"/>
+                        <field name="ref" string="Reference"/>
+                        <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"
+                               attrs="{'readonly': [('parent_id', '!=', False)]}" force_save="1"/>
+                        <field name="siret" attrs="{'invisible': [('is_company', '=', False)]}"/>
+                    </group>
                 </group>
-                 </group>
-                <group name="sale" position="replace"/>
-
-
 
                 <notebook position="inside">
                     <page string="preparation" name="preparation">
@@ -92,10 +98,8 @@
                                 <field name="email_invoice"/>
                                 <field name="email_accounting" attrs="{'invisible': [('email_invoice','!=', True)]}"/>
                                 <field name="paper_invoice"/>
-
                             </group>
                         </group>
-
                     </page>
 
                     <page string="email">
@@ -117,7 +121,6 @@
                         <field name="cadence"/>
                     </page>
                 </notebook>
-
             </field>
         </record>
 
@@ -157,33 +160,32 @@
             </field>
         </record>
 
-
-        <record id="view_partner_property_form" model="ir.ui.view">
+        <record id="view_partner_property_custo1_form" model="ir.ui.view">
             <field name="name">res.partner.form.inherit</field>
             <field name="model">res.partner</field>
             <field name="priority">25</field>
             <field name="inherit_id" ref="account.view_partner_property_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='property_payment_term_id']" position="replace">
-
+                <xpath expr="//field[@name='property_payment_term_id']"  position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
-                <xpath expr="//field[@name='property_supplier_payment_term_id']" position="replace">
-
+                <xpath expr="//field[@name='property_supplier_payment_term_id']"  position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
         </record>
-        <record id="view_partner_property_form_inherit" model="ir.ui.view">
+
+        <record id="view_partner_property_custo2_form" model="ir.ui.view">
             <field name="name">res.partner.form.inherit</field>
             <field name="model">res.partner</field>
             <field name="priority">25</field>
             <field name="inherit_id" ref="purchase.view_partner_property_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='property_purchase_currency_id']" position="replace">
-
+                <xpath expr="//field[@name='property_purchase_currency_id']"  position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
         </record>
-
 
     </data>
 </odoo>

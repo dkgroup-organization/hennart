@@ -3,21 +3,21 @@ from odoo import models
 from odoo import fields ,api
 
 
-class stock_picking(models.Model):
+class StockPicking(models.Model):
     _inherit = "stock.picking"
+
     sscc_lines_ids = fields.One2many('stock.sscc', 'picking_id', 'Code colis SSCC')
     nb_sscc_label = fields.Integer('Needed sscc label:')
 
-
     @api.model
     def create(self, vals):
-        obj = super(stock_picking, self).create(vals)
-        obj.update_sscc()
+        obj = super().create(vals)
+        if obj:
+            obj.update_sscc()
         return obj
 
     def write(self,values):
-        
-        override_write = super(stock_picking,self).write(values)
+        override_write = super().write(values)
         self.update_sscc()
         return override_write
 

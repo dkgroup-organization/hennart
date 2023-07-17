@@ -2,6 +2,7 @@ from odoo import fields, models, api, _
 
 class PriceListDiscount(models.Model):
     _name = 'product.pricelist.discount'
+    _description = "Discount in pricelist"
 
     date_start = fields.Date(string='Date de départ')
     date_end = fields.Date(string='Date de fin')
