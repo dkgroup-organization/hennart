@@ -25,6 +25,7 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
                 <link rel="stylesheet" href="wms_scanner/static/src/css/style.css"/>
                 <link rel="stylesheet" href="wms_scanner/static/src/css/style_tmp.css"/>
+                <link rel="manifest" href="/static/src/manifest.json">
                 <title>
                     <t t-if="user" t-esc="user.company_id.name"/>
                 </title>
