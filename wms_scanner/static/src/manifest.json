@@ -3,6 +3,6 @@
     "short_name": "OdooApp",
     "description": "Une application Odoo progressive",
     "display": "standalone",
-    "start_url": "/"
+    "start_url": "/scanner"
   }
   
