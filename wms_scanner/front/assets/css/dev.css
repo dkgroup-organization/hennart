@@ -42,11 +42,19 @@
   }
 
   .btn-green {
-    @apply w-full py-4 text-xl text-white bg-green-600 rounded-lg shadow-md duration-300 font-bold;
+    @apply w-full py-3 text-xl text-white bg-green-600 rounded-lg shadow-md duration-300 font-bold;
+  }
+
+  .btn-red {
+    @apply w-full py-3 text-xl text-white bg-red-600 rounded-lg shadow-md duration-300 font-bold;
   }
 
   input {
     @apply duration-300;
+  }
+
+  .popup {
+    background-color: rgba(0, 0, 0, 0.8);
   }
 
   .active input {
