@@ -25,6 +25,7 @@
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
                 <link rel="stylesheet" href="wms_scanner/static/src/css/style.css"/>
                 <link rel="stylesheet" href="wms_scanner/static/src/css/style_tmp.css"/>
+                <link rel="manifest" href="/web_pwa_oca/manifest.webmanifest"/>
                 <title>
                     <t t-if="user" t-esc="user.company_id.name"/>
                 </title>
@@ -34,8 +35,7 @@
 
         <!-- BODY -->
         <template id="scanner_menu_body" name="scanner_menu_body">
-            <body class="font-poppins duration-500 min-h-screen"
-                  onload="document.documentElement.requestFullscreen()">
+            <body class="font-poppins duration-500 min-h-screen">
                 <t t-call="wms_scanner.scanner_menu_body_header"/>
                 <t t-call="wms_scanner.scanner_menu_body_main"/>
                 <t t-call="wms_scanner.scanner_script_js"/>
