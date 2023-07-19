@@ -4,7 +4,7 @@
 {
     'name': 'WMS Scanner',
     'summary': 'Allows managing barcode readers with complex scenarios',
-    'version': '14.0.1.0.1',
+    'version': '16.0.1.0.1',
     'category': 'Generic Modules/Inventory Control',
     'website': 'https://dkgroup.fr',
     'author': 'DK Group',
@@ -14,6 +14,7 @@
     'depends': [
         'product',
         'stock',
+        'web_pwa_oca'
     ],
     'data': [
 
