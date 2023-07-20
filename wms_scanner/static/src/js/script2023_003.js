@@ -2,6 +2,9 @@ const menuToggle = document.querySelector(".menu-toggle");
 const header = document.querySelector("header");
 const main = document.querySelector("main");
 const body = document.querySelector("body");
+const popup = document.querySelector(".popup");
+const btn = document.querySelector(".next");
+const closeBtn = document.querySelector(".popup .cursor-pointer");
 
 menuToggle.addEventListener("click", function () {
   header.classList.toggle("menu-open");
@@ -10,7 +13,15 @@ menuToggle.addEventListener("click", function () {
   main.classList.toggle("brightness-50");
 });
 
+btn.addEventListener("click", function (event) {
+  event.preventDefault();
+  popup.classList.add("flex");
+  popup.classList.remove("hidden");
+});
 
+closeBtn.addEventListener("click", function () {
+  popup.classList.add("hidden");
+});
 
 function FocusScan() {
     var scan = document.getElementById("scan");

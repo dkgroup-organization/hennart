@@ -7,20 +7,17 @@
                  class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:max-h-64"
             >
 
-                <p  t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
-                 <t  t-out="data.get('message')"/>
-              </p>
+                <p t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
+                    <t t-out="data.get('message')"/>
+                </p>
                 <t t-if="data.get('step') and data['step'].action_variable in ['location_origin_id', 'location_dest_id']"
-                    t-call="wms_scanner.scanner_button_default_location"/>
+                   t-call="wms_scanner.scanner_button_default_location"/>
             </div>
         </template>
 
         <template id="scanner_button_default_location" name="scanner_button_default_location">
-            <!--<div
-                    class="flex flex-col gap-6 w-72 landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5"
-            >-->
             <div>
-                <p>Defaults locations</p>
+                <span>Defaults locations</span>
                 <t t-foreach="data['step'].get_default_location()" t-as="default_location">
                     <a class="input-select mb-1"
                        t-att-href="'./scanner?scenario=' + str(data['scenario'].id) + '&amp;scan=' + default_location.barcode">
@@ -30,13 +27,13 @@
             </div>
         </template>
 
-        <template id="scanner_move_input_location_origin_id" name="scanner_move_input_location_origin_id">
-            <t t-if="data.get('step') and data['step'].action_variable == 'location_origin_id'">
+        <template id="scanner_input_text_id" name="scanner_input_text_id">
+            <div class="w-full">
                 <t t-if="data.get('warning')">
                     <input
                             type="text"
                             id="scan"
-                            name="location_origin_id"
+                            t-att-name="data['step'].action_variable"
                             class="input-warning"
                             t-att-placeholder="data.get('warning')"
                     />
@@ -45,134 +42,74 @@
                     <input
                             type="text"
                             id="scan"
-                            name="location_origin_id"
+                            t-att-name="data['step'].action_variable"
                             class="input-green"
                             t-att-placeholder="data['step'].action_message or ''"
                     />
                 </t>
 
+                <div class="mt-[30px] flex flex-col gap-6 w-72 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:m-auto">
+                    <p t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
+                        <t t-out="data.get('message')"/>
+                    </p>
+                    <t t-if="data.get('step') and data['step'].action_variable in ['location_origin_id', 'location_dest_id']"
+                       t-call="wms_scanner.scanner_button_default_location"/>
+                </div>
+            </div>
+        </template>
+
+
+
+
+        <template id="scanner_move_input_location_origin_id" name="scanner_move_input_location_origin_id">
+            <t t-if="data.get('step') and data['step'].action_variable == 'location_origin_id'">
+                <t t-call="wms_scanner.scanner_input_text_id"/>
             </t>
             <t t-else="">
-                <p
-                        type="text"
-                        id="location_origin_id"
-                        name="location_origin_id"
-                        class="input-default"
-                >
+                <div id="location_origin_id" name="location_origin_id" class="relative input-default">
                     <t t-out="data.get('location_origin_id') and data['location_origin_id'].name or 'Origin location'"/>
-                </p>
+                    <!--<img t-if="data.get('location_origin_id')" class="absolute right-4 top-[18px] w-6 landscape:top-[10px]"
+                         src="wms_scanner/static/src/img/close-outline.svg"/>-->
+                </div>
             </t>
         </template>
 
         <template id="scanner_move_input_product_id" name="scanner_move_input_product_id">
-
             <t t-if="data.get('step') and data['step'].action_variable == 'product_id'">
-                <t t-if="data.get('warning')">
-                    <input
-                            type="text"
-                            id="scan"
-                            name="product_id"
-                            class="input-warning"
-                            t-att-placeholder="data.get('warning')"
-                    />
-
-                </t>
-                <t t-else="">
-                    <input
-                            type="text"
-                            id="scan"
-                            name="product_id"
-                            class="input-green"
-                            t-att-placeholder="data['step'].action_message or ''"
-                    />
-                </t>
+                <t t-call="wms_scanner.scanner_input_text_id"/>
             </t>
             <t t-else="">
-                <p
-                        type="text"
-                        id="product_id"
-                        name="product_id"
-                        class="input-default"
-                >
-                    <t t-out="data.get('product_id') and (data['product_id'].default_code + ' ' + data['product_id'].name) or 'Product'"/>
-                    <span t-if="data.get('lot_id')">(lot:
-                        <t t-out="data.get('lot_id') and (data['lot_id'].name) or ''"/>
-                        )
-                    </span>
-                </p>
+                <div id="product_id" name="product_id" class="relative input-default">
+                    <t t-out="data.get('product_id') and data['product_id'].name or 'Product'"/>
+                    <!--<img t-if="data.get('location_origin_id')" class="absolute right-4 top-[18px] w-6 landscape:top-[10px]"
+                         src="wms_scanner/static/src/img/close-outline.svg"/>-->
+                </div>
             </t>
         </template>
 
         <template id="scanner_move_input_quantity" name="scanner_move_input_quantity">
-
             <t t-if="data.get('step') and data['step'].action_variable == 'quantity'">
-                <t t-if="data.get('warning')">
-                    <input
-                            type="number"
-                            id="scan"
-                            name="quantity"
-                            class="input-warning"
-                            t-att-placeholder="data.get('warning')"
-                    />
-
-                </t>
-                <t t-else="">
-                    <input
-                            type="number"
-                            id="scan"
-                            name="quantity"
-                            class="input-green"
-                            t-att-placeholder="data['step'].action_message or ''"
-                    />
-                </t>
+                <t t-call="wms_scanner.scanner_input_text_id"/>
             </t>
-
             <t t-else="">
-                <p
-                        type="text"
-                        id="quantity"
-                        name="quantity"
-                        class="input-default"
-                >
-                    <t t-out="data.get('quantity') and data['quantity'] or 'Quantity'"/>
-                </p>
+                <div id="quantity" name="quantity" class="relative input-default">
+                    <t t-out="data.get('quantity') or 'Quantity'"/>
+                    <!--<img t-if="data.get('location_origin_id')" class="absolute right-4 top-[18px] w-6 landscape:top-[10px]"
+                         src="wms_scanner/static/src/img/close-outline.svg"/>-->
+                </div>
             </t>
         </template>
 
         <template id="scanner_move_input_location_dest_id" name="scanner_move_input_location_dest_id">
-
             <t t-if="data.get('step') and data['step'].action_variable == 'location_dest_id'">
-                <t t-if="data.get('warning')">
-                    <input
-                            type="text"
-                            id="scan"
-                            name="location_dest_id"
-                            class="input-warning"
-                            t-att-placeholder="data.get('warning')"
-                    />
-
-                </t>
-                <t t-else="">
-                    <input
-                            type="text"
-                            id="scan"
-                            name="location_dest_id"
-                            class="input-green"
-                            t-att-placeholder="data['step'].action_message or ''"
-                    />
-                </t>
-                <!--<t t-call="wms_scanner.scanner_button_default_location"/>-->
+                <t t-call="wms_scanner.scanner_input_text_id"/>
             </t>
-
             <t t-else="">
-                <p
-                        type="text"
-                        id="location_dest_id"
-                        name="location_dest_id"
-                        class="input-default"
-                >
+                <div id="location_dest_id" name="location_dest_id" class="relative input-default">
                     <t t-out="data.get('location_dest_id') and data['location_dest_id'].name or 'Destination location'"/>
-                </p>
+                    <!--<img t-if="data.get('location_origin_id')" class="absolute right-4 top-[18px] w-6 landscape:top-[10px]"
+                         src="wms_scanner/static/src/img/close-outline.svg"/>-->
+                </div>
             </t>
         </template>
 

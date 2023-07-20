@@ -18,7 +18,7 @@
   }
 
   .menu-toggle span {
-    @apply block w-9 h-1 bg-black duration-300;
+    @apply block w-full h-1 bg-black duration-300;
   }
 
   .menu-toggle span:not(:last-child) {
@@ -26,7 +26,7 @@
   }
 
   .menu-open .menu-toggle span:first-child {
-    @apply rotate-45 mt-4;
+    @apply rotate-45;
   }
 
   .menu-open .menu-toggle span:nth-child(2) {
@@ -34,7 +34,7 @@
   }
 
   .menu-open .menu-toggle span:last-child {
-    @apply -rotate-45 -mt-3.5;
+    @apply -rotate-45 -mt-[14px];
   }
 
   .menu-open nav {
@@ -42,9 +42,41 @@
   }
 
   .btn-green {
-    @apply w-full py-4 text-xl text-white bg-green-600 rounded-lg shadow-md duration-300 font-bold;
+    @apply w-full py-3 text-xl text-white bg-green-600 rounded-lg shadow-md duration-300 font-bold;
   }
-  
+
+  .btn-red {
+    @apply w-full py-3 text-xl text-white bg-red-600 rounded-lg shadow-md duration-300 font-bold;
+  }
+
+  input {
+    @apply duration-300;
+  }
+
+  .popup {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+
+  .active input {
+    @apply border-green-600 bg-green-200 mb-[30px];
+  }
+
+  .input-default {
+    @apply w-full border border-gray-300 rounded-md p-4;
+  }
+
+  .input-select {
+    @apply py-2 text-center border border-black rounded-md w-full;
+  }
+
+  .input-green {
+    @apply w-full border rounded-md p-4 border-green-600 bg-green-400 bg-opacity-20;
+  }
+
+  .input-warning {
+    @apply w-full border rounded-md p-4 border-red-600 bg-red-400 bg-opacity-20;
+  }
+
   ::placeholder {
     @apply text-gray-500 italic;
   }
@@ -53,6 +85,14 @@
 @media (orientation: landscape) {
   .menu-open nav {
     @apply w-11/12;
+  }
+
+  .active input {
+    @apply mb-0;
+  }
+
+  .input-green, .input-warning, .input-default {
+    @apply py-2;
   }
 }
 

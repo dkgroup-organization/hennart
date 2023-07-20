@@ -6,35 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-27 14:18+0000\n"
-"PO-Revision-Date: 2023-02-27 14:18+0000\n"
+"POT-Creation-Date: 2023-07-20 12:52+0000\n"
+"PO-Revision-Date: 2023-07-20 12:52+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid " and the same location. Please first validate the previous inventory: "
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "-- DATA --"
-msgstr "-- DONNEE --"
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "<br/>Please, Keep only one general inventory opening before start"
-msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__menu_type
@@ -49,39 +28,9 @@ msgid "Active"
 msgstr ""
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Add Product"
-msgstr "Ajouter un produit"
-
-#. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Add note, modification date, etc."
 msgstr "Ajouter des notes"
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Add product"
-msgstr "Ajouter des produits"
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Add this Product"
-msgstr "Ajouter un produit"
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "All mouvements is done"
-msgstr "Tous les mouvements sont terminés"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__group_ids
@@ -102,6 +51,11 @@ msgid "Allowed Users Groups"
 msgstr ""
 
 #. module: wms_scanner
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
+msgid "Allowed Warehouse"
+msgstr "Entrepots authorisés"
+
+#. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario__name
 msgid "Appear on barcode reader screen."
 msgstr "Visible à l'écran du scanner"
@@ -113,43 +67,6 @@ msgid "Archived"
 msgstr "Archivé"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Barcode information"
-msgstr "Information sue le code à barre"
-
-#. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_main
-msgid "Bonjour"
-msgstr ""
-
-#. module: wms_scanner
-#: model:ir.model.fields,field_description:wms_scanner.field_wms_session__css
-msgid "CSS"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Cancel"
-msgstr "Annuler"
-
-#. module: wms_scanner
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_session__state__cancel
 msgid "Cancelled"
 msgstr "Annulé"
@@ -158,11 +75,6 @@ msgstr "Annulé"
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__href
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__menu_code
 msgid "Code"
-msgstr ""
-
-#. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_information_body_main
-msgid "Code barre:"
 msgstr ""
 
 #. module: wms_scanner
@@ -184,11 +96,6 @@ msgstr "Sociétés authorisées pour ce scénario"
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__condition
 msgid "Condition"
-msgstr ""
-
-#. module: wms_scanner
-#: model:ir.ui.menu,name:wms_scanner.menu_wms_configuration
-msgid "Configuration"
 msgstr ""
 
 #. module: wms_scanner
@@ -227,6 +134,11 @@ msgid "Debug mode"
 msgstr "Mode Debug"
 
 #. module: wms_scanner
+#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_button_default_location
+msgid "Defaults locations"
+msgstr "Emplacements par défaut"
+
+#. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_menu_search
 msgid "Directly launch a menu"
 msgstr "Menu"
@@ -235,13 +147,6 @@ msgstr "Menu"
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_search
 msgid "Directly launch a scenario"
 msgstr "Scénario"
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Disconnect"
-msgstr "Déconnecter"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__display_name
@@ -269,24 +174,13 @@ msgstr "Date de fin"
 
 #. module: wms_scanner
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_text
-msgid "Enter description"
+msgid "Enter Text"
 msgstr "Saisir le texte"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_quantity
-#, python-format
 msgid "Enter quantity"
 msgstr "Entrer la quantité"
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Enter quantity of new label to print"
-msgstr "Entrer la quantité d'étiquettes à imprimer"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
@@ -294,44 +188,14 @@ msgid "Enter the python code here"
 msgstr "Saisir le code python"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Expedition"
-msgstr ""
-
-#. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__from_id
 msgid "From"
 msgstr "Depuis"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Function configure_page_header"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Function: configure_page_body"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "GENERAL INVENTORY !"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Go to this address to install Android scanner"
-msgstr ""
+#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_main
+msgid "Hello"
+msgstr "Bonjour"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__id
@@ -350,12 +214,12 @@ msgstr ""
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_menu__active
 msgid "If check, this menu is available."
-msgstr ""
+msgstr "Si validé, ce menu eset disponible"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario__active
 msgid "If check, this object is always available."
-msgstr ""
+msgstr "Si validé, cet objet est validé"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__image_file
@@ -370,57 +234,28 @@ msgstr "En cours"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__in_transition_ids
-#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Incoming transitions"
-msgstr ""
+msgstr "Réceptions"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
+#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_information_body_main
 msgid "Information"
 msgstr ""
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_information_body_main
-msgid "Informations"
-msgstr ""
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_message
+msgid "Input Placeholder"
+msgstr "Message"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Install scanner"
-msgstr ""
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_variable
+msgid "Input name"
+msgstr "Nom"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
+#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_inventory_body_main
 msgid "Inventory"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "It is not the good location: %s"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "It is not the good product %s"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Language"
-msgstr ""
+msgstr "Inventaire"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu____last_update
@@ -450,7 +285,6 @@ msgid "Last Updated on"
 msgstr ""
 
 #. module: wms_scanner
-#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_menu__menu_type__logout
 #: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_header
 msgid "Logout"
 msgstr "Déconnection"
@@ -458,9 +292,10 @@ msgstr "Déconnection"
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_header
 msgid "Main menu"
-msgstr ""
+msgstr "Menu Principal"
 
 #. module: wms_scanner
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_menu__menu_type__menu
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_menu_search
 msgid "Menu"
 msgstr ""
@@ -471,70 +306,36 @@ msgid "Menu for scanner"
 msgstr "Menu du scanner"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Mode debug"
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_session_search
+msgid "Message"
 msgstr ""
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Move pack"
-msgstr ""
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__no_scan
+msgid "Message, no scan"
+msgstr "Message, pas de scan"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Move product"
-msgstr ""
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_model
+msgid "Model to scan"
+msgstr "Modèle à scanner"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Moving"
-msgstr ""
+#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_move_body_main
+msgid "Move"
+msgstr "Déplacer"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__name
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__name
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__name
 msgid "Name"
-msgstr ""
-
-#. module: wms_scanner
-#: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__name
-msgid "Name of the step."
-msgstr ""
+msgstr "Nom"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_transition__name
 msgid "Name of the transition."
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "New mouvement to do"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "No"
-msgstr "Non"
-
-#. module: wms_scanner
-#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__none
-msgid "Not used"
-msgstr ""
+msgstr "Description"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
@@ -549,137 +350,49 @@ msgid "Notes"
 msgstr ""
 
 #. module: wms_scanner
+#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_header
+msgid "Odoo"
+msgstr ""
+
+#. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__out_transition_ids
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Outgoing transitions"
-msgstr ""
+msgstr "Transition de sortie"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Pack Inventory"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Pack inventory"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Pack inventory - "
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Pack move"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Packing"
+#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_blank_body_main
+msgid "Page en construction"
 msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__parent_id
 msgid "Parent menu"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Partial Inventory"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Partial inventory - "
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Pass"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Pick Product"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Pick product"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Please, check and close this old inventory before start a new one."
-msgstr ""
+msgstr "Menu supérieur"
 
 #. module: wms_scanner
 #. odoo-python
 #: code:addons/wms_scanner/models/wms_scenario_step.py:0
 #, python-format
 msgid "Please, enter a numeric value"
-msgstr ""
-
-#. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_main
-msgid "Please, select an option."
-msgstr ""
+msgstr "Merci d'entrer une valeur Numérique"
 
 #. module: wms_scanner
 #. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
 #, python-format
-msgid "Preparation"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Print pack label"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Product inventory"
-msgstr ""
+msgid "Please, enter a positive value"
+msgstr "Merci d'entrer une valeur positive"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__python_code
 msgid "Python code"
-msgstr ""
+msgstr "Code Python"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__python_code
 msgid "Python code to execute."
-msgstr ""
+msgstr "Code python"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__scenario_qweb
@@ -690,14 +403,6 @@ msgstr ""
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "QWEB render"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Receipt"
 msgstr ""
 
 #. module: wms_scanner
@@ -712,33 +417,9 @@ msgid "Result:"
 msgstr ""
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_menu__menu_type__wms
-#, python-format
-msgid "Return to WMS"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan barcode Expedition or choice one in the list"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan barcode Preparation"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan barcode Receipt or choice one in the list"
-msgstr ""
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__routing
+msgid "Routing choice, no scan"
+msgstr "Choix, pas de scan"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_zxing
@@ -747,96 +428,34 @@ msgid "Scan barcode from Video Camera"
 msgstr ""
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan barcode pack"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan barcode to get information"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan current Pack or a new empty pack"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan destination location barcode"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan location: "
-msgstr ""
-
-#. module: wms_scanner
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_model
 msgid "Scan model"
-msgstr ""
+msgstr "Scan un objet"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan printer barcode"
-msgstr ""
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_multi
+msgid "Scan multi"
+msgstr "Scan personnalisé"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan product barcode"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan product: "
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan quantity: "
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scan source product location barcode"
-msgstr ""
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_info
+msgid "Scan search"
+msgstr "Scan research"
 
 #. module: wms_scanner
 #: model:ir.actions.act_url,name:wms_scanner.action_url_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_scanner
+#: model:ir.ui.menu,name:wms_scanner.menu_wms_configuration
 #: model:ir.ui.menu,name:wms_scanner.menu_wms_scanner
 msgid "Scanner"
-msgstr ""
+msgstr "Configuration"
 
 #. module: wms_scanner
 #: model:ir.actions.act_window,name:wms_scanner.act_open_wms_menu_view
 #: model:ir.ui.menu,name:wms_scanner.menu_wms_menu
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_menu_form
 msgid "Scanner Menu"
-msgstr ""
+msgstr "Menu scanner"
 
 #. module: wms_scanner
 #: model:ir.actions.act_window,name:wms_scanner.act_open_wms_scenario_view
@@ -846,83 +465,53 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_search
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_tree
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_session_search
 msgid "Scanner Scenario"
 msgstr ""
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Scanner ZXING"
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_session_form
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_session_tree
+msgid "Scanner Session"
 msgstr ""
 
 #. module: wms_scanner
+#: model:ir.actions.act_window,name:wms_scanner.act_open_wms_session_view
 #: model:ir.model,name:wms_scanner.model_wms_session
+#: model:ir.ui.menu,name:wms_scanner.menu_wms_session
 msgid "Scanner session"
 msgstr ""
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_scenario.py:0
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__scenario_id
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__step_ids
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__scenario_id
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__scenario_id
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_menu__menu_type__scenario
-#: model:ir.ui.menu,name:wms_scanner.menu_wms_scenario_configuration
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_search
-#, python-format
 msgid "Scenario"
 msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model,name:wms_scanner.model_wms_scenario
 msgid "Scenario for scanner"
-msgstr ""
+msgstr "Scenario du scanner"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_menu__scenario_id
 msgid "Scenario for this menu."
-msgstr ""
+msgstr "Scenario de ce menu"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__scenario_id
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_transition__scenario_id
 msgid "Scenario for this step."
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Screen 240 px"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Screen 320 px"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Screen 480 px"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Screen size"
-msgstr ""
+msgstr "Scenario de cette étape"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Security"
-msgstr ""
+msgstr "Sécurité"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__sequence
@@ -940,39 +529,13 @@ msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session__name
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_session_search
 msgid "Session"
 msgstr ""
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Some generales inventories are opening. It is ambiguous."
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid ""
-"Some partials inventories are opening!<br/>Please, close old inventories "
-"before start a new one"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid ""
-"Some partials inventories are opening!<br/>Please, close partial inventory "
-"before start a general inventory"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Some product have to be complete later."
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
+msgid "Some name variables is used by the system in data:"
 msgstr ""
 
 #. module: wms_scanner
@@ -986,24 +549,8 @@ msgid "Start Date"
 msgstr ""
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Start Preparation ?"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Start expedition scanning ?"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Start receipt scanning ?"
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__start
+msgid "Start scenario, no scan"
 msgstr ""
 
 #. module: wms_scanner
@@ -1039,334 +586,63 @@ msgstr ""
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Steps"
-msgstr ""
+msgstr "Etape"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_menu__notes
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario__notes
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__scenario_notes
 msgid "Store different notes, date and title for modification, etc..."
-msgstr ""
-
-#. module: wms_scanner
-#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_menu__menu_type__menu
-msgid "Sub Menu"
-msgstr "Menu"
+msgstr "Enregistrer des notes, dates et titre de la modification, etc..."
 
 #. module: wms_scanner
 #. odoo-python
 #: code:addons/wms_scanner/models/wms_scenario_step.py:0
 #, python-format
-msgid "The barcode is empty"
-msgstr ""
+msgid "The barcode has multiples references"
+msgstr "Le code barre à de multiple références"
+
+#. module: wms_scanner
+#. odoo-python
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "The barcodde is empty"
+msgstr "Le barcode est vide"
 
 #. module: wms_scanner
 #. odoo-python
 #: code:addons/wms_scanner/models/wms_scenario_step.py:0
 #: code:addons/wms_scanner/models/wms_scenario_step.py:0
 #, python-format
-msgid "The barcode is unknow"
-msgstr ""
+msgid "The barcode is unknown"
+msgstr "Le barcode est inconnu"
 
 #. module: wms_scanner
 #. odoo-python
 #: code:addons/wms_scanner/models/wms_scenario_step.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
 #, python-format
 msgid "The barcode is unreadable"
-msgstr ""
+msgstr "Le barcode est illisible"
 
 #. module: wms_scanner
 #. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
 #, python-format
-msgid "The date of your inventory is %s. It is ambiguous."
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "The inventory is registred, you can do a new product inventory"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid ""
-"The inventory line is registred, you can do a new product inventory in this "
-"pack"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "The label is printing"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "The mouvement is not registred"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "The mouvement is registred, you can do a new move"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "The mouvement is registred, you can do a new scan"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "The pack is deleting, you can delete another pack"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "The pack is moving, you can move another pack"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "The product is in the pack, you can add a new product"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "The product:<br/> %s %s<br/>"
-msgstr ""
+msgid "The program is frozen in step: {}"
+msgstr "Le scénario est figé à l'étape: {}"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_transition__condition
 msgid ""
 "The transition is followed only if this condition is evaluated as True."
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "There is a error with this barcode location: %s"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "There is a error with this barcode printer: %s"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "There is an error with this inventory line"
-msgstr ""
+msgstr "La transition est suivi si la condition est vrai"
 
 #. module: wms_scanner
 #. odoo-python
 #: code:addons/wms_scanner/models/wms_scenario.py:0
 #, python-format
 msgid "There is no step in this scenario"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "There is not enought quantity"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "There is not enought quantity in this location"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "There is not the good quantity"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "There is not the good quantity: %s"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This barcode is unknow: %s"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This barcode product is unknow: %s"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This barcode reference %s products?"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This expedition is done or cancel, you can't change it'"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This expedition is unknow: %s"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This pack is empty"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This pack is inside another pack. Please, move the parent pack: %s"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This pack is not expected !"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This pack is unknow: %s"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This package is not used for this picking"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This package is out of the warehouse, it can't be changed!"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This page is under construction"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This preparation is done or cancel, you can't change it'"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This preparation is unknow: %s"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This product is not expected !"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This product is not expected ! Do you want to add it on receipt ?"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This product is not in this location"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This product is not in this pack"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This receipt is done or cancel, you can't change it'"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This receipt is unknow: %s"
-msgstr ""
+msgstr "Il n'y a pas d'étape dans ce scénario"
 
 #. module: wms_scanner
 #. odoo-python
@@ -1374,29 +650,14 @@ msgstr ""
 #, python-format
 msgid ""
 "This scenario is currently under construction.Some parameters are not set. "
-"(model)"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_scenario_step.py:0
-#, python-format
-msgid ""
-"This scenario is currently under construction.Some parameters are not set. "
-"(variable)"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "This value is not valid: %s"
-msgstr ""
+"(no scan variable)"
+msgstr "Ce scénario est actuellement en construction. Certains paramétrages ne sont pas terminé"
+"(nom de variable vide)"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__to_id
 msgid "To"
-msgstr ""
+msgstr "vers"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
@@ -1404,163 +665,106 @@ msgid "Transition"
 msgstr ""
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
-msgid "Transition In"
-msgstr ""
-
-#. module: wms_scanner
 #: model:ir.model,name:wms_scanner.model_wms_scenario_transition
 msgid "Transition for scenario"
-msgstr ""
+msgstr "Transition"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Transition out"
-msgstr ""
+msgstr "Transition pour sortir"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__in_transition_ids
 msgid "Transitions which goes to the next step."
-msgstr ""
+msgstr "Transition en direction des étapes suivantes"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__out_transition_ids
 msgid "Transitions which goes to this step."
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Under construction"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Unpack all products"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Unpack products"
-msgstr ""
+msgstr "Transitions entrantes"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__step_qweb
 msgid "Use a specific QWEB template at this step"
-msgstr ""
+msgstr "Utilisé un Template QWEB spécifique à cette étape"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "Valide"
-msgstr ""
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_session__user_id
+msgid "User"
+msgstr "Utilisateur"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_information_body_main
-msgid "Valider"
-msgstr ""
-
-#. module: wms_scanner
-#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_variable
-msgid "Variable"
-msgstr ""
+#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_inventory_body_main
+#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_move_body_main
+msgid "Valid"
+msgstr "Valider"
 
 #. module: wms_scanner
 #: model:ir.ui.menu,name:wms_scanner.menu_wms
 msgid "WMS"
-msgstr ""
+msgstr "SCANNER"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session__warehouse_id
 msgid "Warehouse"
-msgstr ""
+msgstr "Entrepôt"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__warehouse_ids
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__warehouse_ids
-#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Warehouses"
-msgstr ""
+msgstr "Entrepôts"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_menu__warehouse_ids
 msgid "Warehouses for this menu."
-msgstr ""
+msgstr "Entrepôt pour ce menu"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario__warehouse_ids
 msgid "Warehouses for this scenario."
-msgstr ""
+msgstr "Entrepôt pour ce scénario"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "You can do a new expedition, the previous is finish"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "You can do a new preparation, the previous preparation is finish"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "You can do a new preparation, the previous preparation is finish.<br/>"
-msgstr ""
-
-#. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid ""
-"You cannot have two inventory adjustements in state 'in Progess' with the "
-"same product"
+"You can use the object: object and env to acces to all functions and "
+"environment"
+msgstr "Vous pouvez utiliser 'object' et 'env' pour acceder à toutes les fonctions et à l'environement"
+
+#. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_session__data
+msgid "data"
 msgstr ""
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid ""
-"You cannot have two inventory adjustements in state 'in Progess' with the "
-"same product and the same location.<br/> Please first validate the previous "
-"inventory: "
-msgstr ""
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_session__message
+msgid "log last message"
+msgstr "Enregistrer le dernier message"
 
 #. module: wms_scanner
-#. odoo-python
-#: code:addons/wms_scanner/models/wms_session.py:0
-#, python-format
-msgid "is out of the pack.<br/>You can pick another product"
-msgstr ""
+#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_blank_body_main
+msgid "main menu"
+msgstr "Menu principal"
 
 #. module: wms_scanner
-#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_message
-msgid "message"
-msgstr "Message"
-
-#. module: wms_scanner
-#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_model
-msgid "model"
+#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_header
+msgid "menu"
 msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__name
 msgid "name"
+msgstr "Nom"
+
+#. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__sequence
+msgid "sequence"
+msgstr ""
+
+#. module: wms_scanner
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
+msgid "user, warning, scan, function, message, button, result"
 msgstr ""
