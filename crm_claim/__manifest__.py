@@ -22,6 +22,7 @@
         "views/res_partner_views.xml",
         "views/crm_claim_menu.xml",
         "report/crm_claim_report_view.xml",
+        "views/account_move_views_inherit.xml",
     ],
     "demo": ["demo/crm_claim_demo.xml"],
     "installable": True,
