@@ -12,6 +12,10 @@
                         <field name="date_start"/>
                     </group>
                 </xpath>
+
+                <xpath expr="//page[@name='pricelist_rules']//field[@name='name']" position="before">
+                    <field name="product_code"/>
+                </xpath>
             </field>
         </record>
     </data>
