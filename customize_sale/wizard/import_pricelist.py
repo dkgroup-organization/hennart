@@ -92,28 +92,32 @@ class ImportPriceList(models.TransientModel):
         self.ensure_one()
         if not self.file:
             raise UserError(_("Please select a file to import."))
+        if not self.pricelist_id:
+            raise UserError(_("Please select a price list to import."))
 
         book = xlrd.open_workbook(file_contents=base64.b64decode(self.file))
         sheet = book.sheet_by_index(0)
-
-        product_items = []
-
-        pricelist_items = self.pricelist_id.item_ids
-        product_ids = pricelist_items.mapped('product_id')
+        header = {}
+        for i_col in range(sheet.ncols):
+            header_name = sheet.cell_value(0, i_col)
+            header[header_name] = i_col
 
         for row in range(1, sheet.nrows):
-            product_code = sheet.cell_value(row, 0)
-            list_price = sheet.cell_value(row, 1)
+
+            product_code = sheet.cell_value(row, header.get('product_code'))
+            list_price = sheet.cell_value(row, header.get('list_price'))
             # start_date_value = sheet.cell_value(row, 2)
             # end_date_value = sheet.cell_value(row, 3)
 
             if product_code and list_price:
-                product = product_ids.filtered(lambda p: p.default_code == product_code)[:1]
-                if product:
-                    # start_date = xlrd.xldate_as_datetime(start_date_value, book.datemode) if start_date_value else None
-                    # end_date = xlrd.xldate_as_datetime(end_date_value, book.datemode) if end_date_value else None
+                product = self.env['product.product'].search([('default_code', '=', product_code)])
+                if not product:
+                    raise UserError(_("This product code is unknown: {}".format(product_code)))
 
-                    item_values = {
+                condition = [('product_id', '=', product.id), ('pricelist_id', '=', self.pricelist_id.id)]
+                item_ids = self.pricelist_id.item_ids.search(condition)
+
+                item_values = {
                         'pricelist_id': self.pricelist_id.id,
                         'product_id': product.id,
                         'fixed_price': list_price,
@@ -122,15 +126,10 @@ class ImportPriceList(models.TransientModel):
                         # 'date_start': start_date.strftime('%Y-%m-%d 00:00:00') if start_date else False,
                         # 'date_end': end_date.strftime('%Y-%m-%d 00:00:00') if end_date else False,
                     }
-                    product_items.append(item_values)
-
-        if product_items:
-            existing_items = self.env['product.pricelist.item'].search([
-                ('pricelist_id', '=', self.pricelist_id.id),
-                ('product_id', 'in', product_ids.ids)
-            ])
-            existing_items.unlink()
-            self.env['product.pricelist.item'].create(product_items)
+                if item_ids:
+                    item_ids.write(item_values)
+                else:
+                    item_ids.create(item_values)
 
         return True
 
@@ -151,7 +150,7 @@ class ImportPriceList(models.TransientModel):
                 data = [str(product.default_code), str(product.name), float(product.list_price)]
                 rows.append(data)
 
-        with ExportXlsxWriter2(fields, len(rows)) as xlsx_writer:
+        with ExportXlsxWriter(fields, len(rows)) as xlsx_writer:
             for row_index, row in enumerate(rows):
                 for cell_index, cell_value in enumerate(row):
                     xlsx_writer.write_cell(row_index + 1, cell_index, cell_value)
@@ -180,18 +179,5 @@ class ImportPriceList(models.TransientModel):
                 'type': 'binary', 'name': binary_name, 'datas': binary_content,
                 'res_model': 'product.pricelist', 'res_id': self.pricelist_id.id or 0}
             attachment = self.env['ir.attachment'].create(attachment_vals)
-        print('-------------', attachment)
         self.example_id = attachment
 
-
-class ExportXlsxWriter2(ExportXlsxWriter):
-    """ change column width
-    """
-
-    def write_header(self):
-        # Write main header
-        for i, fieldname in enumerate(self.field_names):
-            self.write(0, i, fieldname, self.header_style)
-        self.worksheet.set_column(0, 1, 15)  # around 220 pixels
-        self.worksheet.set_column(2, 2, 60)
-        self.worksheet.set_column(3, i, 4)

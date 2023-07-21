@@ -69,18 +69,20 @@ class SaleOrder(models.Model):
                 ('move_id.state', '!=', 'cancel')
             ])
             # Get the product ids of the order lines
-            product_ids = order_lines.mapped('product_id') - self.order_line.mapped('product_id')
+            product_ids = (order_lines.mapped('product_id') - self.order_line.mapped('product_id')).sorted(key='name')
+
             for product in product_ids:
+                product = product
                 if product.sale_ok:
                     line_vals.append(Command.create({
                         'product_id': product.id,
+                        'name': product.name,
                         'product_template_id': product.product_tmpl_id.id,
                         'product_uom_qty': 0.0,
                     }))
         if line_vals:
             res.update({'order_line': line_vals})
 
-        print('---------res------', res)
         self.update(res)
 
 

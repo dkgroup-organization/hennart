@@ -9,9 +9,9 @@ from collections import defaultdict
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    default_code = fields.Char('Code', related="product_id.default_code", store=True)
+    default_code = fields.Char('Code', related="product_id.default_code", store=True, index=True)
     weight = fields.Float('weight', compute="compute_uos", store=True)
-    product_uos = fields.Many2one('uom.uom', compute="compute_uos", store=True)
+    product_uos = fields.Many2one('uom.uom', string="U", compute="compute_uos", store=True, readonly=True)
     product_uos_qty = fields.Float('Sale Qty', compute="compute_uos", store=True)
     product_uos_price = fields.Float('Sale Qty', compute="compute_uos", store=True)
     cadence = fields.Html(string="Cadencier", compute="compute_cadence", readonly=True)
