@@ -136,7 +136,7 @@ class PurchaseOrderLineInherit(models.Model):
                 quantity=line.product_qty,
                 date=line.order_id.date_order and line.order_id.date_order.date(),
                 uom_id=line.product_uom,)
-                if(seller and seller.packaging):
+                if(seller):
                     line.product_packaging_id = seller.packaging
                 else:
                     line.product_packaging_id = line.product_id.packaging_ids.filtered('purchase')._find_suitable_product_packaging(line.product_qty, line.product_uom) or line.product_packaging_id
