@@ -140,3 +140,8 @@ class PurchaseOrderLineInherit(models.Model):
                     line.product_packaging_id = seller.packaging
                 else:
                     line.product_packaging_id = line.product_id.packaging_ids.filtered('purchase')._find_suitable_product_packaging(line.product_qty, line.product_uom) or line.product_packaging_id
+
+    def _prepare_stock_move_vals(self, picking, price_unit, product_uom_qty, product_uom):
+        values = super(PurchaseOrderLineInherit,self)._prepare_stock_move_vals(picking,price_unit,product_uom_qty,product_uom)
+        values['product_packaging_qty'] = self.product_packaging_qty
+        return values

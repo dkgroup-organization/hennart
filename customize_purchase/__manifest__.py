@@ -10,7 +10,7 @@
     "website": "https://dkgroup.fr",
     "maintainer": "DK group",
     "images": [],
-    "depends": ["purchase"],
+    "depends": ["purchase","delivery"],
     "data": [
         "data/purchase_data.xml",
         "security/ir.model.access.csv",
@@ -19,6 +19,8 @@
         #"views/account_move_views_inherit.xml",
         "views/purchase_promotion_views.xml",
         "wizard/import_promotion_views.xml",
+        "views/stock_picking_views_inherit.xml",
+        "views/stock_move_line_views_inherit.xml",
     ],
     "installable": True,
 }
