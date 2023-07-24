@@ -5,6 +5,7 @@
         <record id="view_order_form_inherits" model="ir.ui.view">
             <field name="name">sale.order.form.inherits</field>
             <field name="model">sale.order</field>
+            <field name="priority">30</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <group name="sale_total" position="before">
