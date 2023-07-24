@@ -10,11 +10,11 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     default_code = fields.Char('Code', related="product_id.default_code", store=True, index=True)
-    weight = fields.Float('weight', compute="compute_uos", store=True)
-    product_uos = fields.Many2one('uom.uom', string="U", compute="compute_uos", store=True, readonly=True)
-    product_uos_qty = fields.Float('Sale Qty', compute="compute_uos", store=True)
-    product_uos_price = fields.Float('Sale Qty', compute="compute_uos", store=True)
-    cadence = fields.Html(string="Cadencier", compute="compute_cadence", readonly=True)
+    weight = fields.Float('weight', compute="compute_uos", store=True, compute_sudo=True)
+    product_uos = fields.Many2one('uom.uom', string="U", compute="compute_uos", compute_sudo=True)
+    product_uos_qty = fields.Float('Sale Qty', compute="compute_uos", store=True, compute_sudo=True)
+    product_uos_price = fields.Float('Sale Qty', compute="compute_uos", store=True, compute_sudo=True)
+    cadence = fields.Html(string="Cadencier", compute="compute_cadence", readonly=True, compute_sudo=True)
     display_qty_widget = fields.Boolean("display widget", store=True, compute='_compute_display_qty_widget')
 
     @api.depends('product_id', 'state')

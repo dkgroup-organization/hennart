@@ -4,7 +4,7 @@ from odoo.exceptions import UserError
 class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
 
-    total_weight = fields.Float(compute='_compute_total_weight')
+    total_weight = fields.Float(string="Total Weight", compute='_compute_total_weight')
 
     discount_unlocked = fields.Boolean(string='Discount Unlocked ?')
 

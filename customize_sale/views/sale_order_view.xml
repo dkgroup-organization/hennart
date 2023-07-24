@@ -8,14 +8,30 @@
             <field name="priority">20</field>
             <field name="arch" type="xml">
 
-                <xpath expr="//field[@name='company_id']" position="before">
-                    <field name="commitment_date" string="Warehouse date"/>
-                    <field name="date_delivered" string="Customer delivery date"/>
-                </xpath>
 
-                <xpath expr="//field[@name='validity_date']" position="attributes">
+                <group name="order_details" position="attributes">
                     <attribute name="invisible">1</attribute>
-                </xpath>
+                </group>
+                <header position="inside">
+                    <button name="action_update_prices" type="object" string=" Update Prices"
+                                help="Recompute all prices based on this pricelist" class="btn-primary"
+                                icon="fa-refresh"
+                                confirm="This will update all unit prices based on the currently set pricelist."
+                                attrs="{'invisible': ['|', ('show_update_pricelist', '=', False), ('state', 'in', ['sale', 'done', 'cancel'])]}"/>
+                </header>
+
+                <button name="action_unlock" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </button>
+
+                <group name="order_details" position="after">
+                    <group name="order_details_custom">
+                        <field name="pricelist_id" options="{'no_open':True,'no_create': True}"/>
+                        <field name="commitment_date" string="Warehouse date"/>
+                        <field name="date_delivered" string="Customer delivery date"/>
+                        <field name="carrier_id"/>
+                    </group>
+                </group>
 
                 <page name="optional_products" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -39,20 +55,11 @@
                 </group>
 
                 <field name="payment_term_id" position="replace"/>
-                <field name="fiscal_position_id" position="after">
-                    <field name="payment_term_id"/>
-                </field>
-
-                <group name="sale_shipping" position="inside">
-                    <field name="carrier_id"/>
-                </group>
 
                 <xpath expr="//button[@name='action_open_delivery_wizard']/.." position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
-                <button name="action_open_delivery_wizard" position="replace"/>
-                <button name="action_open_delivery_wizard" position="replace"/>
                 <button name="action_open_delivery_wizard" position="replace"/>
 
                 <xpath expr="//field[@name='order_line']" position="attributes">
@@ -60,7 +67,7 @@
                 </xpath>
 
                 <xpath expr="//field[@name='order_line']/tree" position="replace">
-                    <tree string="Sales Order Lines" editable="bottom" limit="200" default_order="product_id.name">
+                    <tree string="Sales Order Lines" editable="bottom" limit="200" default_order="product_id">
 
                         <field name="sequence" widget="handle"/>
                         <!-- We do not display the type because we don't want the user to be bothered with that information if he has no section or note. -->
@@ -116,7 +123,7 @@
                         <field name="is_downpayment" invisible="1"/>
 
                         <field name="product_uos_qty" width="50px" string="Qty"/>
-                        <field name="product_uos" width="20px" string="U" readonly="1"/>
+                        <field name="product_uos" width="25px" string="U." readonly="1"/>
                         <field name="product_uos_price" width="50px" string="Price"/>
 
                         <field name="weight" width="50px" sum="Total" optional="hide"/>
