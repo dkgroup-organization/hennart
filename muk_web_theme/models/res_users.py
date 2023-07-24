@@ -74,6 +74,6 @@ class ResUsers(models.Model):
             ('large', 'Large')
         ], 
         string="Sidebar Type",
-        default='small',
+        default='large',
         required=True,
     )
