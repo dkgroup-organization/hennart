@@ -126,11 +126,13 @@ class ImportPriceList(models.TransientModel):
                         # 'date_start': start_date.strftime('%Y-%m-%d 00:00:00') if start_date else False,
                         # 'date_end': end_date.strftime('%Y-%m-%d 00:00:00') if end_date else False,
                     }
-                if item_ids:
+
+                if self.pricelist_id.id == 1:
+                    product.list_price = list_price
+                elif item_ids:
                     item_ids.write(item_values)
                 else:
                     item_ids.create(item_values)
-
         return True
 
     def from_data(self):

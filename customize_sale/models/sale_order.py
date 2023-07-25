@@ -6,6 +6,8 @@
 
 from datetime import date, timedelta, datetime
 from odoo import api, fields, models, Command, _
+from odoo.exceptions import UserError, ValidationError
+
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -85,4 +87,26 @@ class SaleOrder(models.Model):
 
         self.update(res)
 
+    def action_confirm(self):
+        """ Check the sale order before confirmation"""
+        self.check_discount()
+        self.check_line()
+        res = super().action_confirm()
+        return res
 
+    def check_discount(self):
+        """ Check discount, futur"""
+        pass
+
+    def check_line(self):
+        """ Check the line """
+        for sale in self:
+            check_line = {}
+            for line in sale.order_line:
+                key = "{}-{}-{}".format(line.product_id.id, line.price_unit, line.discount)
+                if not key in check_line:
+                    check_line[key] = line
+                else:
+                    raise ValidationError(_(
+                        "There are 2 line with the same product and price. Please, group them:\n{}".format(
+                            line.product_id.name)))

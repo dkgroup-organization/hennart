@@ -4,6 +4,7 @@ from odoo import api, fields, models, _
 from datetime import datetime, timedelta
 from odoo.fields import Command
 from collections import defaultdict
+from odoo.exceptions import UserError, ValidationError
 
 
 class SaleOrderLine(models.Model):

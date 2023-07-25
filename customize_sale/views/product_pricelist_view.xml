@@ -6,12 +6,12 @@
             <field name="model">product.pricelist</field>
             <field name="inherit_id" ref="product.product_pricelist_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//page[@name='pricelist_config']//group[@name='pricelist_discounts']" position="after">
+                <!--<xpath expr="//page[@name='pricelist_config']//group[@name='pricelist_discounts']" position="after">
                     <group name="pricelist_dates" string="Dates">
                         <field name="date_end"/>
                         <field name="date_start"/>
                     </group>
-                </xpath>
+                </xpath>-->
 
                 <xpath expr="//page[@name='pricelist_rules']//field[@name='name']" position="before">
                     <field name="product_code"/>
