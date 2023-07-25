@@ -13,6 +13,7 @@
     "depends": ["account", "sale", "stock", "sale_stock", "sale_mrp", "crm_phonecall",
                 "delivery", "customize_product_template", "product"],
     "data": [
+        "security/ir.model.access.csv",
         "views/sale_order_view.xml",
         "views/product_pricelist_view.xml",
         "wizard/import_pricelist_view.xml",
