@@ -15,6 +15,7 @@
     "data": [
         "views/sale_order_view.xml",
         "views/product_pricelist_view.xml",
+        "wizard/import_pricelist_view.xml",
 
     ],
     "installable": True,

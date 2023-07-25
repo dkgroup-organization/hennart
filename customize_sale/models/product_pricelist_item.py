@@ -8,6 +8,11 @@ class PriceListInherit(models.Model):
     _inherit = 'product.pricelist.item'
 
     product_code = fields.Char(string="Product Code", related="product_id.default_code", index=True, store=True)
+    name = fields.Char(
+        string="Name",
+        compute='_compute_name_and_price',
+        help="Explicit rule name for this pricelist line.",
+        index=True, store=True)
 
     applied_on = fields.Selection(
         selection=[
