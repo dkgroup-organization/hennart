@@ -42,10 +42,6 @@ class StockMoveInherit(models.Model):
                 else:
                     move.lot_expiration_date = False
 
-#    prodlot_inv = fields.function(_update_info, fnct_inv=_write_inv, multi="_update_info", type='char', size=32,
-#                string='Supplier N° lot', on_change="on_change_prodlot_inv(product_id, prodlot_id,prodlot_inv, removal_date)")
-
-
     @api.depends('product_id', 'product_uom_qty', 'product_uom','weight_manual','move_line_ids.weight')
     def _cal_move_weight(self):
         for move in self:

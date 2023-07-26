@@ -19,8 +19,6 @@
         #"views/account_move_views_inherit.xml",
         "views/purchase_promotion_views.xml",
         "wizard/import_promotion_views.xml",
-        "views/stock_picking_views_inherit.xml",
-        "views/stock_move_line_views_inherit.xml",
     ],
     "installable": True,
 }
