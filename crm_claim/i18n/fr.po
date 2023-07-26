@@ -280,7 +280,7 @@ msgid ""
 "            corrective action."
 msgstr ""
 "Créez des catégories de réclamation pour mieux gérer et classer vos\n"
-"            réclamations. Voici quelques exemples de réclamations : action préventive,\n"
+"            réclamations. Voici quelques exemples de réclamations : action préventive,\n"
 "            action corrective."
 
 #. module: crm_claim
@@ -341,7 +341,7 @@ msgstr "Description"
 #. module: crm_claim
 #: model:ir.model.fields,help:crm_claim.field_crm_claim__email_from
 msgid "Destination email for email gateway."
-msgstr "E-mail de destination pour la passerelle de messagerie."
+msgstr "Email de destination pour la passerelle de messagerie."
 
 #. module: crm_claim
 #: model_terms:ir.ui.view,arch_db:crm_claim.crm_case_claims_form_view
@@ -420,7 +420,7 @@ msgid ""
 "them with specific criteria."
 msgstr ""
 "Avoir un aperçu général de toutes les réclamations traitées dans le système en les triant"
-«avec des critères précis».
+"avec des critères précis."
 
 #. module: crm_claim
 #: model:ir.model.fields.selection,name:crm_claim.selection__crm_claim__priority__2
@@ -909,8 +909,7 @@ msgid ""
 "outbound emails for this record before being sent. Separate multiple email "
 "addresses with a comma"
 msgstr ""
-«Ces adresses e-mail seront ajoutées au champ CC de tous les messages entrants et »
-
+"Ces adresses e-mail seront ajoutées au champ CC de tous les messages entrants et"
 "les e-mails sortants pour cet enregistrement avant d'être envoyés. Séparez les e-mails multiples "
 "adresses avec une virgule"
 
@@ -960,7 +959,7 @@ msgstr "UdM"
 #. module: crm_claim
 #: model:ir.model.fields,field_description:crm_claim.field_crm_claim__write_date
 msgid "Update Date"
-msgstr "Date de mise à jour""
+msgstr "Date de mise à jour"
 
 #. module: crm_claim
 #: model:ir.model.fields,help:crm_claim.field_crm_claim_stage__sequence
@@ -1000,7 +999,7 @@ msgid ""
 "            required for the resolution of a claim."
 msgstr ""
 "Vous pouvez créer des étapes de réclamation pour catégoriser le statut de chaque réclamation "
-"            saisi dans le système. Les étapes définissent toutes les étapes nécessaires à la résolution d'une réclamation.
+"            saisi dans le système. Les étapes définissent toutes les étapes nécessaires à la résolution d'une réclamation."
 "            nécessaires à la résolution d'une réclamation."
 
 #. module: crm_claim
