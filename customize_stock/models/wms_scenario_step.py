@@ -138,13 +138,14 @@ class WmsScenarioStep(models.Model):
                 ('location_id', '=', data['location_origin_id'].id),
             ]
 
-            if data['product_id'].tracking == 'lot' and data.get('lot_id'):
+            if data.get('lot_id'):
                 inventory_vals['lot_id'] = data['lot_id'].id
                 condition.append(('lot_id', '=', data['lot_id'].id))
             else:
-                data['warning'] = "This product need a lot number"
-                data['result'] = False
-                return data
+                if data['product_id'].tracking == 'lot':
+                    data['warning'] = "This product need a lot number"
+                    data['result'] = False
+                    return data
 
             quant_ids = self.env['stock.quant'].search(condition)
             if quant_ids:
@@ -177,10 +178,12 @@ class WmsScenarioStep(models.Model):
                 ('product_id', '=', data['product_id'].id),
                 ('location_id', '=', data['location_origin_id'].id)]
 
-            if data['product_id'].tracking == 'lot' and data.get('lot_id'):
+            if data.get('lot_id'):
                 condition.append(('lot_id', '=', data['lot_id'].id))
-            else:
+            elif data['product_id'].tracking == 'lot':
                 data['warning'] = "This product need a lot number"
+            else:
+                condition.append(('lot_id', '=', False))
 
             quant_ids = self.env['stock.quant'].search(condition)
 
