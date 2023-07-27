@@ -5,15 +5,16 @@
         <field name="model">crm.claim</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="name" />
-                <field name="partner_id" />
-                <field name="user_id" />
-                <field name="date" />
-                <field name="stage_id" groups="base.group_user" />
-                <field name="categ_id" string="Type" />
-                <field name="date_deadline" invisible="1" />
-                <field name="date_closed" invisible="1" />
-                <field name="company_id" groups="base.group_multi_company" />
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="invoice"/>
+                <field name="user_id"/>
+                <field name="date"/>
+                <field name="stage_id" groups="base.group_user"/>
+                <field name="categ_id" string="Type"/>
+                <field name="date_deadline" invisible="1"/>
+                <field name="date_closed" invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company"/>
             </tree>
         </field>
     </record>
@@ -27,6 +28,9 @@
                 </header>
                 <sheet string="Claims">
                     <group>
+                        <field name="partner_id" string="Partner" domain="[('is_company', '=', True)]"/>
+                        <field name="invoice" widget="selection" domain="[('move_type', '=', 'out_invoice'),('partner_id', '=', partner_id)]"
+                               string="N° Facture"/>
                         <field name="name"/>
                         <field name="date"/>
                         <field name="company_id" groups="base.group_multi_company"/>
@@ -36,106 +40,99 @@
                         <field name="date_deadline"/>
                     </group>
                     <!--<group colspan="4" col="4">-->
-                        <notebook>
-                          
- 
-                          
-                            <page string="Claim Description">
-                              
-                              <label for="invoice" string="N° Facture"  />
-                               <field name="invoice" widget="selection" domain="[('move_type', '=', 'out_invoice')]" />
-                               <br/>
-
-                                 <label for="partner_id" string="Partner"  />
-                                  <field name="partner_id"  readonly="1"/>
-                                  <br/>
-
-                                <label for="order" string="N° Commande"  />
-                               <field name="order" widget="selection"  readonly="1"/>
-                               <br/>
+                    <notebook>
 
 
-                               <label for="livraison" string="N° Bon de Livraison"  />
-                               <field name="livraison" widget="selection" readonly="1"/>
-                               <br/>
+                        <page string="Claim Description">
 
-                                  
-
-
+                            <label for="order" string="N° Commande"/>
+                            <field name="order" widget="selection" readonly="1"/>
+                            <br/>
 
 
+                            <label for="livraison" string="N° Bon de Livraison"/>
+                            <field name="livraison" widget="selection" readonly="1"/>
+                            <br/>
 
-                                 <label for="all_lines" string="la Totalité de la facture ?"/>
-                               <field name="all_lines"/>
-                               <br/>
-                                 <label for="model_ref_id2" string="Type de Réclamation" attrs="{'invisible': [('all_lines', '=', False)]}"/>
-                               <field name="model_ref_id2" widget="reference" attrs="{'invisible': [('all_lines', '=', False)]}"/>
 
-<br/>
-                                       <label for="invoice_line_ids" string="Lignes de la facture" attrs="{'invisible': [('all_lines', '=', True)]}"/>
-                                    <field name="invoice_line_ids" attrs="{'invisible': [('all_lines', '=', True)]}">
-                                      <tree editable="bottom" create="0" delete="0">
-                                         <field name="sequence" widget="handle"/>
-                                        <field name="product_id" optional="hide" readonly="1"/>
-                                        <field name="name" widget="section_and_note_text" optional="show" readonly="1"/>
-                                  
-                                        <field name="analytic_distribution" widget="analytic_distribution" readonly="1" groups="analytic.group_analytic_accounting" optional="hide" options="{'product_field': 'product_id', 'account_field': 'account_id'}" business_domain_compute="parent.move_type in ['out_invoice', 'out_refund', 'out_receipt'] and 'invoice' or parent.move_type in ['in_invoice', 'in_refund', 'in_receipt'] and 'bill' or 'general'"/>
-                                        <field name="quantity" optional="show" readonly="1"/>
-                                        <field name="product_uom_category_id" invisible="1"/>
-                                        <field name="product_uom_id" string="UoM" groups="uom.group_uom" optional="show" readonly="1"/>
-                                        <field name="price_unit" string="Price" readonly="1"/>
-                                        <field name="discount" string="Disc.%" optional="hide" readonly="1"/>
-                                        <field name="tax_ids" widget="many2many_tags" optional="hide" readonly="1"/>
-                                        <field name="price_subtotal" readonly="1" optional="hide" string="Subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
-                                        <field name="price_total" readonly="1" string="Total" groups="account.group_show_line_subtotals_tax_included"/>
-                                        <field name="sale_line_ids" widget="many2many_tags" optional="hide" />
-                                         <field name="quantity_claim" style="background-color:yellow"/>
-                                          <field name="model_ref_id2" widget="reference" />
-       
+                            <label for="all_lines" string="la Totalité de la facture ?"/>
+                            <field name="all_lines"/>
+                            <br/>
+                            <label for="model_ref_id2" string="Type de Réclamation"
+                                   attrs="{'invisible': [('all_lines', '=', False)]}"/>
+                            <field name="model_ref_id2" widget="reference"
+                                   attrs="{'invisible': [('all_lines', '=', False)]}"/>
 
-                                        
-                                      </tree>
-                                      </field>
-                                
-                          
-                          
-                              
-                                <group>
-                                    <separator colspan="2" string="Claim Reporter"/>
-                                    <field name="partner_id" string="Partner"/>
-                                    <field name="partner_phone"/>
-                                    <field name="email_from" widget="email"/>
-                                </group>
-                                <group string="Responsibilities">
-                                   
-                                    <field name="user_id" context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'base.group_sale_salesman_all_leads']}"/>
-                                    <field name="user_fault"/>
-                                    <field name="categ_id" options="{'no_create': True, 'no_open': True}"/>
-                                    <field name="team_id"/>
-                                    <field name="model_ref_id" widget="reference"/>
-                                    
-                                </group>
+                            <br/>
+                            <label for="invoice_line_ids" string="Lignes de la facture"
+                                   attrs="{'invisible': [('all_lines', '=', True)]}"/>
+                            <field name="invoice_line_ids" attrs="{'invisible': [('all_lines', '=', True)]}">
+                                <tree editable="bottom" create="0" delete="0">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="product_id" optional="hide" readonly="1"/>
+                                    <field name="name" widget="section_and_note_text" optional="show" readonly="1"/>
 
-                                <field name="description" colspan="4" nolabel="1"/>
-                            </page>
-                            <page string="Follow Up" groups="base.group_user">
-                                <group colspan="2" col="2" groups="base.group_no_one">
-                                  
-                                    <field name="create_date"/>
-                                    <field name="date_closed" invisible="1"/>
-                                    <field name="write_date"/>
-                                </group>
-                                <group colspan="2" col="2">
-                                   
-                                    <field name="cause" colspan="2" nolabel="1"/>
-                                </group>
-                                <group colspan="2" col="2">
-                                   
-                                    <field name="type_action"/>
-                                    <field name="resolution" colspan="2" nolabel="1" placeholder="Action Description..."/>
-                                </group>
-                            </page>
-                        </notebook>
+                                    <field name="analytic_distribution" widget="analytic_distribution" readonly="1"
+                                           groups="analytic.group_analytic_accounting" optional="hide"
+                                           options="{'product_field': 'product_id', 'account_field': 'account_id'}"
+                                           business_domain_compute="parent.move_type in ['out_invoice', 'out_refund', 'out_receipt'] and 'invoice' or parent.move_type in ['in_invoice', 'in_refund', 'in_receipt'] and 'bill' or 'general'"/>
+                                    <field name="quantity" optional="show" readonly="1"/>
+                                    <field name="product_uom_category_id" invisible="1"/>
+                                    <field name="product_uom_id" string="UoM" groups="uom.group_uom" optional="show"
+                                           readonly="1"/>
+                                    <field name="price_unit" string="Price" readonly="1"/>
+                                    <field name="discount" string="Disc.%" optional="hide" readonly="1"/>
+                                    <field name="tax_ids" widget="many2many_tags" optional="hide" readonly="1"/>
+                                    <field name="price_subtotal" readonly="1" optional="hide" string="Subtotal"
+                                           groups="account.group_show_line_subtotals_tax_excluded"/>
+                                    <field name="price_total" readonly="1" string="Total"
+                                           groups="account.group_show_line_subtotals_tax_included"/>
+                                    <field name="sale_line_ids" widget="many2many_tags" optional="hide"/>
+                                    <field name="quantity_claim" style="background-color:yellow"/>
+                                    <field name="model_ref_id2" widget="reference"/>
+
+
+                                </tree>
+                            </field>
+
+
+                            <group>
+                                <separator colspan="2" string="Claim Reporter"/>
+                                <field name="partner_id" string="Partner"/>
+                                <field name="partner_phone"/>
+                                <field name="email_from" widget="email"/>
+                            </group>
+                            <group string="Responsibilities">
+
+                                <field name="user_id"
+                                       context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'base.group_sale_salesman_all_leads']}"/>
+                                <field name="user_fault"/>
+                                <field name="categ_id" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="team_id"/>
+                                <field name="model_ref_id" widget="reference"/>
+
+                            </group>
+
+                            <field name="description" colspan="4" nolabel="1"/>
+                        </page>
+                        <page string="Follow Up" groups="base.group_user">
+                            <group colspan="2" col="2" groups="base.group_no_one">
+
+                                <field name="create_date"/>
+                                <field name="date_closed" invisible="1"/>
+                                <field name="write_date"/>
+                            </group>
+                            <group colspan="2" col="2">
+
+                                <field name="cause" colspan="2" nolabel="1"/>
+                            </group>
+                            <group colspan="2" col="2">
+
+                                <field name="type_action"/>
+                                <field name="resolution" colspan="2" nolabel="1" placeholder="Action Description..."/>
+                            </group>
+                        </page>
+                    </notebook>
                     <!--</group>-->
                 </sheet>
                 <div class="oe_chatter">
@@ -149,14 +146,14 @@
     <record model="ir.ui.view" id="crm_case_claims_calendar_view">
         <field name="name">Claims Actions</field>
         <field name="model">crm.claim</field>
-        <field name="priority" eval="2" />
+        <field name="priority" eval="2"/>
         <field name="arch" type="xml">
             <calendar
-                string="Claims"
-                date_start="activity_date_deadline"
-                color="user_id"
+                    string="Claims"
+                    date_start="activity_date_deadline"
+                    color="user_id"
             >
-                <field name="name" />
+                <field name="name"/>
             </calendar>
         </field>
     </record>
@@ -165,67 +162,67 @@
         <field name="model">crm.claim</field>
         <field name="arch" type="xml">
             <search string="Search Claims">
-                <field name="name" string="Claims" />
-                <separator />
+                <field name="name" string="Claims"/>
+                <separator/>
                 <filter
-                    string="Unassigned Claims"
-                    name="Unassigned Claims"
-                    domain="[('user_id','=', False)]"
-                    help="Unassigned Claims"
+                        string="Unassigned Claims"
+                        name="Unassigned Claims"
+                        domain="[('user_id','=', False)]"
+                        help="Unassigned Claims"
                 />
                 <field
-                    name="partner_id"
-                    filter_domain="[('partner_id','child_of',self)]"
+                        name="partner_id"
+                        filter_domain="[('partner_id','child_of',self)]"
                 />
-                <field name="user_id" />
+                <field name="user_id"/>
                 <group expand="0" name="claims" string="Group By">
                     <filter
-                        string="Partner"
-                        name="partner"
-                        domain="[]"
-                        help="Partner"
-                        context="{'group_by':'partner_id'}"
+                            string="Partner"
+                            name="partner"
+                            domain="[]"
+                            help="Partner"
+                            context="{'group_by':'partner_id'}"
                     />
                     <filter
-                        string="Responsible"
-                        name="responsible"
-                        domain="[]"
-                        help="Responsible User"
-                        context="{'group_by':'user_id'}"
+                            string="Responsible"
+                            name="responsible"
+                            domain="[]"
+                            help="Responsible User"
+                            context="{'group_by':'user_id'}"
                     />
                     <filter
-                        string="Stage"
-                        name="stage"
-                        domain="[]"
-                        context="{'group_by':'stage_id'}"
+                            string="Stage"
+                            name="stage"
+                            domain="[]"
+                            context="{'group_by':'stage_id'}"
                     />
                     <filter
-                        string="Type"
-                        name="type"
-                        domain="[]"
-                        context="{'group_by':'categ_id'}"
+                            string="Type"
+                            name="type"
+                            domain="[]"
+                            context="{'group_by':'categ_id'}"
                     />
                     <filter
-                        string="Claim Month"
-                        name="claim_month"
-                        domain="[]"
-                        help="Claim Date by Month"
-                        context="{'group_by':'date'}"
+                            string="Claim Month"
+                            name="claim_month"
+                            domain="[]"
+                            help="Claim Date by Month"
+                            context="{'group_by':'date'}"
                     />
                     <filter
-                        string="Deadline"
-                        name="deadline"
-                        domain="[]"
-                        context="{'group_by':'date_deadline'}"
+                            string="Deadline"
+                            name="deadline"
+                            domain="[]"
+                            context="{'group_by':'date_deadline'}"
                     />
                     <filter
-                        string="Closure"
-                        name="closure"
-                        domain="[]"
-                        help="Date Closed"
-                        context="{'group_by':'date_closed'}"
-                        groups="base.group_no_one"
-                        invisible="1"
+                            string="Closure"
+                            name="closure"
+                            domain="[]"
+                            help="Date Closed"
+                            context="{'group_by':'date_closed'}"
+                            groups="base.group_no_one"
+                            invisible="1"
                     />
                 </group>
             </search>
@@ -235,41 +232,39 @@
         <field name="name">Claims</field>
         <field name="res_model">crm.claim</field>
         <field name="view_mode">tree,calendar,form</field>
-        <field name="view_id" ref="crm_case_claims_tree_view" />
+        <field name="view_id" ref="crm_case_claims_tree_view"/>
         <field name="context">
-        {&quot;search_default_user_id&quot;:uid, &quot;stage_type&quot;: 'claim'}</field>
-        <field name="search_view_id" ref="crm_claim.view_crm_case_claims_filter" />
+            {&quot;search_default_user_id&quot;:uid, &quot;stage_type&quot;: 'claim'}
+        </field>
+        <field name="search_view_id" ref="crm_claim.view_crm_case_claims_filter"/>
         <field name="help" type="html">
             <p class="oe_view_nocontent_create">
                 Record and track your customers' claims.
                 Claims may be linked to a sales order or a lot.
-                You can send emails with attachments and keep the full history for a claim (emails sent, intervention type and so on).
+                You can send emails with attachments and keep the full history for a claim (emails sent, intervention
+                type and so on).
                 Claims may automatically be linked to an email address using the mail gateway module.
             </p>
         </field>
     </record>
     <record model="ir.actions.act_window.view" id="action_crm_tag_tree_claim0">
-        <field name="sequence" eval="1" />
+        <field name="sequence" eval="1"/>
         <field name="view_mode">tree</field>
-        <field name="view_id" ref="crm_case_claims_tree_view" />
-        <field name="act_window_id" ref="crm_claim_category_claim0" />
+        <field name="view_id" ref="crm_case_claims_tree_view"/>
+        <field name="act_window_id" ref="crm_claim_category_claim0"/>
     </record>
     <record model="ir.actions.act_window.view" id="action_crm_tag_calendar_claim0">
-        <field name="sequence" eval="2" />
+        <field name="sequence" eval="2"/>
         <field name="view_mode">calendar</field>
-        <field name="view_id" ref="crm_case_claims_calendar_view" />
-        <field name="act_window_id" ref="crm_claim_category_claim0" />
+        <field name="view_id" ref="crm_case_claims_calendar_view"/>
+        <field name="act_window_id" ref="crm_claim_category_claim0"/>
     </record>
     <record model="ir.actions.act_window.view" id="action_crm_tag_form_claim0">
-        <field name="sequence" eval="3" />
+        <field name="sequence" eval="3"/>
         <field name="view_mode">form</field>
-        <field name="view_id" ref="crm_case_claims_form_view" />
-        <field name="act_window_id" ref="crm_claim_category_claim0" />
+        <field name="view_id" ref="crm_case_claims_form_view"/>
+        <field name="act_window_id" ref="crm_claim_category_claim0"/>
     </record>
-
-
-
-
 
 
 </odoo>
