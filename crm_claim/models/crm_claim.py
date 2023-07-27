@@ -157,7 +157,7 @@ class CrmClaim(models.Model):
         "Separate multiple email addresses with a comma",
     )
     email_from = fields.Char(
-        string="Email", help="Destination email for email gateway."
+        string="Email", help="Destination email for email gateway.", readonly=False, store=True
     )
     partner_phone = fields.Char(string="Phone")
     stage_id = fields.Many2one(
@@ -168,6 +168,13 @@ class CrmClaim(models.Model):
         domain="['|', ('team_ids', '=', team_id), ('case_default', '=', True)]",
     )
     cause = fields.Text(string="Root Cause")
+
+
+    @api.depends('partner_id.email_account')
+    def _compute_email_from(self):
+        for claim in self:
+            if claim.partner_id and claim.partner_id.email_account:
+                claim.email_from = claim.partner_id.email_account
 
     def stage_find(self, team_id, domain=None, order="sequence"):
         """Override of the base.stage method
