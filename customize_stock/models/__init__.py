@@ -8,3 +8,4 @@ from . import stock_weight_device
 from . import stock_weight_value
 from . import stock_move_line_inherit
 from . import stock_move_inherit
+from . import purchase_order_line
