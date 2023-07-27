@@ -19,6 +19,10 @@ class SaleOrderInherit(models.Model):
 
         discount_product = self.env['product.pricelist.discount'].search(
             [('partner_id', '=', self.partner_id.id)], order="logistical_weight DESC")
+
+        if discount_product and 'no_discount' in discount_product.mapped('discount_choice'):
+            return False
+
         if not discount_product:
             discount_product = self.env['product.pricelist.discount'].search(
                 [('pricelist_id.id', '=', self.pricelist_id.id)], order="logistical_weight DESC")
@@ -70,6 +74,7 @@ class SaleOrderInherit(models.Model):
                 discount = self._get_discount_product()
                 if discount and discount.discount_choice == 'pricelist_discount':
                     self._apply_discount_product(discount)
+                self._remove_discount_product()
                 self._recompute_prices()
                 self._check_discount()
 
@@ -120,6 +125,8 @@ class SaleOrderInherit(models.Model):
         """ Check discount before action confirm"""
         discount_product_ids = self.env['product.pricelist.discount'].search(
             [('product_discount_id', '!=', False)]).mapped('product_discount_id')
+        discount_pricelist_ids = self.env['product.pricelist.discount'].search(
+            [('reduced_pricelist_id', '!=', False)]).mapped('reduced_pricelist_id')
 
         for sale in self:
             check_line = {}
@@ -128,7 +135,14 @@ class SaleOrderInherit(models.Model):
                     key = str(line.product_id)
                     if key not in list(check_line.keys()):
                         check_line[key] = line
+                        if sale.pricelist_id in discount_pricelist_ids:
+                            raise ValidationError(_(
+                                "There is a logistical discounts and a price list discount. Please, check this"))
                     else:
                         raise ValidationError(_(
                             "There are 2 lines with logistical discount. Please, group them:\n{}".format(
                                 line.product_id.name)))
+
+            if sale.discount_unlocked and not check_line:
+                raise ValidationError(_(
+                    "There is not logistical discounts. Please, check this"))

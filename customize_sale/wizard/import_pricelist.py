@@ -95,6 +95,10 @@ class ImportPriceList(models.TransientModel):
         if not self.pricelist_id:
             raise UserError(_("Please select a price list to import."))
 
+        product_ids = self.env['product.product'].search([('company_id', '=', False)])
+        print('--------------------------',product_ids, self.env.user.company_id.id)
+        product_ids.write({'company_id': self.env.user.company_id.id})
+
         book = xlrd.open_workbook(file_contents=base64.b64decode(self.file))
         sheet = book.sheet_by_index(0)
         header = {}

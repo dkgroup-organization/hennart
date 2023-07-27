@@ -7,3 +7,5 @@ class PriceListInherit(models.Model):
 
     date_end = fields.Date(string="End Date")
     date_start = fields.Date(string="Start Date")
+
+    company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env.company)

@@ -21,13 +21,14 @@ class PriceListDiscount(models.Model):
         'product.product',
         string='Code produit pour la remise',
         )
-    
-    
+
     discount_choice = fields.Selection(
         string='Methode',
-        selection=[('pricelist_discount', 'Remise Liste de prix'), ('product_discount', 'Remise article')]
+        selection=[('pricelist_discount', 'Remise Liste de prix'),
+                   ('product_discount', 'Remise article'),
+                   ('no_discount', 'No discount')],
+        default='no_discount'
     )
-    
 
     reduced_pricelist_id = fields.Many2one(
         'product.pricelist',

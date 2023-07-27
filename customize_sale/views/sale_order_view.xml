@@ -108,7 +108,7 @@
                                optional="show"/>
                         <field name="qty_to_invoice" invisible="1"/>
 
-                        <widget name="qty_at_date_widget" width="20px" readonly="1"/>
+                        <!--<widget name="qty_at_date_widget" width="50px"/>-->
                         <field name="virtual_available_at_date" string="Stock" readonly="1"/>
 
                         <field name="cadence" attrs="{'column_invisible': [('parent.state', '!=', 'draft')]}"/>
@@ -123,7 +123,8 @@
                         <field name="is_downpayment" invisible="1"/>
 
                         <field name="product_uos_qty" width="50px" string="Qty"/>
-                        <field name="product_uos" width="25px" string="U." readonly="1"/>
+                        <field name="product_uos" invisible="1"/>
+                        <field name="product_uos_name" width="30px" readonly="1"/>
                         <field name="product_uos_price" width="50px" string="Price"/>
 
                         <field name="weight" width="50px" sum="Total" optional="hide"/>

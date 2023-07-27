@@ -37,6 +37,8 @@ class WmsScenarioStep(models.Model):
         # 53201523101X01012020000000 -26 espera: no id , external production [11]
         # 532010004459X010120000000 -25 old id - [:5][5:12][12][13:19][19:]
         # 01013-0066036B090320000000 -26 new_id [13]
+        data_origin = data.copy()
+        data = {}
 
         if len(scan) >= 24:
 
@@ -108,11 +110,18 @@ class WmsScenarioStep(models.Model):
                 day = scan[affinage + 1:affinage + 3]
                 month = scan[affinage + 3:affinage + 5]
                 data['lot_expiration_date'] = "{}-{}-{} 12:00:00".format(year, month, day)
+                data['warning'] = _("This lot is not registred: %s - %s" % (
+                    data['lot_name'], data['lot_expiration_date']))
 
             if action_variable:
-                data[action_variable] = data.get('lot_id') or data.get('product_id') or "?"
+                data[action_variable] = data.get('lot_id') or data.get('product_id') or False
 
-        return data
+        if data.get('warning'):
+            data_origin['warning'] = data.get('warning')
+        else:
+            data_origin.update(data)
+
+        return data_origin
 
     @api.model
     def write_inventory(self, data):
@@ -151,10 +160,12 @@ class WmsScenarioStep(models.Model):
             if quant_ids:
                 quant_ids[0].inventory_quantity = data['quantity']
                 quant_ids[0].user_id = self.env.user
-                quant_ids[0].action_apply_inventory()
+                quant_ids[0].inventory_quantity_set = True
+                #quant_ids[0].action_apply_inventory()
             else:
                 new_inventory = self.env['stock.quant'].create(inventory_vals)
-                new_inventory.action_apply_inventory()
+                new_inventory.inventory_quantity_set = True
+                #new_inventory.action_apply_inventory()
             data = self.init_data(data)
             data.update({
                 'result': True,

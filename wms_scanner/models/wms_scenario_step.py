@@ -168,7 +168,7 @@ class WmsScenarioStep(models.Model):
             if action_scanner == "scan_info" and not data.get(action_variable):
                 data = self.scan_multi(data, scan, action_variable)
 
-            if not data.get(action_variable):
+            if not data.get(action_variable) and not data.get('warning'):
                 data['warning'] = _('The barcode is unknown')
         else:
             data['warning'] = _('The barcode is unknown')
@@ -235,57 +235,52 @@ class WmsScenarioStep(models.Model):
                             product = scan_model_id.product_id
 
                         stock_quants = self.env['stock.quant'].search([
-                                      ('product_id', '=', product.id),
-                                      ('location_id.usage', '=', 'internal'),
-                                      ('quantity', '>', 0)
-                                      ])
+                            ('product_id', '=', product.id),
+                            ('location_id.usage', '=', 'internal'),
+                            ('quantity', '>', 0)
+                        ])
 
-                        for field_name in listt:
-                            if hasattr(scan_model_id, field_name) and getattr(scan_model, field_name):
-                                message += "<p> %s </p>" % (getattr(scan_model, field_name))
+                        message += "<p> [%s] %s </p>" % (product.default_code, product.name)
 
                         if stock_quants:
-                            message += " </br>"
-                            message += "<p class='border-b-2 pb-5 mb-5 border-gray-300'><b>Quants : </b> </p>"
+                            message += "<p class='border-b-2 pb-5 mb-5 border-gray-300'></p>"
                             message += "<ul class='flex flex-col gap-4'> "
 
                         for quant in stock_quants:
-                            message += "  <li> <p  > <b> Lieu :</b> %s </p>" % (quant.location_id.name)
+                            message += "  <li> <p  > <b> Lieu:</b> %s </p>" % quant.location_id.name
                             if quant.lot_id:
-                                message += "<p  > <b> Lot :  </b> %s - %s</p>" % (quant.lot_id.name, quant.removal_date.strftime("%d/%m/%Y"))
-                            message += "<p  > <b> Quantity:</b>  %s </p>" % (quant.quantity)
+                                message += "<p  > <b> Lot:  </b> %s - %s</p>" % (
+                                    quant.lot_id.ref, quant.removal_date.strftime("%d/%m/%Y"))
+                            message += "<p> <b> %s:</b>  %s </p>" % (_('Quantity'), quant.quantity)
                             message += " </li>"
                         message += "</ul>"
 
                     elif scan_model_id._name == 'stock.location':
-                        message += "<b> Location: </b>"
-                        listt = ['default_code', 'barcode', 'name']
                         stock_quants = self.env['stock.quant'].search([
-                                      ('location_id', '=', scan_model_id.id),
-                                      ('quantity', '>', 0)
-                                      ])
-                        for field_name in listt:
-                          if hasattr(scan_model_id, field_name):
-                            message += "<p> %s </p>" % (getattr(scan_model, field_name))
+                            ('location_id', '=', scan_model_id.id),
+                            ('quantity', '>', 0)
+                        ])
 
+                        message += " %s:<b> %s </b>" % (_('Location'), scan_model_id.name)
                         if stock_quants:
-                         message += " </br>"
-                         message += "<p class='border-b-2 pb-5 mb-5 border-gray-300'><b>Quants : </b> </p>"
-                         message += "<ul class='flex flex-col gap-4'> "
+                            message += "<p class='border-b-2 pb-5 mb-5 border-gray-300'></p>"
+                            message += "<ul class='flex flex-col gap-4'> "
 
-                         for quant in stock_quants:
-                            message += "<p> <li> <b> Product : %s </b> </p>" % (quant.product_id.name)
-                            if quant.product_id.tracking == 'lot':
-                               message += "<p  > <b> Lot :  </b> %s - %s</p>" % (quant.lot_id.name, quant.removal_date.strftime("%d/%m/%Y"))
-                            message += "<p> <b> Quantity:</b>  %s </p>" % (quant.quantity)
-                            message += " </li>"
-                         message += "</ul>"
+                            for quant in stock_quants:
+                                message += "<li> <p> <b>[%s] %s </b></p>" % (quant.product_id.default_code,
+                                                                               quant.product_id.name)
+                                if quant.lot_id:
+                                    message += "<p > %s: %s - %s</p>" % (
+                                        _('Lot'), quant.lot_id.ref, quant.removal_date.strftime("%d/%m/%Y"))
+                                message += "<p> <b> %s:</b> %s </p>" % (_('Quantity'), quant.quantity)
+                                message += "</li>"
+                            message += "</ul>"
                     else:
-                        listt = ['default_code', 'barcode', 'name']
-
+                        listt = ['barcode', 'name']
+                        message += "<p><b> %s </b></p>" % scan_model_id._description or scan_model_id._name
                         for field_name in listt:
                             if hasattr(scan_model_id, field_name):
-                                message += "<p> %s %s</p>" % (getattr(scan_model, field_name), scan_model_id)
+                                message += "<p> %s </p>" % (getattr(scan_model, field_name))
                         message += "<br/>"
 
         return markupsafe.Markup(message)

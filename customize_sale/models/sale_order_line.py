@@ -12,11 +12,20 @@ class SaleOrderLine(models.Model):
 
     default_code = fields.Char('Code', related="product_id.default_code", store=True, index=True)
     weight = fields.Float('weight', compute="compute_uos", store=True, compute_sudo=True)
-    product_uos = fields.Many2one('uom.uom', string="U", compute="compute_uos", compute_sudo=True)
+    product_uos = fields.Many2one('uom.uom', string="Unit", related="product_id.uos_id", readonly=True)
+    product_uos_name = fields.Char(string="Unit", related="product_id.uos_id.name", readonly=True)
+
     product_uos_qty = fields.Float('Sale Qty', compute="compute_uos", store=True, compute_sudo=True)
-    product_uos_price = fields.Float('Sale Qty', compute="compute_uos", store=True, compute_sudo=True)
+    product_uos_price = fields.Float('Price', compute="compute_uos", store=True, compute_sudo=True)
+    product_uom_readonly = fields.Boolean("UOM readonly", default=True)
     cadence = fields.Html(string="Cadencier", compute="compute_cadence", readonly=True, compute_sudo=True)
     display_qty_widget = fields.Boolean("display widget", store=True, compute='_compute_display_qty_widget')
+
+    @api.depends('state')
+    def _compute_product_uom_readonly(self):
+        for line in self:
+            # line.ids checks whether it's a new record not yet saved
+            line.product_uom_readonly = line.ids and line.state in ['sale', 'done', 'cancel']
 
     @api.depends('product_id', 'state')
     def _compute_display_qty_widget(self):
@@ -100,10 +109,9 @@ class SaleOrderLine(models.Model):
             if not line.product_id:
                 line.weight = 0.0
                 line.product_uos_qty = 0.0
-                line.product_uos = self.env.ref('uom.product_uom_unit')
                 line.product_uos_price = 0.0
             else:
-                line.product_uos = line.product_id.uos_id
+                #line.product_uos = line.product_id.uos_id
                 line.product_uos_price = line.price_unit
 
                 if line.product_id.type == 'service' or line.is_delivery or line.display_type or line.is_downpayment:

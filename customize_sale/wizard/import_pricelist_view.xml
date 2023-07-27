@@ -15,7 +15,7 @@
                                 <div class="o_row">
                                     <field name="example_id" readonly="1"/>
                                     <button type="object" name="action_export_file" class="oe_highlight"
-                                            icon="fa-download" context="{'pricelist_id': pricelist_id}"/>
+                                            icon="fa-download" title="Import file" context="{'pricelist_id': pricelist_id}"/>
                                 </div>
                             </group>
                         </group>
