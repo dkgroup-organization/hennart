@@ -7,6 +7,7 @@
             <tree>
                 <field name="name"/>
                 <field name="partner_id"/>
+                <field name="invoice"/>
                 <field name="user_id"/>
                 <field name="date"/>
                 <field name="stage_id" groups="base.group_user"/>
@@ -27,7 +28,7 @@
                 </header>
                 <sheet string="Claims">
                     <group>
-                        <field name="partner_id" string="Partner"/>
+                        <field name="partner_id" string="Partner" domain="[('is_company', '=', True)]"/>
                         <field name="invoice" widget="selection" domain="[('move_type', '=', 'out_invoice'),('partner_id', '=', partner_id)]"
                                string="N° Facture"/>
                         <field name="name"/>
