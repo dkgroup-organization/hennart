@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+
         <record id="view_order_form_inherit_sale_add_dates" model="ir.ui.view">
             <field name="name">sale.order.form.sale.add.dates</field>
             <field name="model">sale.order</field>
@@ -14,10 +15,10 @@
                 </group>
                 <header position="inside">
                     <button name="action_update_prices" type="object" string=" Update Prices"
-                                help="Recompute all prices based on this pricelist" class="btn-primary"
-                                icon="fa-refresh"
-                                confirm="This will update all unit prices based on the currently set pricelist."
-                                attrs="{'invisible': ['|', ('show_update_pricelist', '=', False), ('state', 'in', ['sale', 'done', 'cancel'])]}"/>
+                            help="Recompute all prices based on this pricelist" class="btn-primary"
+                            icon="fa-refresh"
+                            confirm="This will update all unit prices based on the currently set pricelist."
+                            attrs="{'invisible': ['|', ('show_update_pricelist', '=', False), ('state', 'in', ['sale', 'done', 'cancel'])]}"/>
                 </header>
 
                 <button name="action_unlock" position="attributes">
