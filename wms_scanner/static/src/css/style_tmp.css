@@ -18,3 +18,12 @@
 .section_up {
 margin-top: -2rem;
 }
+
+.logout {
+    width: min-content;
+
+}
+
+.screen_title {
+    margin-top: -2rem;
+}
