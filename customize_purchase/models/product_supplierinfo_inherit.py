@@ -14,7 +14,25 @@ class ProductSupplierinfoInherit(models.Model):
     product_uos = fields.Many2one("uom.uom", string="Invoicing unit")
     promotion = fields.Float("Promo %", digits='Discount')
     pricelist_ids = fields.One2many("product.supplierinfo.historic", "suppinfo_id", "Supplier Pricelist",readonly=True)
+    product_variant_ids = fields.Many2many('product.product', compute="get_product_domain")
 
+    package_domain = fields.Binary(string="Package domain", compute="_compute_package_domain")
+
+    @api.depends('company_id.multi_vat_foreign_country_ids', 'company_id.account_fiscal_country_id')
+    def _compute_tag_ids_domain(self):
+        for rep_line in self:
+            allowed_country_ids = (False, rep_line.company_id.account_fiscal_country_id.id, *rep_line.company_id.multi_vat_foreign_country_ids.ids,)
+            rep_line.tag_ids_domain = [('applicability', '=', 'taxes'), ('country_id', 'in', allowed_country_ids)]
+
+    @api.depends('product_tmpl_id')
+    def _compute_package_domain(self):
+        """ return domain to use on package"""
+        for package in self:
+            product_ids = self.env['product.product']
+            if package.product_tmpl_id:
+                product_ids |= package.product_tmpl_id.product_variant_ids
+            package.package_domain = [('packaging')]
+            package.product_variant_ids = product_ids
 
     @api.onchange('type','discount1','discount2','base_price')
     def _get_price(self):

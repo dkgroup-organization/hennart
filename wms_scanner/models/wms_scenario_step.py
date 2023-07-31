@@ -147,7 +147,7 @@ class WmsScenarioStep(models.Model):
         elif action_scanner in ['scan_model', 'scan_info']:
             models_ids = action_model
             if action_scanner == 'scan_info':
-                models_ids = self.env['ir.model.fields'].search([('name', '=', 'barcode')]).mapped('model_id')
+                models_ids = self.env['ir.model.fields'].sudo().search([('name', '=', 'barcode')]).mapped('model_id')
 
             for model_id in models_ids:
                 action_model = self.env[model_id.model]

@@ -51,7 +51,7 @@
         </template>
 
         <template id="scanner_script_js" name="scanner_script_js">
-            <script src="wms_scanner/static/src/js/script2023_003.js"/>
+            <script src="wms_scanner/static/src/js/script_menu.js"/>
         </template>
 
         <!-- BODY HEADER -->

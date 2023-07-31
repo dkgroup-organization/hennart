@@ -14,7 +14,8 @@
 
                 </xpath>
                 <xpath expr="//field[@name='company_id']" position="after">
-                    <field name="packaging"/>
+                    <field name="product_variant_ids" invisible="1"/>
+                    <field name="packaging" domain="package_domain"/>
                     <field name="product_uos"/>
 
                 </xpath>
