@@ -16,6 +16,6 @@ class PurchaseOrderLineInherit(models.Model):
 
     def _prepare_account_move_line(self, move=False):
         rec = super(PurchaseOrderLineInherit, self)._prepare_account_move_line(move=False)
-        rec.update({'weight': self.weight_picking,'': [(6, 0, self.move_ids.mapped('lot_ids').ids)]})
+        rec.update({'weight': self.weight_picking,'prodlot_id': [(6, 0, self.move_ids.mapped('lot_ids').ids)]})
         return rec
 

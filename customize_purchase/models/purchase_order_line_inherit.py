@@ -75,8 +75,8 @@ class PurchaseOrderLineInherit(models.Model):
 
     def _prepare_account_move_line(self, move=False):
         rec = super(PurchaseOrderLineInherit, self)._prepare_account_move_line(move=False)
-        rec.update({'promotion': self.discount,'discount1': self.discount1,
-                    'discount2': self.discount2,'base_price': self.base_price})
+        rec.update({'discount': self.discount,'discount1': self.discount1,
+                    'discount2': self.discount2,'base_price': self.base_price,'product_uos':self.product_uos})
         return rec
 
     ## end part of discount management
