@@ -10,11 +10,13 @@ class ProductSupplierinfoInherit(models.Model):
     price = fields.Float(
         'Price', default=0.0, digits='Purchase Product Price',store=True,
         required=True, help="The price to purchase a product")
-    packaging = fields.Many2one('product.packaging', 'Packaging',help="It specifies attributes of packaging like type, quantity of packaging,etc.")
+
+    product_id = fields.Many2one('product.product', related='product_tmpl_id.product_variant_id', store=True)
+    packaging = fields.Many2one('product.packaging',
+                                'Packaging',help="It specifies attributes of packaging like type, quantity of packaging,etc.")
     product_uos = fields.Many2one("uom.uom", string="Invoicing unit")
     promotion = fields.Float("Promo %", digits='Discount')
     pricelist_ids = fields.One2many("product.supplierinfo.historic", "suppinfo_id", "Supplier Pricelist",readonly=True)
-    product_variant_ids = fields.Many2many('product.product', compute="get_product_domain")
 
     package_domain = fields.Binary(string="Package domain", compute="_compute_package_domain")
 
@@ -31,8 +33,7 @@ class ProductSupplierinfoInherit(models.Model):
             product_ids = self.env['product.product']
             if package.product_tmpl_id:
                 product_ids |= package.product_tmpl_id.product_variant_ids
-            package.package_domain = [('packaging')]
-            package.product_variant_ids = product_ids
+            package.package_domain = [('product_id', 'in', product_ids.ids)]
 
     @api.onchange('type','discount1','discount2','base_price')
     def _get_price(self):
@@ -41,7 +42,6 @@ class ProductSupplierinfoInherit(models.Model):
                 rec.price = rec.base_price * (1 - ((rec.discount1 + rec.discount2) / 100.0))
             else:
                 rec.price = rec.base_price * (1 - (rec.discount1 / 100.0)) * (1 - (rec.discount2 / 100.0))
-
 
     def add_priceinfo(self):
         self.pricelist_ids = [(0, 0, {
@@ -54,7 +54,3 @@ class ProductSupplierinfoInherit(models.Model):
             'discount1': self.discount1,
             'discount2': self.discount2,
         })]
-
-
-
-

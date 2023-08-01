@@ -15,11 +15,10 @@
                                 <div class="o_row">
                                     <field name="example_id" readonly="1"/>
                                     <button type="object" name="action_export_file" class="oe_highlight"
-                                            icon="fa-download "/>
+                                            title="download" icon="fa-download"/>
                                 </div>
                             </group>
                         </group>
-
 
                         <group>
                             <group>

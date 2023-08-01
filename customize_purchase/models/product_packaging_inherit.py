@@ -11,10 +11,17 @@ class ProductPackagingInherit(models.Model):
     def create(self, values_list):
         for vals in values_list:
             if 'name' not in vals or not vals['name']:
-                p_name = vals['barcode'] and '[' + vals['barcode'] + '] ' or ''
-                type = self.env['stock.package.type'].browse(vals['package_type_id'])
-                p_name += type.name
-                p_name += vals['qty'] > 0 and ' %s' %str(int(vals['qty'])) or ''
+                p_name = 'colis'
+                p_name += " ({})".format(vals.get('qty', 0))
                 vals['name'] = p_name
-                vals['company_id'] = 1
+            vals['company_id'] = 1
         return super(ProductPackagingInherit,self).create(values_list)
+
+    def name_get(self):
+        """ Return the quantity in package
+        """
+        res = []
+        for package in self:
+            name = package.name or 'colis'
+            res.append((package.id, "{} ({})".format(name, int(package.qty))))
+        return res
