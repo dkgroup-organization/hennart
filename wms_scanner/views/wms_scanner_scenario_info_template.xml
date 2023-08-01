@@ -16,14 +16,14 @@
         <template id="scanner_information_body_main" name="scanner_information_body_main">
             <main class="relative">
 
-                <section id="information">
+                <section id="information" class="screen_title">
                     <div class="container mx-auto px-5 relative">
                         <div class="flex items-center gap-2.5 mb-10 landscape:mb-6">
                             <t t-call="wms_scanner.wms_scanner_image_information"/>
                             <h1>Information</h1>
                         </div>
 
-                        <form class="flex flex-col items-center gap-10 landscape:gap-6 landscape:w-[270px]"
+                        <form class="flex flex-col items-center gap-10 landscape:gap-6 landscape:w-35"
                               method="post">
 
                             <t t-if="data.get('step') and data['step'].action_scanner == 'scan_info'">
@@ -48,7 +48,7 @@
                             </t>
 
                             <div t-if="data.get('message')" id="result"
-                                 class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll landscape:absolute landscape:w-7/12 landscape:right-0 landscape:pr-5 landscape:max-h-64">
+                                 class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll landscape:absolute landscape:w-60 landscape:right-10 landscape:pr-5 landscape:max-h-64">
                                 <t t-out="data.get('message','')"/>
                             </div>
 

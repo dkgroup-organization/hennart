@@ -807,6 +807,9 @@ input{
   right: 0px;
 }
 
+.right-10{
+  right: 10px;
+}
 .top-4{
   top: 1rem;
 }
@@ -2784,6 +2787,9 @@ html {
     right: 0px;
   }
 
+  .landscape\:right-10{
+    right: 10px;
+  }
   .landscape\:top-\[10px\]{
     top: 10px;
   }
@@ -2842,6 +2848,13 @@ html {
 
   .landscape\:w-6\/12{
     width: 50%;
+  }
+
+  .landscape\:w-35{
+    width: 35%;
+  }
+  .landscape\:w-60{
+    width: 60%;
   }
 
   .landscape\:w-7\/12{
