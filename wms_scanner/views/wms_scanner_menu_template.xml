@@ -80,7 +80,7 @@
                             <div>
                                 <a href="./web/session/logout" class="flex logout gap-1">
                                     <img src="wms_scanner/static/src/img/logout.svg" alt=""/>
-                                    Logout:<br>
+                                    Logout:<br/>
                                     <t t-esc="user.name or ''"/>
 
                                 </a>
