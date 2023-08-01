@@ -13,8 +13,20 @@
                     <field name="discount2" />
 
                 </xpath>
+                <field name="min_qty" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </field>
+                
                 <xpath expr="//field[@name='company_id']" position="after">
-                    <field name="packaging"/>
+                    <field name="package_domain" invisible="1"/>
+                    <field name="packaging"
+                           domain="package_domain"
+                    context="{
+                    'default_product_id': product_id,
+                    'default_sales': False,
+                    'default_purchase': True,
+                    'default_package_type_id': 2,
+                    'default_company_id': 1}"/>
                     <field name="product_uos"/>
 
                 </xpath>

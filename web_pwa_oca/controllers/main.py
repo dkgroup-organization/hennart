@@ -88,9 +88,9 @@ class PWA(Controller):
     def _get_pwa_manifest(self):
         """Webapp manifest"""
         config_param_sudo = request.env["ir.config_parameter"].sudo()
-        pwa_name = config_param_sudo.get_param("pwa.manifest.name", "Odoo PWA")
+        pwa_name = config_param_sudo.get_param("pwa.manifest.name", "Scanner")
         pwa_short_name = config_param_sudo.get_param(
-            "pwa.manifest.short_name", "Odoo PWA"
+            "pwa.manifest.short_name", "Scanner"
         )
         pwa_icon = (
             request.env["ir.attachment"]
@@ -98,14 +98,14 @@ class PWA(Controller):
             .search([("url", "like", "/web_pwa_oca/icon.")])
         )
         background_color = config_param_sudo.get_param(
-            "pwa.manifest.background_color", "#2E69B5"
+            "pwa.manifest.background_color", "#FFFFFF"
         )
-        theme_color = config_param_sudo.get_param("pwa.manifest.theme_color", "#2E69B5")
+        theme_color = config_param_sudo.get_param("pwa.manifest.theme_color", "#FFFFFF")
         return {
             "name": pwa_name,
             "short_name": pwa_short_name,
             "icons": self._get_pwa_manifest_icons(pwa_icon),
-            "start_url": "/web",
+            "start_url": "/scanner",
             "display": "standalone",
             "background_color": background_color,
             "theme_color": theme_color,

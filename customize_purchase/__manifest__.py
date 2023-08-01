@@ -16,7 +16,7 @@
         "security/ir.model.access.csv",
         "views/product_supplierinfo_views_inherit.xml",
         "views/purchase_order_views_inherit.xml",
-        #"views/account_move_views_inherit.xml",
+        "views/res_config_settings_views.xml",
         "views/purchase_promotion_views.xml",
         "wizard/import_promotion_views.xml",
     ],

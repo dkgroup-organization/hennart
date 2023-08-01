@@ -30,10 +30,10 @@ class ResConfigSettings(models.TransientModel):
         config_parameter_obj_sudo = self.env["ir.config_parameter"].sudo()
         res = super(ResConfigSettings, self).get_values()
         res["pwa_name"] = config_parameter_obj_sudo.get_param(
-            "pwa.manifest.name", default="Odoo PWA"
+            "pwa.manifest.name", default="Scanner"
         )
         res["pwa_short_name"] = config_parameter_obj_sudo.get_param(
-            "pwa.manifest.short_name", default="Odoo"
+            "pwa.manifest.short_name", default="Scanner"
         )
         pwa_icon_ir_attachment = (
             self.env["ir.attachment"]
@@ -44,10 +44,10 @@ class ResConfigSettings(models.TransientModel):
             pwa_icon_ir_attachment.datas if pwa_icon_ir_attachment else False
         )
         res["pwa_background_color"] = config_parameter_obj_sudo.get_param(
-            "pwa.manifest.background_color", default="#2E69B5"
+            "pwa.manifest.background_color", default="#FFFFFF"
         )
         res["pwa_theme_color"] = config_parameter_obj_sudo.get_param(
-            "pwa.manifest.theme_color", default="#2E69B5"
+            "pwa.manifest.theme_color", default="#FFFFFF"
         )
         return res
 

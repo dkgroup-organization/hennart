@@ -3,7 +3,6 @@
 
 from . import wms_scenario_step
 from . import stock_lot
-from . import res_config
 from . import stock_weight_device
 from . import stock_weight_value
 from . import stock_move
