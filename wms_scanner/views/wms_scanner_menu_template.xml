@@ -23,8 +23,8 @@
                 <meta charset="UTF-8"/>
                 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-                <link rel="stylesheet" href="wms_scanner/static/src/css/style.css"/>
-                <link rel="stylesheet" href="wms_scanner/static/src/css/style_tmp.css"/>
+                <link rel="stylesheet" href="wms_scanner/static/src/css/style_20230801.css"/>
+                <link rel="stylesheet" href="wms_scanner/static/src/css/style_custom_20230801.css"/>
                 <link rel="manifest" href="/web_pwa_oca/manifest.webmanifest"/>
                 <title>
                     <t t-if="user" t-esc="user.company_id.name"/>
@@ -84,12 +84,12 @@
                                 </a>
                             </div>
 
-                            <ul class="grid grid-cols-2 gap-6 mt-8 landscape:grid-cols-3">
+                            <ul class="grid grid-cols-2 gap-6 mt-2 landscape:grid-cols-3">
                                 <t t-foreach="header_menu" t-as="menu_item">
                                     <li>
                                         <a t-att-href="menu_item.href"
-                                           class="border border-gray-200 flex items-center rounded-lg py-5 pl-2.5
-                                            gap-2.5 landscape:pl-2 landscape:py-4 landscape:w-auto">
+                                           class="border border-gray-200 flex items-center rounded-lg py-5 pl-2
+                                            gap-1 landscape:pl-2 landscape:py-4 landscape:w-auto">
                                             <img t-att-src="'wms_scanner/static/src/img/' + (menu_item.image_file or 'infos.svg')"
                                                  alt=""/>
                                             <t t-esc="menu_item.name"/>
