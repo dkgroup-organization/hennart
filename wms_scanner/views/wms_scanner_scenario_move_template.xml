@@ -23,7 +23,7 @@
                             <h1>Move</h1>
                         </div>
 
-                        <form class="flex flex-col items-center gap-2 landscape:gap-3 landscape:w-[49%]" method="post">
+                        <form class="flex flex-col items-center gap-2 landscape:gap-1 landscape:w-[49%]" method="post">
                             <t t-call="wms_scanner.scanner_move_input_location_origin_id"/>
                             <t t-call="wms_scanner.scanner_move_input_product_id"/>
                             <t t-call="wms_scanner.scanner_move_input_quantity"/>

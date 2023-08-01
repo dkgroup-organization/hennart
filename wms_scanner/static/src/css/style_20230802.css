@@ -2876,6 +2876,10 @@ html {
     justify-content: flex-end;
   }
 
+  .landscape\:gap-1{
+    gap: 0.3rem;
+  }
+
   .landscape\:gap-2{
     gap: 0.5rem;
   }
