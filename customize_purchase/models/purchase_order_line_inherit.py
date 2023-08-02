@@ -7,6 +7,7 @@ _logger = logging.getLogger(__name__)
 class PurchaseOrderLineInherit(models.Model):
     _inherit = 'purchase.order.line'
 
+    supplier_discount_type = fields.Selection(string="Type of supplier info",selection=[('discount','Cascade discount'),('add','Add discount')],default="discount")
     discount1 = fields.Float("R1 %", compute="get_price", store=True)
     discount2 = fields.Float("R2 %", compute="get_price", store=True)
     base_price = fields.Float("Base price", compute="get_price", store=True)
@@ -75,8 +76,18 @@ class PurchaseOrderLineInherit(models.Model):
 
     def _prepare_account_move_line(self, move=False):
         rec = super(PurchaseOrderLineInherit, self)._prepare_account_move_line(move=False)
-        rec.update({'discount': self.discount,'discount1': self.discount1,
-                    'discount2': self.discount2,'base_price': self.base_price,'product_uos':self.product_uos})
+        data = {'discount': self.discount, 'discount1': self.discount1,
+                    'discount2': self.discount2, 'initial_price': self.base_price,
+                    'product_uos': self.product_uos.id or self.product_uom_id.id,'supplier_discount_type':self.supplier_discount_type}
+
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+        quantity = self.product_qty
+        if (self.product_uos.id == uom_weight.id):
+            quantity = self.weight * self.product_qty
+            data.update({'quantity' : quantity})
+        rec.update(data)
+
+
         return rec
 
     ## end part of discount management
@@ -86,10 +97,13 @@ class PurchaseOrderLineInherit(models.Model):
         discount1 = supplier.discount1
         discount2 = supplier.discount2
         base_price = supplier.base_price
+        supplier_discount_type = supplier.type
         res.update(
             discount1=discount1,
             discount2=discount2,
-            base_price=base_price)
+            base_price=base_price,
+            supplier_discount_type = supplier_discount_type,
+        )
         return res
 
 
@@ -107,6 +121,7 @@ class PurchaseOrderLineInherit(models.Model):
                 line.discount1 = seller.discount1
                 line.discount2 = seller.discount2
                 line.base_price = seller.base_price
+                line.supplier_discount_type = seller.type
                 if (seller.product_name):
                     line.name = seller.product_name
                 if (seller.product_uos):
