@@ -48,7 +48,7 @@
                     />
                 </t>
 
-                <div class="mt-4 flex flex-col gap-6 w-72 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:m-auto">
+                <div id="input_message" class="mt-4 w-90 flex flex-col gap-6 w-72 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:m-auto">
                     <p t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
                         <t t-out="data.get('message')"/>
                     </p>
@@ -57,9 +57,6 @@
                 </div>
             </div>
         </template>
-
-
-
 
         <template id="scanner_move_input_location_origin_id" name="scanner_move_input_location_origin_id">
             <t t-if="data.get('step') and data['step'].action_variable == 'location_origin_id'">
