@@ -227,7 +227,7 @@ class WmsScenarioStep(models.Model):
                 for scan_model_id in scan_model:
 
                     if scan_model_id._name in ['product.product', 'stock.lot']:
-                        message += "<b>{}: </b>".format(_('Product'))
+
                         listt = ['default_code', 'barcode', 'name']
                         if scan_model_id._name == 'product.product':
                             product = scan_model_id
@@ -240,20 +240,17 @@ class WmsScenarioStep(models.Model):
                             ('quantity', '>', 0)
                         ])
 
-                        message += "<p>[%s] %s</p>" % (product.default_code, product.name)
-
-                        if stock_quants:
-                            message += "<p class='border-b-2 pb-5 mb-5 border-gray-300'></p>"
-                            message += "<div class='flex flex-col gap-4'>"
+                        message += "<b>{}: </b>".format(_('Product'))
+                        message += '<p class="mb-5 border-b-2 pb-5 border-gray-300">[%s] %s</p>' % (product.default_code, product.name)
 
                         for quant in stock_quants:
-                            message += "<p><b>Lieu:</b> %s <br/>" % quant.location_id.name
+                            message += '<p class="mb-5"><b>Lieu:</b> %s <br/>' % quant.location_id.name
                             if quant.lot_id:
                                 message += "<b>Lot:</b> %s - %s<br/>" % (
                                     quant.lot_id.ref, quant.removal_date.strftime("%d/%m/%Y"))
                             message += "<b>%s:</b> %s<br/>" % (_('Quantity'), quant.quantity)
                             message += " </p>"
-                        message += "</div>"
+
 
                     elif scan_model_id._name == 'stock.location':
                         stock_quants = self.env['stock.quant'].search([
@@ -261,20 +258,16 @@ class WmsScenarioStep(models.Model):
                             ('quantity', '>', 0)
                         ])
 
-                        message += "<b>%s:</b><p> %s </p>" % (_('Location'), scan_model_id.name)
-                        if stock_quants:
-                            message += "<p class='border-b-2 pb-5 mb-5 border-gray-300'></p>"
-                            message += "<div class='flex flex-col gap-4'> "
-
-                            for quant in stock_quants:
-                                message += "<p><b>[%s] %s</b><br/>" % (quant.product_id.default_code,
-                                                               quant.product_id.name)
-                                if quant.lot_id:
-                                    message += "%s: %s - %s<br/>" % (
-                                        _('Lot'), quant.lot_id.ref, quant.removal_date.strftime("%d/%m/%Y"))
-                                message += "<b> %s:</b> %s <br/>" % (_('Quantity'), quant.quantity)
-                                message += "</p>"
-                            message += "</div>"
+                        message += '<b>%s:</b><p class="mb-5 border-b-2 pb-5 border-gray-300"> %s </p>' % (_('Location'),
+                                                                                           scan_model_id.name)
+                        for quant in stock_quants:
+                            message += '<p class="mb-5"><b>[%s] %s</b><br/>' % (quant.product_id.default_code,
+                                                                                 quant.product_id.name)
+                            if quant.lot_id:
+                                message += "%s: %s - %s<br/>" % (
+                                    _('Lot'), quant.lot_id.ref, quant.removal_date.strftime("%d/%m/%Y"))
+                            message += "<b> %s:</b> %s <br/>" % (_('Quantity'), quant.quantity)
+                            message += "</p>"
                     else:
                         listt = ['barcode', 'name']
                         message += "<p><b> %s </b></p>" % scan_model_id._description or scan_model_id._name
