@@ -109,8 +109,8 @@ class WmsScenarioStep(models.Model):
                 year = '20' + scan[-8:-6]
                 day = scan[affinage + 1:affinage + 3]
                 month = scan[affinage + 3:affinage + 5]
-                data['lot_expiration_date'] = "{}-{}-{} 12:00:00".format(year, month, day)
-                data['warning'] = _("This lot is not registred: %s - %s" % (
+                data['lot_expiration_date'] = "{}-{}-{} 05:00:00".format(year, month, day)
+                data['warning'] = _("Unknown lot: %s - %s" % (
                     data['lot_name'], data['lot_expiration_date']))
 
             if action_variable:
