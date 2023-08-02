@@ -27,7 +27,7 @@
 
             <xpath expr="//field[@name='discount']" position="after">
                 <field name="product_packaging" optional="hide"/>
-                <field name="prodlot_id" optional="hide"/>
+                <field name="prodlot_id" widget="many2many_tags" optional="hide"/>
                 <field name="lot" optional="hide"/>
                 <field name="weight" optional="hide"/>
                 <field name="weight_uom_id" optional="hide"/>

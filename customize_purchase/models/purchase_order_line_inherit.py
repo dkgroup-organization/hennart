@@ -73,13 +73,11 @@ class PurchaseOrderLineInherit(models.Model):
             price_subtotal=subtotal,
         )
 
-    # def _prepare_account_move_line(self, move=False):
-    #     rec = super(PurchaseOrderLineInherit, self)._prepare_account_move_line(move=False)
-    #     rec.update({'discount': self.discount,'discount1': self.discount1,
-    #                 'discount2': self.discount2,'base_price': self.base_price,'weight': self.weight,
-    #                 'product_uos': self.product_uos.id,'product_packaging_id': self.product_packaging_id.id,
-    #                 'product_packaging_qty': self.product_packaging_qty})
-    #     return rec
+    def _prepare_account_move_line(self, move=False):
+        rec = super(PurchaseOrderLineInherit, self)._prepare_account_move_line(move=False)
+        rec.update({'discount': self.discount,'discount1': self.discount1,
+                    'discount2': self.discount2,'base_price': self.base_price,'product_uos':self.product_uos})
+        return rec
 
     ## end part of discount management
 
@@ -136,7 +134,12 @@ class PurchaseOrderLineInherit(models.Model):
                 quantity=line.product_qty,
                 date=line.order_id.date_order and line.order_id.date_order.date(),
                 uom_id=line.product_uom,)
-                if(seller and seller.packaging):
+                if(seller):
                     line.product_packaging_id = seller.packaging
                 else:
                     line.product_packaging_id = line.product_id.packaging_ids.filtered('purchase')._find_suitable_product_packaging(line.product_qty, line.product_uom) or line.product_packaging_id
+
+    def _prepare_stock_move_vals(self, picking, price_unit, product_uom_qty, product_uom):
+        values = super(PurchaseOrderLineInherit,self)._prepare_stock_move_vals(picking,price_unit,product_uom_qty,product_uom)
+        values['product_packaging_qty'] = self.product_packaging_qty
+        return values
