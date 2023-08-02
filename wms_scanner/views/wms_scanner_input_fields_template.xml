@@ -57,7 +57,7 @@
                 </div>
             </div>
         </template>
-        
+
         <template id="scanner_move_input_location_origin_id" name="scanner_move_input_location_origin_id">
             <t t-if="data.get('step') and data['step'].action_variable == 'location_origin_id'">
                 <t t-call="wms_scanner.scanner_input_text_id"/>
