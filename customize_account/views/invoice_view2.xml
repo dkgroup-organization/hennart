@@ -42,7 +42,6 @@
                 <field name="number_of_pack" optional="hide"/>
                 <field name="number_of_unit" optional="hide"/>
                 <field name="promotion" optional="hide"/>
-				<field name="product_uos" optional="hide"/>
                 <field name="uom_qty" optional="hide"/>
                 <field name="type" optional="hide"/>
                 <field name="histo_cost_price" optional="hide"/>
