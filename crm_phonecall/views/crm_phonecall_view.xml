@@ -36,6 +36,8 @@
                 decoration-muted="state in ('cancel','done')"
             >
                 <field name="date" />
+                <field name="type1"/>
+                <field name="channel"/>
                 <field name="name" />
                 <field name="partner_id" />
                 <button
