@@ -9,34 +9,62 @@
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_qty']" position="before">
                     <field name="max_qty"/>
                 </xpath>
-                <xpath expr="//field[@name='order_line']//tree//field[@name='product_uom'][last()]" position="attributes">
-                    <attribute name="string">U</attribute>
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_id']" position="before">
+                    <field name="default_code"/>
+                    <field name="date_planned" invisible="1"/>
                 </xpath>
+
+                <xpath expr="//field[@name='order_line']//tree//field[@name='product_uom'][last()]" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_qty']" position="attributes">
-                    <attribute name="string">Number of packages</attribute>
+                    <attribute name="string">Nb</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_id']" position="attributes">
                     <attribute name="string">Packing</attribute>
+                     <attribute name="options">{'no_create': True}</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_id']" position="after">
                     <field name="total_weight" sum="Weight"/>
                 </xpath>
+                <xpath expr="//field[@name='order_line']//tree//field[@name='name']" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </xpath>
+
                 <xpath expr="//field[@name='order_line']//tree//field[@name='price_unit']" position="attributes">
-                    <attribute name="string">Purchase price</attribute>
+                    <attribute name="readonly">1</attribute>
                 </xpath>
+
+                <xpath expr="//field[@name='order_line']//tree//field[@name='taxes_id']" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </xpath>
+                <field name="picking_type_id" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </field>
+                <field name="currency_id" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </field>
+                <field name="fiscal_position_id" position="after">
+                   <field name="currency_id" />
+                </field>
+                <field name="partner_id" position="attributes">
+                    <attribute name="domain">[('parent_id', '=', False)]</attribute>
+                    <attribute name="options">{'no_create': True}</attribute>
+                </field>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='taxes_id']" position="before">
-                    <field name="product_uos"/>
+                    <field name="product_uos" readonly="1" />
                 </xpath>
+
                 <xpath expr="//field[@name='order_line']//tree//field[@name='price_unit']" position="before">
-                    <field name="base_price" readonly="1"/>
-                    <field name="discount1" readonly="1"/>
-                    <field name="discount2"  readonly="1"/>
-                    <field name="discount"/>
+                    <field name="base_price" readonly="1" optional="hide"/>
+                    <field name="discount1" readonly="1" optional="hide"/>
+                    <field name="discount2"  readonly="1" optional="hide"/>
+                    <field name="discount" readonly="1" optional="show"/>
                 </xpath>
 
             </field>
         </record>
-
 
     </data>
 </odoo>

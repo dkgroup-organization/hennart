@@ -13,6 +13,30 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     cadence = fields.Html(string="Cadencier", compute="compute_cadence")
+    is_customer = fields.Boolean('Customer')
+    is_supplier = fields.Boolean('Supplier')
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        search_partner_mode = self.env.context.get('res_partner_search_mode')
+        is_customer = search_partner_mode == 'customer'
+        is_supplier = search_partner_mode == 'supplier'
+        if search_partner_mode:
+            for vals in vals_list:
+                if is_customer:
+                    vals['is_customer'] = True
+                elif is_supplier:
+                    vals['is_supplier'] = True
+        return super().create(vals_list)
+
+    @api.onchange('is_customer', 'is_supplier')
+    def change_rank(self):
+        """ Check minimum rank"""
+        for partner in self:
+            if partner.is_customer and partner.customer_rank <= 0:
+                partner.customer_rank = 1
+            if partner.is_supplier and partner.supplier_rank <= 0:
+                partner.supplier_rank = 1
 
     def compute_cadence(self):
         # cadencier

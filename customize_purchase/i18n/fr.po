@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0-20230328\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-20 10:35+0000\n"
-"PO-Revision-Date: 2023-06-20 10:35+0000\n"
+"POT-Creation-Date: 2023-07-26 14:29+0000\n"
+"PO-Revision-Date: 2023-07-26 14:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -29,6 +29,11 @@ msgstr ""
 #: model:ir.model.fields.selection,name:customize_purchase.selection__product_supplierinfo__type__add
 msgid "Add discount"
 msgstr "Ajouter les remises et les promotions"
+
+#. module: customize_purchase
+#: model_terms:ir.ui.view,arch_db:customize_purchase.product_supplierinfo_form_view_inherit
+msgid "Ajouter"
+msgstr ""
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__year
@@ -145,6 +150,11 @@ msgid "Group by..."
 msgstr "Grouper par..."
 
 #. module: customize_purchase
+#: model:ir.model,name:customize_purchase.model_product_supplierinfo_historic
+msgid "Historic of supplier price change"
+msgstr ""
+
+#. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_import_promotion__id
 #: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo_historic__id
 #: model:ir.model.fields,field_description:customize_purchase.field_purchase_promotion__id
@@ -170,6 +180,7 @@ msgstr "Importation Promotion"
 #. odoo-python
 #: code:addons/customize_purchase/wizard/import_promotion.py:0
 #: code:addons/customize_purchase/wizard/import_promotion.py:0
+#: model:ir.model,name:customize_purchase.model_import_promotion
 #: model:ir.ui.menu,name:customize_purchase.menu_import_promotion
 #: model_terms:ir.ui.view,arch_db:customize_purchase.import_promotion_form_view
 #, python-format
@@ -382,8 +393,9 @@ msgid ""
 "The minimal quantity to trigger this rule, expressed in the supplier Unit of"
 " Measure if any or in the default Unit of Measure of the product otherrwise."
 msgstr ""
-"La quantité minimale pour déclencher cette règle, exprimée dans l'unité de mesure du fournisseur"
-"le cas échéant ou dans l'unité de mesure par défaut du produit dans le cas contraire."
+"La quantité minimale pour déclencher cette règle, exprimée dans l'unité de "
+"mesure du fournisseurle cas échéant ou dans l'unité de mesure par défaut du "
+"produit dans le cas contraire."
 
 #. module: customize_purchase
 #: model:ir.model.fields,help:customize_purchase.field_product_supplierinfo__price
@@ -396,8 +408,8 @@ msgid ""
 "This price will be considered as a price for the supplier Unit of Measure if"
 " any or the default Unit of Measure of the product otherwise"
 msgstr ""
-"Ce prix sera considéré comme un prix pour l'unité de mesure du fournisseur si"
-"tout ou l'unité de mesure par défaut du produit sinon"
+"Ce prix sera considéré comme un prix pour l'unité de mesure du fournisseur "
+"sitout ou l'unité de mesure par défaut du produit sinon"
 
 #. module: customize_purchase
 #: model:ir.model.fields,field_description:customize_purchase.field_product_supplierinfo__type
@@ -463,18 +475,8 @@ msgid "example file"
 msgstr "Fichier d'exemple"
 
 #. module: customize_purchase
-#: model:ir.model,name:customize_purchase.model_import_promotion
-msgid "import.promotion"
-msgstr ""
-
-#. module: customize_purchase
 #: model:ir.model.fields.selection,name:customize_purchase.selection__import_promotion__date__mm/dd/yyyy
 msgid "mm/dd/yyyy"
-msgstr ""
-
-#. module: customize_purchase
-#: model:ir.model,name:customize_purchase.model_product_supplierinfo_historic
-msgid "product.supplierinfo.historic"
 msgstr ""
 
 #. module: customize_purchase

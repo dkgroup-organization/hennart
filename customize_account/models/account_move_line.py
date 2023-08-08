@@ -12,7 +12,7 @@ class AccountMoveLine(models.Model):
         string='Packaging',
         )
 
-    prodlot_id = fields.Many2one(
+    prodlot_id = fields.Many2many(
         'stock.lot',
         string='Production lot',
         )
