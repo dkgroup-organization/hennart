@@ -12,20 +12,40 @@ class PurchaseOrderLineInherit(models.Model):
     discount2 = fields.Float("R2 %", compute="get_price", store=True)
     base_price = fields.Float("Base price", compute="get_price", store=True)
     discount = fields.Float(string="Discount (%)", compute="calculate_discount_percentage", store=True)
-    product_uos = fields.Many2one("uom.uom", string="Invoicing unit", compute="get_price", store=True)
+    product_uos = fields.Many2one("uom.uom", string="Unit", compute="get_price", store=True)
     max_qty = fields.Float('Stock', compute="_get_stock")
     weight = fields.Float('Unit Weight', compute="get_price", store=True)
     total_weight = fields.Float('Weight', compute="get_price", store=True)
     default_code = fields.Char("code", related="product_id.default_code", store=True)
+    weight_picking = fields.Float(compute='_compute_weight_picking', string='Weight received', store=True,
+                                  readonly=True)
 
-    date_planned = fields.Datetime(string='Warehouse date', related="order_id.date_planned", readonly=True, store=True, index=True,
-        help="Delivery date expected from vendor. This date respectively defaults to vendor pricelist lead time then today's date.")
+    date_planned = fields.Datetime(string='Warehouse date', compute="_compute_date_planned", store=True, index=True)
 
     product_packaging_id = fields.Many2one('product.packaging', string='Packaging',
                                            domain="[('purchase', '=', True), ('product_id', '=', product_id)]",
                                            compute="_compute_product_packaging", store=True, readonly=True)
     product_packaging_qty = fields.Float('Packaging Quantity', compute="_compute_product_packaging", store=True,
                                          readonly=True)
+
+    @api.depends('order_id.date_planned')
+    def _compute_date_planned(self):
+        """ Not used"""
+        for line in self:
+            line.date_planned = line.order_id.date_planned
+
+    @api.depends('move_ids.weight')
+    def _compute_weight_picking(self):
+        for line in self:
+            weight = 0.0
+            for move_line in line.move_ids:
+                weight += move_line.weight
+            line.weight_picking = weight
+
+    def _prepare_account_move_line(self, move=False):
+        rec = super(PurchaseOrderLineInherit, self)._prepare_account_move_line(move=False)
+        rec.update({'weight': self.weight_picking,'prodlot_id': [(6, 0, self.move_ids.mapped('lot_ids').ids)]})
+        return rec
 
 
     @api.depends('product_id')
@@ -40,18 +60,17 @@ class PurchaseOrderLineInherit(models.Model):
     def calculate_discount_percentage(self):
         for line in self:
             vendor = line.partner_id
-            planned_date = line.date_planned
+            date_planned = line.order_id.date_planned
 
-            if planned_date:
-                if line.order_id.state not in ['draft', 'sent'] or not line.product_id or not planned_date:
-                    print('---------continue-----------\n', vendor,  line)
+            if date_planned:
+                if line.order_id.state not in ['draft', 'sent'] or not line.product_id or not date_planned:
+
                     continue
                 condition = [('product_id', '=', line.product_id.id), ('supplier_id', '=', vendor.id),
-                             ('date_start', '<=', planned_date.date()), ('date_end', '>=', planned_date.date())]
+                             ('date_start', '<=', date_planned.date()), ('date_end', '>=', date_planned.date())]
 
                 promotions = self.env['purchase.promotion'].search(condition)
 
-                print('-------date_planned-------------\n',promotions, vendor, line.date_planned)
                 if promotions.discount:
                     line.discount = promotions.discount
                 else:
@@ -108,7 +127,7 @@ class PurchaseOrderLineInherit(models.Model):
             base_price=base_price)
         return res
 
-    @api.depends('product_id', 'product_qty', 'date_planned')
+    @api.depends('product_id', 'product_qty', 'order_id.date_planned')
     def get_price(self):
         for line in self:
 
@@ -117,7 +136,7 @@ class PurchaseOrderLineInherit(models.Model):
             seller = line.product_id._select_seller(
                 partner_id=line.partner_id,
                 quantity=line.product_qty,
-                date=line.date_planned and line.date_planned.date(),
+                date=line.order_id.date_planned and line.order_id.date_planned.date(),
                 uom_id=line.product_uom,)
             if (seller):
                 line.discount1 = seller.discount1
@@ -136,13 +155,11 @@ class PurchaseOrderLineInherit(models.Model):
             line.weight = weight
             line.total_weight = weight * line.product_qty
 
-    @api.depends('product_id', 'partner_id', 'product_qty', 'product_uom', 'date_planned')
+    @api.depends('product_id', 'partner_id', 'product_qty', 'product_uom', 'order_id.date_planned')
     def _compute_product_packaging(self):
         for line in self:
-            if line.date_planned:
-                date_planned = line.date_planned.date()
-            else:
-                date_planned = line.date_order.date()
+            if line.order_id.date_planned:
+                date_planned = line.order_id.date_planned.date() or fields.Datetime.now().date()
 
             # suggest biggest suitable packaging
             if line.product_id and line.product_qty and line.product_uom and line.partner_id:
@@ -174,4 +191,8 @@ class PurchaseOrderLineInherit(models.Model):
     def _prepare_stock_move_vals(self, picking, price_unit, product_uom_qty, product_uom):
         values = super(PurchaseOrderLineInherit,self)._prepare_stock_move_vals(picking,price_unit,product_uom_qty,product_uom)
         values['product_packaging_qty'] = self.product_packaging_qty
+        values['date'] = self.order_id.date_planned
+        values['date_deadline'] =  self.order_id.date_planned
         return values
+
+

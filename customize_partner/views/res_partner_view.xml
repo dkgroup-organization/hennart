@@ -61,18 +61,18 @@
 
                 <group name="banks" position="before">
                     <group string="Information Fiscale" name="info_fiscal_account">
-
                         <field name="property_account_position_id" options="{'no_create': True, 'no_open': True}"/>
                         <field name="incoterm_id"/>
                         <field name="incoterm_contact_id"/>
                         <field name="incoterm_city"/>
                         <field name="oeri_code"/>
                     </group>
-
                 </group>
 
                 <group name="banks" position="before">
                     <group name="misc" string="Divers">
+                        <field name="is_customer"/>
+                        <field name="is_supplier"/>
                         <field name="company_registry" attrs="{'invisible': [('parent_id','!=',False)]}"/>
                         <field name="ref" string="Reference"/>
                         <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"

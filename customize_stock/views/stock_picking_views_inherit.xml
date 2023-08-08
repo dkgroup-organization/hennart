@@ -6,20 +6,22 @@
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
+
                 <xpath expr="//field[@name='move_ids_without_package']//tree//field[@name='product_packaging_id']"
-                       position="before">
-                    <field name="product_packaging_qty" groups="product.group_stock_packaging"/>
-
-                    <!--<button type="object" class="oe_stat_button" name="update_lot"  icon="fa-plus"/>-->
-
+                       position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
+
                 <xpath expr="//field[@name='move_ids_without_package']//tree//field[@name='product_uom']"
                        position="after">
+                    <field name="product_packaging_qty" />
+                    <field name="product_packaging_id" />
                     <field name="weight"/>
                     <field name="weight_manual"/>
                     <field name="prodlot_inv" string="Supplier N° lot"/>
                     <field name="lot_expiration_date" readonly="0" widget="date"/>
                 </xpath>
+
             </field>
         </record>
 

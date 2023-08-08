@@ -17,9 +17,9 @@
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_uom'][last()]" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
-                
+
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_qty']" position="attributes">
-                    <attribute name="string">Number of packages</attribute>
+                    <attribute name="string">Nb</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_id']" position="attributes">
                     <attribute name="string">Packing</attribute>
@@ -31,6 +31,7 @@
                 <xpath expr="//field[@name='order_line']//tree//field[@name='name']" position="attributes">
                     <attribute name="optional">hide</attribute>
                 </xpath>
+
                 <xpath expr="//field[@name='order_line']//tree//field[@name='price_unit']" position="attributes">
                     <attribute name="readonly">1</attribute>
                 </xpath>
@@ -59,12 +60,11 @@
                     <field name="base_price" readonly="1" optional="hide"/>
                     <field name="discount1" readonly="1" optional="hide"/>
                     <field name="discount2"  readonly="1" optional="hide"/>
-                    <field name="discount" optional="hide"/>
+                    <field name="discount" readonly="1" optional="show"/>
                 </xpath>
 
             </field>
         </record>
-
 
     </data>
 </odoo>
