@@ -6,10 +6,10 @@
             <field name="model">purchase.promotion</field>
             <field name="arch" type="xml">
                 <tree editable="bottom">
-                    <field name="supplier_id"/>
+                    <field name="supplier_id" options="{'no_create': True}"/>
                     <field name="date_start"/>
                     <field name="date_end"/>
-                    <field name="product_id"/>
+                    <field name="product_id" options="{'no_create': True}"/>
                     <field name="name"/>
                     <field name="discount"/>
                 </tree>

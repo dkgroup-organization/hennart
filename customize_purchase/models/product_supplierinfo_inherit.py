@@ -11,11 +11,10 @@ class ProductSupplierinfoInherit(models.Model):
         'Price', default=0.0, digits='Purchase Product Price',store=True,
         required=True, help="The price to purchase a product")
 
-    product_id = fields.Many2one('product.product', related='product_tmpl_id.product_variant_id', store=True)
+    product_id = fields.Many2one('product.product', related='product_tmpl_id.product_variant_id', store=True, index=True)
     packaging = fields.Many2one('product.packaging',
                                 'Packaging',help="It specifies attributes of packaging like type, quantity of packaging,etc.")
     product_uos = fields.Many2one("uom.uom", string="Invoicing unit")
-    promotion = fields.Float("Promo %", digits='Discount')
     pricelist_ids = fields.One2many("product.supplierinfo.historic", "suppinfo_id", "Supplier Pricelist",readonly=True)
 
     package_domain = fields.Binary(string="Package domain", compute="_compute_package_domain")
