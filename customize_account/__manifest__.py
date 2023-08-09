@@ -14,6 +14,7 @@
     "data": [
         "views/res_config_view.xml",
         "views/invoice_view.xml",
+        "views/invoice_view2.xml",
 
 
     ],

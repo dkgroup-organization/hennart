@@ -1,0 +1,269 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* customize_account
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0-20230328\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-03 09:02+0000\n"
+"PO-Revision-Date: 2023-08-03 09:02+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.view_it_config_settings
+msgid ""
+"<span class=\"o_form_label\">Customization</span>\n"
+"                            <span class=\"fa fa-lg fa-building-o\" title=\"Customization of account.\" aria-label=\"Customization of account.\" groups=\"base.group_multi_company\" role=\"img\"/>"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__account_id
+#: model:ir.model.fields,field_description:customize_account.field_account_move__account_id
+#: model:ir.model.fields,field_description:customize_account.field_account_payment__account_id
+msgid "Account"
+msgstr "Compte"
+
+#. module: customize_account
+#: model:ir.model.fields.selection,name:customize_account.selection__account_move_line__supplier_discount_type__add
+msgid "Add discount"
+msgstr "Ajouter les remises et les promotions"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__picking_id
+#: model:ir.model.fields,field_description:customize_account.field_account_move__picking_id
+#: model:ir.model.fields,field_description:customize_account.field_account_payment__picking_id
+msgid "Bon de livraison"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields.selection,name:customize_account.selection__account_move_line__supplier_discount_type__discount
+msgid "Cascade discount"
+msgstr "Cascader les remises et les promotions"
+
+#. module: customize_account
+#: model:ir.model,name:customize_account.model_res_config_settings
+msgid "Config Settings"
+msgstr "Paramètres de config"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__incoterm_date
+#: model:ir.model.fields,field_description:customize_account.field_account_move__incoterm_date
+#: model:ir.model.fields,field_description:customize_account.field_account_payment__incoterm_date
+msgid "Date of arrival in UK"
+msgstr "Date d'arrivée au UK"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__histo_cost_price
+msgid "Histo Cost Price"
+msgstr "Historique prix de revient"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__piece_comptable
+#: model:ir.model.fields,field_description:customize_account.field_account_move__piece_comptable
+#: model:ir.model.fields,field_description:customize_account.field_account_payment__piece_comptable
+msgid "ID piece comptable"
+msgstr "ID pièce comptable"
+
+#. module: customize_account
+#: model:ir.model.fields.selection,name:customize_account.selection__account_move__payment_state__in_payment
+msgid "In Payment"
+msgstr "En paiement"
+
+#. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.account_move_view_form
+msgid "Infos V7"
+msgstr "Infos V7 "
+
+#. module: customize_account
+#: model:ir.model.fields.selection,name:customize_account.selection__account_move__payment_state__invoicing_legacy
+msgid "Invoicing App Legacy"
+msgstr "Historique de l'app facturation"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__product_uos
+msgid "Invoicing unit"
+msgstr "Unité de facturation"
+
+#. module: customize_account
+#: model:ir.model,name:customize_account.model_account_move
+msgid "Journal Entry"
+msgstr "Pièce comptable"
+
+#. module: customize_account
+#: model:ir.model,name:customize_account.model_account_move_line
+msgid "Journal Item"
+msgstr "Écriture comptable"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__lot
+msgid "Lot"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__margin_percent
+msgid "Marge %"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__margin
+msgid "Marge total"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__payment_method_id
+#: model:ir.model.fields,field_description:customize_account.field_account_move__payment_method_id
+msgid "Methode de paiement"
+msgstr "Méthode de paiement"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__number_of_pack
+msgid "Nb pack"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__number_of_unit
+msgid "Nb unit"
+msgstr "Nb unité"
+
+#. module: customize_account
+#: model:ir.model.fields.selection,name:customize_account.selection__account_move__payment_state__not_paid
+msgid "Not Paid"
+msgstr "Non payées"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__product_packaging
+msgid "Packaging"
+msgstr "Conditionnement"
+
+#. module: customize_account
+#: model:ir.model.fields.selection,name:customize_account.selection__account_move__payment_state__paid
+msgid "Paid"
+msgstr "Payé"
+
+#. module: customize_account
+#: model:ir.model.fields.selection,name:customize_account.selection__account_move__payment_state__partial
+msgid "Partially Paid"
+msgstr "Partiellement réglé"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__payment_state
+#: model:ir.model.fields,field_description:customize_account.field_account_move__payment_state
+#: model:ir.model.fields,field_description:customize_account.field_account_payment__payment_state
+msgid "Payment Status"
+msgstr "Statut de paiement"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__picking_ids
+#: model:ir.model.fields,field_description:customize_account.field_account_move__picking_ids
+#: model:ir.model.fields,field_description:customize_account.field_account_payment__picking_ids
+msgid "Pickings"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__incoterm_port
+#: model:ir.model.fields,field_description:customize_account.field_account_move__incoterm_port
+#: model:ir.model.fields,field_description:customize_account.field_account_payment__incoterm_port
+msgid "Port of entry"
+msgstr "Port d'entrée"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__initial_price
+msgid "Price"
+msgstr "Prix"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__cost_price
+msgid "Prix de revient"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__price_net
+msgid "Prix net"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__prodlot_id
+msgid "Production lot"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__promotion
+msgid "Promo %"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__uom_qty
+msgid "Qty"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__discount1
+msgid "R1 %"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__discount2
+msgid "R2 %"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__cadeau
+msgid "Remise Total"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields.selection,name:customize_account.selection__account_move__payment_state__reversed
+msgid "Reversed"
+msgstr "Extourné"
+
+#. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.view_it_config_settings
+msgid "Specific configuration for customer."
+msgstr "Configuration spécifique pour le client."
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__total_ht
+#: model:ir.model.fields,field_description:customize_account.field_account_move__total_ht
+#: model:ir.model.fields,field_description:customize_account.field_account_payment__total_ht
+msgid "Total HT"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__total_ttc
+#: model:ir.model.fields,field_description:customize_account.field_account_move__total_ttc
+#: model:ir.model.fields,field_description:customize_account.field_account_payment__total_ttc
+msgid "Total TTC"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__total_tva
+#: model:ir.model.fields,field_description:customize_account.field_account_move__total_tva
+#: model:ir.model.fields,field_description:customize_account.field_account_payment__total_tva
+msgid "Total TVA"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__type
+msgid "Type"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__supplier_discount_type
+msgid "Type of supplier info"
+msgstr "Informations sur le type de fournisseur"
+
+#. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.view_it_config_settings
+msgid "Update account code"
+msgstr "Actualiser le code de compte"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line__weight
+msgid "Weight"
+msgstr "Poids"
