@@ -35,8 +35,13 @@ class ResPartner(models.Model):
         for partner in self:
             if partner.is_customer and partner.customer_rank <= 0:
                 partner.customer_rank = 1
+            elif not partner.is_customer:
+                partner.customer_rank = 0
+
             if partner.is_supplier and partner.supplier_rank <= 0:
                 partner.supplier_rank = 1
+            elif not partner.is_supplier:
+                partner.supplier_rank = 0
 
     def compute_cadence(self):
         # cadencier
