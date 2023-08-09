@@ -1,0 +1,300 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* customize_report
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-09 14:44+0000\n"
+"PO-Revision-Date: 2023-08-09 14:44+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid ""
+"<span groups=\"account.group_show_line_subtotals_tax_excluded\">Amount</span>\n"
+"                                        <span groups=\"account.group_show_line_subtotals_tax_included\">Total Price</span>"
+msgstr ""
+"<span groups=\"account.group_show_line_subtotals_tax_excluded\">Montant</span>\n"
+"                                        <span groups=\"account.group_show_line_subtotals_tax_included\">Total</span>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<span>Code</span>"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<span>Disc %</span>"
+msgstr "<span>Remise %</span>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<span>EAN</span>"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.external_layout_boxed_inherits
+msgid ""
+"<span>FR</span>\n"
+"                            <span>62.215.030</span>\n"
+"                            <span><strong>CE</strong></span>"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<span>Net price</span>"
+msgstr "<span>Prix Net</span>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<span>Pack of</span>"
+msgstr "<span>Colis de</span>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<span>Product</span>"
+msgstr "<span>Produit</span>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<span>Qty</span>"
+msgstr "<span>Qté</span>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<span>Tax %</span>"
+msgstr "<span>TVA %</span>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<span>Unit price</span>"
+msgstr "<span>Prix U</span>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<span>Unit</span>"
+msgstr "<span>U</span>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong class=\"mr16\">Subtotal</strong>"
+msgstr "<strong class=\"mr16\">Sous total</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong style=\"margin-left: 10px !important;\">Customer order:</strong>"
+msgstr "<strong style=\"margin-left: 10px !important;\">Commande:</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong style=\"margin-left: 10px !important;\">Customer:</strong>"
+msgstr "<strong style=\"margin-left: 10px !important;\">Client:</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong style=\"margin-left: 10px !important;\">Date:</strong>"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong style=\"margin-left: 10px !important;\">Delivery:</strong>"
+msgstr "<strong style=\"margin-left: 10px !important;\">Livraison:</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong>Amount Due</strong>"
+msgstr "<strong>Montant Du</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong>Carrier:</strong>"
+msgstr "<strong>Transporteur:</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchasequotation_document_inherit
+msgid "<strong>Code Hennart</strong>"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchaseorder_document_inherit
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchasequotation_document_inherit
+msgid "<strong>Delivery date:</strong>"
+msgstr "<strong>Date de Livraison:</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchaseorder_document_inherit
+msgid "<strong>Disc.</strong>"
+msgstr "<strong>Rem.</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong>Due date: </strong>"
+msgstr "<strong>Date de paiement: </strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong>Gross weight:</strong>"
+msgstr "<strong>Poids brut:</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchaseorder_document_inherit
+msgid "<strong>Hennart code</strong>"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong>Nb container:</strong>"
+msgstr "<strong>Nb cartons:</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong>Nb pack:</strong>"
+msgstr "<strong>Nb colis:</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong>Nb pallet:</strong>"
+msgstr "<strong>Nb colis:</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchaseorder_document_inherit
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchasequotation_document_inherit
+msgid "<strong>Order date:</strong>"
+msgstr "<strong>date de commande:</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchaseorder_document_inherit
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchasequotation_document_inherit
+msgid "<strong>Pack</strong>"
+msgstr "<strong>Colis</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchaseorder_document_inherit
+msgid "<strong>Price</strong>"
+msgstr "<strong>Prix</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong>Weight:</strong>"
+msgstr "<strong>Poids:</strong>"
+
+#. module: customize_report
+#: model:ir.model,name:customize_report.model_res_company
+msgid "Companies"
+msgstr "Sociétés"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "Facture Annulée"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "Facture Brouillon"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "Facture Fournisseur"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.view_company_form_inherit_add_text
+msgid "Footer Text"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.external_layout_boxed_inherits
+msgid "HENNART FRERES"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.view_company_form_inherit_add_text
+msgid "Header Text"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "Invoice"
+msgstr ""
+
+#. module: customize_report
+#: model:ir.model.fields,field_description:customize_report.field_res_company__invoice_footer_text
+msgid "Invoice Footer Text"
+msgstr ""
+
+#. module: customize_report
+#: model:ir.model.fields,field_description:customize_report.field_res_company__invoice_header_text
+msgid "Invoice Header Text"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.external_layout_boxed_inherits
+msgid "Logo"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "Lot:"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "Note de crédit"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "Note de crédit Fournisseur"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchasequotation_document_inherit
+msgid "Order"
+msgstr "Commande"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "Paid on"
+msgstr "à réglé pour le"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.view_company_form_inherit_add_text
+msgid "Report Text"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_saleorder_document_inherits
+#: model_terms:ir.ui.view,arch_db:customize_report.sale_order_portal_content_inherits
+msgid "Uos"
+msgstr "U"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_saleorder_document_inherits
+#: model_terms:ir.ui.view,arch_db:customize_report.sale_order_portal_content_inherits
+msgid "Uos Qty"
+msgstr "Qté"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_saleorder_document_inherits
+#: model_terms:ir.ui.view,arch_db:customize_report.sale_order_portal_content_inherits
+msgid "Weight"
+msgstr "Poids"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.external_layout_boxed_inherits
+msgid "ZI du Château - 8, rue Gutenberg - F 62 220 CARVIN"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchaseorder_document_inherit
+#: model_terms:ir.ui.view,arch_db:customize_report.report_purchasequotation_document_inherit
+msgid "pack of"
+msgstr "colis de"

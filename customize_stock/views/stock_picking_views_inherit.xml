@@ -11,7 +11,16 @@
                        position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
-
+                <field name="date_deadline" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                </field>
+                <field name="location_dest_id" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                </field>
+                
+                <field name="date_deadline" position="attributes">
+                     <attribute name="invisible">1</attribute>
+                </field>
                 <xpath expr="//field[@name='move_ids_without_package']//tree//field[@name='product_uom']"
                        position="after">
                     <field name="product_packaging_qty" />

@@ -33,17 +33,17 @@
                 <field name="weight_uom_id" optional="hide"/>
                 <field name="cadeau" optional="hide"/>
                 <field name="cost_price" optional="hide"/>
+                <field name="supplier_discount_type" optional="hide"/>
                 <field name="discount1" optional="hide"/>
                 <field name="discount2" optional="hide"/>
+                 <field name="initial_price"  optional="hide"/>
                 <field name="margin" optional="hide"/>
                 <field name="margin_percent" optional="hide"/>
                 <field name="number_of_pack" optional="hide"/>
                 <field name="number_of_unit" optional="hide"/>
                 <field name="promotion" optional="hide"/>
-				<field name="product_uos" optional="hide"/>
                 <field name="uom_qty" optional="hide"/>
                 <field name="type" optional="hide"/>
-                <field name="initial_price" optional="hide"/>
                 <field name="histo_cost_price" optional="hide"/>
             </xpath>
 
@@ -72,9 +72,9 @@
                 <field name="payment_method_id"/>
             </xpath>
 			
-			<xpath expr="//field[@name='partner_id']" position="after">
-				<field name="payment_state" readonly="0"/>
-            </xpath>
+<!--			<xpath expr="//field[@name='partner_id']" position="after">-->
+<!--				<field name="payment_state" readonly="0"/>-->
+<!--            </xpath>-->
 
         </field>
     </record>
