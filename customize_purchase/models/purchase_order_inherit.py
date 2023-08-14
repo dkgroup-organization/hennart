@@ -25,8 +25,6 @@ class PurchaseOrder(models.Model):
             for line in self.order_line:
                 if not line.product_qty:
                     line.unlink()
-
-            print('\n--------void line unlinked---------------')
             #order.order_line._validate_analytic_distribution()
             #order._add_supplier_to_product()
             # Deal with double validation process
@@ -52,7 +50,9 @@ class PurchaseOrder(models.Model):
 
         if self.partner_id:
             line_vals = []
-            seller_ids = self.env['product.supplierinfo'].search([('partner_id', '=', self.partner_id.id)])
+            seller_ids = self.env['product.supplierinfo'].search([
+                ('partner_id', '=', self.partner_id.id),
+                ('no_purchase', '!=', True)])
             if seller_ids:
                 product_ids_seller = seller_ids.mapped('product_tmpl_id').mapped('product_variant_ids')
                 product_ids = product_ids_seller

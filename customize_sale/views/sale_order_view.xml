@@ -39,7 +39,7 @@
                 </page>
                 <field name="partner_id" position="attributes">
                     <attribute name="options">{'no_create': True}</attribute>
-                    <attribute name="domain">[('is_customer', '=', True), ('parent_id', '=', False)]</attribute>
+                    <attribute name="domain">[('is_customer', '=', True), ('is_company', '=', True)]</attribute>
                 </field>
 
                 <xpath expr="//page[@name='other_information']//field[@name='partner_invoice_id']"

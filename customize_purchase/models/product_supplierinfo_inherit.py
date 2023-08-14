@@ -3,6 +3,7 @@ from odoo import fields, models, api
 
 class ProductSupplierinfoInherit(models.Model):
     _inherit = 'product.supplierinfo'
+
     type = fields.Selection(string="Type of supplier info",selection=[('discount','Cascade discount'),('add','Add discount')],default="discount")
     discount1 = fields.Float("Discount 1",digits='Discount')
     discount2 = fields.Float("Discount 2",digits='Discount')
@@ -18,6 +19,8 @@ class ProductSupplierinfoInherit(models.Model):
     pricelist_ids = fields.One2many("product.supplierinfo.historic", "suppinfo_id", "Supplier Pricelist",readonly=True)
 
     package_domain = fields.Binary(string="Package domain", compute="_compute_package_domain")
+    no_purchase = fields.Boolean('Stop Purchase', help=""" Select this option if you want stopping to purchase this product 
+    from this supplier""")
 
     @api.depends('company_id.multi_vat_foreign_country_ids', 'company_id.account_fiscal_country_id')
     def _compute_tag_ids_domain(self):
