@@ -49,7 +49,7 @@
                    <field name="currency_id" />
                 </field>
                 <field name="partner_id" position="attributes">
-                    <attribute name="domain">[('is_supplier', '=', True)]</attribute>
+                    <attribute name="domain">[('is_supplier', '=', True), ('is_company', '=', True)]</attribute>
                     <attribute name="options">{'no_create': True}</attribute>
                 </field>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='taxes_id']" position="before">

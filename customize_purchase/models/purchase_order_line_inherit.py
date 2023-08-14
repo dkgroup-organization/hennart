@@ -25,9 +25,8 @@ class PurchaseOrderLineInherit(models.Model):
 
     product_packaging_id = fields.Many2one('product.packaging', string='Packaging',
                                            domain="[('purchase', '=', True), ('product_id', '=', product_id)]",
-                                           compute="_compute_product_packaging", store=True, readonly=True)
-    product_packaging_qty = fields.Float('Packaging Quantity', compute="_compute_product_packaging", store=True,
-                                         readonly=True)
+                                           compute="_compute_product_packaging", store=True)
+    product_packaging_qty = fields.Float('Packaging Quantity', compute="_compute_product_packaging", store=True)
 
     @api.depends('order_id.date_planned')
     def _compute_date_planned(self):

@@ -16,6 +16,14 @@
                 <field name="min_qty" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </field>
+                <field name="product_uom" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </field>
+
+                <group name="vendor" position="inside">
+                    <field name="no_purchase" />
+                </group>
+
                 <field name="product_tmpl_id" position="attributes">
                     <attribute name="options">{'no_create': True}</attribute>
                 </field>
