@@ -5,8 +5,9 @@ import datetime
 
 _logger = logging.getLogger(__name__)
 
-class StockMoveInherit(models.Model):
+class StockMove(models.Model):
     _inherit = "stock.move"
+
     product_packaging_qty = fields.Float('Packaging Quantity')
     weight_manual = fields.Float("Weight manual")
     prodlot_inv = fields.Char(string='Supplier N° lot')
@@ -17,11 +18,10 @@ class StockMoveInherit(models.Model):
         help='This is the date on which the goods with this Serial Number may'
              ' become dangerous and must not be consumed.')
 
-
     def write(self, vals):
-        res = super(StockMoveInherit, self).write(vals)
+        res = super().write(vals)
         if 'prodlot_inv' in vals or 'lot_expiration_date' in vals:
-            if(not self.move_line_ids ):
+            if not self.move_line_ids:
                 self.move_line_ids = [(0, 0, {
                 'lot_name': self.prodlot_inv,
                 'expiration_date':self.lot_expiration_date

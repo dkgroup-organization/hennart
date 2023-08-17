@@ -143,6 +143,6 @@ class SaleOrderInherit(models.Model):
                             "There are 2 lines with logistical discount. Please, group them:\n{}".format(
                                 line.product_id.name)))
 
-            if sale.discount_unlocked and not check_line:
+            if sale.discount_unlocked and sale.pricelist_id not in discount_pricelist_ids and not check_line:
                 raise ValidationError(_(
                     "There is not logistical discounts. Please, check this"))

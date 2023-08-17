@@ -10,13 +10,12 @@ from odoo import api, fields, models, _, Command
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
-    def compute_date_delivered(self):
-        """ Define date delivered"""
+    #date_delivered = fields.Datetime("delivered date", compute='compute_date_delivered', help="Customer delivered date")
 
+    def compute_date_delivered(self):
+        """ Custom delivery, Always delivery at one time with no backorder"""
         for picking in self:
             if picking.state in ['done', 'cancel']:
                 continue
-            if picking.sale_id:
-                picking.date_delivered = picking.sale_id.date_delivered
-            else:
-                super(StockPicking, picking).compute_date_delivered()
+            if not picking.date_delivered:
+                picking.date_delivered = fields.Datetime.now()

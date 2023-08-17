@@ -15,11 +15,11 @@ class PurchaseOrderLineInherit(models.Model):
     discount = fields.Float(string="Discount (%)", compute="calculate_discount_percentage", store=True)
     product_uos = fields.Many2one("uom.uom", string="Unit", compute="get_price", store=True)
     max_qty = fields.Float('Stock', compute="_get_stock")
-    weight = fields.Float('Unit Weight', compute="get_price", store=True)
-    total_weight = fields.Float('Weight', compute="get_price", store=True)
+    weight = fields.Float('Unit Weight', compute="get_price", store=True, digits="Stock Weight")
+    total_weight = fields.Float('Weight', compute="get_price", store=True, digits="Stock Weight")
     default_code = fields.Char("code", related="product_id.default_code", store=True)
     weight_picking = fields.Float(compute='_compute_weight_picking', string='Weight received', store=True,
-                                  readonly=True)
+                                  readonly=True, digits="Stock Weight")
 
     date_planned = fields.Datetime(string='Warehouse date', compute="_compute_date_planned", store=True, index=True)
 
@@ -121,7 +121,6 @@ class PurchaseOrderLineInherit(models.Model):
             quantity = self.weight * self.product_qty
             data.update({'quantity' : quantity})
         rec.update(data)
-
 
         return rec
 

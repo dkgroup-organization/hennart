@@ -12,14 +12,12 @@ class StockWeightValue(models.Model):
     weight = fields.Float('Total Weight', digits='Stock Weight')
     tare = fields.Float('Tare Weight', digits='Stock Weight')
 
-
-
-
     type =  fields.Selection([('1', 'Type 1')], 'type')
     product_id = fields.Many2one('product.product', 'Product')
     product_qty = fields.Float('Quantity', digits='Product Unit of Measure')
     prodlot_id = fields.Many2one('stock.lot', 'Production lot')
     user_prepa_id = fields.Many2one('res.users', 'Preparator')
+
     picking_id = fields.Many2one('stock.picking', 'Reference', index=True)
 
     state = fields.Selection([('draft', 'New'), ('cancel', 'Cancelled'), ('done', 'Done')],

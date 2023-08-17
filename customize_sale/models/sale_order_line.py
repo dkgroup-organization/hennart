@@ -11,11 +11,13 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     default_code = fields.Char('Code', related="product_id.default_code", store=True, index=True)
-    weight = fields.Float('weight', compute="compute_uos", store=True, compute_sudo=True)
+    weight = fields.Float('weight', compute="compute_uos", store=True, digits="Stock Weight",
+                          compute_sudo=True)
+
     product_uos = fields.Many2one('uom.uom', string="Unit", related="product_id.uos_id", readonly=True)
     product_uos_name = fields.Char(string="Unit", related="product_id.uos_id.name", readonly=True)
 
-    product_uos_qty = fields.Float('Sale Qty', compute="compute_uos", store=True, compute_sudo=True)
+    product_uos_qty = fields.Float('Qty', compute="compute_uos", store=True, compute_sudo=True)
     product_uos_price = fields.Float('Price', compute="compute_uos", store=True, compute_sudo=True)
     product_uom_readonly = fields.Boolean("UOM readonly", default=True)
     cadence = fields.Html(string="Cadencier", compute="compute_cadence", readonly=True, compute_sudo=True)
@@ -96,6 +98,43 @@ class SaleOrderLine(models.Model):
     def _compute_customer_lead(self):
         """ The customer lead is more complexe in this project, It depends on location of customer: 1, 2 or 3 days """
         self.customer_lead = 0.0
+
+    def _get_outgoing_incoming_moves(self):
+        """ """
+        outgoing_moves = self.env['stock.move']
+        incoming_moves = self.env['stock.move']
+        # TODO: import the weight
+
+        moves = self.move_ids.filtered(lambda r: r.state != 'cancel' and not r.scrapped and self.product_id == r.product_id)
+        if self._context.get('accrual_entry_date'):
+            moves = moves.filtered(lambda r: fields.Date.context_today(r, r.date) <= self._context['accrual_entry_date'])
+
+        for move in moves:
+            if move.location_dest_id.usage == "customer":
+                if not move.origin_returned_move_id or (move.origin_returned_move_id and move.to_refund):
+                    outgoing_moves |= move
+            elif move.location_dest_id.usage != "customer" and move.to_refund:
+                incoming_moves |= move
+
+        return outgoing_moves, incoming_moves
+
+    @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom')
+    def _compute_qty_delivered(self):
+        super(SaleOrderLine, self)._compute_qty_delivered()
+
+        for line in self:  # TODO: maybe one day, this should be done in SQL for performance sake
+            if line.qty_delivered_method == 'stock_move':
+                qty = 0.0
+                outgoing_moves, incoming_moves = line._get_outgoing_incoming_moves()
+                for move in outgoing_moves:
+                    if move.state != 'done':
+                        continue
+                    qty += move.product_uom._compute_quantity(move.product_uom_qty, line.product_uom, rounding_method='HALF-UP')
+                for move in incoming_moves:
+                    if move.state != 'done':
+                        continue
+                    qty -= move.product_uom._compute_quantity(move.product_uom_qty, line.product_uom, rounding_method='HALF-UP')
+                line.qty_delivered = qty
 
     @api.depends('product_id', 'product_uom_qty', 'price_unit', 'state')
     def compute_uos(self):
@@ -274,42 +313,3 @@ class SaleOrderLine(models.Model):
                     amount_to_invoice = price_subtotal - line.untaxed_amount_invoiced
 
             line.untaxed_amount_to_invoice = amount_to_invoice
-
-
-    def _prepare_invoice_line(self, **optional_values):
-        """Prepare the values to create the new invoice line for a sales order line.
-
-        :param optional_values: any parameter that should be added to the returned invoice line
-        :rtype: dict
-        """
-        # TODO: change the quantity and price_unit by uos_id (kg or unit)
-        self.ensure_one()
-        res = {
-            'display_type': self.display_type or 'product',
-            'sequence': self.sequence,
-            'name': self.name,
-            'product_id': self.product_id.id,
-            'product_uom_id': self.product_uom.id,
-            'product_uos': self.product_uos.id,
-            'product_uos_qty': self.product_uos_qty,
-            'product_uos_price': self.product_uos_price,
-            'quantity': self.qty_to_invoice,
-            'discount': self.discount,
-            'price_unit': self.price_unit,
-            'tax_ids': [Command.set(self.tax_id.ids)],
-            'sale_line_ids': [Command.link(self.id)],
-            'is_downpayment': self.is_downpayment,
-        }
-        analytic_account_id = self.order_id.analytic_account_id.id
-        if self.analytic_distribution and not self.display_type:
-            res['analytic_distribution'] = self.analytic_distribution
-        if analytic_account_id and not self.display_type:
-            if 'analytic_distribution' in res:
-                res['analytic_distribution'][analytic_account_id] = res['analytic_distribution'].get(analytic_account_id, 0) + 100
-            else:
-                res['analytic_distribution'] = {analytic_account_id: 100}
-        if optional_values:
-            res.update(optional_values)
-        if self.display_type:
-            res['account_id'] = False
-        return res

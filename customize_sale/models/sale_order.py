@@ -91,6 +91,9 @@ class SaleOrder(models.Model):
         """ Check the sale order before confirmation"""
         self.check_discount()
         self.check_line()
+        for line in self.order_line:
+            if not line.product_uom_qty:
+                line.unlink()
         res = super().action_confirm()
         return res
 

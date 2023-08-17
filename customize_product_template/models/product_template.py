@@ -139,7 +139,7 @@ class ProductTemplate(models.Model):
 
     to_weight = fields.Boolean(string='to weight')
     tare = fields.Float(string='Tare', help='Tare')
-    weight_gross = fields.Float(string='Gross Weight',help='The gross weight in Kg.')
+    weight_gross = fields.Float(string='Gross Weight',help='The gross weight in Kg.', digits="Stock Weight")
     format_etiquette =  fields.Char('Format d\'etiquette', size=128)
     to_label = fields.Boolean(string='to label')
     gestion_affinage = fields.Boolean(string='Refining management')

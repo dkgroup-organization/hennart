@@ -25,3 +25,4 @@ class ResPartner(models.Model):
             partner.phonecall_count = self.env["crm.phonecall"].search_count(
                 [("partner_id", "=", partner.id), ('state', 'in', ['open', 'pending'])]
             )
+

@@ -48,7 +48,7 @@ class ProductSupplierinfoInherit(models.Model):
     def add_priceinfo(self):
         self.pricelist_ids = [(0, 0, {
             'suppinfo_id': self.id,
-            'min_quantity': self.min_qty,
+            'min_quantity': 0.0,
             'price': self.price,
             'date_start': self.date_start,
             'date_end': self.date_end,
