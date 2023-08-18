@@ -26,7 +26,8 @@
                      <attribute name="options">{'no_create': True}</attribute>
                 </xpath>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_id']" position="after">
-                    <field name="total_weight" sum="Weight"/>
+                    <field name="weight" sum="Weight"/>
+                    <field name="supplierinfo_id"/>
                 </xpath>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='name']" position="attributes">
                     <attribute name="optional">hide</attribute>

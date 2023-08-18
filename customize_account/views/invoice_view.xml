@@ -50,7 +50,6 @@
                                         <field name="number_of_pack"/>
 
                                         <field name="weight"/>
-                                        <field name="weight_uom_id"/>
 
                                         <field name="quantity" optional="show"/>
                                         <field name="product_uom_category_id" invisible="1"/>
