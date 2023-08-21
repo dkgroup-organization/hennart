@@ -4,6 +4,9 @@ from odoo import _, api, fields, models
 from odoo.tools import float_compare, float_is_zero
 from collections import defaultdict
 
+import logging
+_logger = logging.getLogger(__name__)
+
 
 class AccountMoveLine(models.Model):
     """ Add the possibility to invoice by weight price.
@@ -13,6 +16,14 @@ class AccountMoveLine(models.Model):
 
     _inherit = "account.move.line"
 
+    # To check, doublon
+    price_net = fields.Float(string='Prix net', compute='_compute_price_net')
+    product_uos = fields.Many2one('uom.uom', string="Udv")
+    histo_cost_price = fields.Float()
+
+    # import_V7
+    number_of_pack = fields.Float(string='Nb pack')
+    number_of_unit = fields.Float(string='Nb unit')
     product_packaging = fields.Many2one(
         'product.packaging',
         string='Packaging',
@@ -22,44 +33,24 @@ class AccountMoveLine(models.Model):
         'stock.lot',
         string='Production lot',
         )
-    
-    lot = fields.Char()
-
-    stock_move_ids = fields.Many2many('stock.move', string="Stock moves")
-    default_code = fields.Char('Code', related='product_id.default_code', store=True)
-
-
-    weight = fields.Float("Weight")
-
+    type = fields.Char()
     cadeau = fields.Float(string='Remise Total')
-
     cost_price = fields.Float(string='Prix de revient')
-
-    discount1 = fields.Float(string='R1 %')
-    discount2 = fields.Float(string='R2 %')
-
     margin = fields.Float(string='Marge total')
     margin_percent = fields.Float(string='Marge %')
 
-    number_of_pack = fields.Float(string='Nb pack')
-    number_of_unit = fields.Float(string='Nb unit')
-
-    promotion = fields.Float(string='Promo %')
-    
-
-
-    type = fields.Char()
-
+    # purchase add
     initial_price = fields.Float(string='Price')
+    discount1 = fields.Float(string='R1 %')
+    discount2 = fields.Float(string='R2 %')
+    promotion = fields.Float(string='Promo %')
 
-    histo_cost_price = fields.Float()
-
-    product_uos = fields.Many2one('uom.uom', string="Udv")
-    
-    price_net = fields.Float(
-        string='Prix net',
-        compute='_compute_price_net'
-    )
+    # Validated V16
+    default_code = fields.Char('Code', related='product_id.default_code', store=True)
+    stock_move_ids = fields.Many2many('stock.move', string="Stock moves")
+    weight = fields.Float("Weight")
+    manual_weight = fields.Float("Manual Weight")
+    lot = fields.Char("production lot")
 
     supplierinfo_id = fields.Many2one('product.supplierinfo',
                                       compute='get_supplierinfo_id',
@@ -78,7 +69,7 @@ class AccountMoveLine(models.Model):
         string='Quantity',
         compute='get_quantity', store=True, precompute=True,
         digits='Product Unit of Measure',
-        help="Number of product sold or purchase in kg or unit. "
+        help="Invoiced quantity in kg or unit."
     )
 
     def _get_out_and_not_invoiced_qty(self, in_moves):
@@ -113,11 +104,12 @@ class AccountMoveLine(models.Model):
         for line in self:
             if line.move_id.state in ['cancel', 'posted']:
                 continue
-            elif line.move_id.move_type in ['out_invoice', 'out_refund', 'out_receipt', 'entry']:
+            elif line.move_id.move_type not in ['in_invoice', 'in_refund']:
                 line.supplierinfo_id = False
 
             elif line.supplierinfo_id and line.supplierinfo_id.product_id == line.product_id and \
                     line.supplierinfo_id.partner_id == line.move_id.partner_id:
+                # OK, it's good, already doing
                 pass
             elif line.product_id and line.move_id.partner_id:
                 line.supplierinfo_id = line.product_id._select_seller(
@@ -161,8 +153,17 @@ class AccountMoveLine(models.Model):
 
             invoice_line.stock_move_ids |= stock_move_ids
 
+    def get_stock_weight(self):
+        """ update weight from stock move"""
+        self.update_stock_move()
 
-    @api.depends('product_uom_id', 'weight', 'uom_qty', 'move_id.state')
+        for invoice_line in self:
+            weight = 0.0
+            for move in invoice_line.stock_move_ids:
+                weight += move.weight
+            invoice_line.weight = weight
+
+    @api.depends('product_uom_id', 'weight', 'uom_qty', 'move_id.state', 'stock_move_ids.state')
     def get_quantity(self):
         """ get supplier info to define price, unit and packing"""
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
@@ -170,10 +171,25 @@ class AccountMoveLine(models.Model):
         for line in self:
             if line.move_id.state in ['cancel', 'posted']:
                 continue
+            elif not line.product_id:
+                line.quantity = 0.0
             elif line.product_uom_id == uom_weight:
-                line.quantity = line.weight * line.uom_qty
+                if line.manual_weight:
+                    line.quantity = line.manual_weight
+                elif line.stock_move_ids:
+                    line.get_stock_weight()
+                    line.quantity = line.weight
+                elif line.product_id.weight > 0.0:
+                    line.quantity = line.product_id.weight * line.uom_qty
+                else:
+                    line.weight_exception()
             else:
                 line.quantity = line.uom_qty
+
+    def weight_exception(self):
+        """ Exception product line with no weight"""
+        _logger.warning('This line has no weight: %s' % self)
+        pass
 
     def init_stock_move(self):
         """ Init stock_move to restart evaluation"""

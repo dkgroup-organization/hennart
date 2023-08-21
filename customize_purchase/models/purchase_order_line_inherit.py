@@ -8,16 +8,13 @@ _logger = logging.getLogger(__name__)
 class PurchaseOrderLineInherit(models.Model):
     _inherit = 'purchase.order.line'
 
-    supplier_discount_type = fields.Selection(string="Type of supplier info",
-                                              selection=[('discount', 'Cascade discount'), ('add', 'Add discount')],
-                                              default="discount")
     discount1 = fields.Float("R1 %", compute="get_price", store=True)
     discount2 = fields.Float("R2 %", compute="get_price", store=True)
     base_price = fields.Float("Base price", compute="get_price", store=True)
-    discount = fields.Float(string="Discount (%)", compute="calculate_discount_percentage", store=True)
+    discount = fields.Float(string="Promo.(%)", compute="calculate_discount_percentage", store=True)
     product_uos = fields.Many2one("uom.uom", string="Unit", compute="get_price", store=True)
     max_qty = fields.Float('Stock', compute="_get_stock")
-    weight = fields.Float('Unit Weight', compute="get_price", store=True, digits="Stock Weight")
+    weight = fields.Float('Weight', compute="get_price", store=True, digits="Stock Weight")
     default_code = fields.Char("code", related="product_id.default_code", store=True)
 
     date_planned = fields.Datetime(string='Warehouse date', compute="_compute_date_planned", store=True, index=True)
@@ -123,10 +120,10 @@ class PurchaseOrderLineInherit(models.Model):
             else:
                 line.product_packaging_id = line.supplierinfo_id.packaging
 
-            if line.product_packaging_id.qty:
+            if line.product_packaging_id.qty > 1.0:
                 product_packaging_qty = line.product_qty / line.product_packaging_id.qty
 
-                if product_packaging_qty - float(int(product_packaging_qty)) > 0.01:
+                if product_packaging_qty - float(int(product_packaging_qty)) > 0.001:
                     product_packaging_qty = float(int(product_packaging_qty)) + 1.0
                 else:
                     product_packaging_qty = float(int(product_packaging_qty))
@@ -151,25 +148,26 @@ class PurchaseOrderLineInherit(models.Model):
 
     ## end part of discount management
     def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, company_id, supplier, po):
+        """ Update supplier information """
         res = super(PurchaseOrderLineInherit, self)._prepare_purchase_order_line(product_id,product_qty,product_uom,company_id,supplier,po)
-        discount1 = supplier.discount1
-        discount2 = supplier.discount2
-        base_price = supplier.base_price
-        supplier_discount_type = supplier.type
-        res.update(
-            discount1=discount1,
-            discount2=discount2,
-            base_price=base_price,
-            supplier_discount_type=supplier.type,
-        )
+        if supplier:
+            res.update(
+                discount1=supplier.discount1,
+                discount2=supplier.discount2,
+                base_price=supplier.base_price,
+                supplier_discount_type=supplier.type,
+            )
         return res
 
     @api.depends('product_id', 'product_qty', 'order_id.date_planned', 'order_id.partner_id')
     def get_price(self):
         for line in self:
 
-            if line.order_id.state not in ['draft', 'sent'] or not line.product_id:
+            if line.order_id.state not in ['draft', 'sent']:
                 continue
+            elif not line.product_id:
+                line.discount1 = line.discount2 = line.base_price = 0.0
+
             seller = line.product_id._select_seller(
                 partner_id=line.order_id.partner_id,
                 quantity=line.product_qty,
@@ -180,7 +178,7 @@ class PurchaseOrderLineInherit(models.Model):
                 line.discount1 = seller.discount1
                 line.discount2 = seller.discount2
                 line.base_price = seller.base_price
-                line.supplier_discount_type = seller.type
+
                 if (seller.product_name):
                     line.name = seller.product_name
                 if (seller.product_uos):

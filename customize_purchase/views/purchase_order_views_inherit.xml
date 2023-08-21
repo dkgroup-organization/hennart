@@ -11,9 +11,10 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_id']" position="before">
                     <field name="default_code"/>
-                    <field name="date_planned" invisible="1"/>
                 </xpath>
-
+                <xpath expr="//field[@name='order_line']//tree//field[@name='date_planned']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_uom'][last()]" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
@@ -27,7 +28,7 @@
                 </xpath>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_id']" position="after">
                     <field name="weight" sum="Weight"/>
-                    <field name="supplierinfo_id"/>
+                    <field name="supplierinfo_id" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='order_line']//tree//field[@name='name']" position="attributes">
                     <attribute name="optional">hide</attribute>
@@ -65,6 +66,14 @@
                 </xpath>
 
             </field>
+        </record>
+
+        <record id="purchase.purchase_rfq" model="ir.actions.act_window">
+            <field name="domain">[('state', 'not in', ['cancel', 'done', 'purchase'])]</field>
+        </record>
+
+        <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+            <field name="domain">[('state','in',('purchase', 'done', 'cancel'))]</field>
         </record>
 
     </data>
