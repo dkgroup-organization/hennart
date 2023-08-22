@@ -48,8 +48,8 @@ class AccountMoveLine(models.Model):
     # Validated V16
     default_code = fields.Char('Code', related='product_id.default_code', store=True)
     stock_move_ids = fields.Many2many('stock.move', string="Stock moves")
-    weight = fields.Float("Weight")
-    manual_weight = fields.Float("Manual Weight")
+
+
     lot = fields.Char("production lot")
 
     supplierinfo_id = fields.Many2one('product.supplierinfo',
@@ -67,9 +67,17 @@ class AccountMoveLine(models.Model):
 
     quantity = fields.Float(
         string='Quantity',
-        compute='get_quantity', store=True, precompute=True,
+        compute='get_quantity', store=True, precompute=False,
+        inverse=False, readonly=True,
         digits='Product Unit of Measure',
         help="Invoiced quantity in kg or unit."
+    )
+    manual_weight = fields.Float("Manual Weight")
+    weight = fields.Float(
+        string="Weight",
+        compute='get_quantity', store=True, precompute=False,
+        inverse='onchange_weight',
+        digits='Stock Weight',
     )
 
     def _get_out_and_not_invoiced_qty(self, in_moves):
@@ -142,6 +150,11 @@ class AccountMoveLine(models.Model):
         """ Not used"""
         pass
 
+    def get_stock_weight(self):
+        """ update weight from stock move"""
+        for invoice_line in self:
+            invoice_line.weight = sum(invoice_line.stock_move_ids.mapped('weight'))
+
     def update_stock_move(self):
         """ Update information based on picking"""
         for invoice_line in self:
@@ -151,38 +164,56 @@ class AccountMoveLine(models.Model):
             for purchase_line in invoice_line.purchase_line_id:
                 stock_move_ids |= purchase_line.move_ids
 
+            for stock_move in stock_move_ids:
+                if stock_move.state in ['draft', 'cancel'] or stock_move.quantity_done == 0.0:
+                    continue
+                stock_move_ids |= stock_move
             invoice_line.stock_move_ids |= stock_move_ids
 
-    def get_stock_weight(self):
-        """ update weight from stock move"""
-        self.update_stock_move()
+    @api.onchange('weight')
+    def onchange_weight(self):
+        """ save manual value """
+        for line in self:
+            if line.product_id and line.product_id.weight * line.uom_qty == line.weight:
+                line.manual_weight = 0.0
+            else:
+                line.manual_weight = line.weight
 
-        for invoice_line in self:
-            weight = 0.0
-            for move in invoice_line.stock_move_ids:
-                weight += move.weight
-            invoice_line.weight = weight
+    @api.onchange('quantity')
+    def onchange_quantity(self):
+        """ Update weight ou uom_qty"""
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+        for line in self:
+            if line.product_uom_id == uom_weight:
+                if line.weight != line.quantity:
+                    line.manual_weight = line.quantity
+            elif line.uom_qty != line.quantity:
+                line.uom_qty = line.quantity
 
-    @api.depends('product_uom_id', 'weight', 'uom_qty', 'move_id.state', 'stock_move_ids.state')
+    @api.depends('product_uom_id', 'manual_weight', 'weight', 'uom_qty', 'move_id.state', 'stock_move_ids.state')
     def get_quantity(self):
         """ get supplier info to define price, unit and packing"""
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+        self.update_stock_move()
 
         for line in self:
             if line.move_id.state in ['cancel', 'posted']:
                 continue
             elif not line.product_id:
-                line.quantity = 0.0
-            elif line.product_uom_id == uom_weight:
+                line.uom_qty = 0.0
+                line.weight = 0.0
+            else:
                 if line.manual_weight:
-                    line.quantity = line.manual_weight
+                    line.weight = line.manual_weight
                 elif line.stock_move_ids:
-                    line.get_stock_weight()
-                    line.quantity = line.weight
+                    line.weight = sum(line.stock_move_ids.mapped('weight'))
                 elif line.product_id.weight > 0.0:
-                    line.quantity = line.product_id.weight * line.uom_qty
+                    line.weight = line.product_id.weight * line.uom_qty
                 else:
                     line.weight_exception()
+
+            if line.product_uom_id == uom_weight:
+                line.quantity = line.weight
             else:
                 line.quantity = line.uom_qty
 

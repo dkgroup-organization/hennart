@@ -18,6 +18,9 @@
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_uom'][last()]" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
+                <xpath expr="//field[@name='order_line']//tree//field[@name='analytic_distribution']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
 
                 <xpath expr="//field[@name='order_line']//tree//field[@name='product_packaging_qty']" position="attributes">
                     <attribute name="string">Nb</attribute>

@@ -57,13 +57,12 @@
                     <field name="number_of_unit"/>
                     <field name="number_of_pack"/>
 
-                    <field name="weight"/>
+                    <field name="weight" context="{'manual': True}"/>
+                    <field name="manual_weight" invisible="1"/>
 
-                    <field name="quantity" optional="show"/>
+                    <field name="quantity" optional="show" context="{'manual': True}"/>
                     <field name="product_uom_category_id" invisible="1"/>
                     <field name="product_uom_id"/>
-                    <field name="product_uos"/>
-
 
                     <field name="price_unit" string="Price"/>
                     <field name="discount" string="Disc.%" optional="hide"/>

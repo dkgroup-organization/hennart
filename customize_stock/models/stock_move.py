@@ -10,6 +10,8 @@ class StockMove(models.Model):
 
     product_packaging_qty = fields.Float('Packaging Quantity')
     weight_manual = fields.Float("Weight manual")
+    weight = fields.Float(compute='get_move_weight', digits='Stock Weight', store=True, compute_sudo=True)
+
     prodlot_inv = fields.Char(string='Supplier N° lot')
     picking_type_use_create_lots = fields.Boolean(related='picking_type_id.use_create_lots', readonly=True)
 
@@ -42,15 +44,20 @@ class StockMove(models.Model):
                 else:
                     move.lot_expiration_date = False
 
-    @api.depends('product_id', 'product_uom_qty', 'product_uom','weight_manual','move_line_ids.weight')
-    def _cal_move_weight(self):
+    @api.depends('state', 'product_id', 'product_uom_qty', 'product_uom', 'weight_manual', 'move_line_ids.weight')
+    def get_move_weight(self):
         for move in self:
+            if move.state == 'cancel':
+                move.weight = 0.0
+            elif move.state == 'done':
+                continue
+
             weight = 0.0
-            if(move.weight_manual > 0.00):
+            if move.weight_manual > 0.00:
                 weight = move.weight_manual
-            elif(move.move_line_ids and move.move_line_ids.filtered(lambda lines: lines.weight > 0.00)):
+            elif move.move_line_ids and move.move_line_ids.filtered(lambda lines: lines.weight > 0.00):
                 weight = sum(move.move_line_ids.filtered(lambda lines: lines.weight > 0.00).mapped('weight'))
-            elif(move.product_id.weight > 0.0):
+            elif move.product_id.weight > 0.0:
                 weight = (move.product_qty * move.product_id.weight)
             move.weight = weight
 
