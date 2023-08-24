@@ -103,9 +103,10 @@ class SaleOrderLine(models.Model):
         """ """
         outgoing_moves = self.env['stock.move']
         incoming_moves = self.env['stock.move']
-        # TODO: import the weight
+        # TODO: import the weight, import the kit
 
-        moves = self.move_ids.filtered(lambda r: r.state != 'cancel' and not r.scrapped and self.product_id == r.product_id)
+        moves = self.move_ids.filtered(lambda r: r.state != 'cancel' and not r.scrapped and
+                    (self.product_id == r.product_id or self.product_id == r.bom_line_id.bom_id.product_id))
         if self._context.get('accrual_entry_date'):
             moves = moves.filtered(lambda r: fields.Date.context_today(r, r.date) <= self._context['accrual_entry_date'])
 
@@ -129,12 +130,37 @@ class SaleOrderLine(models.Model):
                 for move in outgoing_moves:
                     if move.state != 'done':
                         continue
-                    qty += move.product_uom._compute_quantity(move.product_uom_qty, line.product_uom, rounding_method='HALF-UP')
+                    if move.bom_line_id.bom_id.type == 'phantom':
+                        qty += move.product_uom_qty / move.bom_line_id.product_qty
+                    else:
+                        qty += move.product_uom_qty
                 for move in incoming_moves:
                     if move.state != 'done':
                         continue
-                    qty -= move.product_uom._compute_quantity(move.product_uom_qty, line.product_uom, rounding_method='HALF-UP')
+                    if move.bom_line_id.bom_id.type == 'phantom':
+                        qty -= move.product_uom_qty / move.bom_line_id.product_qty
+                    else:
+                        qty -= move.product_uom_qty
+
                 line.qty_delivered = qty
+
+    @api.depends('invoice_lines.move_id.state', 'invoice_lines.quantity')
+    def _compute_qty_invoiced(self):
+        """
+        Compute the quantity invoiced. If case of a refund, the quantity invoiced is decreased. Note
+        that this is the case only if the refund is generated from the SO and that is intentional: if
+        a refund made would automatically decrease the invoiced quantity, then there is a risk of reinvoicing
+        it automatically, which may not be wanted at all. That's why the refund has to be created from the SO
+        """
+        for line in self:
+            qty_invoiced = 0.0
+            for invoice_line in line._get_invoice_lines():
+                if invoice_line.move_id.state != 'cancel' or invoice_line.move_id.payment_state == 'invoicing_legacy':
+                    if invoice_line.move_id.move_type == 'out_invoice':
+                        qty_invoiced += invoice_line.uom_qty
+                    elif invoice_line.move_id.move_type == 'out_refund':
+                        qty_invoiced -= invoice_line.uom_qty
+            line.qty_invoiced = qty_invoiced
 
     @api.depends('product_id', 'product_uom_qty', 'price_unit', 'state')
     def compute_uos(self):
@@ -276,7 +302,7 @@ class SaleOrderLine(models.Model):
                 price_reduce = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
 
                 if line.product_id.uos_id == uom_weight:
-                    uos_qty_to_consider = uom_qty_to_consider * line.weight
+                    uos_qty_to_consider = uom_qty_to_consider * line.product_id.weight
                 else:
                     uos_qty_to_consider = uom_qty_to_consider * (line.product_id.base_unit_count or 1.0)
 
@@ -313,3 +339,44 @@ class SaleOrderLine(models.Model):
                     amount_to_invoice = price_subtotal - line.untaxed_amount_invoiced
 
             line.untaxed_amount_to_invoice = amount_to_invoice
+
+    def _prepare_invoice_line(self, **optional_values):
+        """Prepare the values to create the new invoice line for a sales order line.
+
+        :param optional_values: any parameter that should be added to the returned invoice line
+        :rtype: dict
+        """
+        self.ensure_one()
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+
+        res = {
+            'display_type': self.display_type or 'product',
+            'sequence': self.sequence,
+            'name': self.name,
+            'product_id': self.product_id.id,
+            'product_uom_id': self.product_uos.id,
+            'quantity': self.qty_to_invoice,
+            'uom_qty': self.qty_to_invoice,
+            'discount': self.discount,
+            'price_unit': self.price_unit,
+            'tax_ids': [Command.set(self.tax_id.ids)],
+            'sale_line_ids': [Command.link(self.id)],
+            'is_downpayment': self.is_downpayment,
+        }
+        if self.product_uos == uom_weight:
+            res['quantity'] = self.qty_to_invoice * self.product_id.weight
+
+        analytic_account_id = self.order_id.analytic_account_id.id
+        if self.analytic_distribution and not self.display_type:
+            res['analytic_distribution'] = self.analytic_distribution
+        if analytic_account_id and not self.display_type:
+            analytic_account_id = str(analytic_account_id)
+            if 'analytic_distribution' in res:
+                res['analytic_distribution'][analytic_account_id] = res['analytic_distribution'].get(analytic_account_id, 0) + 100
+            else:
+                res['analytic_distribution'] = {analytic_account_id: 100}
+        if optional_values:
+            res.update(optional_values)
+        if self.display_type:
+            res['account_id'] = False
+        return res

@@ -155,7 +155,6 @@ class PurchaseOrderLineInherit(models.Model):
                 discount1=supplier.discount1,
                 discount2=supplier.discount2,
                 base_price=supplier.base_price,
-                supplier_discount_type=supplier.type,
             )
         return res
 

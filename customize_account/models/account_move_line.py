@@ -49,7 +49,6 @@ class AccountMoveLine(models.Model):
     default_code = fields.Char('Code', related='product_id.default_code', store=True)
     stock_move_ids = fields.Many2many('stock.move', string="Stock moves")
 
-
     lot = fields.Char("production lot")
 
     supplierinfo_id = fields.Many2one('product.supplierinfo',
@@ -60,25 +59,28 @@ class AccountMoveLine(models.Model):
     product_uom_id = fields.Many2one(
         comodel_name='uom.uom',
         string='Unit',
-        compute='get_product_uom_id', store=True, readonly=False,
+        compute='get_product_uom_id', store=True, readonly=True,
         domain="[]",
         ondelete="restrict",
     )
-
     quantity = fields.Float(
         string='Quantity',
-        compute='get_quantity', store=True, precompute=False,
-        inverse=False, readonly=True,
+        compute='get_quantity', store=True, readonly=False, precompute=False,
         digits='Product Unit of Measure',
         help="Invoiced quantity in kg or unit."
     )
     manual_weight = fields.Float("Manual Weight")
     weight = fields.Float(
         string="Weight",
-        compute='get_quantity', store=True, precompute=False,
-        inverse='onchange_weight',
+        compute='get_quantity', store=True, readonly=False, precompute=False,
         digits='Stock Weight',
     )
+    price_unit = fields.Float(
+        string='Unit Price',
+        compute=False, store=True, readonly=False, precompute=False,
+        digits='Product Price',
+    )
+
 
     def _get_out_and_not_invoiced_qty(self, in_moves):
         self.ensure_one()
@@ -96,21 +98,12 @@ class AccountMoveLine(models.Model):
         out_and_not_invoiced_qty = min(aml_qty, total_out_and_not_invoiced_qty)
         return out_and_not_invoiced_qty
 
-    def _get_invoiced_qty_per_product(self):
-        qties = defaultdict(float)
-        for aml in self:
-            qty = aml.uom_qty
-            if aml.move_id.move_type == 'out_invoice':
-                qties[aml.product_id] += qty
-            elif aml.move_id.move_type == 'out_refund':
-                qties[aml.product_id] -= qty
-        return qties
-
     @api.depends('product_id', 'move_id.move_type', 'move_id.partner_id', 'move_id.state')
     def get_supplierinfo_id(self):
         """ get supplier info to define price, unit and packing"""
+
         for line in self:
-            if line.move_id.state in ['cancel', 'posted']:
+            if line.move_id.state in ['cancel', 'posted'] or line.move_id.piece_comptable:
                 continue
             elif line.move_id.move_type not in ['in_invoice', 'in_refund']:
                 line.supplierinfo_id = False
@@ -129,9 +122,12 @@ class AccountMoveLine(models.Model):
     @api.depends('product_id', 'move_id.move_type', 'move_id.partner_id', 'move_id.state')
     def get_product_uom_id(self):
         """ Return the unit to use to invoice (unit or Kg), unit can't be changing"""
+
         for line in self:
-            if line.move_id.state in ['cancel', 'posted'] and line.product_uom_id:
-                continue
+            if line.product_uos:
+                line.product_uom_id = line.product_uos
+            elif line.move_id.state in ['cancel', 'posted']:
+                line.product_uom_id = line.product_uom_id
             elif line.product_id:
                 if line.move_id.move_type in ['out_invoice', 'out_refund', 'out_receipt', 'entry']:
                     line.product_uom_id = line.product_id.uos_id or self.env.ref('uom.product_uom_unit')
@@ -150,14 +146,12 @@ class AccountMoveLine(models.Model):
         """ Not used"""
         pass
 
-    def get_stock_weight(self):
-        """ update weight from stock move"""
-        for invoice_line in self:
-            invoice_line.weight = sum(invoice_line.stock_move_ids.mapped('weight'))
-
     def update_stock_move(self):
         """ Update information based on picking"""
         for invoice_line in self:
+            print('\n----------update_stock_move------------', invoice_line.price_unit)
+            if invoice_line.move_id in ['cancel', 'posted']:
+                continue
             stock_move_ids = self.env['stock.move']
             for sale_line in invoice_line.sale_line_ids:
                 stock_move_ids |= sale_line.move_ids
@@ -167,39 +161,52 @@ class AccountMoveLine(models.Model):
             for stock_move in stock_move_ids:
                 if stock_move.state in ['draft', 'cancel'] or stock_move.quantity_done == 0.0:
                     continue
-                stock_move_ids |= stock_move
-            invoice_line.stock_move_ids |= stock_move_ids
+                invoice_line.stock_move_ids |= stock_move
 
     @api.onchange('weight')
     def onchange_weight(self):
         """ save manual value """
-        for line in self:
-            if line.product_id and line.product_id.weight * line.uom_qty == line.weight:
-                line.manual_weight = 0.0
-            else:
-                line.manual_weight = line.weight
+        print('\n----------onchange_weight------------', self.price_unit)
+        self.ensure_one()
+        res = {}
+        if self.product_id and self.product_id.weight * self.uom_qty == self.weight:
+            res['manual_weight'] = 0.0
+        else:
+            res['manual_weight'] = self.weight
+
+        if self.move_id.state not in ['cancel', 'move']:
+            self.update(res)
 
     @api.onchange('quantity')
     def onchange_quantity(self):
         """ Update weight ou uom_qty"""
-        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
-        for line in self:
-            if line.product_uom_id == uom_weight:
-                if line.weight != line.quantity:
-                    line.manual_weight = line.quantity
-            elif line.uom_qty != line.quantity:
-                line.uom_qty = line.quantity
+        self.ensure_one()
+        res = {}
+        uom_weight = self.env['product.template'].sudo()._get_weight_uom_id_from_ir_config_parameter()
+
+        if self.product_uom_id == uom_weight:
+            if self.weight != self.quantity:
+                res['weight'] = self.quantity
+        elif self.uom_qty != self.quantity:
+            res['uom_qty'] = self.quantity
+
+        print('-------onchange_quantity--------------------', self, self.move_id.state, res)
+        if self.move_id.state not in ['cancel', 'done']:
+            self.update(res)
 
     @api.depends('product_uom_id', 'manual_weight', 'weight', 'uom_qty', 'move_id.state', 'stock_move_ids.state')
     def get_quantity(self):
         """ get supplier info to define price, unit and packing"""
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
-        self.update_stock_move()
 
         for line in self:
+            print('\n------------get_quantity-----------', line.price_unit)
             if line.move_id.state in ['cancel', 'posted']:
                 continue
-            elif not line.product_id:
+            else:
+                line.update_stock_move()
+
+            if not line.product_id:
                 line.uom_qty = 0.0
                 line.weight = 0.0
             else:
@@ -229,28 +236,37 @@ class AccountMoveLine(models.Model):
     @api.depends('price_unit', 'discount')
     def _compute_price_net(self):
         for line in self:
-            line.price_net = line.price_unit - (line.price_unit * line.discount / 100)
+            line.price_net = line.price_unit - (line.price_unit * line.discount / 100.0)
 
     @api.onchange('supplierinfo_id')
     def onchange_supplierinfo(self):
         """ Load value"""
-        for line in self:
-            if line.supplierinfo_id:
-                line.discount1 = line.supplierinfo_id.discount1
-                line.discount2 = line.supplierinfo_id.discount2
-                line.initial_price = line.supplierinfo_id.base_price
-                if line.supplierinfo_id.product_name:
-                    line.name = line.supplierinfo_id.product_name
-                if line.supplierinfo_id.product_code:
-                    line.name = "[{}] {}".format(line.supplierinfo_id.product_code, line.supplierinfo_id.product_name)
-                if line.supplierinfo_id.type == "add":
-                    line.price_unit = line.supplierinfo_id.base_price * \
-                        (1 - ((line.supplierinfo_id.discount1 + line.supplierinfo_id.discount2) / 100.0))
-                else:
-                    line.price_unit = line.supplierinfo_id.base_price * \
-                        (1 - (line.supplierinfo_id.discount1 / 100.0)) * (1 - (line.supplierinfo_id.discount2 / 100.0))
+        self.ensure_one()
+        res = {}
+        if self.move_id.state in ['cancel', 'posted']:
+            pass
+        elif self.supplierinfo_id:
+            res["discount1"] = self.supplierinfo_id.discount1
+            res["discount2"] = self.supplierinfo_id.discount2
+            res["initial_price"] = self.supplierinfo_id.base_price
+            if self.supplierinfo_id.product_name:
+                res["name"] = self.supplierinfo_id.product_name
+            if self.supplierinfo_id.product_code:
+                res["name"] = "[{}] {}".format(self.supplierinfo_id.product_code,
+                                               self.supplierinfo_id.product_name or self.product_id.name)
+            if self.supplierinfo_id.type == "add":
+                res["price_unit"] = res["initial_price"] * \
+                    (1.0 - ((res["discount1"] + res["discount2"]) / 100.0))
             else:
-                line.discount1 = line.supplierinfo_id.discount2 = 0.0
+                res["price_unit"] = self.supplierinfo_id.base_price * \
+                    (1.0 - (res["discount1"] / 100.0)) * (1.0 - (res["discount2"] / 100.0))
+        else:
+            res["discount1"] = 0.0
+            res["discount2"] = 0.0
+            res["initial_price"] = 0.0
+            res["price_unit"] = 0.0
+        print('\n--------onchange_supplierinfo--------', res)
+        self.update(res)
 
     def _generate_price_difference_vals(self, layers):
         """

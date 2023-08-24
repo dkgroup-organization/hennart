@@ -8,6 +8,7 @@ _logger = logging.getLogger(__name__)
 class StockMove(models.Model):
     _inherit = "stock.move"
 
+    default_code = fields.Char('Code', related="product_id.default_code")
     product_packaging_qty = fields.Float('Packaging Quantity')
     weight_manual = fields.Float("Weight manual")
     weight = fields.Float(compute='get_move_weight', digits='Stock Weight', store=True, compute_sudo=True)

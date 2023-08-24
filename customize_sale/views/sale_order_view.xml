@@ -152,13 +152,15 @@
                         <field name="qty_to_deliver" invisible="1"/>
                         <field name="is_mto" invisible="1"/>
                         <field name="display_qty_widget" invisible="1"/>
-
-
                     </tree>
-
                 </xpath>
 
             </field>
         </record>
+
+        <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
+            <field name="domain">[('state', 'not in', ['cancel', 'done', 'sale'])]</field>
+        </record>
+
     </data>
 </odoo>
