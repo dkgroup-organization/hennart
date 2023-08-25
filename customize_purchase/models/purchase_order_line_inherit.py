@@ -103,10 +103,10 @@ class PurchaseOrderLineInherit(models.Model):
                 'supplierinfo_id': self.supplierinfo_id.id}
 
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
-        quantity = self.product_qty
-        uom_qty = self.product_qty
+        quantity = self.qty_to_invoice
+        uom_qty = self.qty_to_invoice
         if self.product_uos.id == uom_weight.id:
-            quantity = self.weight
+            quantity = self.qty_to_invoice * self.product_id.weight
         data.update({'quantity': quantity, 'uom_qty': uom_qty})
         res.update(data)
         return res
@@ -141,12 +141,7 @@ class PurchaseOrderLineInherit(models.Model):
             self._compute_product_packaging()
             self.product_qty = self.product_packaging_qty * self.supplierinfo_id.packaging.qty
 
-    @api.depends('product_uom', 'product_qty', 'product_id.uom_id')
-    def _compute_product_uom_qty(self):
-        for line in self:
-            line.product_uom_qty = line.product_qty
 
-    ## end part of discount management
     def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, company_id, supplier, po):
         """ Update supplier information """
         res = super(PurchaseOrderLineInherit, self)._prepare_purchase_order_line(product_id,product_qty,product_uom,company_id,supplier,po)
@@ -166,29 +161,29 @@ class PurchaseOrderLineInherit(models.Model):
                 continue
             elif not line.product_id:
                 line.discount1 = line.discount2 = line.base_price = 0.0
-
-            seller = line.product_id._select_seller(
-                partner_id=line.order_id.partner_id,
-                quantity=line.product_qty,
-                date=line.order_id.date_planned and line.order_id.date_planned.date(),
-                uom_id=line.product_uom,)
-            if seller:
-                line.supplierinfo_id = seller
-                line.discount1 = seller.discount1
-                line.discount2 = seller.discount2
-                line.base_price = seller.base_price
-
-                if (seller.product_name):
-                    line.name = seller.product_name
-                if (seller.product_uos):
-                    line.product_uos =seller.product_uos
-                else:
-                    line.product_uos = line.product_id.uos_id or line.product_id.uom_id
             else:
-                line.discount1 = line.discount2 = line.base_price = 0.0
-                line.product_uos = line.product_id.uos_id or line.product_id.uom_id
+                seller = line.product_id._select_seller(
+                    partner_id=line.order_id.partner_id,
+                    quantity=line.product_qty,
+                    date=line.order_id.date_planned and line.order_id.date_planned.date(),
+                    uom_id=line.product_uom,)
+                if seller:
+                    line.supplierinfo_id = seller
+                    line.discount1 = seller.discount1
+                    line.discount2 = seller.discount2
+                    line.base_price = seller.base_price
 
-            line.weight = line.product_id.weight * line.product_qty
+                    if seller.product_name:
+                        line.name = seller.product_name
+                    if seller.product_uos:
+                        line.product_uos = seller.product_uos
+                    else:
+                        line.product_uos = line.product_id.uos_id or line.product_id.uom_id
+                else:
+                    line.discount1 = line.discount2 = line.base_price = 0.0
+                    line.product_uos = line.product_id.uos_id or line.product_id.uom_id
+
+                line.weight = line.product_id.weight * line.product_qty
 
     def _prepare_stock_move_vals(self, picking, price_unit, product_uom_qty, product_uom):
         values = super(PurchaseOrderLineInherit,self)._prepare_stock_move_vals(picking,price_unit,product_uom_qty,product_uom)
