@@ -21,9 +21,10 @@
                             <field name="total_tva"/>
                             <field name="total_ttc"/>
                             <field name="piece_comptable"/>
-
                             <field name="picking_id"/>
                         </group>
+                        <button class="oe_highlight" name="action_valide_imported" type="object" string="Valide"
+                                attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                     </group>
                 </page>
             </xpath>
@@ -54,8 +55,6 @@
                            business_domain_compute="parent.move_type in ['out_invoice', 'out_refund', 'out_receipt'] and 'invoice' or parent.move_type in ['in_invoice', 'in_refund', 'in_receipt'] and 'bill' or 'general'"/>
 
                     <field name="uom_qty"/>
-                    <field name="number_of_unit"/>
-                    <field name="number_of_pack"/>
 
                     <field name="weight" context="{'manual': True}"/>
                     <field name="manual_weight" invisible="1"/>
@@ -64,12 +63,17 @@
                     <field name="product_uom_category_id" invisible="1"/>
                     <field name="product_uom_id"/>
 
+                    <field name="initial_price"  optional="hide" attrs="{'column_invisible': [('parent.move_type', 'not in', ['in_invoice', 'in_refund'])]}"/>
+                    <field name="discount1" optional="hide" attrs="{'column_invisible': [('parent.move_type', 'not in', ['in_invoice', 'in_refund'])]}"/>
+                    <field name="discount2" optional="hide" attrs="{'column_invisible': [('parent.move_type', 'not in', ['in_invoice', 'in_refund'])]}"/>
+
+
                     <field name="price_unit" string="Price"/>
-                    <field name="discount" string="Disc.%" optional="hide"/>
+                    <field name="discount" string="Promo" optional="hide"/>
                     <field name="tax_ids" widget="many2many_tags"
                            domain="[('type_tax_use', '=?', parent.invoice_filter_type_domain), ('company_id', '=', parent.company_id), ('country_id', '=', parent.tax_country_id)]"
                            context="{'append_type_to_tax_name': not parent.invoice_filter_type_domain}"
-                           options="{'no_create': True}" optional="show"/>
+                           options="{'no_create': True}" optional="hide"/>
                     <field name="price_subtotal" string="Subtotal"/>
                     <field name="price_total" string="Total" invisible="1"/>
 
@@ -93,7 +97,6 @@
                 <field name="incoterm_port"/>
                 <field name="incoterm_date"/>
             </group>
-
 
             <xpath expr="//div[@class='o_td_label']//label[@for='invoice_payment_term_id']" position="replace">
             </xpath>

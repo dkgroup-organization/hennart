@@ -190,7 +190,6 @@ class AccountMoveLine(models.Model):
         elif self.uom_qty != self.quantity:
             res['uom_qty'] = self.quantity
 
-        print('-------onchange_quantity--------------------', self, self.move_id.state, res)
         if self.move_id.state not in ['cancel', 'done']:
             self.update(res)
 
@@ -200,7 +199,6 @@ class AccountMoveLine(models.Model):
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
 
         for line in self:
-            print('\n------------get_quantity-----------', line.price_unit)
             if line.move_id.state in ['cancel', 'posted']:
                 continue
             else:

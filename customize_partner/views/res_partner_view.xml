@@ -66,6 +66,7 @@
                         <field name="incoterm_contact_id"/>
                         <field name="incoterm_city"/>
                         <field name="oeri_code"/>
+                        <field name="vat"/>
                     </group>
                 </group>
 
