@@ -11,6 +11,7 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     #date_delivered = fields.Datetime("delivered date", compute='compute_date_delivered', help="Customer delivered date")
+    picking_type_code = fields.Selection(string='Code', related="picking_type_id.code")
 
     def compute_date_delivered(self):
         """ Custom delivery, Always delivery at one time with no backorder"""

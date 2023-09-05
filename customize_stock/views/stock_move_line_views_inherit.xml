@@ -15,7 +15,13 @@
                     <field name="weight" string="Weight"/>
                     <field name="weight_manual" string="Weight manual"/>
                 </xpath>
-
+                
+                <field name="package_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="result_package_id" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
             </field>
         </record>
 

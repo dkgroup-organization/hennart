@@ -111,6 +111,8 @@ class PartnerCrmAppointment(models.Model):
                 else:
                     nextday = today + datetime.timedelta(days=(7 + weekday - now_weekday))
 
+                if 8.0 < appointment.time < 20.0:
+                    appointment.time = 8.0
                 nextday_utc = self.timezone_2_utc(nextday, appointment.time)
 
                 phone_vals = {
