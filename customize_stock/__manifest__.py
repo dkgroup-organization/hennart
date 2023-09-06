@@ -12,7 +12,7 @@
     'application': True,
     'installable': True,
     'depends': [
-        'wms_scanner', 'customize_product_template', 'customize_partner'
+        'wms_scanner', 'customize_product_template', 'customize_partner', 'delivery'
     ],
     'data': [
         "security/ir.model.access.csv",

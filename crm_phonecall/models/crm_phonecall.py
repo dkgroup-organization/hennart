@@ -263,7 +263,7 @@ class CrmPhonecall(models.Model):
                 app = phonecall.partner_id.appointment_delivery_ids[0]
 
                 if today1.weekday() == int(app.load_day):
-                  if  today1.hour < 11:
+                  if today1.hour < 11:
                     while today1.weekday() != int(app.load_day): #0 for monday
                       today1 += timedelta(days=1)
                     date_entrepot = today1
@@ -280,7 +280,7 @@ class CrmPhonecall(models.Model):
                     'date_delivered':delivered_date,
                     'carrier_id' : partner.appointment_delivery_ids[0].carrier_id.id,
                     'commitment_date': date_entrepot
-            }
+                    }
                   else:
                     today1 += timedelta(days=1)
                     while today1.weekday() != int(app.load_day): #0 for monday
@@ -320,9 +320,6 @@ class CrmPhonecall(models.Model):
                     'commitment_date':  date_entrepot
                     }
 
-            
-
-
             sale = self.env['sale.order'].create(sale_vals)
             sale_ids |= sale
             phonecall.write({'state': 'done'})
@@ -333,7 +330,7 @@ class CrmPhonecall(models.Model):
                 'view_type': 'form',
                 'view_mode': 'form',
                 'res_model': 'sale.order',
-                'res_id': sale[0].id,
+                'res_id': sale_ids[0].id,
                 'target': 'current',
                 'context': {},
                 'type': 'ir.actions.act_window',

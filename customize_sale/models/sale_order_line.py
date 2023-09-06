@@ -11,11 +11,13 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     default_code = fields.Char('Code', related="product_id.default_code", store=True, index=True)
-    weight = fields.Float('weight', compute="compute_uos", store=True, compute_sudo=True)
+    weight = fields.Float('weight', compute="compute_uos", store=True, digits="Stock Weight",
+                          compute_sudo=True)
+
     product_uos = fields.Many2one('uom.uom', string="Unit", related="product_id.uos_id", readonly=True)
     product_uos_name = fields.Char(string="Unit", related="product_id.uos_id.name", readonly=True)
 
-    product_uos_qty = fields.Float('Sale Qty', compute="compute_uos", store=True, compute_sudo=True)
+    product_uos_qty = fields.Float('Qty', compute="compute_uos", store=True, compute_sudo=True)
     product_uos_price = fields.Float('Price', compute="compute_uos", store=True, compute_sudo=True)
     product_uom_readonly = fields.Boolean("UOM readonly", default=True)
     cadence = fields.Html(string="Cadencier", compute="compute_cadence", readonly=True, compute_sudo=True)
@@ -96,6 +98,69 @@ class SaleOrderLine(models.Model):
     def _compute_customer_lead(self):
         """ The customer lead is more complexe in this project, It depends on location of customer: 1, 2 or 3 days """
         self.customer_lead = 0.0
+
+    def _get_outgoing_incoming_moves(self):
+        """ """
+        outgoing_moves = self.env['stock.move']
+        incoming_moves = self.env['stock.move']
+        # TODO: import the weight, import the kit
+
+        moves = self.move_ids.filtered(lambda r: r.state != 'cancel' and not r.scrapped and
+                    (self.product_id == r.product_id or self.product_id == r.bom_line_id.bom_id.product_id))
+        if self._context.get('accrual_entry_date'):
+            moves = moves.filtered(lambda r: fields.Date.context_today(r, r.date) <= self._context['accrual_entry_date'])
+
+        for move in moves:
+            if move.location_dest_id.usage == "customer":
+                if not move.origin_returned_move_id or (move.origin_returned_move_id and move.to_refund):
+                    outgoing_moves |= move
+            elif move.location_dest_id.usage != "customer" and move.to_refund:
+                incoming_moves |= move
+
+        return outgoing_moves, incoming_moves
+
+    @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom')
+    def _compute_qty_delivered(self):
+        super(SaleOrderLine, self)._compute_qty_delivered()
+
+        for line in self:  # TODO: maybe one day, this should be done in SQL for performance sake
+            if line.qty_delivered_method == 'stock_move':
+                qty = 0.0
+                outgoing_moves, incoming_moves = line._get_outgoing_incoming_moves()
+                for move in outgoing_moves:
+                    if move.state != 'done':
+                        continue
+                    if move.bom_line_id.bom_id.type == 'phantom':
+                        qty += move.product_uom_qty / move.bom_line_id.product_qty
+                    else:
+                        qty += move.product_uom_qty
+                for move in incoming_moves:
+                    if move.state != 'done':
+                        continue
+                    if move.bom_line_id.bom_id.type == 'phantom':
+                        qty -= move.product_uom_qty / move.bom_line_id.product_qty
+                    else:
+                        qty -= move.product_uom_qty
+
+                line.qty_delivered = qty
+
+    @api.depends('invoice_lines.move_id.state', 'invoice_lines.quantity')
+    def _compute_qty_invoiced(self):
+        """
+        Compute the quantity invoiced. If case of a refund, the quantity invoiced is decreased. Note
+        that this is the case only if the refund is generated from the SO and that is intentional: if
+        a refund made would automatically decrease the invoiced quantity, then there is a risk of reinvoicing
+        it automatically, which may not be wanted at all. That's why the refund has to be created from the SO
+        """
+        for line in self:
+            qty_invoiced = 0.0
+            for invoice_line in line._get_invoice_lines():
+                if invoice_line.move_id.state != 'cancel' or invoice_line.move_id.payment_state == 'invoicing_legacy':
+                    if invoice_line.move_id.move_type == 'out_invoice':
+                        qty_invoiced += invoice_line.uom_qty
+                    elif invoice_line.move_id.move_type == 'out_refund':
+                        qty_invoiced -= invoice_line.uom_qty
+            line.qty_invoiced = qty_invoiced
 
     @api.depends('product_id', 'product_uom_qty', 'price_unit', 'state')
     def compute_uos(self):
@@ -237,7 +302,7 @@ class SaleOrderLine(models.Model):
                 price_reduce = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
 
                 if line.product_id.uos_id == uom_weight:
-                    uos_qty_to_consider = uom_qty_to_consider * line.weight
+                    uos_qty_to_consider = uom_qty_to_consider * line.product_id.weight
                 else:
                     uos_qty_to_consider = uom_qty_to_consider * (line.product_id.base_unit_count or 1.0)
 
@@ -275,35 +340,37 @@ class SaleOrderLine(models.Model):
 
             line.untaxed_amount_to_invoice = amount_to_invoice
 
-
     def _prepare_invoice_line(self, **optional_values):
         """Prepare the values to create the new invoice line for a sales order line.
 
         :param optional_values: any parameter that should be added to the returned invoice line
         :rtype: dict
         """
-        # TODO: change the quantity and price_unit by uos_id (kg or unit)
         self.ensure_one()
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+
         res = {
             'display_type': self.display_type or 'product',
             'sequence': self.sequence,
             'name': self.name,
             'product_id': self.product_id.id,
-            'product_uom_id': self.product_uom.id,
-            'product_uos': self.product_uos.id,
-            'product_uos_qty': self.product_uos_qty,
-            'product_uos_price': self.product_uos_price,
+            'product_uom_id': self.product_uos.id,
             'quantity': self.qty_to_invoice,
+            'uom_qty': self.qty_to_invoice,
             'discount': self.discount,
             'price_unit': self.price_unit,
             'tax_ids': [Command.set(self.tax_id.ids)],
             'sale_line_ids': [Command.link(self.id)],
             'is_downpayment': self.is_downpayment,
         }
+        if self.product_uos == uom_weight:
+            res['quantity'] = self.qty_to_invoice * self.product_id.weight
+
         analytic_account_id = self.order_id.analytic_account_id.id
         if self.analytic_distribution and not self.display_type:
             res['analytic_distribution'] = self.analytic_distribution
         if analytic_account_id and not self.display_type:
+            analytic_account_id = str(analytic_account_id)
             if 'analytic_distribution' in res:
                 res['analytic_distribution'][analytic_account_id] = res['analytic_distribution'].get(analytic_account_id, 0) + 100
             else:

@@ -11,7 +11,7 @@ class ProductCategory(models.Model):
         ('serial', 'By Unique Serial Number'),
         ('lot', 'By Lots'),
         ('none', 'No Tracking')],
-        string="Tracking", required=True, default='lot',
+        string="Tracking", required=True, default='lot', precompute=False,
         help="Ensure the traceability of a storable product in your warehouse.")
 
     detailed_type = fields.Selection([
@@ -20,10 +20,7 @@ class ProductCategory(models.Model):
         ('service', 'Service')],
         string="type", default='product')
 
-    type = fields.Selection([
-        ('product', 'Product'),
-        ('consu', 'Consumable'),
-        ('service', 'Service')],
+    type = fields.Selection(related="detailed_type",
         string="type", default='product')
 
     use_expiration_date = fields.Boolean("Use expiration date", default=True)

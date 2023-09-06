@@ -14,7 +14,7 @@ class ResPartner(models.Model):
         comodel_name="crm.phonecall", inverse_name="partner_id", string="Phonecalls"
     )
     phonecall_count = fields.Integer(compute="_compute_phonecall_count")
-    user2_id = fields.Many2one('res.users', 'Salesperson 2',
+    user2_id = fields.Many2one('res.users', 'Manager',
                                help='The internal user that is in charge of communicating with this contact if any.')
     appointment_ids = fields.One2many('partner.crm.appointment', 'partner_id', 'Call apppointement')
     appointment_delivery_ids = fields.One2many('partner.delivery.appointment', 'partner_id', 'Delivery apppointement')
@@ -25,3 +25,4 @@ class ResPartner(models.Model):
             partner.phonecall_count = self.env["crm.phonecall"].search_count(
                 [("partner_id", "=", partner.id), ('state', 'in', ['open', 'pending'])]
             )
+

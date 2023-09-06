@@ -10,12 +10,12 @@
     "website": "https://dkgroup.fr",
     "maintainer": "DK group",
     "images": [],
-    "depends": ["account", "account_usability", "sale"],
+    "depends": ["account", "account_usability", "customize_purchase", "customize_sale", "customize_stock",
+                "intrastat_product"],
     "data": [
         "views/res_config_view.xml",
         "views/invoice_view.xml",
-        "views/invoice_view2.xml",
-
+        "views/account_journal_view.xml",
 
     ],
     "installable": True,
