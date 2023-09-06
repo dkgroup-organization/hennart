@@ -146,6 +146,8 @@ class ResPartner(models.Model):
                         dic_email[email].append(code)
 
             for email in list(dic_email.keys()):
+                if not email:
+                    continue
 
                 condition = [('parent_id', '=', partner.id), ('email', '=', email)]
                 contact_ids = self.search(condition)

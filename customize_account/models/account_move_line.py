@@ -149,8 +149,7 @@ class AccountMoveLine(models.Model):
     def update_stock_move(self):
         """ Update information based on picking"""
         for invoice_line in self:
-            print('\n----------update_stock_move------------', invoice_line.price_unit)
-            if invoice_line.move_id in ['cancel', 'posted']:
+            if invoice_line.move_id.state in ['cancel', 'posted']:
                 continue
             stock_move_ids = self.env['stock.move']
             for sale_line in invoice_line.sale_line_ids:
@@ -159,14 +158,13 @@ class AccountMoveLine(models.Model):
                 stock_move_ids |= purchase_line.move_ids
 
             for stock_move in stock_move_ids:
-                if stock_move.state in ['draft', 'cancel'] or stock_move.quantity_done == 0.0:
+                if stock_move.state in ['draft']:
                     continue
                 invoice_line.stock_move_ids |= stock_move
 
     @api.onchange('weight')
     def onchange_weight(self):
         """ save manual value """
-        print('\n----------onchange_weight------------', self.price_unit)
         self.ensure_one()
         res = {}
         if self.product_id and self.product_id.weight * self.uom_qty == self.weight:
@@ -211,7 +209,16 @@ class AccountMoveLine(models.Model):
                 if line.manual_weight:
                     line.weight = line.manual_weight
                 elif line.stock_move_ids:
-                    line.weight = sum(line.stock_move_ids.mapped('weight'))
+                    weight = 0.0
+                    uom_qty = 0.0
+                    for stock_move in line.stock_move_ids:
+                        if stock_move.state not in ['draft', 'cancel']:
+                            weight += stock_move.weight
+                            uom_qty += stock_move.quantity_done
+
+                    line.weight = weight
+                    line.uom_qty = uom_qty
+
                 elif line.product_id.weight > 0.0:
                     line.weight = line.product_id.weight * line.uom_qty
                 else:

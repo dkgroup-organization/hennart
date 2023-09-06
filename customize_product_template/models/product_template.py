@@ -50,10 +50,31 @@ class ProductTemplate(models.Model):
                 product.detailed_type = 'product'
                 product.use_expiration_date = True
 
-    tracking = fields.Selection(compute="update_categ_value", store=True, precompute=True)
-    type = fields.Selection(compute="update_categ_value", store=True, precompute=True)
-    detailed_type = fields.Selection(compute="update_categ_value", store=True, precompute=True)
-    use_expiration_date = fields.Boolean(compute="update_categ_value", store=True, precompute=True)
+        query = """
+        update product_template pt set tracking = pc.tracking from  product_category pc where pt.categ_id = pc.id and pt.tracking != pc.tracking;
+        update product_template pt set type = pc.type from  product_category pc where pt.categ_id = pc.id and pt.type != pc.type;
+        update product_template pt set detailed_type = pc.detailed_type from  product_category pc where pt.categ_id = pc.id and pt.detailed_type != pc.detailed_type;
+        update product_template pt set use_expiration_date = pc.use_expiration_date from  product_category pc where pt.categ_id = pc.id and pt.use_expiration_date != pc.use_expiration_date;
+        """
+
+    tracking = fields.Selection(compute="update_categ_value", store=True, precompute=False, default='lot')
+    type = fields.Selection(compute="update_categ_value", store=True, precompute=False, default='product')
+    detailed_type = fields.Selection(compute="update_categ_value", store=True, precompute=False, default='product')
+    use_expiration_date = fields.Boolean(compute="update_categ_value", store=True, precompute=False, default=True)
+
+    service_type = fields.Selection(
+        [('manual', 'Manually set quantities on order')], string='Track Service',
+        compute='_compute_service_type', store=True, readonly=False, precompute=False, default="manual",
+        help="Manually set quantities on order: Invoice based on the manually entered quantity, without creating an analytic account.\n"
+             "Timesheets on contract: Invoice based on the tracked hours on the related timesheet.\n"
+             "Create a task and track hours: Create a task on the sales order validation and track the work hours.")
+
+    invoice_policy = fields.Selection(
+        [('order', 'Ordered quantities'),
+         ('delivery', 'Delivered quantities')], string='Invoicing Policy',
+        compute='_compute_invoice_policy', store=True, readonly=True, precompute=False, default="delivery",
+        help='Ordered Quantity: Invoice quantities ordered by the customer.\n'
+             'Delivered Quantity: Invoice quantities delivered to the customer.')
 
     route_ids = fields.Many2many(default=False)
     uos_id = fields.Many2one('uom.uom', string='Unit of Sale',
@@ -164,6 +185,19 @@ class ProductTemplate(models.Model):
 
     base_unit_name = fields.Char(compute='_compute_base_unit_name',
                                  help='Displays the custom unit for the products if defined or the selected unit of measure otherwise.')
+
+    def _compute_service_type(self):
+        """ only one case manually"""
+        self.service_type = 'manual'
+
+    def _compute_invoice_policy(self):
+        """ Define invoice policy"""
+        for product in self:
+            type = product.categ_id.type or "product"
+            if type != "service":
+                product.invoice_policy = "delivery"
+            else:
+                product.invoice_policy = "order"
 
     @api.depends('list_price', 'weight', 'uos_id', 'bom_ids', 'bom_ids.base_unit_count')
     def compute_package(self):

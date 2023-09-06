@@ -50,15 +50,19 @@ class StockMove(models.Model):
         for move in self:
             if move.state == 'cancel':
                 move.weight = 0.0
-            elif move.state == 'done':
+                move.weight_manual = 0.0
                 continue
 
             weight = 0.0
             if move.weight_manual > 0.00:
                 weight = move.weight_manual
             elif move.move_line_ids and move.move_line_ids.filtered(lambda lines: lines.weight > 0.00):
+                # TODO: Check if state cancel exist on stock.move.line
                 weight = sum(move.move_line_ids.filtered(lambda lines: lines.weight > 0.00).mapped('weight'))
             elif move.product_id.weight > 0.0:
-                weight = (move.product_qty * move.product_id.weight)
+                if move.state == "done":
+                    move.weight_manual = weight = (move.quantity_done * move.product_id.weight)
+                else:
+                    weight = (move.product_qty * move.product_id.weight)
             move.weight = weight
 
