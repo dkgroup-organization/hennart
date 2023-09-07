@@ -26,24 +26,7 @@ class AccountMove(models.Model):
         'account.account',
         string='Account',
     )
-    
-    payment_state = fields.Selection(
-        selection=[
-            ('not_paid', 'Not Paid'),
-            ('in_payment', 'In Payment'),
-            ('paid', 'Paid'),
-            ('partial', 'Partially Paid'),
-            ('reversed', 'Reversed'),
-            ('invoicing_legacy', 'Invoicing App Legacy'),
-        ],
-        string="Payment Status",
-        # compute='_compute_payment_state', 
-        store=True, 
-        readonly=False,
-        copy=False,
-        tracking=True,
-    )
-    
+
     picking_ids = fields.Many2many('stock.picking', string='Pickings')
 
     payment_state = fields.Selection(
@@ -78,27 +61,47 @@ class AccountMove(models.Model):
             self.journal_id = False
 
     def action_valide_imported(self):
-        """ Valid a imported move"""
+        """ Valid a imported move, there is some correction todo"""
         uom_weight = self.env['product.template'].sudo()._get_weight_uom_id_from_ir_config_parameter()
+        remote_server = self.env['synchro.server'].search([])
+        sync_obj = remote_server[0].obj_ids.search([('model_name', '=', 'account.invoice.line')])
 
         for move in self:
-            if move.state != 'draft':
+            if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
                 continue
-            for line in self.invoice_line_ids:
+
+            if move.fiscal_position_id.id in [2, 3]:
+                # error imported reload
+                self.env['synchro.obj.line'].search([('obj_id', '=', 40), ('local_id', '=', move.id)]).update_values()
+                if move.fiscal_position_id.id in [2, 3]:
+                    move.fiscal_position_id = False
+                    continue
+
+            if not move.invoice_line_ids and move.total_ttc:
+                " Import the line"
+                piece_comptable = eval(move.piece_comptable)
+                if len(piece_comptable):
+                    domain = [('invoice_id.move_id', '=', piece_comptable[0])]
+                    remote_ids = sync_obj.remote_search(domain)
+                    remote_values = sync_obj.remote_read(remote_ids)
+                    sync_obj.write_local_value(remote_values)
+            for line in move.invoice_line_ids:
                 if line.product_uos == uom_weight:
                     line.manual_weight = line.quantity
                 else:
                     line.uom_qty = line.quantity
-                    
-            self.invoice_line_ids.get_product_uom_id()
+            move.invoice_line_ids.get_product_uom_id()
+
             if move.piece_comptable and move.total_ttc == move.amount_total:
-                if move.journal_id.id == 1:
-                    move.action_post()
-                    move.payment_state = 'paid'
+                if move.journal_id.type == 'sale':
+                    move.sudo().action_post()
+                    if move.total_ttc == move.amount_total:
+                        move.payment_state = 'paid'
                 else:
                     if move.partner_id.vat and move.fiscal_position_id and move.piece_comptable and move.total_ttc == move.amount_total:
-                        move.action_post()
-                        move.payment_state = 'paid'
+                        move.sudo().action_post()
+                        if move.total_ttc == move.amount_total:
+                            move.payment_state = 'paid'
                     else:
                         #update this
                         print("\n------not posted-----", move.partner_id.id, move.partner_id.name)

@@ -16,6 +16,7 @@ class StockMove(models.Model):
     prodlot_inv = fields.Char(string='Supplier N° lot')
     picking_type_use_create_lots = fields.Boolean(related='picking_type_id.use_create_lots', readonly=True)
 
+    lot_description = fields.Html("Lot description", compute="get_lot_description")
     lot_expiration_date = fields.Datetime(
         string='Expiration Date', compute='_compute_expiration_date', store=True,
         help='This is the date on which the goods with this Serial Number may'
@@ -26,24 +27,14 @@ class StockMove(models.Model):
         if 'prodlot_inv' in vals or 'lot_expiration_date' in vals:
             if not self.move_line_ids:
                 self.move_line_ids = [(0, 0, {
-                'lot_name': self.prodlot_inv,
-                'expiration_date':self.lot_expiration_date
-            })]
+                    'lot_name': self.prodlot_inv,
+                    'expiration_date': self.lot_expiration_date
+                    })]
             elif (self.move_line_ids and len(self.move_line_ids) == 1):
                 for move in self.move_line_ids:
                     move.lot_name = self.prodlot_inv
                     move.expiration_date = self.lot_expiration_date
         return res
-
-    @api.depends('product_id', 'picking_type_use_create_lots')
-    def _compute_expiration_date(self):
-        for move in self:
-            if move.picking_type_use_create_lots:
-                if move.product_id.use_expiration_date:
-                    if not move.lot_expiration_date:
-                        move.lot_expiration_date = fields.Datetime.today() + datetime.timedelta(days=move.product_id.expiration_time)
-                else:
-                    move.lot_expiration_date = False
 
     @api.depends('state', 'product_id', 'product_uom_qty', 'product_uom', 'weight_manual', 'move_line_ids.weight')
     def get_move_weight(self):
