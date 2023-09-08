@@ -22,6 +22,11 @@ class StockMove(models.Model):
         help='This is the date on which the goods with this Serial Number may'
              ' become dangerous and must not be consumed.')
 
+    def get_lot_description(self):
+        """ Get lot description"""
+        for move in self:
+            move.lot_description = ""
+
     def write(self, vals):
         res = super().write(vals)
         if 'prodlot_inv' in vals or 'lot_expiration_date' in vals:
