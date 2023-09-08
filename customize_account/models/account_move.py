@@ -78,7 +78,7 @@ class AccountMove(models.Model):
                     # Manual correction needed
                     continue
 
-            if not move.invoice_line_ids and move.total_ttc:
+            if not move.invoice_line_ids:
                 " Import the line"
                 piece_comptable = eval(move.piece_comptable)
                 if len(piece_comptable):
@@ -106,9 +106,7 @@ class AccountMove(models.Model):
                             move.payment_state = 'paid'
                     else:
                         # update this
-                        print("\n---!!!--not posted--!!!---", move.partner_id.id, move.partner_id.name)
                         pass
-            print("\n------posted-----", move.partner_id.id, move.partner_id.name)
 
     def compute_picking_ids(self):
         for invoice in self:

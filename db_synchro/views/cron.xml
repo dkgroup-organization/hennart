@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
 	<data>
-		
 		<record id="cron_auto_migrate_invoices" model="ir.cron">
 			<field name="name">Sync invoices automaticly</field>
 			<field name="interval_number">5</field>
@@ -13,18 +12,5 @@
 			<field name="model_id" ref="db_synchro.model_synchro_server"/>
 			<field name="code">model.cron_migrate_invoices()</field>
 		</record>
-
-		<record id="cron_auto_migrate_invoice_lines" model="ir.cron">
-			<field name="name">Sync invoice lines automaticly</field>
-			<field name="interval_number">5</field>
-			<field name="interval_type">minutes</field>
-			<field name="numbercall">-1</field>
-			<field name="state" eval="'code'"/>
-			<field name="doall" eval="False"/>
-			<field name="user_id" ref="base.user_root"/>
-			<field name="model_id" ref="db_synchro.model_synchro_server"/>
-			<field name="code">model.cron_migrate_invoice_lines()</field>
-		</record>
-		
 	</data>
 </odoo>
