@@ -9,6 +9,7 @@ PAYMENT_STATE_SELECTION = [
         ('invoicing_legacy', 'Invoicing App Legacy'),
 ]
 
+
 class AccountMove(models.Model):
     _inherit = "account.move"
 
