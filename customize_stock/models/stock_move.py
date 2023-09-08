@@ -35,7 +35,7 @@ class StockMove(models.Model):
                     'lot_name': self.prodlot_inv,
                     'expiration_date': self.lot_expiration_date
                     })]
-            elif (self.move_line_ids and len(self.move_line_ids) == 1):
+            elif self.move_line_ids and len(self.move_line_ids) == 1:
                 for move in self.move_line_ids:
                     move.lot_name = self.prodlot_inv
                     move.expiration_date = self.lot_expiration_date
