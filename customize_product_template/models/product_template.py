@@ -193,11 +193,7 @@ class ProductTemplate(models.Model):
     def _compute_invoice_policy(self):
         """ Define invoice policy"""
         for product in self:
-            type = product.categ_id.type or "product"
-            if type != "service":
-                product.invoice_policy = "delivery"
-            else:
-                product.invoice_policy = "order"
+            product.invoice_policy = "delivery"
 
     @api.depends('list_price', 'weight', 'uos_id', 'bom_ids', 'bom_ids.base_unit_count')
     def compute_package(self):

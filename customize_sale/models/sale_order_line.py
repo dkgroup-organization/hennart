@@ -119,13 +119,13 @@ class SaleOrderLine(models.Model):
 
         return outgoing_moves, incoming_moves
 
-    @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom')
+    @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom', 'order_id.delivery_status')
     def _compute_qty_delivered(self):
         super(SaleOrderLine, self)._compute_qty_delivered()
 
-        for line in self:  # TODO: maybe one day, this should be done in SQL for performance sake
+        for line in self:
+            qty = 0.0
             if line.qty_delivered_method == 'stock_move':
-                qty = 0.0
                 outgoing_moves, incoming_moves = line._get_outgoing_incoming_moves()
                 for move in outgoing_moves:
                     if move.state != 'done':
@@ -142,7 +142,10 @@ class SaleOrderLine(models.Model):
                     else:
                         qty -= move.product_uom_qty
 
-                line.qty_delivered = qty
+            if line.product_id.type == 'service' and line.order_id.delivery_status != 'pending':
+                qty = line.product_uom_qty
+
+            line.qty_delivered = qty
 
     @api.depends('invoice_lines.move_id.state', 'invoice_lines.quantity')
     def _compute_qty_invoiced(self):
