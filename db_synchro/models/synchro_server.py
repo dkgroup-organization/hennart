@@ -227,7 +227,10 @@ class BaseSynchroServer(models.Model):
     def cron_valid_invoice(self):
         """ Scheduled migration for invoices"""
         condition = [('piece_comptable', '!=', False), ('state', '=', 'draft'), ('fiscal_position_id', '!=', False)]
-        invoice_ids = self.env['account.move'].search(condition, limit=1000)
-        for invoice in invoice_ids:
-            invoice.with_delay().action_valide_imported()
+        job_ids = self.env['queue.job'].search([('state', '=', 'pending')])
+
+        if len(job_ids) < 15:
+            invoice_ids = self.env['account.move'].search(condition, limit=100)
+            for invoice in invoice_ids:
+                invoice.with_delay().action_valide_imported()
 
