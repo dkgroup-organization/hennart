@@ -29,7 +29,9 @@ class AccountMoveLine(models.Model):
         string='Packaging',
         )
 
-    prodlot_id = fields.Many2many(
+
+
+    prodlot_ids = fields.Many2many(
         'stock.lot',
         string='Production lot',
         )
@@ -46,6 +48,7 @@ class AccountMoveLine(models.Model):
     promotion = fields.Float(string='Promo %')
 
     # Validated V16
+    prodlot_id = fields.Many2one('stock.lot', string='Production lot')
     default_code = fields.Char('Code', related='product_id.default_code', store=True)
     stock_move_ids = fields.Many2many('stock.move', string="Stock moves")
 

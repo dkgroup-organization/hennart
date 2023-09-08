@@ -128,7 +128,7 @@ class PartnerCrmAppointment(models.Model):
                     'date': nextday_utc,
                     'state': 'open',
                 }
-                res != self.env['crm.phonecall'].create(phone_vals)
+                res = self.env['crm.phonecall'].create(phone_vals)
 
         return res
 

@@ -63,9 +63,12 @@
                     <field name="product_uom_category_id" invisible="1"/>
                     <field name="product_uom_id"/>
 
-                    <field name="initial_price"  optional="hide" attrs="{'column_invisible': [('parent.move_type', 'not in', ['in_invoice', 'in_refund'])]}"/>
-                    <field name="discount1" optional="hide" attrs="{'column_invisible': [('parent.move_type', 'not in', ['in_invoice', 'in_refund'])]}"/>
-                    <field name="discount2" optional="hide" attrs="{'column_invisible': [('parent.move_type', 'not in', ['in_invoice', 'in_refund'])]}"/>
+                    <field name="initial_price" optional="hide"
+                           attrs="{'column_invisible': [('parent.move_type', 'not in', ['in_invoice', 'in_refund'])]}"/>
+                    <field name="discount1" optional="hide"
+                           attrs="{'column_invisible': [('parent.move_type', 'not in', ['in_invoice', 'in_refund'])]}"/>
+                    <field name="discount2" optional="hide"
+                           attrs="{'column_invisible': [('parent.move_type', 'not in', ['in_invoice', 'in_refund'])]}"/>
 
 
                     <field name="price_unit" string="Price"/>
@@ -105,13 +108,17 @@
             <xpath expr="//field[@name='payment_reference']" position="replace">
             </xpath>
 
-            <xpath expr="//field[@name='narration']" position="before">
-                <field name="invoice_payment_term_id"/>
-                <field name="payment_method_id"/>
-                <field name="payment_reference"/>
-            </xpath>
+            <notebook position="inside">
+                <page string="Paiement">
+                    <group string="Paiement informations">
+                        <field name="invoice_payment_term_id"/>
+                        <field name="payment_method_id"/>
+                        <field name="payment_reference"/>
+                        <field name="payment_state" attrs="{'invisible': [('state', '!=', 'posted')]}"/>
+                    </group>
+                </page>
+            </notebook>
 
         </field>
     </record>
-
 </odoo>
