@@ -72,9 +72,10 @@ class AccountMove(models.Model):
 
             if move.fiscal_position_id.id in [2, 3]:
                 # error imported reload
-                self.env['synchro.obj.line'].search([('obj_id', '=', 40), ('local_id', '=', move.id)]).update_values()
+                self.env['synchro.obj.line'].search([('obj_id.model_name', '=', 'account.invoice'), ('local_id', '=', move.id)]).update_values()
                 if move.fiscal_position_id.id in [2, 3]:
                     move.fiscal_position_id = False
+                    # Manual correction needed
                     continue
 
             if not move.invoice_line_ids and move.total_ttc:
@@ -90,6 +91,7 @@ class AccountMove(models.Model):
                     line.manual_weight = line.quantity
                 else:
                     line.uom_qty = line.quantity
+
             move.invoice_line_ids.get_product_uom_id()
 
             if move.piece_comptable and move.total_ttc == move.amount_total:
@@ -103,9 +105,10 @@ class AccountMove(models.Model):
                         if move.total_ttc == move.amount_total:
                             move.payment_state = 'paid'
                     else:
-                        #update this
-                        print("\n------not posted-----", move.partner_id.id, move.partner_id.name)
+                        # update this
+                        print("\n---!!!--not posted--!!!---", move.partner_id.id, move.partner_id.name)
                         pass
+            print("\n------posted-----", move.partner_id.id, move.partner_id.name)
 
     def compute_picking_ids(self):
         for invoice in self:
