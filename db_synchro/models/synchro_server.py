@@ -226,11 +226,29 @@ class BaseSynchroServer(models.Model):
     @api.model
     def cron_valid_invoice(self, limit=100):
         """ Scheduled migration for invoices"""
-        condition = [('piece_comptable', '!=', False), ('state', '=', 'draft'), ('fiscal_position_id', '!=', False)]
+        pool_invoice = 5 * limit
+
         job_ids = self.env['queue.job'].search([('state', '=', 'pending')])
+        invoice_ids = self.env['account.move']
+        synchro_line_ids = self.env['synchro.obj.line']
 
-        if len(job_ids) < 15:
-            invoice_ids = self.env['account.move'].search(condition, limit=limit)
-            for invoice in invoice_ids:
-                invoice.with_delay().action_valide_imported()
+        if len(job_ids) < pool_invoice:
+            while len(invoice_ids) < pool_invoice:
 
+                if not synchro_line_ids:
+                    synchro_line_ids = self.env['synchro.obj.line'].search(
+                        [('obj_id.model_id.model', '=', 'account.move'), ('local_id', '>', 0)],
+                        order='update_date asc', limit=5*limit)
+
+                for line in synchro_line_ids:
+                    invoice = self.env['account.move'].browse(line.local_id)
+
+                    if invoice.piece_comptable and invoice.state == 'draft' and invoice.fiscal_position_id:
+                        invoice.with_delay().action_valide_imported()
+                        invoice_ids |= invoice
+                        print('\n', invoice.name)
+
+                    line.update_date = fields.Datetime().now()
+
+                    if len(invoice_ids) >= pool_invoice:
+                        break
