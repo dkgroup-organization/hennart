@@ -14,18 +14,26 @@ class StockMove(models.Model):
     weight = fields.Float(compute='get_move_weight', digits='Stock Weight', store=True, compute_sudo=True)
 
     prodlot_inv = fields.Char(string='Supplier N° lot')
-    picking_type_use_create_lots = fields.Boolean(related='picking_type_id.use_create_lots', readonly=True)
-
-    lot_description = fields.Html("Lot description", compute="get_lot_description")
     lot_expiration_date = fields.Datetime(
-        string='Expiration Date', compute='_compute_expiration_date', store=True,
+        string='Expiration Date', compute=False, store=True,
         help='This is the date on which the goods with this Serial Number may'
              ' become dangerous and must not be consumed.')
+
+    picking_type_use_create_lots = fields.Boolean(related='picking_type_id.use_create_lots', readonly=True)
+    lot_description = fields.Html("Lot description", compute="get_lot_description", store=False, readonly=True)
 
     def get_lot_description(self):
         """ Get lot description"""
         for move in self:
-            move.lot_description = ""
+            lot_ids = self.env['stock.lot']
+            lot_description = ""
+            for move_line in move.move_line_ids:
+                if move_line.lot_id:
+                    lot_ids |= move_line.lot_id
+            lot_ids |= move.lot_ids
+            for lot in lot_ids:
+                lot_description += "{} - {}</br>".format(lot.name, lot.expiration_date)
+            move.lot_description = lot_description
 
     def write(self, vals):
         res = super().write(vals)

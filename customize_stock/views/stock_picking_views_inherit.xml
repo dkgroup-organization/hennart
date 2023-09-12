@@ -35,6 +35,14 @@
                     <attribute name="optional">"hide"</attribute>
                 </xpath>
 
+                <xpath expr="//page[@name='operations']//field[@name='lot_ids']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='operations']//field[@name='lot_ids']" position="before">
+                  <field name="lot_description"/>
+                </xpath>
+
                 <xpath expr="//page[@name='operations']//field[@name='product_packaging_id']" position="attributes">
                     <attribute name="attrs">{'column_invisible': [('parent.picking_type_code', '!=', 'incoming')]}</attribute>
                 </xpath>

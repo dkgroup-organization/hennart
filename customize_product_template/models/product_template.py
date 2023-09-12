@@ -43,12 +43,11 @@ class ProductTemplate(models.Model):
                 product.tracking = product.categ_id.tracking
                 product.type = product.categ_id.detailed_type
                 product.detailed_type = product.categ_id.detailed_type
-                product.use_expiration_date = product.categ_id.use_expiration_date
             else:
                 product.tracking = 'lot'
                 product.type = 'product'
                 product.detailed_type = 'product'
-                product.use_expiration_date = True
+            product.use_expiration_date = True
 
         query = """
         update product_template pt set tracking = pc.tracking from  product_category pc where pt.categ_id = pc.id and pt.tracking != pc.tracking;

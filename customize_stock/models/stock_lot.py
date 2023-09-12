@@ -20,6 +20,12 @@ class Stock_lot(models.Model):
     temp2_old_barcode = fields.Char(string='migration Barcode 2', index=True)
     barcode = fields.Char(string='Barcode', compute="get_barcode", store=True, index=True)
     barcode_ext = fields.Char(string='Barcode (external)', compute="get_barcode", store=True, index=True)
+    use_expiration_date = fields.Boolean('use_expiration_date', compute="freeze_value")
+
+    def freeze_value(self):
+        """ Freeze configuration"""
+        for line in self:
+            line.use_expiration_date = True
 
     @api.constrains('name', 'ref', 'product_id', 'company_id')
     def _check_unique_lot(self):

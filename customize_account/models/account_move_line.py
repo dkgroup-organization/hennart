@@ -52,7 +52,7 @@ class AccountMoveLine(models.Model):
     default_code = fields.Char('Code', related='product_id.default_code', store=True)
     stock_move_ids = fields.Many2many('stock.move', string="Stock moves")
 
-    lot = fields.Char("production lot")
+    lot = fields.Char("lot")
 
     supplierinfo_id = fields.Many2one('product.supplierinfo',
                                       compute='get_supplierinfo_id',
@@ -202,8 +202,6 @@ class AccountMoveLine(models.Model):
         for line in self:
             if line.move_id.state in ['cancel', 'posted']:
                 continue
-            else:
-                line.update_stock_move()
 
             if not line.product_id:
                 line.uom_qty = 0.0
@@ -212,6 +210,7 @@ class AccountMoveLine(models.Model):
                 if line.manual_weight:
                     line.weight = line.manual_weight
                 elif line.stock_move_ids:
+                    # Use update_stock_move to get the value
                     weight = 0.0
                     uom_qty = 0.0
                     for stock_move in line.stock_move_ids:
@@ -219,7 +218,11 @@ class AccountMoveLine(models.Model):
                             weight += stock_move.weight
                             uom_qty += stock_move.quantity_done
 
-                    line.weight = weight
+                    if line.manual_weight:
+                        line.weight = line.manual_weight
+                    else:
+                        line.weight = weight
+
                     line.uom_qty = uom_qty
 
                 elif line.product_id.weight > 0.0:

@@ -73,7 +73,8 @@ class AccountMove(models.Model):
 
             if move.fiscal_position_id.id in [2, 3]:
                 # error imported reload
-                self.env['synchro.obj.line'].search([('obj_id.model_name', '=', 'account.invoice'), ('local_id', '=', move.id)]).update_values()
+                self.env['synchro.obj.line'].search([('obj_id.model_name', '=', 'account.invoice'),
+                                                     ('local_id', '=', move.id)]).update_values()
                 if move.fiscal_position_id.id in [2, 3]:
                     move.fiscal_position_id = False
                     # Manual correction needed
