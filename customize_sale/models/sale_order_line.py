@@ -22,6 +22,7 @@ class SaleOrderLine(models.Model):
     product_uom_readonly = fields.Boolean("UOM readonly", default=True)
     cadence = fields.Html(string="Cadencier", compute="compute_cadence", readonly=True, compute_sudo=True)
     display_qty_widget = fields.Boolean("display widget", store=True, compute='_compute_display_qty_widget')
+    logistic_discount = fields.Float('logistical discount')
 
     @api.depends('state')
     def _compute_product_uom_readonly(self):

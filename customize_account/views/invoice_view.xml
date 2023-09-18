@@ -6,6 +6,11 @@
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
 
+            <header position="inside">
+                <button class="oe_highlight" name="update_discount_stock" type="object" string="update"
+                                attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+            </header>
+
             <xpath expr="//page[@name='other_info']" position="after">
                 <page id="other_tab_v7" string="Control V7" name="infos_v7"
                       attrs="{'invisible': [('piece_comptable', '=', False)]}">
@@ -90,7 +95,7 @@
                     <field name="supplierinfo_id" optional="hide"/>
 
                     <field name="stock_move_ids" optional="hide" widget="many2many_tags"/>
-                    <button name="update_stock_move" type="object" string="update"/>
+                    <button name="update_stock_move" type="object" string="update" optional="hide"/>
                 </tree>
             </xpath>
 

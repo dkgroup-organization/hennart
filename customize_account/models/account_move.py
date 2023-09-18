@@ -43,6 +43,49 @@ class AccountMove(models.Model):
         compute='_compute_suitable_journal2_ids',
     )
 
+    def get_max_subtotal_tax(self):
+        """ return subtotal and tax"""
+        discount_product_ids = self.env['product.pricelist.discount'].search(
+            [('product_discount_id', '!=', False)]).mapped('product_discount_id')
+
+        subtotal_by_tax = {}
+
+        for line in self.invoice_line_ids:
+            if line.product_id in discount_product_ids or line.product_id.type == "service":
+                continue
+
+            tax = line.tax_ids
+            subtotal = line.price_subtotal
+            if tax in subtotal_by_tax:
+                subtotal_by_tax[tax] += subtotal
+            else:
+                subtotal_by_tax[tax] = subtotal
+
+        if subtotal_by_tax:
+            max_subtotal_tax = max(subtotal_by_tax, key=subtotal_by_tax.get)
+            return max_subtotal_tax, subtotal_by_tax[max_subtotal_tax]
+        else:
+            return False, 0.0
+
+    def update_discount_stock(self):
+        """ check the sale line logistical discount """
+        line_discount_data = []
+        for invoice in self:
+            for invoice_line in invoice.invoice_line_ids:
+                invoice_line.update_stock_move()
+                for sale_line in invoice_line.sale_line_ids:
+                    if sale_line.logistic_discount:
+                        line_discount_data.append(
+                            {'invoice_line': invoice_line, 'logistic_discount': sale_line.logistic_discount})
+
+        for line_discount in line_discount_data:
+            invoice = line_discount['invoice_line'].move_id
+            tax, total_HT = invoice.get_max_subtotal_tax()
+            line_discount['invoice_line'].tax_ids = tax
+            line_discount['invoice_line'].price_unit = - total_HT * line_discount['logistic_discount'] / 100
+            line_discount['invoice_line'].uom_qty = 1.0
+            print('-------------------------', line_discount['logistic_discount'])
+
     @api.depends('company_id', 'invoice_filter_type_domain', 'src_dest_country_id')
     def _compute_suitable_journal2_ids(self):
         for m in self:
