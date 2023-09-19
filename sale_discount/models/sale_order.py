@@ -52,8 +52,9 @@ class SaleOrderInherit(models.Model):
                 line_values = {
                     'order_id': self._origin.id,
                     'product_id': product_id.id,
-                    'name': product_id.name,
+                    'name': product_id.name + ": {:.2f} %".format(discount_percent),
                     'product_uom_qty': 1,
+                    'logistic_discount': discount_percent,
                     'price_unit': -1 * (subtotal * (discount_percent / 100)),
                 }
                 if max_subtotal_tax:

@@ -84,7 +84,6 @@ class AccountMoveLine(models.Model):
         digits='Product Price',
     )
 
-
     def _get_out_and_not_invoiced_qty(self, in_moves):
         self.ensure_one()
         if not in_moves:
@@ -276,7 +275,7 @@ class AccountMoveLine(models.Model):
             res["discount2"] = 0.0
             res["initial_price"] = 0.0
             res["price_unit"] = 0.0
-        print('\n--------onchange_supplierinfo--------', res)
+
         self.update(res)
 
     def _generate_price_difference_vals(self, layers):
