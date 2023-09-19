@@ -74,7 +74,7 @@ class AccountMove(models.Model):
             for invoice_line in invoice.invoice_line_ids:
                 invoice_line.update_stock_move()
                 for sale_line in invoice_line.sale_line_ids:
-                    if sale_line.logistic_discount:
+                    if sale_line.logistic_discount > 0.0:
                         line_discount_data.append(
                             {'invoice_line': invoice_line, 'logistic_discount': sale_line.logistic_discount})
 
@@ -82,7 +82,7 @@ class AccountMove(models.Model):
             invoice = line_discount['invoice_line'].move_id
             tax, total_HT = invoice.get_max_subtotal_tax()
             line_discount['invoice_line'].tax_ids = tax
-            line_discount['invoice_line'].price_unit = - total_HT * line_discount['logistic_discount'] / 100
+            line_discount['invoice_line'].price_unit = - total_HT * line_discount['logistic_discount'] / 100.0
             line_discount['invoice_line'].uom_qty = 1.0
 
     @api.depends('company_id', 'invoice_filter_type_domain', 'src_dest_country_id')
