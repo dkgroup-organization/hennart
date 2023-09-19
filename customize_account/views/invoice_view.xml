@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
 
             <header position="inside">
-                <button class="oe_highlight" name="update_discount_stock" type="object" string="update"
+                <button class="oe_highlight" name="update_discount_stock" type="object" string="update delivery"
                                 attrs="{'invisible': [('state', '!=', 'draft')]}"/>
             </header>
 
