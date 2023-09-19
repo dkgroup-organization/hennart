@@ -84,7 +84,6 @@ class AccountMove(models.Model):
             line_discount['invoice_line'].tax_ids = tax
             line_discount['invoice_line'].price_unit = - total_HT * line_discount['logistic_discount'] / 100
             line_discount['invoice_line'].uom_qty = 1.0
-            print('-------------------------', line_discount['logistic_discount'])
 
     @api.depends('company_id', 'invoice_filter_type_domain', 'src_dest_country_id')
     def _compute_suitable_journal2_ids(self):
@@ -145,9 +144,10 @@ class AccountMove(models.Model):
                     if move.total_ttc == move.amount_total:
                         move.payment_state = 'paid'
                 else:
-                    if move.partner_id.vat and move.fiscal_position_id and move.piece_comptable and move.total_ttc == move.amount_total:
+                    if (move.partner_id.vat and move.fiscal_position_id and move.piece_comptable and
+                            int(move.total_ttc * 100.0) == int(move.amount_total * 100.0)):
                         move.sudo().action_post()
-                        if move.total_ttc == move.amount_total:
+                        if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
                             move.payment_state = 'paid'
                     else:
                         # update this

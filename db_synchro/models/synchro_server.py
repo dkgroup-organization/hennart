@@ -246,7 +246,6 @@ class BaseSynchroServer(models.Model):
                     if invoice.piece_comptable and invoice.state == 'draft' and invoice.fiscal_position_id:
                         invoice.with_delay().action_valide_imported()
                         invoice_ids |= invoice
-                        print('\n', invoice.name)
 
                     line.update_date = fields.Datetime().now()
 
