@@ -100,8 +100,14 @@ class AccountMove(models.Model):
     @api.onchange('partner_id')
     def onchange_partner2_id(self):
         """ select journal by country"""
-        if self.journal_id not in self.suitable_journal_ids:
-            self.journal_id = False
+        self.ensure_one()
+        res = {}
+        if self.suitable_journal_ids:
+            if self.journal_id not in self.suitable_journal_ids:
+                res['journal_id'] = self.suitable_journal_ids[0]
+        else:
+            res['journal_id'] = False
+        self.update(res)
 
     def action_valide_imported(self):
         """ Valid a imported move, there is some correction todo"""
@@ -138,20 +144,15 @@ class AccountMove(models.Model):
 
             move.invoice_line_ids.get_product_uom_id()
 
-            if move.piece_comptable and move.total_ttc == move.amount_total:
-                if move.journal_id.type == 'sale':
+            if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
+                if (move.partner_id.vat and move.fiscal_position_id and move.piece_comptable and
+                        int(move.total_ttc * 100.0) == int(move.amount_total * 100.0)):
                     move.sudo().action_post()
-                    if move.total_ttc == move.amount_total:
+                    if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
                         move.payment_state = 'paid'
                 else:
-                    if (move.partner_id.vat and move.fiscal_position_id and move.piece_comptable and
-                            int(move.total_ttc * 100.0) == int(move.amount_total * 100.0)):
-                        move.sudo().action_post()
-                        if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
-                            move.payment_state = 'paid'
-                    else:
-                        # update this
-                        pass
+                    # update this
+                    pass
 
     def compute_picking_ids(self):
         for invoice in self:
@@ -164,3 +165,61 @@ class AccountMove(models.Model):
                 invoice.picking_ids = picking_ids
             else:
                 invoice.picking_ids = False
+
+    def _get_last_sequence_domain(self, relaxed=False):
+        # EXTENDS account sequence.mixin
+        self.ensure_one()
+        if not self.journal_id:
+            return "WHERE FALSE", {}
+        journal_ids = self.env['account.journal'].search([('type', '=', self.journal_id.type)])
+
+        where_string = "WHERE journal_id in %(journal_ids)s AND name != '/'"
+        param = {'journal_ids': tuple(journal_ids.ids)}
+        is_payment = self.payment_id or self._context.get('is_payment')
+
+        if not relaxed:
+            domain = [('journal_id', '=', self.journal_id.id), ('id', '!=', self.id or self._origin.id), ('name', 'not in', ('/', '', False))]
+            if self.journal_id.refund_sequence:
+                refund_types = ('out_refund', 'in_refund')
+                domain += [('move_type', 'in' if self.move_type in refund_types else 'not in', refund_types)]
+            if self.journal_id.payment_sequence:
+                domain += [('payment_id', '!=' if is_payment else '=', False)]
+            reference_move_name = self.search(domain + [('date', '<=', self.date)], order='date desc', limit=1).name
+            if not reference_move_name:
+                reference_move_name = self.search(domain, order='date asc', limit=1).name
+            sequence_number_reset = self._deduce_sequence_number_reset(reference_move_name)
+
+        if self.journal_id.refund_sequence:
+            if self.move_type in ('out_refund', 'in_refund'):
+                where_string += " AND move_type IN ('out_refund', 'in_refund') "
+            else:
+                where_string += " AND move_type NOT IN ('out_refund', 'in_refund') "
+        elif self.journal_id.payment_sequence:
+            if is_payment:
+                where_string += " AND payment_id IS NOT NULL "
+            else:
+                where_string += " AND payment_id IS NULL "
+
+        return where_string, param
+
+    @api.depends('name', 'journal_id')
+    def _compute_made_sequence_hole(self):
+
+        self.env.cr.execute("""
+            SELECT this.id
+              FROM account_move this
+              JOIN res_company company ON company.id = this.company_id
+         LEFT JOIN account_move other ON this.move_type = other.move_type
+                                     AND this.sequence_prefix = other.sequence_prefix
+                                     AND this.sequence_number = other.sequence_number + 1
+             WHERE other.id IS NULL
+                AND this.invoice_date > '2022-12-31'
+               AND this.sequence_number != 1
+               AND this.name != '/'
+               AND this.id = ANY(%(move_ids)s)
+        """, {
+            'move_ids': self.ids,
+        })
+        made_sequence_hole = set(r[0] for r in self.env.cr.fetchall())
+        for move in self:
+            move.made_sequence_hole = move.id in made_sequence_hole

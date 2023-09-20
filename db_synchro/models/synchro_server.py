@@ -229,11 +229,11 @@ class BaseSynchroServer(models.Model):
         pool_invoice = 5 * limit
 
         job_ids = self.env['queue.job'].search([('state', '=', 'pending')])
-        invoice_ids = self.env['account.move']
+        nb_invoice = 0
         synchro_line_ids = self.env['synchro.obj.line']
 
         if len(job_ids) < pool_invoice:
-            while len(invoice_ids) < pool_invoice:
+            while nb_invoice < pool_invoice:
 
                 if not synchro_line_ids:
                     synchro_line_ids = self.env['synchro.obj.line'].search(
@@ -245,9 +245,9 @@ class BaseSynchroServer(models.Model):
 
                     if invoice.piece_comptable and invoice.state == 'draft' and invoice.fiscal_position_id:
                         invoice.with_delay().action_valide_imported()
-                        invoice_ids |= invoice
+                        nb_invoice += 1
 
                     line.update_date = fields.Datetime().now()
 
-                    if len(invoice_ids) >= pool_invoice:
+                    if nb_invoice >= pool_invoice:
                         break
