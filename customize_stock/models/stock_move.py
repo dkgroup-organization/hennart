@@ -32,7 +32,7 @@ class StockMove(models.Model):
                     lot_ids |= move_line.lot_id
             lot_ids |= move.lot_ids
             for lot in lot_ids:
-                lot_description += "{} - {}</br>".format(lot.name, lot.expiration_date)
+                lot_description += "{} {}</br>".format(lot.name, lot.expiration_date or lot.use_date)
             move.lot_description = lot_description
 
     def write(self, vals):
