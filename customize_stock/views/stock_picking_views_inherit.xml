@@ -27,12 +27,17 @@
                     </page>
                 </page>
 
+
                 <xpath expr="//page[@name='operations']//button[@name='action_put_in_pack']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
+                <xpath expr="//page[@name='operations']//field[@name='move_ids_without_package']/tree" position="attributes">
+                    <attribute name="decoration-warning">state=='cancel'</attribute>
+                </xpath>
+
                 <xpath expr="//page[@name='operations']//field[@name='product_uom']" position="attributes">
-                    <attribute name="optional">"hide"</attribute>
+                    <attribute name="optional">hide</attribute>
                 </xpath>
 
                 <xpath expr="//page[@name='operations']//field[@name='lot_ids']" position="attributes">
