@@ -1,0 +1,23 @@
+<odoo>
+    <data>
+
+        <record id="sale_advance_payment2_form_view" model="ir.ui.view">
+            <field name="name">sale.advance.payment.inv</field>
+            <field name="model">sale.advance.payment.inv</field>
+            <field name="inherit_id" ref="sale.view_sale_advance_payment_inv"/>
+            <field name="arch" type="xml">
+
+                <footer position="replace">
+                    <footer>
+                    <button name="create_invoices2" type="object" id="create_invoice_open" string="Create and View Invoice" context="{'open_invoices': True}" class="btn-primary" data-hotkey="q"/>
+                    <button name="create_invoices2" type="object" id="create_invoice" string="Create Invoice" data-hotkey="w"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    </footer>
+                </footer>
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

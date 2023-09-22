@@ -21,6 +21,15 @@ class Stock_lot(models.Model):
     barcode = fields.Char(string='Barcode', compute="get_barcode", store=True, index=True)
     barcode_ext = fields.Char(string='Barcode (external)', compute="get_barcode", store=True, index=True)
     use_expiration_date = fields.Boolean('use_expiration_date', compute="freeze_value")
+    blocked = fields.Boolean('Blocked', help="Block the possibility of reserve this lot")
+
+    def name_get(self):
+        res = []
+        for lot in self:
+            lot_name ="{} {:%Y-%m-%d}".format(lot.ref or '?',
+                            lot.expiration_date or lot.use_date or lot.date)
+            res.append((lot.id, lot_name))
+        return res
 
     def freeze_value(self):
         """ Freeze configuration"""

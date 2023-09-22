@@ -17,6 +17,7 @@
         "views/sale_order_view.xml",
         "views/product_pricelist_view.xml",
         "wizard/import_pricelist_view.xml",
+        "wizard/sale_make_invoice_advance.xml",
 
     ],
     "installable": True,

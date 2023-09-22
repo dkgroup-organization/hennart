@@ -5,6 +5,7 @@ import datetime
 
 _logger = logging.getLogger(__name__)
 
+
 class StockMove(models.Model):
     _inherit = "stock.move"
 
@@ -29,10 +30,11 @@ class StockMove(models.Model):
             lot_description = ""
             for move_line in move.move_line_ids:
                 if move_line.lot_id:
-                    lot_ids |= move_line.lot_id
-            lot_ids |= move.lot_ids
-            for lot in lot_ids:
-                lot_description += "{} - {}</br>".format(lot.name, lot.expiration_date)
+                    lot_description += "{} {:%Y-%m-%d}".format(move_line.lot_id.ref or '?',
+                            move_line.lot_id.expiration_date or move_line.lot_id.use_date)
+                    if move_line.qty_done != move.quantity_done:
+                        lot_description += "({})".format(move_line.qty_done)
+                    lot_description += "</br>"
             move.lot_description = lot_description
 
     def write(self, vals):
@@ -42,7 +44,7 @@ class StockMove(models.Model):
                 self.move_line_ids = [(0, 0, {
                     'lot_name': self.prodlot_inv,
                     'expiration_date': self.lot_expiration_date
-                    })]
+                })]
             elif self.move_line_ids and len(self.move_line_ids) == 1:
                 for move in self.move_line_ids:
                     move.lot_name = self.prodlot_inv
@@ -69,4 +71,3 @@ class StockMove(models.Model):
                 else:
                     weight = (move.product_qty * move.product_id.weight)
             move.weight = weight
-
