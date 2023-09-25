@@ -1,0 +1,33 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="account_move_line_lot_tree_view">
+            <field name="name">account.move.line.lot.tree</field>
+            <field name="model">account.move.line.lot</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="account_move_line_id" options="{'no_create': True}"/>
+                    <field name="stock_move_line_id" options="{'no_create': True}"/>
+                    <field name="lot_id" options="{'no_create': True}"/>
+                    <field name="product_id"/>
+                    <field name="weight"/>
+                    <field name="uom_qty"/>
+                    <field name="quantity"/>
+                    <field name="product_uos"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_account_move_line_lot_filter" model="ir.ui.view">
+            <field name="name">account.move.line.lot.select</field>
+            <field name="model">account.move.line.lot</field>
+            <field name="arch" type="xml">
+                <search string="Search lot">
+                    <field name="product_id"/>
+                    <field name="lot_id"/>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -29,12 +29,6 @@ class AccountMoveLine(models.Model):
         string='Packaging',
         )
 
-
-
-    prodlot_ids = fields.Many2many(
-        'stock.lot',
-        string='Production lot',
-        )
     type = fields.Char()
     cadeau = fields.Float(string='Remise Total')
     cost_price = fields.Float(string='Prix de revient')
@@ -51,6 +45,7 @@ class AccountMoveLine(models.Model):
     prodlot_id = fields.Many2one('stock.lot', string='Production lot')
     default_code = fields.Char('Code', related='product_id.default_code', store=True)
     stock_move_ids = fields.Many2many('stock.move', string="Stock moves")
+    account_move_line_lot_ids = fields.One2many('account.move.line.lot', 'account_move_line_id', string="Detailed lot")
 
     lot = fields.Char("lot")
 
@@ -83,6 +78,7 @@ class AccountMoveLine(models.Model):
         compute=False, store=True, readonly=False, precompute=False,
         digits='Product Price',
     )
+    invoice_filter_type_domain = fields.Char('invoice filter type', related="move_id.invoice_filter_type_domain")
 
     def _get_out_and_not_invoiced_qty(self, in_moves):
         self.ensure_one()
@@ -163,6 +159,19 @@ class AccountMoveLine(models.Model):
                 if stock_move.state in ['draft']:
                     continue
                 invoice_line.stock_move_ids |= stock_move
+
+            stock_move_line_ids = invoice_line.account_move_line_lot_ids.mapped('stock_move_line_id')
+
+            for stock_move_line in invoice_line.stock_move_ids.move_line_ids:
+                if stock_move_line not in stock_move_line_ids:
+                    vals = {
+                            'account_move_line_id': invoice_line.id,
+                            'stock_move_line_id': stock_move_line.id,
+                            'lot_id': stock_move_line.lot_id.id,
+                            'uom_qty': stock_move_line.qty_done,
+                            'weight': stock_move_line.weight,
+                            }
+                    invoice_line.account_move_line_lot_ids.create(vals)
 
     @api.onchange('weight')
     def onchange_weight(self):
@@ -449,3 +458,29 @@ class AccountMoveLine(models.Model):
                 layer.remaining_value += svl_vals['value']
                 svl_vals_list.append(svl_vals)
         return svl_vals_list, aml_vals_list
+
+    def action_show_details(self):
+        """ Returns an action that will open a form view (in a popup) allowing to work on all the
+        move lines of a particular account move line. This form view is used choose lot.
+        """
+        self.ensure_one()
+
+        # If "show suggestions" is not checked on the picking type, we have to filter out the
+        # reserved move lines. We do this by displaying `move_line_nosuggest_ids`. We use
+        # different views to display one field or another so that the webclient doesn't have to
+        # fetch both.
+        view = self.env.ref('customize_account.account_move_line_custom_form_view')
+
+        return {
+            'name': _('Detailed Operations'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'account.move.line',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'res_id': self.id,
+            'context': dict(
+                self.env.context
+            ),
+        }

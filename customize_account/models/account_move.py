@@ -167,7 +167,7 @@ class AccountMove(models.Model):
                 invoice.picking_ids = False
 
     def _get_last_sequence_domain(self, relaxed=False):
-        # EXTENDS account sequence.mixin
+        # Need to have the same calculation for all sale journal
         self.ensure_one()
         if not self.journal_id:
             return "WHERE FALSE", {}

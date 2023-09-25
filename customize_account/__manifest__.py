@@ -13,9 +13,13 @@
     "depends": ["account", "account_usability", "customize_purchase", "customize_sale", "customize_stock",
                 "intrastat_product"],
     "data": [
+        "security/ir.model.access.csv",
         "views/res_config_view.xml",
-        "views/invoice_view.xml",
+        "views/account_move_view.xml",
         "views/account_journal_view.xml",
+        "views/sale_order_view.xml",
+        #"views/account_move_line_lot_views.xml",
+        "views/account_move_line_views.xml",
 
     ],
     "installable": True,
