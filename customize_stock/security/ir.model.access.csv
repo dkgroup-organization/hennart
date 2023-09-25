@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_stock_weight_device,access_stock_weight_device,model_stock_weight_device,,1,1,1,1
 access_stock_weight_value,access_stock_weight_value,model_stock_weight_value,,1,1,1,1
+access_import_product_template,access_import_product_template,model_import_product_template,,1,1,1,1
