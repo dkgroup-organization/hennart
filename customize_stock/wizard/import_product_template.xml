@@ -7,34 +7,12 @@
             <field name="arch" type="xml">
                 <form string="Import Product Template">
                     <sheet>
-
                         <group>
-                            <group>
-                                <label for="example_id"/>
-                                <div class="o_row">
-                                    <field name="example_id" readonly="1"/>
-                                    <button type="object" name="action_export_file" class="oe_highlight"
-                                            icon="fa-download" title="Import file" context="{'pricelist_id': pricelist_id}"/>
-                                </div>
-                            </group>
-                        </group>
-
-                        <group>
-                            <group>
-                                <label for="file"/>
-                                <div class="o_row">
-                                    <field name="file" filename="name" options="{'accepted_file_extensions': '.xlsx'}"/>
-                                    <field name="name" invisible="1"/>
-                                </div>
-                            </group>
-                        </group>
-                        <group>
-                            <group>
-                                <label for="pricelist_id"/>
-                                <div class="o_row">
-                                    <field name="pricelist_id"/>
-                                </div>
-                            </group>
+                            <label for="file"/>
+                            <div class="o_row">
+                                <field name="file" filename="name" options="{'accepted_file_extensions': '.xlsx'}"/>
+                                <field name="name" invisible="1"/>
+                            </div>
                         </group>
                     </sheet>
                     <footer>

@@ -35,58 +35,7 @@ class ImportPriceList(models.TransientModel):
     file = fields.Binary('Import File')
     name = fields.Char('Name')
 
-    example_id = fields.Many2one('ir.attachment', 'Example file')
     file_name = fields.Char('File name')
-    # message = fields.Html("Message")
-    pricelist_id = fields.Many2one(
-        'product.pricelist',
-        string='Price List',
-    )
-
-
-    @api.model
-    def default_get(self, fields):
-        rec = super().default_get(fields)
-
-        binary_content = base64.b64encode(self.from_data())
-        binary_name = "import_list_de_prix_0.xlsx"
-        #creation attachment file or update
-        attachment_id = self.env['ir.attachment'].search([('type','=','binary'),('name','=',binary_name)],limit=1)
-        if attachment_id:
-            attachment_id.write({'datas': binary_content})
-        else:
-            attachment_vals = {'type': 'binary', 'name': binary_name, 'datas': binary_content}
-            attachment_id = self.env['ir.attachment'].create(attachment_vals)
-        rec.update({
-            'pricelist_id': self.pricelist_id,
-            'example_id' : attachment_id.id,
-        })
-        return rec
-
-    def action_export_file(self):
-        self.ensure_one()
-
-        if self.env.context.get('pricelist_id'):
-            binary_name = "import_list_de_prix_{}.xlsx".format(self.env.context.get('pricelist_id'))
-
-            # creation attachment file or update
-            condition = [
-                ('res_model', '=', 'product.pricelist'),
-                ('res_id', '=', self.env.context.get('pricelist_id')),
-                ('name', '=', binary_name)
-            ]
-            attachment_ids = self.env['ir.attachment'].search(condition)
-
-            if attachment_ids:
-                return {
-                    'type': 'ir.actions.act_url',
-                    'url': '/web/content/%s' % attachment_ids[0].id
-                }
-        else:
-            return {
-                'type': 'ir.actions.act_url',
-                'url': '/web/content/%s' % self.example_id.id
-            }
 
     def action_valide(self):
         self.ensure_one()
@@ -109,8 +58,6 @@ class ImportPriceList(models.TransientModel):
 
             product_code = sheet.cell_value(row, header.get('product_code'))
             list_price = sheet.cell_value(row, header.get('list_price'))
-            # start_date_value = sheet.cell_value(row, 2)
-            # end_date_value = sheet.cell_value(row, 3)
 
             if product_code and list_price:
                 product = self.env['product.product'].search([('default_code', '=', product_code)])
@@ -126,8 +73,6 @@ class ImportPriceList(models.TransientModel):
                         'fixed_price': list_price,
                         'compute_price': 'fixed',
                         'applied_on': '0_product_variant',
-                        # 'date_start': start_date.strftime('%Y-%m-%d 00:00:00') if start_date else False,
-                        # 'date_end': end_date.strftime('%Y-%m-%d 00:00:00') if end_date else False,
                     }
 
                 if self.pricelist_id.id == 1:
@@ -139,7 +84,6 @@ class ImportPriceList(models.TransientModel):
         return True
 
     def from_data(self):
-        # fields = ['product_code', 'product_name', 'list_price', 'start_date', 'end_date']
         fields = ['product_code', 'product_name', 'list_price']
 
         rows = []
@@ -161,28 +105,4 @@ class ImportPriceList(models.TransientModel):
                     xlsx_writer.write_cell(row_index + 1, cell_index, cell_value)
 
         return xlsx_writer.value
-
-    @api.onchange('pricelist_id')
-    def onchange_pricelist_id(self):
-        """ Update content of exemple file"""
-
-        binary_content = base64.b64encode(self.from_data())
-        binary_name = "import_list_de_prix_{}.xlsx".format(self.pricelist_id.id or 0)
-
-        # creation attachment file or update
-        attachment_ids = self.env['ir.attachment'].search([
-            ('res_model', '=', 'product.pricelist'),
-            ('res_id', '=', self.pricelist_id.id or 0),
-            ('name', '=', binary_name)
-        ])
-
-        if attachment_ids:
-            attachment = attachment_ids[0]
-            attachment.write({'datas': binary_content})
-        else:
-            attachment_vals = {
-                'type': 'binary', 'name': binary_name, 'datas': binary_content,
-                'res_model': 'product.pricelist', 'res_id': self.pricelist_id.id or 0}
-            attachment = self.env['ir.attachment'].create(attachment_vals)
-        self.example_id = attachment
 
