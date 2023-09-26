@@ -63,7 +63,7 @@ class ImportPriceList(models.TransientModel):
             # Créer ou mettre à jour le produit en fonction de son existence
             if not product:
                 product = self.env['product.template'].create({
-                    'default_code': product_code,
+                    'default_code': str(product_code),
                     'name': sheet.cell_value(row, header.get('name')),
                 })
 
