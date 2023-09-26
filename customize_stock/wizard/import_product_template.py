@@ -43,7 +43,7 @@ class ImportPriceList(models.TransientModel):
             raise UserError(_("Please select a file to import."))
 
         # Charger le fichier Excel depuis le champ binaire
-        book = xlrd.open_workbook(file_contents=base64.b64decode(self.file), formatting_info=True)
+        book = xlrd.open_workbook(file_contents=base64.b64decode(self.file))
         sheet = book.sheet_by_index(0)
         header = {}
 
