@@ -70,7 +70,7 @@ class ImportPriceList(models.TransientModel):
             # Mapper les autres champs du fichier Excel aux champs Odoo ici pour mettre à jour le produit
             product.write({
                 'name': sheet.cell_value(row, header.get('name')),
-                'agrement_number': sheet.cell_value(row, header.get('agrement_number')),
+                # 'agrement_number': sheet.cell_value(row, header.get('agrement_number')),
                 'region': sheet.cell_value(row, header.get('region')),
                 # Allergen (Many2many)
                 # AOP
