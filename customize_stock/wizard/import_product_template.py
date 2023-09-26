@@ -53,8 +53,8 @@ class ImportPriceList(models.TransientModel):
 
         # Parcourir les lignes du fichier Excel
         for row in range(1, sheet.nrows):
-            # Utiliser xlrd.xldate_as_tuple pour obtenir la valeur de la cellule sous forme de texte brut
-            product_code = xlrd.formula.formula_text(sheet.cell_value(row, header.get('default_code')), book.datemode)
+            product_raw_value = sheet.cell_value(row, header.get('default_code'))
+            product_code = str(product_raw_value).strip()
             if not product_code:
                 continue  # Ignorer les lignes sans default_code
 
