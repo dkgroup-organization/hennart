@@ -53,7 +53,11 @@ class ImportPriceList(models.TransientModel):
 
         # Parcourir les lignes du fichier Excel
         for row in range(1, sheet.nrows):
-            product_code = str(sheet.cell_value(row, header.get('default_code')))
+            cell_value = sheet.cell_value(row, header.get('default_code'))
+            if cell_value == int(cell_value):  # Si la valeur est un entier
+                product_code = "{:.0f}".format(cell_value)  # Formatage pour conserver les zéros au début
+            else:
+                product_code = str(cell_value)  # Si la valeur n'est pas un entier, la traiter comme une chaîne de caractères
             raise UserError(product_code)
             if not product_code:
                 continue  # Ignorer les lignes sans default_code
