@@ -75,10 +75,10 @@ class ImportPriceList(models.TransientModel):
                 # Allergen (Many2many)
                 # AOP
                 # Type fermier
-                'type_milk': sheet.cell_value(row, header.get('type_milk')),
-                'heat_treatment_milk': sheet.cell_value(row, header.get('heat_treatment_milk')),
-                'rennet': sheet.cell_value(row, header.get('rennet')),
-                'salting': sheet.cell_value(row, header.get('salting')),
+                'type_milk': sheet.cell_value(row, header.get('type_milk')).lower(),
+                'heat_treatment_milk': sheet.cell_value(row, header.get('heat_treatment_milk')).lower(),
+                'rennet': sheet.cell_value(row, header.get('rennet')).lower(),
+                'salting': sheet.cell_value(row, header.get('salting')).lower(),
                 # Allergen (Many2many)
                 # OGM
                 'nv_energy_kj': sheet.cell_value(row, header.get('nv_energy_kj')),
