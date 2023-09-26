@@ -107,6 +107,6 @@ class ImportPriceList(models.TransientModel):
                     ingredient_ids.append(ingredient.id)
             
             # Attacher les enregistrements product.ingredient au produit
-            product.write({'ingredient_ids': [(6, 0, ingredient_ids)]})
+            product.write({'ingredient': [(6, 0, ingredient_ids)]})
 
         return True
