@@ -43,7 +43,7 @@ class ImportPriceList(models.TransientModel):
             raise UserError(_("Please select a file to import."))
 
         # Charger le fichier Excel depuis le champ binaire
-        book = xlrd.open_workbook(file_contents=base64.b64decode(self.file))
+        book = xlrd.open_workbook(file_contents=base64.b64decode(self.file), formatting_info=True)
         sheet = book.sheet_by_index(0)
         header = {}
 
@@ -53,11 +53,7 @@ class ImportPriceList(models.TransientModel):
 
         # Parcourir les lignes du fichier Excel
         for row in range(1, sheet.nrows):
-            cell_value = sheet.cell_value(row, header.get('default_code'))
-            if cell_value == int(cell_value):  # Si la valeur est un entier
-                product_code = "{:.0f}".format(cell_value)  # Formatage pour conserver les zéros au début
-            else:
-                product_code = str(cell_value)  # Si la valeur n'est pas un entier, la traiter comme une chaîne de caractères
+            product_code = sheet.cell_value(row, header.get('default_code')).value
             raise UserError(product_code)
             if not product_code:
                 continue  # Ignorer les lignes sans default_code
