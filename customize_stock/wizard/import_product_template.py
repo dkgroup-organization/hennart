@@ -53,7 +53,7 @@ class ImportPriceList(models.TransientModel):
 
         # Parcourir les lignes du fichier Excel
         for row in range(1, sheet.nrows):
-            product_code = sheet.cell_value(row, header.get(self.column_mapping['default_code']))
+            product_code = sheet.cell_value(row, header.get('default_code'))
             if not product_code:
                 continue  # Ignorer les lignes sans default_code
 
@@ -64,36 +64,36 @@ class ImportPriceList(models.TransientModel):
             if not product:
                 product = self.env['product.template'].create({
                     'default_code': product_code,
-                    'name': sheet.cell_value(row, header.get(self.column_mapping['name'])),
+                    'name': sheet.cell_value(row, header.get('name')),
                 })
 
             # Mapper les autres champs du fichier Excel aux champs Odoo ici pour mettre à jour le produit
             product.write({
-                'name': sheet.cell_value(row, header.get(self.column_mapping['name'])),
-                'agrement_number': sheet.cell_value(row, header.get(self.column_mapping['agrement_number'])),
-                'region': sheet.cell_value(row, header.get(self.column_mapping['region'])),
+                'name': sheet.cell_value(row, header.get('name')),
+                'agrement_number': sheet.cell_value(row, header.get('agrement_number')),
+                'region': sheet.cell_value(row, header.get('region')),
                 # Allergen (Many2many)
                 # AOP
                 # Type fermier
-                'type_milk': sheet.cell_value(row, header.get(self.column_mapping['type_milk'])),
-                'heat_treatment_milk': sheet.cell_value(row, header.get(self.column_mapping['heat_treatment_milk'])),
-                'rennet': sheet.cell_value(row, header.get(self.column_mapping['rennet'])),
-                'salting': sheet.cell_value(row, header.get(self.column_mapping['salting'])),
+                'type_milk': sheet.cell_value(row, header.get('type_milk')),
+                'heat_treatment_milk': sheet.cell_value(row, header.get('heat_treatment_milk')),
+                'rennet': sheet.cell_value(row, header.get('rennet')),
+                'salting': sheet.cell_value(row, header.get('salting')),
                 # Allergen (Many2many)
                 # OGM
-                'nv_energy_kj': sheet.cell_value(row, header.get(self.column_mapping['nv_energy_kj'])),
-                'nv_energy_kc': sheet.cell_value(row, header.get(self.column_mapping['nv_energy_kc'])),
-                'nv_fat': sheet.cell_value(row, header.get(self.column_mapping['nv_fat'])),
-                'fat_in_dry_matter': sheet.cell_value(row, header.get(self.column_mapping['fat_in_dry_matter'])),
-                'nv_saturated_fatty_acids': sheet.cell_value(row, header.get(self.column_mapping['nv_saturated_fatty_acids'])),
-                'nv_carbohydrates': sheet.cell_value(row, header.get(self.column_mapping['nv_carbohydrates'])),
-                'nv_sugars': sheet.cell_value(row, header.get(self.column_mapping['nv_sugars'])),
-                'nv_protein': sheet.cell_value(row, header.get(self.column_mapping['nv_protein'])),
-                'nv_salt': sheet.cell_value(row, header.get(self.column_mapping['nv_salt'])),
+                'nv_energy_kj': sheet.cell_value(row, header.get('nv_energy_kj')),
+                'nv_energy_kc': sheet.cell_value(row, header.get('nv_energy_kc')),
+                'nv_fat': sheet.cell_value(row, header.get('nv_fat')),
+                'fat_in_dry_matter': sheet.cell_value(row, header.get('fat_in_dry_matter')),
+                'nv_saturated_fatty_acids': sheet.cell_value(row, header.get('nv_saturated_fatty_acids')),
+                'nv_carbohydrates': sheet.cell_value(row, header.get('nv_carbohydrates')),
+                'nv_sugars': sheet.cell_value(row, header.get('nv_sugars')),
+                'nv_protein': sheet.cell_value(row, header.get('nv_protein')),
+                'nv_salt': sheet.cell_value(row, header.get('nv_salt')),
             })
             
             # Récupérer les valeurs de la colonne ingredient et les diviser par ","
-            ingredient_values = sheet.cell_value(row, header.get(self.column_mapping['ingredient'])).split(',')
+            ingredient_values = sheet.cell_value(row, header.get('ingredient')).split(',')
             
             # Nettoyer et créer les enregistrements product.ingredient si nécessaire
             ingredient_ids = []
