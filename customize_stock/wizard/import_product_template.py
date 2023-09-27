@@ -93,7 +93,7 @@ class ImportPriceList(models.TransientModel):
             
             # Récupérer les valeurs de la colonne ingredient et allergen et les diviser par ","
             ingredient_values = sheet.cell_value(row, header.get('ingredient')).split(',')
-            allergen_values = sheet.cell_value(row, header.get('allergen')).split(',')
+            allergen_values = sheet.cell_value(row, header.get('Allergen')).split(',')
             
             ingredient_ids = []
             for ingredient_value in ingredient_values:
