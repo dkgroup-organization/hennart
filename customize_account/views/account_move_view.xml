@@ -67,7 +67,6 @@
                     <field name="uom_qty"/>
 
                     <field name="weight" context="{'manual': True}"/>
-                    <field name="manual_weight" invisible="1"/>
 
                     <field name="quantity" optional="show" context="{'manual': True}"/>
                     <field name="product_uom_category_id" invisible="1"/>
@@ -99,9 +98,9 @@
 
 
                     <field name="account_move_line_lot_ids" invisible="1"/>
-                    <field name="stock_move_ids" invisible="1"/>
                     <field name="supplierinfo_id" optional="hide"/>
                     <button name="action_show_details" type="object"
+                            attrs="{'invisible': [('product_id', '=', False)]}"
                             icon="fa-list" width="0.1" title="Details"/>
                 </tree>
             </xpath>

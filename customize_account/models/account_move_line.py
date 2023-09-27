@@ -3,6 +3,8 @@
 from odoo import _, api, fields, models
 from odoo.tools import float_compare, float_is_zero
 from collections import defaultdict
+#from odoo.tools.float_utils import float_round, float_is_zero
+from odoo.exceptions import UserError, ValidationError
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -24,6 +26,7 @@ class AccountMoveLine(models.Model):
     # import_V7
     number_of_pack = fields.Float(string='Nb pack')
     number_of_unit = fields.Float(string='Nb unit')
+    prodlot_id = fields.Many2one('stock.lot', string='Production lot')
     product_packaging = fields.Many2one(
         'product.packaging',
         string='Packaging',
@@ -42,9 +45,8 @@ class AccountMoveLine(models.Model):
     promotion = fields.Float(string='Promo %')
 
     # Validated V16
-    prodlot_id = fields.Many2one('stock.lot', string='Production lot')
+
     default_code = fields.Char('Code', related='product_id.default_code', store=True)
-    stock_move_ids = fields.Many2many('stock.move', string="Stock moves")
     account_move_line_lot_ids = fields.One2many('account.move.line.lot', 'account_move_line_id', string="Detailed lot")
 
     lot = fields.Char("lot")
@@ -52,8 +54,6 @@ class AccountMoveLine(models.Model):
     supplierinfo_id = fields.Many2one('product.supplierinfo',
                                       compute='get_supplierinfo_id',
                                       string="Supplier info", store=True)
-
-    uom_qty = fields.Float(string="Qty")
     product_uom_id = fields.Many2one(
         comodel_name='uom.uom',
         string='Unit',
@@ -61,16 +61,25 @@ class AccountMoveLine(models.Model):
         domain="[]",
         ondelete="restrict",
     )
+    uom_qty = fields.Float(
+        string="Qty",
+        compute='get_uom_qty',
+        inverse="put_uom_qty", readonly=False,
+        store=True, precompute=False,
+        )
+
     quantity = fields.Float(
-        string='Quantity',
-        compute='get_quantity', store=True, readonly=False, precompute=False,
+        string='UDV qty',
+        compute='get_quantity', store=True, readonly=True, precompute=False,
         digits='Product Unit of Measure',
         help="Invoiced quantity in kg or unit."
     )
-    manual_weight = fields.Float("Manual Weight")
+    manual_weight = fields.Float("Manual Weight") # DELETE if not used
     weight = fields.Float(
         string="Weight",
-        compute='get_quantity', store=True, readonly=False, precompute=False,
+        compute='get_weight',
+        inverse="put_weight", readonly=False,
+        store=True, precompute=False,
         digits='Stock Weight',
     )
     price_unit = fields.Float(
@@ -79,6 +88,18 @@ class AccountMoveLine(models.Model):
         digits='Product Price',
     )
     invoice_filter_type_domain = fields.Char('invoice filter type', related="move_id.invoice_filter_type_domain")
+
+    @api.model
+    def sql_update_lot_imported(self):
+        """ update account_move_line with data imported from V7 in prodlot_id"""
+        sql = """
+        insert into account_move_line_lot (account_move_line_id, lot_id, uom_qty, quantity, weight, state) 
+        select aml.id, aml.prodlot_id, aml.uom_qty, aml.quantity, aml.weight, 'manual'
+        from account_move_line aml
+        left join account_move_line_lot amll on aml.id = amll.account_move_line_id
+        where amll.state is null;
+        """
+
 
     def _get_out_and_not_invoiced_qty(self, in_moves):
         self.ensure_one()
@@ -117,7 +138,7 @@ class AccountMoveLine(models.Model):
             else:
                 line.supplierinfo_id = False
 
-    @api.depends('product_id', 'move_id.move_type', 'move_id.partner_id', 'move_id.state')
+    @api.depends('product_id', 'move_id.move_type', 'move_id.state')
     def get_product_uom_id(self):
         """ Return the unit to use to invoice (unit or Kg), unit can't be changing"""
 
@@ -155,93 +176,117 @@ class AccountMoveLine(models.Model):
             for purchase_line in invoice_line.purchase_line_id:
                 stock_move_ids |= purchase_line.move_ids
 
+            stock_move_ids = self.env['stock.move']
             for stock_move in stock_move_ids:
                 if stock_move.state in ['draft']:
                     continue
-                invoice_line.stock_move_ids |= stock_move
+                stock_move_ids |= stock_move
 
             stock_move_line_ids = invoice_line.account_move_line_lot_ids.mapped('stock_move_line_id')
 
-            for stock_move_line in invoice_line.stock_move_ids.move_line_ids:
+            for stock_move_line in stock_move_ids.move_line_ids:
+                vals = {
+                    'stock_move_line_id': stock_move_line.id,
+                    'lot_id': stock_move_line.lot_id.id,
+                    'uom_qty': stock_move_line.qty_done,
+                    'weight': stock_move_line.weight,
+                }
                 if stock_move_line not in stock_move_line_ids:
-                    vals = {
-                            'account_move_line_id': invoice_line.id,
-                            'stock_move_line_id': stock_move_line.id,
-                            'lot_id': stock_move_line.lot_id.id,
-                            'uom_qty': stock_move_line.qty_done,
-                            'weight': stock_move_line.weight,
-                            }
+                    vals['account_move_line_id'] = invoice_line.id
                     invoice_line.account_move_line_lot_ids.create(vals)
+                else:
+                    stock_move_line.write(vals)
 
-    @api.onchange('weight')
-    def onchange_weight(self):
-        """ save manual value """
-        self.ensure_one()
-        res = {}
-        if self.product_id and self.product_id.weight * self.uom_qty == self.weight:
-            res['manual_weight'] = 0.0
+    @api.onchange('uom_qty')
+    def onchange_uom_qty(self):
+        """ change the weight
+        """
+        if self.product_id:
+            weight = self.uom_qty * self.product_id.weight
         else:
-            res['manual_weight'] = self.weight
+            weight = 0.0
+        self.update({'weight': weight})
 
-        if self.move_id.state not in ['cancel', 'move']:
-            self.update(res)
+    def write(self, vals):
+        res = super().write(vals)
+        print('\n*********write*************', vals)
+        return res
 
-    @api.onchange('quantity')
-    def onchange_quantity(self):
-        """ Update weight ou uom_qty"""
-        self.ensure_one()
-        res = {}
-        uom_weight = self.env['product.template'].sudo()._get_weight_uom_id_from_ir_config_parameter()
+    def put_uom_qty(self):
+        """ Create account_move_line_lot_ids to save value"""
+        for line in self:
+            print("\n********put_uom_qty********", line.uom_qty, line.weight)
+            line_lot_vals = {'uom_qty': line.uom_qty}
 
-        if self.product_uom_id == uom_weight:
-            if self.weight != self.quantity:
-                res['weight'] = self.quantity
-        elif self.uom_qty != self.quantity:
-            res['uom_qty'] = self.quantity
+            if not line.weight and line.product_id.weight:
+                line_lot_vals['weight'] = line.product_id.weight * line.uom_qty
 
-        if self.move_id.state not in ['cancel', 'done']:
-            self.update(res)
+            if not line.account_move_line_lot_ids:
+                line_lot_vals['account_move_line_id'] = line.id
+                line_lot_vals['state'] = 'manual'
+                line.account_move_line_lot_ids.create(line_lot_vals)
+            elif len(line.account_move_line_lot_ids) == 1:
+                line.account_move_line_lot_ids.update(line_lot_vals)
+            else:
+                raise ValidationError(_("this line has multiples production lot, uses the detailed view to update"))
 
-    @api.depends('product_uom_id', 'manual_weight', 'weight', 'uom_qty', 'move_id.state', 'stock_move_ids.state')
+    def put_weight(self):
+        """ Create account_move_line_lot_ids to save value"""
+        for line in self:
+            print("\n********put_weight********", line.uom_qty, line.weight)
+            line_lot_vals = {'weight': line.weight}
+
+            if not line.account_move_line_lot_ids:
+                line_lot_vals['account_move_line_id'] = line.id
+                line_lot_vals['state'] = 'manual'
+                line.account_move_line_lot_ids.create(line_lot_vals)
+            elif len(line.account_move_line_lot_ids) == 1:
+                line.account_move_line_lot_ids.update(line_lot_vals)
+            else:
+                raise ValidationError(_("this line has multiples production lot, uses the detailed view to update"))
+
+    @api.depends('product_uom_id', 'weight', 'uom_qty')
     def get_quantity(self):
         """ get supplier info to define price, unit and packing"""
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
 
         for line in self:
-            if line.move_id.state in ['cancel', 'posted']:
-                continue
-
-            if not line.product_id:
-                line.uom_qty = 0.0
-                line.weight = 0.0
-            else:
-                if line.manual_weight:
-                    line.weight = line.manual_weight
-                elif line.stock_move_ids:
-                    # Use update_stock_move to get the value
-                    weight = 0.0
-                    uom_qty = 0.0
-                    for stock_move in line.stock_move_ids:
-                        if stock_move.state not in ['draft', 'cancel']:
-                            weight += stock_move.weight
-                            uom_qty += stock_move.quantity_done
-
-                    if line.manual_weight:
-                        line.weight = line.manual_weight
-                    else:
-                        line.weight = weight
-
-                    line.uom_qty = uom_qty
-
-                elif line.product_id.weight > 0.0:
-                    line.weight = line.product_id.weight * line.uom_qty
-                else:
-                    line.weight_exception()
-
             if line.product_uom_id == uom_weight:
                 line.quantity = line.weight
             else:
                 line.quantity = line.uom_qty
+
+    @api.depends('account_move_line_lot_ids.uom_qty')
+    def get_uom_qty(self):
+        """ Get uom_qty"""
+        for line in self:
+            if line.move_id.state in ['cancel', 'posted']:
+                continue
+
+            if not line.product_id or not line.account_move_line_lot_ids:
+                line.uom_qty = 1.0
+            else:
+                uom_qty = 0.0
+                for stock_move_line_lot in line.account_move_line_lot_ids:
+                    if stock_move_line_lot.state not in ['draft', 'cancel']:
+                        uom_qty += stock_move_line_lot.uom_qty
+                line.uom_qty = uom_qty
+
+    @api.depends('account_move_line_lot_ids.weight')
+    def get_weight(self):
+        """ Get uom_qty"""
+        for line in self:
+            if line.move_id.state in ['cancel', 'posted']:
+                continue
+
+            if not line.product_id or not line.account_move_line_lot_ids:
+                line.weight = 1.0
+            else:
+                weight = 0.0
+                for stock_move_line_lot in line.account_move_line_lot_ids:
+                    if stock_move_line_lot.state not in ['draft', 'cancel']:
+                        weight += stock_move_line_lot.weight
+                line.weight = weight
 
     def weight_exception(self):
         """ Exception product line with no weight"""

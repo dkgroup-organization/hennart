@@ -24,15 +24,50 @@ class AccountMoveLineLot(models.Model):
     product_uom_id = fields.Many2one('uom.uom', string="Udv", related="account_move_line_id.product_uom_id")
     quantity = fields.Float(
         string='Quantity',
+        store=True,
         digits='Product Unit of Measure',
-        help="Invoiced quantity in kg or unit."
+        help="Invoiced quantity in kg or unit.",
+        compute="compute_quantity"
     )
     weight = fields.Float(
         string="Weight",
         digits='Stock Weight',
-        required=True,
+        required=False,
     )
+    state = fields.Selection([
+        ('manual', 'Manual'),
+        ('draft', 'draft'),
+        ('done', 'Done'),
+        ('cancel', 'Cancelled')], default='manual',
+        store=True, compute='_compute_state',
+        copy=True)
 
-    def update_lot_qty(self):
-        """ get qty and lot"""
-        pass
+    @api.depends('stock_move_line_id.state')
+    def _compute_state(self):
+        """ define state """
+        for line in self:
+            if line.stock_move_line_id:
+                if line.stock_move_line_id.state in ['cancel', 'done']:
+                    line.state = line.stock_move_line_id.state
+                else:
+                    line.state = 'draft'
+            else:
+                line.state = 'manual'
+
+    @api.depends('product_uom_id', 'weight', 'uom_qty')
+    def compute_quantity(self):
+        """ get quantity by UDV"""
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+        for line in self:
+            if line.product_uom_id == uom_weight:
+                line.quantity = line.weight
+            else:
+                line.quantity = line.uom_qty
+
+    @api.onchange('stock_move_line_id')
+    def onchange_stock_move_line_id(self):
+        """ get qty and weight """
+        if self.stock_move_line_id:
+            self.uom_qty = self.stock_move_line_id.qty_done
+            self.weight = self.stock_move_line_id.weight
+            self.lot_id = self.stock_move_line_id.lot_id

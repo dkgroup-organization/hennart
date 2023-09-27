@@ -22,6 +22,7 @@
                                 <field name="price_unit" string="Price"/>
                                 <field name="invoice_filter_type_domain" invisible="1"/>
                                 <field name="quantity"/>
+                                <field name="discount" string="Disc.%"/>
                                 <field name="price_subtotal" string="Subtotal"/>
                             </group>
 
@@ -34,21 +35,39 @@
                                        options="{'no_create': True}"/>
                                 <field name="currency_id" invisible="1"/>
                             </group>
+                            <group invisible="1">
+                                <field name="sequence" invisible="1"/>
+                                        <field name="partner_id" invisible="1"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="display_type" force_save="1" invisible="1"/>
+                                        <field name="product_uom_id" invisible="1"/>
+                            </group>
+
                         </group>
+
+
 
                         <group string="Production lot">
-                            <field name="stock_move_ids" optional="hide" invisible="1"/>
+
 
                         </group>
-                        <field name="account_move_line_lot_ids">
+                        <field name="account_move_line_lot_ids" context="{'default_product_id': product_id}">
                             <tree editable="bottom">
                                 <!--<field name="account_move_line_id" options="{'no_create': True}"/>-->
-                                <field name="stock_move_line_id" options="{'no_create': True}"/>
-                                <field name="lot_id" options="{'no_create': True}"/>
-                                <field name="uom_qty"/>
-                                <field name="weight"/>
-                                <field name="quantity" string="UDV qty"/>
+                                <field name="product_id" invisible="1"/>
+                                <field name="stock_move_line_id"
+                                       options="{'no_create': True, 'no_edit': True}"
+                                       domain="[('product_id', '=', product_id)]"
+                                />
+                                <field name="lot_id" options="{'no_create': True}"
+                                       domain="[('product_id', '=', product_id)]"
+                                />
+                                <field name="uom_qty" sum="total"/>
+                                <field name="weight" sum="total"/>
+
+                                <field name="quantity" string="UDV qty" sum="total"/>
                                 <field name="product_uom_id"/>
+                                <field name="state"/>
                             </tree>
                         </field>
 
