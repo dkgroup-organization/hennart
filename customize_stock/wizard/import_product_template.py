@@ -73,14 +73,12 @@ class ImportPriceList(models.TransientModel):
                 'name': sheet.cell_value(row, header.get('name')),
                 # 'agrement_number': sheet.cell_value(row, header.get('agrement_number')),
                 'region': sheet.cell_value(row, header.get('region')),
-                # Allergen (Many2many)
                 # AOP
                 # Type fermier
                 'type_milk': sheet.cell_value(row, header.get('type_milk')).lower(),
                 'heat_treatment_milk': sheet.cell_value(row, header.get('heat_treatment_milk')).lower(),
                 'rennet': sheet.cell_value(row, header.get('rennet')).lower(),
                 'salting': sheet.cell_value(row, header.get('salting')).lower(),
-                # Allergen (Many2many)
                 # OGM
                 'nv_energy_kj': sheet.cell_value(row, header.get('nv_energy_kj')),
                 'nv_energy_kc': sheet.cell_value(row, header.get('nv_energy_kc')),
@@ -93,21 +91,31 @@ class ImportPriceList(models.TransientModel):
                 'nv_salt': sheet.cell_value(row, header.get('nv_salt')),
             })
             
-            # Récupérer les valeurs de la colonne ingredient et les diviser par ","
+            # Récupérer les valeurs de la colonne ingredient et allergen et les diviser par ","
             ingredient_values = sheet.cell_value(row, header.get('ingredient')).split(',')
+            allergen_values = sheet.cell_value(row, header.get('allergen')).split(',')
             
-            # Nettoyer et créer les enregistrements product.ingredient si nécessaire
             ingredient_ids = []
             for ingredient_value in ingredient_values:
                 ingredient_name = ingredient_value.strip()
                 if ingredient_name:
-                    # Rechercher ou créer un enregistrement product.ingredient avec le nom
                     ingredient = self.env['product.ingredient'].search([('name', '=', ingredient_name)], limit=1)
                     if not ingredient:
                         ingredient = self.env['product.ingredient'].create({'name': ingredient_name})
                     ingredient_ids.append(ingredient.id)
+
+            allergen_ids = []
+            for allergen_value in allergen_values:
+                allergen_name = allergen_value.strip()
+                if allergen_name:
+                    allergen = self.env['product.allergen'].search([('name', '=', allergen_name)], limit=1)
+                    if not allergen:
+                        allergen = self.env['product.allergen'].create({'name': allergen_name})
+                    allergen_ids.append(allergen.id)
             
-            # Attacher les enregistrements product.ingredient au produit
-            product.write({'ingredient': [(6, 0, ingredient_ids)]})
+            product.write({
+                'ingredient': [(6, 0, ingredient_ids)],
+                'allergen': [(6, 0, allergen_ids)],
+            })
 
         return True
