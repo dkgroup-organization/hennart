@@ -115,6 +115,18 @@ class AccountMove(models.Model):
         remote_server = self.env['synchro.server'].search([])
         sync_obj = remote_server[0].obj_ids.search([('model_name', '=', 'account.invoice.line')])
 
+        # Create all account_move_line_lot
+        sql = """
+        insert into account_move_line_lot (account_move_line_id, lot_id, uom_qty, quantity, weight, state) 
+        select aml.id, aml.prodlot_id, aml.uom_qty, aml.quantity, aml.weight, 'manual'
+        from account_move_line aml
+        left join account_move_line_lot amll on aml.id = amll.account_move_line_id
+        where amll.state is null;
+        """
+        self.env.cr.execute(sql)
+        self.env.cr.commit()
+        self.invalidate_recordset()
+
         for move in self:
             if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
                 continue
@@ -136,11 +148,6 @@ class AccountMove(models.Model):
                     remote_ids = sync_obj.remote_search(domain)
                     remote_values = sync_obj.remote_read(remote_ids)
                     sync_obj.write_local_value(remote_values)
-            for line in move.invoice_line_ids:
-                if line.product_uos == uom_weight:
-                    line.manual_weight = line.quantity
-                else:
-                    line.uom_qty = line.quantity
 
             move.invoice_line_ids.get_product_uom_id()
 

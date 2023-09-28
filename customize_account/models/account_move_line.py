@@ -89,18 +89,6 @@ class AccountMoveLine(models.Model):
     )
     invoice_filter_type_domain = fields.Char('invoice filter type', related="move_id.invoice_filter_type_domain")
 
-    @api.model
-    def sql_update_lot_imported(self):
-        """ update account_move_line with data imported from V7 in prodlot_id"""
-        sql = """
-        insert into account_move_line_lot (account_move_line_id, lot_id, uom_qty, quantity, weight, state) 
-        select aml.id, aml.prodlot_id, aml.uom_qty, aml.quantity, aml.weight, 'manual'
-        from account_move_line aml
-        left join account_move_line_lot amll on aml.id = amll.account_move_line_id
-        where amll.state is null;
-        """
-
-
     def _get_out_and_not_invoiced_qty(self, in_moves):
         self.ensure_one()
         if not in_moves:
@@ -176,11 +164,9 @@ class AccountMoveLine(models.Model):
             for purchase_line in invoice_line.purchase_line_id:
                 stock_move_ids |= purchase_line.move_ids
 
-            stock_move_ids = self.env['stock.move']
             for stock_move in stock_move_ids:
                 if stock_move.state in ['draft']:
-                    continue
-                stock_move_ids |= stock_move
+                    stock_move_ids -= stock_move
 
             stock_move_line_ids = invoice_line.account_move_line_lot_ids.mapped('stock_move_line_id')
 
@@ -195,7 +181,8 @@ class AccountMoveLine(models.Model):
                     vals['account_move_line_id'] = invoice_line.id
                     invoice_line.account_move_line_lot_ids.create(vals)
                 else:
-                    stock_move_line.write(vals)
+                    invoice_line.account_move_line_lot_ids.filtered(
+                        lambda a: a.stock_move_line_id == stock_move_line).write(vals)
 
     @api.onchange('uom_qty')
     def onchange_uom_qty(self):
@@ -207,15 +194,9 @@ class AccountMoveLine(models.Model):
             weight = 0.0
         self.update({'weight': weight})
 
-    def write(self, vals):
-        res = super().write(vals)
-        print('\n*********write*************', vals)
-        return res
-
     def put_uom_qty(self):
         """ Create account_move_line_lot_ids to save value"""
         for line in self:
-            print("\n********put_uom_qty********", line.uom_qty, line.weight)
             line_lot_vals = {'uom_qty': line.uom_qty}
 
             if not line.weight and line.product_id.weight:
@@ -233,7 +214,6 @@ class AccountMoveLine(models.Model):
     def put_weight(self):
         """ Create account_move_line_lot_ids to save value"""
         for line in self:
-            print("\n********put_weight********", line.uom_qty, line.weight)
             line_lot_vals = {'weight': line.weight}
 
             if not line.account_move_line_lot_ids:
@@ -509,14 +489,8 @@ class AccountMoveLine(models.Model):
         move lines of a particular account move line. This form view is used choose lot.
         """
         self.ensure_one()
-
-        # If "show suggestions" is not checked on the picking type, we have to filter out the
-        # reserved move lines. We do this by displaying `move_line_nosuggest_ids`. We use
-        # different views to display one field or another so that the webclient doesn't have to
-        # fetch both.
         view = self.env.ref('customize_account.account_move_line_custom_form_view')
-
-        return {
+        action = {
             'name': _('Detailed Operations'),
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
@@ -525,7 +499,8 @@ class AccountMoveLine(models.Model):
             'view_id': view.id,
             'target': 'new',
             'res_id': self.id,
-            'context': dict(
-                self.env.context
-            ),
+            'context': dict(self.env.context),
         }
+        if self.move_id.state == "posted":
+            action['flags'] = {'mode': 'readonly'}
+        return action
