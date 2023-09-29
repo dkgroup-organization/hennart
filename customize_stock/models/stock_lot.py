@@ -22,12 +22,16 @@ class Stock_lot(models.Model):
     barcode_ext = fields.Char(string='Barcode (external)', compute="get_barcode", store=True, index=True)
     use_expiration_date = fields.Boolean('use_expiration_date', compute="freeze_value")
     blocked = fields.Boolean('Blocked', help="Block the possibility of reserve this lot")
+    expiration_date = fields.Datetime(
+        string='Expiration Date', compute=False, store=True, readonly=False, default=False,
+        help='This is the date on which the goods with this Serial Number may become dangerous and must not be consumed.')
 
     def name_get(self):
         res = []
         for lot in self:
-            lot_name ="{} {:%Y-%m-%d}".format(lot.ref or '?',
-                            lot.expiration_date or lot.use_date or lot.date)
+            lot_name ="{}".format(lot.ref or '?')
+            if lot.expiration_date:
+                lot_name += " {:%Y-%m-%d}".format(lot.expiration_date)
             res.append((lot.id, lot_name))
         return res
 

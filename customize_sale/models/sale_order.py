@@ -113,3 +113,7 @@ class SaleOrder(models.Model):
                     raise ValidationError(_(
                         "There are 2 line with the same product and price. Please, group them:\n{}".format(
                             line.product_id.name)))
+
+    def create_custom_invoice(self):
+        """ futur function"""
+        pass

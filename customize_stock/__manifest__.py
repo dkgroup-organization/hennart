@@ -12,7 +12,8 @@
     'application': True,
     'installable': True,
     'depends': [
-        'wms_scanner', 'customize_product_template', 'customize_partner', 'delivery'
+        'wms_scanner', 'customize_product_template', 'customize_partner',
+        'mrp', 'delivery', 'product_expiry'
     ],
     'data': [
         "security/ir.model.access.csv",

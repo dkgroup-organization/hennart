@@ -1,0 +1,79 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="account_move_line_custom_form_view">
+            <field name="name">account.move.line.form</field>
+            <field name="model">account.move.line</field>
+            <field name="arch" type="xml">
+
+                <form string="detailed Item" create="false">
+                    <sheet>
+                        <field name="company_id" invisible="1"/>
+                        <field name="parent_state" invisible="1"/>
+                        <field name="id" invisible="1"/>
+                        <group>
+                            <field name="move_id" readonly="1"/>
+                            <field name="default_code"/>
+                            <field name="product_id" readonly="1"/>
+                        </group>
+
+                        <group string="Amount">
+
+                            <group>
+                                <field name="price_unit" string="Price"/>
+                                <field name="invoice_filter_type_domain" invisible="1"/>
+                                <field name="quantity"/>
+                                <field name="discount" string="Disc.%"/>
+                                <field name="price_subtotal" string="Subtotal"/>
+                            </group>
+
+                            <group>
+                                <field name="account_id" options="{'no_create': True}"
+                                       domain="[('company_id', '=', company_id)]"/>
+                                <field name="tax_ids" widget="many2many_tags"
+                                       domain="[('type_tax_use', '=?', invoice_filter_type_domain)]"
+                                       context="{'append_type_to_tax_name': not invoice_filter_type_domain}"
+                                       options="{'no_create': True}"/>
+                                <field name="currency_id" invisible="1"/>
+                            </group>
+                            <group invisible="1">
+                                <field name="sequence" invisible="1"/>
+                                        <field name="partner_id" invisible="1"/>
+                                        <field name="company_id" invisible="1"/>
+                                        <field name="display_type" force_save="1" invisible="1"/>
+                                        <field name="product_uom_id" invisible="1"/>
+                            </group>
+
+                        </group>
+
+
+
+                        <group string="Production lot">
+
+
+                        </group>
+                        <field name="account_move_line_lot_ids" context="{'default_product_id': product_id}">
+                            <tree editable="bottom">
+                                <!--<field name="account_move_line_id" options="{'no_create': True}"/>-->
+                                <field name="product_id" invisible="1"/>
+                                <field name="stock_move_line_id"
+                                       options="{'no_create': True, 'no_edit': True}"
+                                       domain="[('product_id', '=', product_id)]"
+                                />
+                                <field name="lot_id" options="{'no_create': True}"
+                                       domain="[('product_id', '=', product_id)]"
+                                />
+                                <field name="uom_qty" sum="total"/>
+                                <field name="weight" sum="total"/>
+
+                                <field name="quantity" string="UDV qty" sum="total"/>
+                                <field name="product_uom_id"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

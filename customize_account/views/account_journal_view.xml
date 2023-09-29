@@ -2,6 +2,14 @@
 <odoo>
     <data>
 
+        <record id="account_journal_customize_kanban_form" model="ir.ui.view">
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.account_journal_dashboard_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//t[@t-call='HasSequenceHoles']" position="replace"/>
+            </field>
+        </record>
+
         <record id="account_journal_customize_view_form" model="ir.ui.view">
             <field name="name">dk_group.account.journal.form</field>
             <field name="model">account.journal</field>
