@@ -15,10 +15,12 @@ class AccountMoveLineLot(models.Model):
     _description = "Detailed lot"
 
     account_move_line_id = fields.Many2one('account.move.line', string='Account move line')
-
     product_id = fields.Many2one('product.product', string="product", related="account_move_line_id.product_id")
-    stock_move_line_id = fields.Many2one('stock.move.line', string='stock move line')
-    lot_id = fields.Many2one('stock.lot', string='Production lot')
+    default_code = fields.Char(string="code", related="account_move_line_id.product_id.default_code")
+
+    stock_move_line_id = fields.Many2one('stock.move.line', string='stock move line', copy=True)
+    lot_id = fields.Many2one('stock.lot', string='Production lot', copy=True)
+    base_unit_count = fields.Float('Pack qty', related="account_move_line_id.product_id.base_unit_count")
 
     uom_qty = fields.Float(string="Qty")
     product_uom_id = fields.Many2one('uom.uom', string="Udv", related="account_move_line_id.product_uom_id")
@@ -42,6 +44,10 @@ class AccountMoveLineLot(models.Model):
         store=True, compute='_compute_state',
         copy=True)
 
+    def get_product_id(self):
+        """ get product_id , check if the parent product use """
+        pass
+
     @api.depends('stock_move_line_id.state')
     def _compute_state(self):
         """ define state """
@@ -61,6 +67,8 @@ class AccountMoveLineLot(models.Model):
         for line in self:
             if line.product_uom_id == uom_weight:
                 line.quantity = line.weight
+            elif line.product_id.base_unit_count > 0:
+                line.quantity = line.uom_qty * line.product_id.base_unit_count
             else:
                 line.quantity = line.uom_qty
 
@@ -68,6 +76,10 @@ class AccountMoveLineLot(models.Model):
     def onchange_stock_move_line_id(self):
         """ get qty and weight """
         if self.stock_move_line_id:
-            self.uom_qty = self.stock_move_line_id.qty_done
+            if self.product_id.base_unit_count > 0:
+                self.uom_qty = self.stock_move_line_id.qty_done / self.product_id.base_unit_count
+            else:
+                self.uom_qty = self.stock_move_line_id.qty_done
             self.weight = self.stock_move_line_id.weight
             self.lot_id = self.stock_move_line_id.lot_id
+
