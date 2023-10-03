@@ -371,7 +371,7 @@ class SaleOrderLine(models.Model):
             res['quantity'] = self.qty_to_invoice * self.product_id.weight
         if self.product_id.base_unit_count > 1:
             res['quantity'] = self.qty_to_invoice * self.product_id.base_unit_count
-        print('\n-------------_prepare_invoice_line--------------', self.product_id.default_code, res)
+
         analytic_account_id = self.order_id.analytic_account_id.id
         if self.analytic_distribution and not self.display_type:
             res['analytic_distribution'] = self.analytic_distribution

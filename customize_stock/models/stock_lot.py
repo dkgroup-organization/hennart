@@ -29,9 +29,9 @@ class Stock_lot(models.Model):
     def name_get(self):
         res = []
         for lot in self:
-            lot_name ="{}".format(lot.ref or '?')
+            lot_name = "{}".format(lot.ref or '?')
             if lot.expiration_date:
-                lot_name += " {:%Y-%m-%d}".format(lot.expiration_date)
+                lot_name += " {:%d/%m/%Y}".format(lot.expiration_date)
             res.append((lot.id, lot_name))
         return res
 

@@ -5,6 +5,7 @@ from odoo.exceptions import UserError, ValidationError
 
 class StockMoveLine(models.Model):
     _inherit = "stock.move.line"
+    _rec_name = "name"
 
     default_code = fields.Char('Code', related="product_id.default_code")
     weight = fields.Float("Weight", compute=False, digits='Stock Weight', store=True)
@@ -16,6 +17,17 @@ class StockMoveLine(models.Model):
         'uom.uom', 'Unit of Measure', required=True,
         compute="_compute_product_uom_id", store=True, readonly=True, precompute=True,
     )
+    name = fields.Char('description', compute="compute_name", store=True)
+    to_label = fields.Boolean(string='to label')
+    to_weight = fields.Boolean(string='to weight')
+
+
+    @api.depends('picking_id', 'product_id')
+    def compute_name(self):
+        """ return information about picking"""
+        for line in self:
+            name = f"({line.picking_id.name}) {line.product_id.name}"
+
     @api.model
     def default_get(self, fields):
         res = super().default_get(fields)

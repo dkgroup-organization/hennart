@@ -49,6 +49,7 @@
                                         <page string="Action">
                                             <group>
                                                 <field name="sequence"/>
+                                                <field name="step_qweb"/>
                                                 <field name="action_scanner"/>
                                                 <field name="action_model"
                                                        attrs="{'invisible':[('action_scanner','!=', 'scan_model')]}"/>
@@ -57,6 +58,7 @@
                                                 <field name="action_message"
                                                        attrs="{'invisible':[('action_scanner','in', ['none', 'start', 'routing'])]}"/>
                                                 <field name="scenario_id" invisible="1"/>
+                                                <field name="step_qweb"/>
                                             </group>
                                             <separator string="Enter the python code here" colspan="4"/>
                                             <div>

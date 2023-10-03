@@ -138,7 +138,7 @@ class WmsController(http.Controller):
         data = qweb_data.get('data', {})
         if data.get('step') and data['step'].step_qweb:
             qweb_template = data['step'].step_qweb
-        elif data.get('scenario'):
+        elif data.get('scenario') and data['scenario'].scenario_qweb:
             qweb_template = data['scenario'].scenario_qweb
         else:
             qweb_template = False
