@@ -100,6 +100,16 @@ class WmsScenarioStep(models.Model):
             scan = params.get('scan', '')
         return scan
 
+    def read_button(self, data):
+        """" Get the button """
+        self.ensure_one()
+        params = dict(request.params) or {}
+        if params.get('button'):
+            data['button'] = params.get('button')
+            if params.get('scan'):
+                data[data['button']] = params.get('scan')
+        return data
+
     def read_scan(self, data={}):
         "Decode scan and return associated objects"
         self.ensure_one()
@@ -195,7 +205,8 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         original_data = data.copy()
 
-        if self.action_scanner not in ['start', 'routing', 'no_scan']:
+        data = self.read_button(data)
+        if not data.get('button') and self.action_scanner not in ['start', 'routing', 'no_scan']:
             data = self.read_scan(data)
 
         if not data.get('warning'):
@@ -203,7 +214,7 @@ class WmsScenarioStep(models.Model):
             if not data.get('warning'):
                 data = self.execute_transition(data)
                 if not data.get('warning') and data.get('step') and data['step'] != self and \
-                        data['step'].action_scanner in ['routing', 'start']:
+                        data['step'].action_scanner in ['routing']:
                     data = data['step'].execute_step(data)
 
         if data.get('warning'):

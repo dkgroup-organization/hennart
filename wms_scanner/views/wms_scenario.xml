@@ -58,7 +58,6 @@
                                                 <field name="action_message"
                                                        attrs="{'invisible':[('action_scanner','in', ['none', 'start', 'routing'])]}"/>
                                                 <field name="scenario_id" invisible="1"/>
-                                                <field name="step_qweb"/>
                                             </group>
                                             <separator string="Enter the python code here" colspan="4"/>
                                             <div>

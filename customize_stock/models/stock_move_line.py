@@ -20,7 +20,8 @@ class StockMoveLine(models.Model):
     name = fields.Char('description', compute="compute_name", store=True)
     to_label = fields.Boolean(string='to label')
     to_weight = fields.Boolean(string='to weight')
-
+    to_pass = fields.Boolean(string='to pass')
+    priority = fields.Integer("Priority", default=0)
 
     @api.depends('picking_id', 'product_id')
     def compute_name(self):
