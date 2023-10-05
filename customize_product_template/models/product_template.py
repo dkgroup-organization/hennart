@@ -165,6 +165,13 @@ class ProductTemplate(models.Model):
     gestion_affinage = fields.Boolean(string='Refining management')
     to_personnalize = fields.Boolean(string='Customer specifity')
 
+    # LABEL
+    aop = fields.Boolean(string='AOP')
+    ogm = fields.Boolean(string='OGM')
+    farmer_type = fields.Boolean(string='Type Fermier')
+
+    approval_number = fields.Char(string='N° Agrément')
+
     # WEB description
     web_historic = fields.Html('Historic')
     web_manufacture = fields.Html('Manufacture')
