@@ -227,13 +227,14 @@ class WmsScenarioStep(models.Model):
 
         product_id = data.get('product_id')
         lot_id = data.get('lot_id')
+        weight = data.get('weight')
         quantity = data.get('quantity', 0)
 
         date_now = time.strftime('MV-%Y-%m-%d-')
         session = self.env['wms.session'].get_session()
         picking_name = date_now + "{}-{}".format(session.id, self.env.user.login)
 
-        picking_stock = self.env['stock.picking'].search([('name', '=', picking_name)])
+        picking_stock = self.env['stock.picking'].search([('name', '=', picking_name), ('state', 'not in', ['cancel'])])
         if not picking_stock:
             picking_stock = self.env['stock.picking'].create({
                 'name': picking_name,
@@ -241,33 +242,45 @@ class WmsScenarioStep(models.Model):
                 'location_id': stock_location.id,
                 'location_dest_id': stock_location.id,
                 'picking_type_id': picking_type.id,
+                'immediate_transfer': True,
+                'show_operations': True,
             })
 
-        move_line_vals = {
+        move_vals = {
+            'name': "scanner: " + picking_stock.name + ': ' + product_id.default_code,
             'location_id': location_origin_id.id,
             'location_dest_id':  location_dest_id.id,
-            'lot_id': lot_id.id or False,
             'product_id': product_id.id,
-            'product_uom_id': product_id.uom_id.id,
-            'qty_done': quantity,
+            'product_uom': product_id.uom_id.id,
+            'product_uom_qty': quantity,
+            'quantity_done': quantity,
             'picking_id': picking_stock.id,
             }
+        new_move = picking_stock.move_ids_without_package.create(move_vals)
+        new_move._action_confirm(merge=False)
 
-        try:
-            new_line = picking_stock.move_line_ids_without_package.create(move_line_vals)
-            new_line.move_id._action_done()
-        except:
-            data['warning'] = _("Error, The move is not registered")
-            new_line = self.env['stock.move.line']
+        if picking_stock.state == 'draft':
+            picking_stock.action_confirm()
 
-        if new_line.move_id.state == 'done':
+        if lot_id:
+            new_move.move_line_ids.lot_id = lot_id
+
+        if weight:
+            new_move.move_line_ids.weight = weight
+        elif product_id:
+            new_move.move_line_ids.weight = product_id.weight * quantity
+
+        new_move.picking_id._action_done()
+
+        if new_move.state == 'done':
             data = self.init_data(data)
-            data['message'] = _("The move is registered")
+            data['message'] = _("The previews move is registered")
             data['result'] = True
         else:
             data['result'] = False
 
         return data
+
 
     @api.model
     def init_data(self, data):

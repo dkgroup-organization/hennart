@@ -13,9 +13,10 @@
 
                 <xpath expr="//field[@name='product_uom_id']" position="after">
                     <field name="weight" string="Weight"/>
-                    <field name="weight_manual" string="Weight manual"/>
                 </xpath>
-                
+                <xpath expr="//field[@name='product_uom_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
                 <field name="package_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>
@@ -40,9 +41,10 @@
 
                 <xpath expr="//field[@name='product_uom_id']" position="after">
                     <field name="weight" string="Weight"/>
-                    <field name="weight_manual" string="Weight manual"/>
                 </xpath>
-
+                <xpath expr="//field[@name='product_uom_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
                 <field name="package_id" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </field>

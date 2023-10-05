@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_order_invoice_form" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+
+                <button id="create_invoice" position="attributes">
+                    <attribute name="name">create_custom_invoice</attribute>
+                    <attribute name="type">object</attribute>
+                    <attribute name="context">{'open_invoices': True}</attribute>
+                </button>
+
+            </field>
+        </record>
+    </data>
+</odoo>

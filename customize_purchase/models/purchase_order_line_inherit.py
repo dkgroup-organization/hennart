@@ -202,7 +202,7 @@ class PurchaseOrderLineInherit(models.Model):
                     if inv_line.move_id.move_type == 'in_invoice':
                         qty += inv_line.uom_qty
                     elif inv_line.move_id.move_type == 'in_refund':
-                        qty -= inv_line.inv_line.uom_qty
+                        qty -= inv_line.uom_qty
             line.qty_invoiced = qty
 
             # compute qty_to_invoice

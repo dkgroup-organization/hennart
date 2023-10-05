@@ -20,14 +20,18 @@ class Stock_lot(models.Model):
     temp2_old_barcode = fields.Char(string='migration Barcode 2', index=True)
     barcode = fields.Char(string='Barcode', compute="get_barcode", store=True, index=True)
     barcode_ext = fields.Char(string='Barcode (external)', compute="get_barcode", store=True, index=True)
-    use_expiration_date = fields.Boolean('use_expiration_date', compute="freeze_value")
+    use_expiration_date = fields.Boolean('use_expiration_date', store=True, compute="freeze_value")
     blocked = fields.Boolean('Blocked', help="Block the possibility of reserve this lot")
+    expiration_date = fields.Datetime(
+        string='Expiration Date', compute=False, store=True, readonly=False, default=False,
+        help='This is the date on which the goods with this Serial Number may become dangerous and must not be consumed.')
 
     def name_get(self):
         res = []
         for lot in self:
-            lot_name ="{} {:%Y-%m-%d}".format(lot.ref or '?',
-                            lot.expiration_date or lot.use_date or lot.date)
+            lot_name = "{}".format(lot.ref or '?')
+            if lot.expiration_date:
+                lot_name += " {:%d/%m/%Y}".format(lot.expiration_date)
             res.append((lot.id, lot_name))
         return res
 
@@ -64,7 +68,12 @@ class Stock_lot(models.Model):
                 ref = another_lot.ref.split('-')
                 if len(ref) == 2 and ref[1].isnumeric() and int(ref[1]) >= ref_index:
                     ref_index = int(ref[1]) + 1
-            lot.ref = lot.name + "-" + "{}".format(ref_index).zfill(2)
+
+            lot_ref = lot.name + "-" + "{}".format(ref_index).zfill(2)
+            while self.search([('ref', '=', lot_ref)]):
+                ref_index += 1
+                lot_ref = lot.name + "-" + "{}".format(ref_index).zfill(2)
+            lot.ref = lot_ref
 
     @api.onchange('name')
     def onchange_name(self):

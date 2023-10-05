@@ -369,6 +369,8 @@ class SaleOrderLine(models.Model):
         }
         if self.product_uos == uom_weight:
             res['quantity'] = self.qty_to_invoice * self.product_id.weight
+        if self.product_id.base_unit_count > 1:
+            res['quantity'] = self.qty_to_invoice * self.product_id.base_unit_count
 
         analytic_account_id = self.order_id.analytic_account_id.id
         if self.analytic_distribution and not self.display_type:

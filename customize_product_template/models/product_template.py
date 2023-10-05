@@ -163,7 +163,10 @@ class ProductTemplate(models.Model):
     format_etiquette =  fields.Char('Format d\'etiquette', size=128)
     to_label = fields.Boolean(string='to label')
     gestion_affinage = fields.Boolean(string='Refining management')
-    to_personnalize = fields.Boolean(string='Customer specifity')
+    to_personnalize = fields.Boolean(string='Customer specifity',
+                                     help="This product need a production opération to be personnalized."
+                                          " For exemple, label with brand."
+                                          "This product cannot be sold to another customer")
 
     # LABEL
     aop = fields.Boolean(string='AOP')

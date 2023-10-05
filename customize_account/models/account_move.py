@@ -15,13 +15,13 @@ class AccountMove(models.Model):
 
     picking_id = fields.Char(string="Bon de livraison")
     incoterm_port = fields.Char(string="Port of entry")
-    incoterm_date = fields.Date(string="Date of arrival in UK")
+    incoterm_date = fields.Date(string="Date of arrival in UK", copy=False)
     payment_method_id = fields.Char(string="Methode de paiement")
 
-    total_ht = fields.Float(string='Total HT')
-    total_tva = fields.Float(string='Total TVA')
-    total_ttc = fields.Float(string='Total TTC')
-    piece_comptable = fields.Char(string='ID piece comptable')
+    total_ht = fields.Float(string='Total HT', copy=False)
+    total_tva = fields.Float(string='Total TVA', copy=False)
+    total_ttc = fields.Float(string='Total TTC', copy=False)
+    piece_comptable = fields.Char(string='ID piece comptable', copy=False)
 
     account_id = fields.Many2one(
         'account.account',
@@ -115,6 +115,18 @@ class AccountMove(models.Model):
         remote_server = self.env['synchro.server'].search([])
         sync_obj = remote_server[0].obj_ids.search([('model_name', '=', 'account.invoice.line')])
 
+        # Create all account_move_line_lot
+        sql = """
+        insert into account_move_line_lot (account_move_line_id, lot_id, uom_qty, quantity, weight, state) 
+        select aml.id, aml.prodlot_id, aml.uom_qty, aml.quantity, aml.weight, 'manual'
+        from account_move_line aml
+        left join account_move_line_lot amll on aml.id = amll.account_move_line_id
+        where amll.state is null;
+        """
+        self.env.cr.execute(sql)
+        self.env.cr.commit()
+        self.invalidate_recordset()
+
         for move in self:
             if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
                 continue
@@ -136,11 +148,6 @@ class AccountMove(models.Model):
                     remote_ids = sync_obj.remote_search(domain)
                     remote_values = sync_obj.remote_read(remote_ids)
                     sync_obj.write_local_value(remote_values)
-            for line in move.invoice_line_ids:
-                if line.product_uos == uom_weight:
-                    line.manual_weight = line.quantity
-                else:
-                    line.uom_qty = line.quantity
 
             move.invoice_line_ids.get_product_uom_id()
 
@@ -167,7 +174,7 @@ class AccountMove(models.Model):
                 invoice.picking_ids = False
 
     def _get_last_sequence_domain(self, relaxed=False):
-        # EXTENDS account sequence.mixin
+        # Need to have the same calculation for all sale journal
         self.ensure_one()
         if not self.journal_id:
             return "WHERE FALSE", {}
