@@ -110,7 +110,7 @@
                             </group>
                             <group string="Label">
                                 <field name="aop"/>
-                                <field name="OGM"/>
+                                <field name="ogm"/>
                                 <field name="farmer_type"/>
                             </group>
                         </group>
