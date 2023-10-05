@@ -68,18 +68,33 @@ class ImportPriceList(models.TransientModel):
                     'name': sheet.cell_value(row, header.get('name')),
                 })
 
+            if sheet.cell_value(row, header.get('AOP')) != False:
+                aop = True
+            else:
+                aop = False
+
+            if sheet.cell_value(row, header.get('OGM')) != False:
+                ogm = True
+            else:
+                ogm = False
+
+            if sheet.cell_value(row, header.get('Type fermier')) != False:
+                farmer_type = True
+            else:
+                farmer_type = False
+
             # Mapper les autres champs du fichier Excel aux champs Odoo ici pour mettre à jour le produit
             product.write({
                 'name': sheet.cell_value(row, header.get('name')),
-                # 'agrement_number': sheet.cell_value(row, header.get('agrement_number')),
+                'approval_number': sheet.cell_value(row, header.get('N° Agrément')),
                 'region': sheet.cell_value(row, header.get('region')),
-                # AOP
-                # Type fermier
+                'aop': aop,
+                'ogm': ogm,
+                'farmer_type': farmer_type,
                 'type_milk': sheet.cell_value(row, header.get('type_milk')).lower(),
                 'heat_treatment_milk': sheet.cell_value(row, header.get('heat_treatment_milk')).lower(),
                 'rennet': sheet.cell_value(row, header.get('rennet')).lower(),
                 'salting': sheet.cell_value(row, header.get('salting')).lower(),
-                # OGM
                 'nv_energy_kj': sheet.cell_value(row, header.get('nv_energy_kj')),
                 'nv_energy_kc': sheet.cell_value(row, header.get('nv_energy_kc')),
                 'nv_fat': sheet.cell_value(row, header.get('nv_fat')),
