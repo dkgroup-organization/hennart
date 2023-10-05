@@ -36,6 +36,7 @@
                                 <tree string="Step">
                                     <field name="sequence" widget="handled"/>
                                     <field name="name"/>
+                                    <field name="description"/>
                                     <field name="python_code"/>
                                     <field name="scenario_id" invisible="1"/>
                                     <field name="out_transition_ids" widget="many2many_tags"/>
@@ -44,6 +45,7 @@
                                 <form string="Step">
                                     <group>
                                         <field name="name"/>
+                                        <field name="description"/>
                                     </group>
                                     <notebook>
                                         <page string="Action">

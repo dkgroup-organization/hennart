@@ -22,8 +22,9 @@ class WmsScenarioStep(models.Model):
     name = fields.Char(
         string='Name', compute="compute_name",
         store=True)
+    description = fields.Char('Description')
     action_scanner = fields.Selection(
-        [('start', 'Start scenario, no scan'),
+        [('start', 'Start scenario, no scan, routing'),
          ('routing', 'Routing choice, no scan, go to next step'),
          ('no_scan', 'Message, no scan'),
          ('scan_quantity', 'Enter quantity'),
@@ -204,6 +205,7 @@ class WmsScenarioStep(models.Model):
         there are 3 actions: scan - compute - choice next step"""
         self.ensure_one()
         original_data = data.copy()
+        print('\n----------execute_step---------------', data)
 
         data = self.read_button(data)
         if not data.get('button') and self.action_scanner not in ['start', 'routing', 'no_scan']:
@@ -214,7 +216,7 @@ class WmsScenarioStep(models.Model):
             if not data.get('warning'):
                 data = self.execute_transition(data)
                 if not data.get('warning') and data.get('step') and data['step'] != self and \
-                        data['step'].action_scanner in ['routing']:
+                        data['step'].action_scanner in ['start', 'routing']:
                     data = data['step'].execute_step(data)
 
         if data.get('warning'):

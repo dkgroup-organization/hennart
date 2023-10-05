@@ -23,8 +23,7 @@
                             <h1>preparation</h1>
                         </div>
 
-                        <t t-call="wms_scanner.scanner_list_preparation"/>
-
+                        <t t-if="data.get('picking_ids')" t-call="wms_scanner.scanner_list_preparation"/>
 
                     </div>
                 </section>
@@ -33,7 +32,7 @@
 
         <template id="scanner_list_preparation" name="scanner_list_preparation">
 
-            <div class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll  landscape:max-h-44">
+            <div class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md">
                 <ul class="flex flex-col gap-4">
                     <t t-foreach="data.get('picking_ids', [])" t-as="picking">
                         <li>
@@ -41,25 +40,21 @@
 
                                 <div class="flex items-center justify-between">
                                     <p t-esc="picking.name" class="font-bold mb-1"/>
-                                    <img src="wms_scanner/static/src/img/draft.svg" alt=""/>
+                                    <p t-esc="picking.carrier_id.name" class="font-bold mb-1"/>
                                 </div>
-                                <span t-esc="picking.partner_id.name"/>
+
                                 <div class="flex justify-between">
-                                    <p t-esc="picking.carrier_id.name"/>
+                                    <p t-esc="picking.partner_id.name"/>
                                     <p t-esc="picking.scheduled_date"/>
                                 </div>
                             </a>
                         </li>
                     </t>
                 </ul>
-            </div>
-            <div class="flex flex-col items-center gap-2 landscape:gap-3 landscape:w">
                 <a t-att-href="'./scanner?scenario={}&amp;step={}&amp;button=add_preparation'.format(data['scenario'].id, data['step'].id)">
                     <button class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">Add preparation</button></a>
             </div>
-
         </template>
-
 
     </data>
 </odoo>

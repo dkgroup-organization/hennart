@@ -12,7 +12,7 @@ class StockMoveLine(models.Model):
     picking_type_code = fields.Selection('Type', related="picking_type_id.code", store=True, index=True)
     expiration_date = fields.Datetime(
         string='Expiration Date', compute=False, store=True, readonly=False, default=False,
-        help='This is the date on which the goods with this Serial Number may become dangerous and must not be consumed.')
+        help='This is the date on which the goods with this Lot Number may become dangerous and must not be consumed.')
     product_uom_id = fields.Many2one(
         'uom.uom', 'Unit of Measure', required=True,
         compute="_compute_product_uom_id", store=True, readonly=True, precompute=True,
@@ -21,13 +21,13 @@ class StockMoveLine(models.Model):
     to_label = fields.Boolean(string='to label')
     to_weight = fields.Boolean(string='to weight')
     to_pass = fields.Boolean(string='to pass')
-    priority = fields.Integer("Priority", default=0)
+    priority = fields.Integer("Priority", store=True, default=0)
 
     @api.depends('picking_id', 'product_id')
     def compute_name(self):
         """ return information about picking"""
         for line in self:
-            name = f"({line.picking_id.name}) {line.product_id.name}"
+            name = f"({line.picking_id.name}) [{line.product_id.default_code}]{line.product_id.name}"
 
     @api.model
     def default_get(self, fields):
@@ -40,7 +40,7 @@ class StockMoveLine(models.Model):
     def _unlink_except_done_or_cancel(self):
         for ml in self:
             if ml.state in ('done'):
-                raise UserError(_('You can not delete product moves if the picking is done. You can only correct the done quantities.'))
+                raise UserError(_('You can not delete product moves if the picking is done.'))
 
     @api.depends('product_id.uom_id')
     def _compute_product_uom_id(self):

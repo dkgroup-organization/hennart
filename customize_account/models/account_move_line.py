@@ -50,7 +50,7 @@ class AccountMoveLine(models.Model):
     account_move_line_lot_ids = fields.One2many('account.move.line.lot', 'account_move_line_id',
                                                 copy=True, string="Detailed lot")
 
-    lot = fields.Char("lot")
+    lot = fields.Char("lot") # DELETE if not used
 
     supplierinfo_id = fields.Many2one('product.supplierinfo',
                                       compute='get_supplierinfo_id',
