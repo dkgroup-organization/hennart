@@ -94,7 +94,6 @@ class WmsScenario(models.Model):
             data = self.init_scenario(data)
         else:
             data = self.init_scenario(data)
-            data = self.get_button(data)
             data = data['step'].execute_step(data)
         return data
 
@@ -128,12 +127,6 @@ class WmsScenario(models.Model):
                 data.update({'warning': warning})
         return data
 
-    def get_button(self, data):
-        """" Get the button """
-        params = dict(request.params) or {}
-        if params.get('button'):
-            data['button'] = params.get('button')
-        return data
 
 
 

@@ -22,9 +22,10 @@ class WmsScenarioStep(models.Model):
     name = fields.Char(
         string='Name', compute="compute_name",
         store=True)
+    description = fields.Char('Description')
     action_scanner = fields.Selection(
-        [('start', 'Start scenario, no scan'),
-         ('routing', 'Routing choice, no scan'),
+        [('start', 'Start scenario, no scan, routing'),
+         ('routing', 'Routing choice, no scan, go to next step'),
          ('no_scan', 'Message, no scan'),
          ('scan_quantity', 'Enter quantity'),
          ('scan_text', 'Enter Text'),
@@ -33,12 +34,14 @@ class WmsScenarioStep(models.Model):
          ('scan_multi', 'Scan multi'),
          ],
         string="Scanner", default="no_scan", required=True)
-    action_model = fields.Many2one('ir.model', string="Model to scan")
-    action_variable = fields.Char(string='Input name', default='scan')
+    action_model = fields.Many2one('ir.model', string="Model to scan",
+                                   help="Define the model used at this step.")
+    action_variable = fields.Char(string='Input name', default='scan',
+                                  help="Define a name for the result of the scan at this step ")
     action_message = fields.Char(string='Input Placeholder', translate=True)
     step_qweb = fields.Char(
         string='QWEB Template',
-        help="Use a specific QWEB template at this step")
+        help="Use a specific QWEB template at this step (optional).")
     scenario_id = fields.Many2one(
         comodel_name='wms.scenario',
         string='Scenario',
@@ -97,6 +100,16 @@ class WmsScenarioStep(models.Model):
         else:
             scan = params.get('scan', '')
         return scan
+
+    def read_button(self, data):
+        """" Get the button """
+        self.ensure_one()
+        params = dict(request.params) or {}
+        if params.get('button'):
+            data['button'] = params.get('button')
+            if params.get('scan'):
+                data[data['button']] = params.get('scan')
+        return data
 
     def read_scan(self, data={}):
         "Decode scan and return associated objects"
@@ -192,8 +205,10 @@ class WmsScenarioStep(models.Model):
         there are 3 actions: scan - compute - choice next step"""
         self.ensure_one()
         original_data = data.copy()
+        print('\n----------execute_step---------------', data)
 
-        if self.action_scanner not in ['start', 'routing', 'no_scan']:
+        data = self.read_button(data)
+        if not data.get('button') and self.action_scanner not in ['start', 'routing', 'no_scan']:
             data = self.read_scan(data)
 
         if not data.get('warning'):
@@ -201,7 +216,7 @@ class WmsScenarioStep(models.Model):
             if not data.get('warning'):
                 data = self.execute_transition(data)
                 if not data.get('warning') and data.get('step') and data['step'] != self and \
-                        data['step'].action_scanner == 'routing':
+                        data['step'].action_scanner in ['start', 'routing']:
                     data = data['step'].execute_step(data)
 
         if data.get('warning'):
@@ -303,7 +318,7 @@ class WmsScenarioStep(models.Model):
                 data['step'] = transition.to_id
                 break
 
-        if not data.get('warning') and self.action_scanner == 'routing' and (
+        if not data.get('warning') and self.action_scanner in ['routing', 'start'] and (
                 not data.get('step') or data['step'] == self):
             data['warning'] = _('The program is frozen in step: {}'.format(self.name))
 

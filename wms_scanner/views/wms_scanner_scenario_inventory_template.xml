@@ -31,8 +31,6 @@
                             <button type="submit" class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">Valid</button>
                         </form>
 
-
-
                     </div>
                 </section>
             </main>

@@ -31,7 +31,6 @@ class StockMove(models.Model):
         inverse="put_prodlot_inv", readonly=False,
         store=False, precompute=False,
     )
-
     lot_expiration_date = fields.Date(
         string='Expiration Date',
         compute='get_prodlot_inv',
@@ -43,6 +42,20 @@ class StockMove(models.Model):
     picking_type_use_create_lots = fields.Boolean(related='picking_type_id.use_create_lots', readonly=True)
     lot_description = fields.Html("Lot description", compute="get_lot_description", store=False,
                                   readonly=True, sanitize=False)
+
+    def check_line(self):
+        """ check if all line has production lot information"""
+        message = ""
+        for move in self:
+            for move_line in move.move_line_ids:
+                if move_line.state == "cancel":
+                    continue
+                if move_line.lot_id and not move_line.lot_id.expiration_date:
+                    message += _(f"\nThis lot need a expiration date: {move.name} {move_line.lot_id.name}")
+                    #message += _(f"\nThis product has not a production lot: {move.name}")
+
+        if message:
+            raise ValidationError(message)
 
     def get_default_value(self, vals={}):
         self.ensure_one()
@@ -161,7 +174,7 @@ class StockMove(models.Model):
                 if move_line.lot_id:
                     lot_description += "{}".format(move_line.lot_id.ref or '?')
                     if move_line.lot_id.expiration_date:
-                        lot_description += " {:%Y-%m-%d}".format(move_line.lot_id.expiration_date)
+                        lot_description += " {:%d/%m/%Y}".format(move_line.lot_id.expiration_date)
                     if move_line.qty_done != move.quantity_done:
                         lot_description += "({})".format(move_line.qty_done)
                     lot_description += "</br>"
