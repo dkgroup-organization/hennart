@@ -136,6 +136,7 @@ class WmsController(http.Controller):
 
         # Find the template to use, on step? on scenario
         data = qweb_data.get('data', {})
+
         if data.get('step') and data['step'].step_qweb:
             qweb_template = data['step'].step_qweb
         elif data.get('scenario') and data['scenario'].scenario_qweb:
@@ -143,7 +144,10 @@ class WmsController(http.Controller):
         else:
             qweb_template = False
 
-        if qweb_template:
+        if data.get('debug'):
+            qweb_data |= {'debug': self.qweb_debug(data)}
+            return request.render('wms_scanner.scanner_scenario_blank', qweb_data)
+        elif qweb_template:
             return request.render(qweb_template, qweb_data)
         else:
             qweb_data |= {'debug': self.qweb_debug(data)}

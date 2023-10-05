@@ -205,24 +205,28 @@ class WmsScenarioStep(models.Model):
         there are 3 actions: scan - compute - choice next step"""
         self.ensure_one()
         original_data = data.copy()
-        print('\n----------execute_step---------------', data)
-
         data = self.read_button(data)
         if not data.get('button') and self.action_scanner not in ['start', 'routing', 'no_scan']:
             data = self.read_scan(data)
 
         if not data.get('warning'):
             data = self.execute_code(data)
+
             if not data.get('warning'):
                 data = self.execute_transition(data)
                 if not data.get('warning') and data.get('step') and data['step'] != self and \
                         data['step'].action_scanner in ['start', 'routing']:
                     data = data['step'].execute_step(data)
 
-        if data.get('warning'):
+        if data.get('debug'):
+            logger.warning("\nDebug_data: {}".format(data))
+            original_data['debug'] = data['debug']
+            data = original_data.copy()
+
+        elif data.get('warning') or data.get('debug'):
             # If warning, restore previous data.
-            logger.warning("Warning data: {}".format(data))
-            original_data['warning'] = data['warning']
+            logger.warning("Warning_data: {}".format(data))
+            original_data['warning'] = data.get('warning', '')
             data = original_data.copy()
 
         message = self.info_message(data)
@@ -297,12 +301,17 @@ class WmsScenarioStep(models.Model):
         "Eval the python code"
         self.ensure_one()
         if self.python_code:
-            localdict = {
-                'object': self,
-                'env': self.env,
-                'data': data.copy()}
-            safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
-            data = localdict.get('data')
+            try:
+                localdict = {
+                    'object': self,
+                    'env': self.env,
+                    'data': data.copy()}
+                safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
+                data = localdict.get('data')
+            except:
+                debug = _("This code generate an error: %s" % (self.python_code or ''))
+                data.update({'debug': debug})
+
         return data
 
     def execute_transition(self, data):
@@ -313,14 +322,17 @@ class WmsScenarioStep(models.Model):
             if not transition.condition:
                 continue
             localdict = {'data': data.copy()}
-            eval = safe_eval(transition.condition, localdict, mode="eval", nocopy=True)
+            try:
+                eval = safe_eval(transition.condition, localdict, mode="eval", nocopy=True)
+            except:
+                data['debug'] = _("this code generate a error: {}".format(transition.condition))
             if eval:
                 data['step'] = transition.to_id
                 break
 
         if not data.get('warning') and self.action_scanner in ['routing', 'start'] and (
                 not data.get('step') or data['step'] == self):
-            data['warning'] = _('The program is frozen in step: {}'.format(self.name))
+            data['debug'] = data.get('debug', '') + _('The program is frozen in step: {}'.format(self.name))
 
         return data
 
