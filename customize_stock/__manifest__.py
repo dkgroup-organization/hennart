@@ -13,7 +13,7 @@
     'installable': True,
     'depends': [
         'wms_scanner', 'customize_product_template', 'customize_partner',
-        'mrp', 'delivery', 'product_expiry'
+        'mrp', 'delivery', 'product_expiry', 'stock'
     ],
     'data': [
         "security/ir.model.access.csv",
@@ -24,6 +24,7 @@
         "views/stock_move_line_views_inherit.xml",
         "views/stock_location_view.xml",
         "views/stock_quant_view.xml",
+        "wizard/import_product_template.xml",
 
     ],
     'demo': [

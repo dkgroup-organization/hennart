@@ -73,6 +73,7 @@
                                 <field name="specificity_milk"/>
                                 <field name="region"/>
                                 <field name="department"/>
+                                <field name="approval_number"/>
                             </group>
                         </group>
                         <group string="Description" name="web_description">
@@ -106,6 +107,11 @@
                                 <field name="code_DUN14"/>
                                 <field name="code_ean_prix"/>
                                 <field name="code_ean_poids"/>
+                            </group>
+                            <group string="Label">
+                                <field name="aop"/>
+                                <field name="ogm"/>
+                                <field name="farmer_type"/>
                             </group>
                         </group>
                     </page>

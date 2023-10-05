@@ -168,6 +168,13 @@ class ProductTemplate(models.Model):
                                           " For exemple, label with brand."
                                           "This product cannot be sold to another customer")
 
+    # LABEL
+    aop = fields.Boolean(string='AOP')
+    ogm = fields.Boolean(string='OGM')
+    farmer_type = fields.Boolean(string='Type Fermier')
+
+    approval_number = fields.Char(string='N° Agrément')
+
     # WEB description
     web_historic = fields.Html('Historic')
     web_manufacture = fields.Html('Manufacture')
