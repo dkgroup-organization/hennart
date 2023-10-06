@@ -58,6 +58,10 @@ class ImportPriceList(models.TransientModel):
             if not product_code:
                 continue  # Ignorer les lignes sans default_code
 
+            test_value = product_code
+
+            raise(test_value)
+
             # Rechercher le produit par default_code
             product = self.env['product.template'].search([('default_code', '=', product_code)])
 
