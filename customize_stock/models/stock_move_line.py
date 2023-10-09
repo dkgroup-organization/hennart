@@ -27,7 +27,7 @@ class StockMoveLine(models.Model):
     def compute_name(self):
         """ return information about picking"""
         for line in self:
-            name = f"({line.picking_id.name}) [{line.product_id.default_code}]{line.product_id.name}"
+            line.name = f"({line.picking_id.name}) [{line.product_id.default_code}]{line.product_id.name}"
 
     @api.model
     def default_get(self, fields):
@@ -39,7 +39,7 @@ class StockMoveLine(models.Model):
     @api.ondelete(at_uninstall=False)
     def _unlink_except_done_or_cancel(self):
         for ml in self:
-            if ml.state in ('done'):
+            if ml.state in ['done']:
                 raise UserError(_('You can not delete product moves if the picking is done.'))
 
     @api.depends('product_id.uom_id')

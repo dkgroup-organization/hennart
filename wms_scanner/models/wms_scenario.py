@@ -90,36 +90,23 @@ class WmsScenario(models.Model):
     def do_scenario(self, data):
         "execute the scenario"
         self.ensure_one()
-        if self.check_start(data):
-            data = self.init_scenario(data)
-        else:
-            data = self.init_scenario(data)
-            data = data['step'].execute_step(data)
+        data = self.init_scenario(data)
+        data = data['step'].execute_step(data)
         return data
-
-    def check_start(self, data):
-        """ Check if it is the first step"""
-        if data.get('scenario') and data.get('scenario') != self:
-            return True
-        if data.get('scenario') and not data.get('step'):
-            return True
-        return False
 
     def init_scenario(self, data):
         """ initiate data"""
         self.ensure_one()
-
-        # init the scenario if is not the same in data
-        if data.get('scenario') and data.get('scenario') != self:
-            del(data['scenario'])
-            if data.get('step'):
-                del(data['step'])
-
         # init data if first time
-        if not (data.get('scenario') and data.get('step')):
+        if not data or not data.get('scenario') or data.get('scenario') != self or not data.get('step'):
             # start new scenario
             if self.step_ids:
-                data = {'scenario': self, 'step': self.step_ids[0], 'user': self.env.user}
+                start_step = self.step_ids.search([
+                    ('action_scanner', '=', 'start'),
+                    ('scenario_id', '=', self.id)], limit=1)
+                data = {'scenario': self,
+                        'step': start_step or self.step_ids[0],
+                        'user': self.env.user}
             else:
                 data = {'scenario': self}
                 # There is no starting step

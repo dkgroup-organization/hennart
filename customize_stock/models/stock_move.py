@@ -52,7 +52,8 @@ class StockMove(models.Model):
                     continue
                 if move_line.lot_id and not move_line.lot_id.expiration_date:
                     message += _(f"\nThis lot need a expiration date: {move.name} {move_line.lot_id.name}")
-                    #message += _(f"\nThis product has not a production lot: {move.name}")
+                if move_line.weight == 0.0 and move_line.quantity_done > 0.0:
+                    message += _(f"\nThis line need a weight: {move.name}")
 
         if message:
             raise ValidationError(message)
@@ -70,6 +71,7 @@ class StockMove(models.Model):
                 'product_uom_id': self.product_uom.id,
             })
         return vals
+
     @api.depends('move_line_ids.lot_id')
     def get_prodlot_inv(self):
         """ Get prodlot_inv"""

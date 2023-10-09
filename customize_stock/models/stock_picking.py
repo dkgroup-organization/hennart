@@ -14,7 +14,7 @@ class StockPicking(models.Model):
     picking_type_code = fields.Selection(string='Code', related="picking_type_id.code")
     sequence = fields.Integer(string='Sequence', compute='_compute_sequence', store=True)
 
-    @api.depends('scheduled_date', 'move_ids_without_package', 'move_ids_without_package.product_uom_qty')
+    @api.depends('scheduled_date')
     def _compute_sequence(self):
         for picking in self:
             dt = picking.scheduled_date or fields.Datetime.now()
