@@ -226,11 +226,26 @@ class BaseSynchroServer(models.Model):
     @api.model
     def cron_valid_invoice(self, limit=100):
         """ Scheduled migration for invoices"""
+
+        # Create all account_move_line_lot
+        sql = """
+        insert into account_move_line_lot (account_move_line_id, lot_id, uom_qty, quantity, weight, state) 
+        select aml.id, aml.prodlot_id, aml.uom_qty, aml.quantity, aml.weight, 'manual'
+        from account_move_line aml
+        left join account_move_line_lot amll on aml.id = amll.account_move_line_id
+        where amll.state is null;
+        """
+        self.env.cr.execute(sql)
+        self.env.cr.commit()
+        self.invalidate_recordset()
+
+
         pool_invoice = 5 * limit
 
         job_ids = self.env['queue.job'].search([('state', '=', 'pending')])
         nb_invoice = 0
         synchro_line_ids = self.env['synchro.obj.line']
+
 
         if len(job_ids) < pool_invoice:
             while nb_invoice < pool_invoice:
@@ -240,6 +255,7 @@ class BaseSynchroServer(models.Model):
                         [('obj_id.model_id.model', '=', 'account.move'), ('local_id', '>', 0)],
                         order='update_date asc', limit=5*limit)
 
+
                 for line in synchro_line_ids:
                     invoice = self.env['account.move'].browse(line.local_id)
 
@@ -248,6 +264,7 @@ class BaseSynchroServer(models.Model):
                         nb_invoice += 1
 
                     line.update_date = fields.Datetime().now()
+                    synchro_line_ids -= line
 
                     if nb_invoice >= pool_invoice:
                         break

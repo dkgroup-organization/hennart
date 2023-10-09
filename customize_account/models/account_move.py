@@ -85,16 +85,66 @@ class AccountMove(models.Model):
             line_discount['invoice_line'].price_unit = - total_HT * line_discount['logistic_discount'] / 100.0
             line_discount['invoice_line'].uom_qty = 1.0
 
+        self.update_origin()
+
+    def update_origin(self):
+        """ check order and picking origin"""
+        for invoice in self:
+            ref = invoice.ref
+            origin = []
+            stock_move_ids = self.env['stock.move']
+
+            for invoice_line in invoice.invoice_line_ids:
+
+                for sale_line in invoice_line.sale_line_ids:
+                    if sale_line.order_id.name not in origin:
+                        origin.append(sale_line.order_id.name)
+                    if sale_line.order_id.client_order_ref not in origin:
+                        origin.append(sale_line.order_id.name)
+
+                    stock_move_ids |= sale_line.move_ids
+
+                for purchase_line in invoice_line.purchase_line_id:
+                    if purchase_line.order_id.name not in origin:
+                        origin.append(purchase_line.order_id.name)
+                    if purchase_line.order_id.partner_ref not in origin:
+                        origin.append(purchase_line.order_id.partner_ref)
+
+                    stock_move_ids |= purchase_line.move_ids
+
+                for picking in stock_move_ids.mapped('picking_id'):
+                    if picking.name not in origin:
+                        origin.append(picking.name)
+                    if picking.origin not in origin:
+                        origin.append(picking.origin)
+
+            def split_origin(list_item):
+                res = []
+                for item in list_item:
+                    for separator in [';', ' ', ':']:
+                        item = item.replace(separator, ',')
+                    item = item.replace(',,,', ',').replace(',,', ',').replace(',,', ',')
+                    item = item.split(',')
+                    if len(item):
+                        for item_detail in item:
+                            res.append(item_detail)
+
+                res = list(dict.fromkeys(res))
+                return res
+
+            invoice.invoice_origin = ', '.join(split_origin(origin))
+
     @api.depends('company_id', 'invoice_filter_type_domain', 'src_dest_country_id')
     def _compute_suitable_journal2_ids(self):
         for m in self:
             journal_type = m.invoice_filter_type_domain or 'general'
             company_id = m.company_id.id or self.env.company.id
             domain = [('company_id', '=', company_id), ('type', '=', journal_type)]
-            if m.src_dest_country_id:
-                domain += [('country_ids', 'in', m.src_dest_country_id.ids)]
-            else:
-                domain += [('country_ids', '=', False)]
+            if journal_type == 'sale':
+                if m.src_dest_country_id:
+                    domain += [('country_ids', 'in', m.src_dest_country_id.ids)]
+                else:
+                    domain += [('country_ids', '=', False)]
             m.suitable_journal_ids = self.env['account.journal'].search(domain)
 
     @api.onchange('partner_id')
@@ -114,18 +164,6 @@ class AccountMove(models.Model):
         uom_weight = self.env['product.template'].sudo()._get_weight_uom_id_from_ir_config_parameter()
         remote_server = self.env['synchro.server'].search([])
         sync_obj = remote_server[0].obj_ids.search([('model_name', '=', 'account.invoice.line')])
-
-        # Create all account_move_line_lot
-        sql = """
-        insert into account_move_line_lot (account_move_line_id, lot_id, uom_qty, quantity, weight, state) 
-        select aml.id, aml.prodlot_id, aml.uom_qty, aml.quantity, aml.weight, 'manual'
-        from account_move_line aml
-        left join account_move_line_lot amll on aml.id = amll.account_move_line_id
-        where amll.state is null;
-        """
-        self.env.cr.execute(sql)
-        self.env.cr.commit()
-        self.invalidate_recordset()
 
         for move in self:
             if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
@@ -160,6 +198,7 @@ class AccountMove(models.Model):
                 else:
                     # update this
                     pass
+        return True
 
     def compute_picking_ids(self):
         for invoice in self:
