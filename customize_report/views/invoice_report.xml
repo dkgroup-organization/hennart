@@ -75,7 +75,8 @@
                                             <td name="code"><span t-field="line.product_id.default_code" /></td>
                                             <td name="ean"><span t-field="line.product_id.barcode" /></td>
                                             <td class="text-end">
-                                                <span t-field="line.quantity"/>
+                                                <span t-field="line.uom_qty"/>
+                                                <span t-field="line.product_uos"/>
                                                 <!-- <span t-field="line.product_uom_id" groups="uom.group_uom"/> -->
                                             </td>
                                             <td name="account_invoice_line_name">
@@ -84,15 +85,14 @@
                                                 
                                                 <t t-foreach="line.account_move_line_lot_ids" t-as="move">
                                                     <span>
-                                                        <p style="font-size: 10px; margin-bottom: 3px;"><span t-field="move.lot_id.name"/>  <span t-field="move.lot_id.expiration_date" t-options='{"format": "dd-MM-yyyy"}'/>  QTE: <span t-field="move.uom_qty"/></p>
+                                                        <p style="font-size: 10px; margin-bottom: 3px;"><span t-field="move.lot_id.name"/> | <span t-field="move.lot_id.expiration_date" t-options='{"format": "dd-MM-yyyy"}'/> | QTE: <span t-field="move.uom_qty"/></p>
                                                     </span>
                                                 </t>
 
                                             </td>
                                             <td name="colis_de"><span t-if="line.product_id.base_unit_count > 1" t-field="line.product_id.base_unit_count"/></td>
                                             <td name="unite">
-                                                <span t-field="line.uom_qty"/>
-                                                <span t-field="line.product_uos"/>
+                                                <span t-field="line.quantity" t-options='{"widget": "float", "precision": 1}'/>
                                             </td>
                                             <td t-attf-class="text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                                 <span class="text-nowrap" t-field="line.price_unit"/>
