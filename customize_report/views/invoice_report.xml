@@ -80,11 +80,11 @@
                                             </td>
                                             <td name="account_invoice_line_name">
                                                 <span t-field="line.product_id.name"/><br></br>
-                                                <p t-if="line.prodlot_id" style="font-size: 10px;">Lot: <span t-field="line.prodlot_id.name"/> <span t-field="line.prodlot_id.expiration_date"/></p>
+                                                <!-- <p t-if="line.prodlot_id" style="font-size: 10px;">Lot: <span t-field="line.prodlot_id.name"/> <span t-field="line.prodlot_id.expiration_date"/></p> -->
                                                 
                                                 <t t-foreach="line.account_move_line_lot_ids" t-as="move">
                                                     <span>
-                                                        <p><span t-field="move.lot_id.name"/>  Exp:<span t-field="move.lot_id.expiration_date"/></p>
+                                                        <p style="font-size: 10px; line-height: 1;"><span t-field="move.lot_id.name"/>  Exp:<span t-field="move.lot_id.expiration_date"/></p>
                                                     </span>
                                                 </t>
 
