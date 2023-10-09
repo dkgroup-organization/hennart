@@ -236,16 +236,21 @@ class BaseSynchroServer(models.Model):
         where amll.state is null;
         """
         self.env.cr.execute(sql)
+        sql = """
+        update stock_lot set expiration_date = COALESCE(use_date, alert_date, removal_date, date) 
+        where expiration_date is null;
+        """
+        self.env.cr.execute(sql)
+
         self.env.cr.commit()
         self.invalidate_recordset()
 
-
+        # Start update
         pool_invoice = 5 * limit
 
         job_ids = self.env['queue.job'].search([('state', '=', 'pending')])
         nb_invoice = 0
         synchro_line_ids = self.env['synchro.obj.line']
-
 
         if len(job_ids) < pool_invoice:
             while nb_invoice < pool_invoice:
@@ -254,7 +259,6 @@ class BaseSynchroServer(models.Model):
                     synchro_line_ids = self.env['synchro.obj.line'].search(
                         [('obj_id.model_id.model', '=', 'account.move'), ('local_id', '>', 0)],
                         order='update_date asc', limit=5*limit)
-
 
                 for line in synchro_line_ids:
                     invoice = self.env['account.move'].browse(line.local_id)

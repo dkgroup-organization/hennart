@@ -93,6 +93,8 @@ class AccountMove(models.Model):
             ref = invoice.ref
             origin = []
             stock_move_ids = self.env['stock.move']
+            if invoice.piece_comptable:
+                origin.append(invoice.invoice_origin)
 
             for invoice_line in invoice.invoice_line_ids:
 
@@ -121,10 +123,10 @@ class AccountMove(models.Model):
             def split_origin(list_item):
                 res = []
                 for item in list_item:
-                    for separator in [';', ' ', ':']:
-                        item = item.replace(separator, ',')
-                    item = item.replace(',,,', ',').replace(',,', ',').replace(',,', ',')
-                    item = item.split(',')
+                    for separator in [';', ' ', ',']:
+                        item = item.replace(separator, ':')
+                    item = item.replace(':::', ':').replace('::', ':').replace('::', ':')
+                    item = item.split(':')
                     if len(item):
                         for item_detail in item:
                             res.append(item_detail)
@@ -132,7 +134,7 @@ class AccountMove(models.Model):
                 res = list(dict.fromkeys(res))
                 return res
 
-            invoice.invoice_origin = ', '.join(split_origin(origin))
+            invoice.invoice_origin = ': '.join(split_origin(origin))
 
     @api.depends('company_id', 'invoice_filter_type_domain', 'src_dest_country_id')
     def _compute_suitable_journal2_ids(self):
