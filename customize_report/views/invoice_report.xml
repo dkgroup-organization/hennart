@@ -82,9 +82,9 @@
                                                 <span t-field="line.product_id.name"/><br></br>
                                                 <p t-if="line.prodlot_id" style="font-size: 10px;">Lot: <span t-field="line.prodlot_id.name"/> <span t-field="line.prodlot_id.expiration_date"/></p>
                                                 
-                                                <t t-foreach="line.account_move_line_ids" t-as="move">
+                                                <t t-foreach="line.account_move_line_id" t-as="move">
                                                     <span>
-                                                        <t t-esc="move.lot_id.name"/>  Exp:<t t-esc="move.lot_id.expiration_date"/>
+                                                        <p><t t-esc="move.lot_id.name"/><span t-field="line.prodlot_id.name"/>  Exp:<t t-esc="move.lot_id.expiration_date"/>
                                                     </span>
                                                 </t>
 
