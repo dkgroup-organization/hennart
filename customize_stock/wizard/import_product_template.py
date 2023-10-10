@@ -54,12 +54,12 @@ class ImportPriceList(models.TransientModel):
         # Parcourir les lignes du fichier Excel
         for row in range(1, sheet.nrows):
             product_code = ''
-            product_code = str(sheet.cell_value(row, header.get('default_code')))
+            product_code = str(sheet.cell_value(row, header.get('default_code'))).strip()
             if not product_code:
                 continue  # Ignorer les lignes sans default_code
 
             # Rechercher le produit par default_code
-            product = self.env['product.template'].search([('default_code', '=', product_code)])
+            product = self.env['product.template'].search([('default_code', '=', product_code)], limit=1)
 
             # Créer ou mettre à jour le produit en fonction de son existence
             if not product:
