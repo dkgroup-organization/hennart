@@ -62,7 +62,7 @@
                                     </th>
                                     <th name="th_prix_net" class="small-header text-start small-header"><span>Net price</span></th>
                                     <th name="th_taxes" t-attf-class="small-header text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Tax %</span></th>
-                                    <th name="th_subtotal" class="text-end small-header">
+                                    <th name="th_subtotal" class="text-start small-header">
                                         <span groups="account.group_show_line_subtotals_tax_excluded">Amount</span>
                                         <span groups="account.group_show_line_subtotals_tax_included">Total Price</span>
                                     </th>
@@ -82,7 +82,6 @@
                                             <td name="ean"><span t-field="line.product_id.barcode" /></td>
                                             <td class="text-end">
                                                 <span t-field="line.uom_qty"/>
-                                                <span t-field="line.product_uos"/>
                                                 <!-- <span t-field="line.product_uom_id" groups="uom.group_uom"/> -->
                                             </td>
                                             <td name="account_invoice_line_name">
@@ -99,6 +98,7 @@
                                             <td name="colis_de"><span t-if="line.product_id.base_unit_count > 1" t-field="line.product_id.base_unit_count"/></td>
                                             <td name="unite">
                                                 <span t-field="line.quantity" t-options='{"widget": "float", "precision": 1}'/>
+                                                <span t-field="line.product_uos"/>
                                             </td>
                                             <td t-attf-class="text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                                 <span class="text-nowrap" t-field="line.price_unit" t-options='{"widget": "float", "precision": 2}'/>
