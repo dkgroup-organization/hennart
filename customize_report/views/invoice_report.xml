@@ -41,11 +41,17 @@
 
                         <t t-set="display_discount" t-value="any(l.discount for l in o.invoice_line_ids)"/>
 
+                        <style>
+                            .small-header {
+                                font-size: 5px;
+                            }
+                        </style>
+
                         <table class="table table-sm o_main_table table-borderless" name="invoice_line_table">
                             <thead>
                                 <tr>
-                                    <th name="th_code" class="text-start"><span>Code</span></th>
-                                    <th name="th_ean" class="text-start"><span>EAN</span></th>
+                                    <th name="th_code" class="text-start small-header"><span>Code</span></th>
+                                    <th name="th_ean" class="text-start small-header"><span>EAN</span></th>
                                     <th name="th_quantity" class="text-end"><span>Qty</span></th>
                                     <th name="th_description" class="text-start"><span>Product</span></th>
                                     <th name="th_colis_de" class="text-start"><span>Pack of</span></th>
