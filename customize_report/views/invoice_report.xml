@@ -56,8 +56,8 @@
                                     <th name="th_description" class="text-start small-header"><span>Product</span></th>
                                     <th name="th_colis_de" class="text-start small-header"><span>Pack of</span></th>
                                     <th name="th_unite" class="text-start small-header"><span>Unit</span></th>
-                                    <th name="th_priceunit" t-attf-class="small-header text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Unit price</span></th>
-                                    <th name="th_price_unit" t-attf-class="small-header text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                    <th name="th_priceunit" t-attf-class="small-header text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Unit price</span></th>
+                                    <th name="th_price_unit" t-attf-class="small-header text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                         <span>Disc %</span>
                                     </th>
                                     <th name="th_prix_net" class="small-header text-start small-header"><span>Net price</span></th>
@@ -90,7 +90,7 @@
                                                 <!-- <p t-if="line.prodlot_id" style="font-size: 10px;">Lot: <span t-field="line.prodlot_id.name"/> <span t-field="line.prodlot_id.expiration_date"/></p> -->
                                                 
                                                 <t t-foreach="line.account_move_line_lot_ids" t-as="move">
-                                                    <span>
+                                                    <span t-if="move.lot_id">
                                                         <p style="font-size: 10px; margin-bottom: 3px;"><span t-field="move.lot_id.name"/> | <span t-field="move.lot_id.expiration_date" t-options='{"format": "dd-MM-yyyy"}'/> | QTE: <span t-field="move.uom_qty"/></p>
                                                     </span>
                                                 </t>
