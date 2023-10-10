@@ -93,7 +93,7 @@
                                                 
                                                 <t t-foreach="line.account_move_line_lot_ids" t-as="move">
                                                     <span t-if="move.lot_id">
-                                                        <p style="font-size: 10px; margin-bottom: 3px;"><span t-field="move.lot_id.name"/> | <span t-field="move.lot_id.expiration_date" t-options='{"format": "dd-MM-yyyy"}'/> | QTE: <span t-field="move.uom_qty"/></p>
+                                                        <p style="font-size: 8px; margin-bottom: 3px;"><span t-field="move.lot_id.name"/> | <span t-field="move.lot_id.expiration_date" t-options='{"format": "dd-MM-yyyy"}'/> | QTE: <span t-field="move.uom_qty"/></p>
                                                     </span>
                                                 </t>
 
