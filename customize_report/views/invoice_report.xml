@@ -57,13 +57,13 @@
                                     <th name="th_ean" class="text-start small-header"><span>EAN</span></th>
                                     <th name="th_quantity" class="text-start small-header"><span>Qty</span></th>
                                     <th name="th_description" class="text-start small-header"><span>Product</span></th>
-                                    <th name="th_colis_de" class="text-start small-header"><span>Pack    of</span></th>
+                                    <th name="th_colis_de" class="text-start small-header"><span>Pack <br/> of</span></th>
                                     <th name="th_unite" class="text-start small-header"><span>Unit</span></th>
-                                    <th name="th_priceunit" t-attf-class="small-header text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Unit price</span></th>
+                                    <th name="th_priceunit" t-attf-class="small-header text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Unit <br/> price</span></th>
                                     <th name="th_price_unit" t-attf-class="small-header text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                         <span>Disc %</span>
                                     </th>
-                                    <th name="th_prix_net" class="small-header text-start small-header"><span>Net    price</span></th>
+                                    <th name="th_prix_net" class="small-header text-start small-header"><span>Net <br/> price</span></th>
                                     <th name="th_taxes" t-attf-class="small-header text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Tax %</span></th>
                                     <th name="th_subtotal" class="text-start small-header">
                                         <span groups="account.group_show_line_subtotals_tax_excluded">Amount</span>
