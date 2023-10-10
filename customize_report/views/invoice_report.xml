@@ -45,6 +45,9 @@
                             .small-header {
                                 font-size: 10px;
                             }
+                            .td {
+                                font-size: 10px !important;
+                            }
                         </style>
 
                         <table class="table table-sm o_main_table table-borderless" name="invoice_line_table">
