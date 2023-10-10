@@ -95,7 +95,7 @@
                                                 </t>
 
                                             </td>
-                                            <td name="colis_de"><span t-if="line.product_id.base_unit_count > 1" t-field="line.product_id.base_unit_count"/></td>
+                                            <td name="colis_de"><span t-if="line.product_id.base_unit_count > 1" t-field="line.product_id.base_unit_count" t-options='{"widget": "float", "precision": 0}'/></td>
                                             <td name="unite">
                                                 <span t-field="line.quantity" t-options='{"widget": "float", "precision": 1}'/>
                                                 <span t-field="line.product_uos"/>
