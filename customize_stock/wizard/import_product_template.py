@@ -68,20 +68,20 @@ class ImportPriceList(models.TransientModel):
                     'name': sheet.cell_value(row, header.get('name')),
                 })
 
-            if sheet.cell_value(row, header.get('AOP')) == False:
-                aop = False
-            else:
+            if sheet.cell_value(row, header.get('AOP')) == 'AOP':
                 aop = True
-
-            if sheet.cell_value(row, header.get('OGM')) == False:
-                ogm = False
             else:
+                aop = False
+
+            if sheet.cell_value(row, header.get('OGM')) == 'OGM':
                 ogm = True
-
-            if sheet.cell_value(row, header.get('Type fermier')) == False:
-                farmer_type = False
             else:
+                ogm = False
+
+            if sheet.cell_value(row, header.get('Type fermier')) == 'Farmer':
                 farmer_type = True
+            else:
+                farmer_type = False
 
             # Mapper les autres champs du fichier Excel aux champs Odoo ici pour mettre à jour le produit
             product.write({
