@@ -41,22 +41,31 @@
 
                         <t t-set="display_discount" t-value="any(l.discount for l in o.invoice_line_ids)"/>
 
+                        <style>
+                            .small-header {
+                                font-size: 10px;
+                            }
+                            .small-text {
+                                font-size: 10px;
+                            }
+                        </style>
+
                         <table class="table table-sm o_main_table table-borderless" name="invoice_line_table">
                             <thead>
                                 <tr>
-                                    <th name="th_code" class="text-start"><span>Code</span></th>
-                                    <th name="th_ean" class="text-start"><span>EAN</span></th>
-                                    <th name="th_quantity" class="text-end"><span>Qty</span></th>
-                                    <th name="th_description" class="text-start"><span>Product</span></th>
-                                    <th name="th_colis_de" class="text-start"><span>Pack of</span></th>
-                                    <th name="th_unite" class="text-start"><span>Unit</span></th>
-                                    <th name="th_priceunit" t-attf-class="text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Unit price</span></th>
-                                    <th name="th_price_unit" t-attf-class="text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                    <th name="th_code" class="text-start small-header"><span>Code</span></th>
+                                    <th name="th_ean" class="text-start small-header"><span>EAN</span></th>
+                                    <th name="th_quantity" class="text-start small-header"><span>Qty</span></th>
+                                    <th name="th_description" class="text-start small-header"><span>Product</span></th>
+                                    <th name="th_colis_de" class="text-start small-header"><span>Pack <br/> of</span></th>
+                                    <th name="th_unite" class="text-start small-header"><span>Unit</span></th>
+                                    <th name="th_priceunit" t-attf-class="small-header text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Unit <br/> price</span></th>
+                                    <th name="th_price_unit" t-attf-class="small-header text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                         <span>Disc %</span>
                                     </th>
-                                    <th name="th_prix_net" class="text-start"><span>Net price</span></th>
-                                    <th name="th_taxes" t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Tax %</span></th>
-                                    <th name="th_subtotal" class="text-end">
+                                    <th name="th_prix_net" class="small-header text-start small-header"><span>Net <br/> price</span></th>
+                                    <th name="th_taxes" t-attf-class="small-header text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"><span>Tax %</span></th>
+                                    <th name="th_subtotal" class="text-start small-header">
                                         <span groups="account.group_show_line_subtotals_tax_excluded">Amount</span>
                                         <span groups="account.group_show_line_subtotals_tax_included">Total Price</span>
                                     </th>
@@ -72,35 +81,42 @@
 
                                     <tr t-att-class="'bg-200 fw-bold o_line_section' if line.display_type == 'line_section' else 'fst-italic o_line_note' if line.display_type == 'line_note' else ''">
                                         <t t-if="line.display_type == 'product'" name="account_invoice_line_accountable">
-                                            <td name="code"><span t-field="line.product_id.default_code" /></td>
-                                            <td name="ean"><span t-field="line.product_id.barcode" /></td>
-                                            <td class="text-end">
-                                                <span t-field="line.quantity"/>
+                                            <td name="code" class="small-text"><span t-field="line.product_id.default_code" /></td>
+                                            <td name="ean" class="small-text"><span t-field="line.product_id.barcode" /></td>
+                                            <td class="small-text text-end">
+                                                <span t-field="line.uom_qty"/>
                                                 <!-- <span t-field="line.product_uom_id" groups="uom.group_uom"/> -->
                                             </td>
                                             <td name="account_invoice_line_name">
-                                                <span t-field="line.product_id.name"/><br></br>
-                                                <p t-if="line.prodlot_id" style="font-size: 10px;">Lot: <span t-field="line.prodlot_id.name"/> <span t-field="line.prodlot_id.expiration_date"/></p>
+                                                <span class="small-text" t-field="line.product_id.name"/><br></br>
+                                                <!-- <p t-if="line.prodlot_id" style="font-size: 10px;">Lot: <span t-field="line.prodlot_id.name"/> <span t-field="line.prodlot_id.expiration_date"/></p> -->
+                                                
+                                                <t t-foreach="line.account_move_line_lot_ids" t-as="move">
+                                                    <span t-if="move.lot_id">
+                                                        <p style="font-size: 8px; margin-bottom: 3px;"><span t-field="move.lot_id.name"/> | <span t-field="move.lot_id.expiration_date" t-options='{"format": "dd-MM-yyyy"}'/> | QTE: <span t-field="move.uom_qty"/></p>
+                                                    </span>
+                                                </t>
+
                                             </td>
-                                            <td name="colis_de"><span t-if="line.product_id.base_unit_count > 1" t-field="line.product_id.base_unit_count"/></td>
-                                            <td name="unite">
-                                                <span t-field="line.uom_qty"/>
+                                            <td class="small-text" name="colis_de"><span t-if="line.product_id.base_unit_count > 1" t-field="line.product_id.base_unit_count" t-options='{"widget": "float", "precision": 0}'/></td>
+                                            <td class="small-text" name="unite">
+                                                <span t-field="line.quantity" t-options='{"widget": "float", "precision": 3}'/>
                                                 <span t-field="line.product_uos"/>
                                             </td>
-                                            <td t-attf-class="text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                                <span class="text-nowrap" t-field="line.price_unit"/>
+                                            <td t-attf-class="small-text text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                                <span class="text-nowrap" t-field="line.price_unit" t-options='{"widget": "float", "precision": 2}'/>
                                             </td>
-                                            <td t-attf-class="text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                            <td t-attf-class="small-text text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                                 <span class="text-nowrap" t-field="line.discount"/>
                                             </td>
                                             <!-- a changer le nom du champ pour le prix net et mettre un champ calculé -->
-                                            <td name="prix_net"><span t-field="line.price_net" /></td>
-                                            <td t-attf-class="text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
+                                            <td class="small-text" name="prix_net"><span t-field="line.price_net" /></td>
+                                            <td t-attf-class="small-text text-start {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                                                 <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_ids))" id="line_tax_ids"/>
                                             </td>
                                             <td >
-                                                <span class="text-nowrap" t-field="line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
-                                                <span class="text-nowrap" t-field="line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
+                                                <span class="small-text text-nowrap" t-field="line.price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
+                                                <span class="small-text text-nowrap" t-field="line.price_total" groups="account.group_show_line_subtotals_tax_included"/>
                                             </td>
                                         </t>
                                         <t t-if="line.display_type == 'line_section'">
