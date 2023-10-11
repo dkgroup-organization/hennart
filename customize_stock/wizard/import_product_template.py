@@ -63,10 +63,7 @@ class ImportPriceList(models.TransientModel):
 
             # Créer ou mettre à jour le produit en fonction de son existence
             if not product:
-                product = self.env['product.template'].create({
-                    'default_code': product_code,
-                    'name': sheet.cell_value(row, header.get('name')),
-                })
+                raise(f'Error! the product with default_code {product_code} is not found! Please correct the file !')
 
             if sheet.cell_value(row, header.get('AOP')) == 'AOP':
                 aop = True
