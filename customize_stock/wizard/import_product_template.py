@@ -60,8 +60,6 @@ class ImportPriceList(models.TransientModel):
 
             # Rechercher le produit par default_code
             product = self.env['product.template'].search([('default_code', 'ilike', sheet.cell_value(row, header.get('default_code')))], limit=1)
-            
-            raise UserError(product_code)
 
             # Créer ou mettre à jour le produit en fonction de son existence
             if not product:
