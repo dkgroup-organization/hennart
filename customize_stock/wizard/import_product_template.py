@@ -54,16 +54,12 @@ class ImportPriceList(models.TransientModel):
         # Parcourir les lignes du fichier Excel
         for row in range(1, sheet.nrows):
             product_code = ''
-            product_code = product_code + sheet.cell_value(row, header.get('default_code'))
+            product_code = sheet.cell_value(row, header.get('default_code'))
             if not product_code:
                 continue  # Ignorer les lignes sans default_code
 
-            if not product_code.startswith('0'):
-                # Ajouter un "0" au début si ce n'est pas déjà le cas
-                product_code = '0' + product_code
-
             # Rechercher le produit par default_code
-            product = self.env['product.template'].search([('default_code', '=', sheet.cell_value(row, header.get('default_code')))], limit=1)
+            product = self.env['product.template'].search([('default_code', 'ilike', sheet.cell_value(row, header.get('default_code')))], limit=1)
             
             raise UserError(product_code)
 
