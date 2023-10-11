@@ -56,7 +56,7 @@ class ImportPriceList(models.TransientModel):
             product_code = ''
             product_code = sheet.cell_value(row, header.get('default_code'))
 
-            product_code = str(product_code).zfill(5)
+            product_code = str(product_code).split('.')[0].zfill(5)
 
             if not product_code:
                 continue  # Ignorer les lignes sans default_code
