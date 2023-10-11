@@ -59,29 +59,29 @@ class ImportPriceList(models.TransientModel):
                 continue  # Ignorer les lignes sans default_code
 
             # Rechercher le produit par default_code
-            product = self.env['product.template'].search([('default_code', 'ilike', sheet.cell_value(row, header.get('default_code')))], limit=1)
+            product = self.env['product.template'].search([('default_code', 'ilike', product_code)], limit=1)
 
             # Créer ou mettre à jour le produit en fonction de son existence
             if not product:
                 product = self.env['product.template'].create({
-                    'default_code': sheet.cell_value(row, header.get('default_code')),
+                    'default_code': product_code,
                     'name': sheet.cell_value(row, header.get('name')),
                 })
 
-            if sheet.cell_value(row, header.get('AOP')) != False:
-                aop = True
-            else:
+            if sheet.cell_value(row, header.get('AOP')) == False:
                 aop = False
-
-            if sheet.cell_value(row, header.get('OGM')) != False:
-                ogm = True
             else:
+                aop = True
+
+            if sheet.cell_value(row, header.get('OGM')) == False:
                 ogm = False
-
-            if sheet.cell_value(row, header.get('Type fermier')) != False:
-                farmer_type = True
             else:
+                ogm = True
+
+            if sheet.cell_value(row, header.get('Type fermier')) == False:
                 farmer_type = False
+            else:
+                farmer_type = True
 
             # Mapper les autres champs du fichier Excel aux champs Odoo ici pour mettre à jour le produit
             product.write({
