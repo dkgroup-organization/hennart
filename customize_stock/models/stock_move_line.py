@@ -47,3 +47,38 @@ class StockMoveLine(models.Model):
     def _compute_product_uom_id(self):
         for line in self:
             line.product_uom_id = line.product_id.uom_id
+
+    @api.onchange('lot_name', 'lot_id', 'expiration_date')
+    def onchange_lot_name(self):
+        """ rewrite the function to limit the check for this project
+        - no serial
+        - possibility to have some production lot with same name
+        - don 't change qty_done
+        - don't search location
+        - update expiration_date
+        """
+        if self.lot_name and not self.lot_id:
+            # create lot
+            lot_vals = {'lot_name': self.lot_name,
+                        'expiration_date': self.expiration_date,
+                        'product_id': self.product_id.id}
+            self._create_and_assign_production_lot()
+
+        elif self.lot_name and self.lot_id:
+            # update lot
+            lot_vals = {'name': self.lot_name,
+                        'expiration_date': self.expiration_date}
+            self.lot_id.update(lot_vals)
+
+        elif self.lot_id and not self.lot_name:
+            # get lot_name
+            self.update({
+                'lot_name': self.lot_id.name,
+                'expiration_date': self.lot_id.expiration_date,
+            })
+        else:
+            self.update({
+                'lot_name': False,
+                'expiration_date': False,
+                'lot_id': False
+            })
