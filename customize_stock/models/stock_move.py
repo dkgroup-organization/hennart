@@ -40,7 +40,7 @@ class StockMove(models.Model):
                 ' become dangerous and must not be consumed.')
 
     picking_type_use_create_lots = fields.Boolean(related='picking_type_id.use_create_lots', readonly=True)
-    lot_description = fields.Html("Lot description", compute="get_lot_description", store=False,
+    lot_description = fields.Text("Lot description", compute="get_lot_description", store=False,
                                   readonly=True, sanitize=False)
 
     def check_line(self):
@@ -49,6 +49,9 @@ class StockMove(models.Model):
         for move in self:
             for move_line in move.move_line_ids:
                 if move_line.state == "cancel":
+                    continue
+                if move_line.weight == 0.0 and move_line.qty_done == 0.0:
+                    move_line.unlink()
                     continue
                 if move_line.lot_id and not move_line.lot_id.expiration_date:
                     message += _(f"\nThis lot need a expiration date: {move.name} {move_line.lot_id.name}")
@@ -141,6 +144,7 @@ class StockMove(models.Model):
                 message = _("this line has multiples production lot, uses the detailed view to update")
                 message += '\n {}'.format(line.name)
                 raise ValidationError(message)
+
     @api.depends('move_line_ids.weight')
     def get_weight(self):
         """ Get weight"""
@@ -179,6 +183,6 @@ class StockMove(models.Model):
                         lot_description += " {:%d/%m/%Y}".format(move_line.lot_id.expiration_date)
                     if move_line.qty_done != move.quantity_done:
                         lot_description += "({})".format(move_line.qty_done)
-                    lot_description += "</br>"
+                    lot_description += ", "
             move.lot_description = lot_description
 
