@@ -29,6 +29,9 @@ class WmsScenarioStep(models.Model):
             data['picking'] = picking
             print('\n---------get_next_picking_line---4------', data)
 
+            if picking.state in ['confirmed', 'waiting']:
+                picking.action_assign()
+
             # Todo: define the rule to apply,
             moves_line_ids = self.env['stock.move.line'].search([
                 ('picking_id', '=', picking.id)
@@ -38,6 +41,34 @@ class WmsScenarioStep(models.Model):
 
         print('\n---------get_next_picking_line---------', data)
         return data
+
+    def get_input_name(self, data):
+        """ Return input name to qweb template"""
+        self.ensure_one()
+        if self.action_variable:
+            res = self.action_variable
+        else:
+            res = 'scan'
+        return res
+
+    def get_input_placeholder(self, data):
+        """ Return input placeholder to qweb template"""
+        self.ensure_one()
+        res = 'Scan'
+        move_line = data.get('move_line')
+        if move_line:
+            if self.action_variable == 'lot_id':
+                res = _(f'Scan lot: {move_line.lot_id.ref}')
+        return res
+
+    def get_input_class(self, data):
+        """ Return input class to qweb template"""
+        self.ensure_one()
+        if data.get('warning'):
+            res = "input-warning"
+        else:
+            res = "input-green"
+        return res
 
     def get_user_picking(self, data):
         """ return the set of picking currently in preparation by this user"""

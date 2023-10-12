@@ -30,8 +30,10 @@
         </template>
 
         <template id="scanner_line_preparation" name="scanner_line_preparation">
+            <t t-if="data.get('step')">
+                <t t-set="step" t-value="data.get('step')"/>
                 <form class="flex flex-col items-center gap-2 landscape:gap-1 landscape:w-[49%]"
-                      t-att-action="'./scanner?scenario={}&amp;step={}'.format(data['scenario'].id, data['step'].id)"
+                      t-att-action="'./scanner?scenario={}&amp;step={}'.format(step.scenario_id.id, step.id)"
                       method="post">
                     <t t-call="customize_scanner.scanner_preparation_location_id"/>
                     <t t-call="customize_scanner.scanner_preparation_product_id"/>
@@ -40,6 +42,29 @@
 
                     <button type="submit" class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">Valid</button>
                 </form>
+            </t>
+
+        </template>
+
+        <template id="scanner_input" name="preparation_input">
+            <div class="w-full">
+                    <input
+                            type="text"
+                            id="scan"
+                            t-att-name="step.get_input_name(data)"
+                            t-att-class="step.get_input_class(data)"
+                            t-att-placeholder="step.get_input_placeholder(data)"
+                    />
+
+                <div id="input_message" class="mt-4 w-90 flex flex-col gap-6 w-72 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:m-auto">
+                    <p t-if="data.get('warning')" class="border-b-2 pb-5 mb-5 border-gray-300">
+                        <t t-out="data.get('warning')"/>
+                    </p>
+                    <p t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
+                        <t t-out="data.get('message')"/>
+                    </p>
+                </div>
+            </div>
         </template>
 
         <template id="scanner_preparation_location_id" name="scanner_preparation_location_id">
@@ -59,8 +84,8 @@
         </template>
 
         <template id="scanner_preparation_input_lot_id" name="scanner_preparation_input_lot_id">
-            <t t-if="data['step'].action_variable == 'lot_id'">
-                <t t-call="wms_scanner.scanner_input_text_id"/>
+            <t t-if="step.action_variable == 'lot_id'">
+                <t t-call="customize_scanner.scanner_input"/>
             </t>
             <t t-else="">
                 <div name="lot_id" class="relative input-default">

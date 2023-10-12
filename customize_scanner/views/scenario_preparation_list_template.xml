@@ -23,7 +23,7 @@
                             <h1>preparation</h1>
                         </div>
 
-                        <t t-if="data.get('picking_ids')" t-call="customize_scanner.scanner_list_preparation"/>
+                        <t t-call="customize_scanner.scanner_list_preparation"/>
 
                     </div>
                 </section>
