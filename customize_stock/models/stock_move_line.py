@@ -21,6 +21,7 @@ class StockMoveLine(models.Model):
     to_label = fields.Boolean(string='to label')
     to_weight = fields.Boolean(string='to weight')
     to_pass = fields.Boolean(string='to pass')
+    to_pick = fields.Boolean(string='to pick')
     priority = fields.Integer("Priority", store=True, default=0)
 
     @api.depends('picking_id', 'product_id')

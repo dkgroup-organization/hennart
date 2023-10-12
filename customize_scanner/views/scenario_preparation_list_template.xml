@@ -2,18 +2,18 @@
 <odoo>
     <data>
 
-        <template id="scanner_scenario_preparation" name="scanner_scenario_preparation">
+        <template id="scanner_scenario_list_preparation" name="scanner_scenario_list_preparation">
             <html>
                 <t t-call="wms_scanner.scanner_html_head"/>
                 <body class="font-poppins duration-500 min-h-screen">
                     <t t-call="wms_scanner.scanner_menu_body_header"/>
-                    <t t-call="wms_scanner.scanner_preparation_body_main"/>
+                    <t t-call="customize_scanner.scanner_list_preparation_body_main"/>
                     <t t-call="wms_scanner.scanner_script_js"/>
                 </body>
             </html>
         </template>
 
-        <template id="scanner_preparation_body_main" name="scanner_preparation_body_main">
+        <template id="scanner_list_preparation_body_main" name="scanner_list_preparation_body_main">
             <main class="relative">
 
                 <section id="preparation" class="screen_title">
@@ -23,7 +23,7 @@
                             <h1>preparation</h1>
                         </div>
 
-                        <t t-if="data.get('picking_ids')" t-call="wms_scanner.scanner_list_preparation"/>
+                        <t t-if="data.get('picking_ids')" t-call="customize_scanner.scanner_list_preparation"/>
 
                     </div>
                 </section>

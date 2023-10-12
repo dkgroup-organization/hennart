@@ -38,42 +38,6 @@ class StockPicking(models.Model):
         self.move_ids_without_package.check_line()
         return super().button_validate()
 
-    @api.model
-    def get_user_picking(self):
-        """ return the set of picking currently in preparation by this user"""
-        picking_type = self.env.ref('stock.picking_type_out')
-
-        picking_ids = self.env['stock.picking'].search([
-            ('user_id', '=', self.env.user.id),
-            ('picking_type_id', '=', picking_type.id),
-            ('state', 'in', ['assigned', 'confirmed', 'waiting'])
-        ], order='sequence')
-        return picking_ids
-
-    @api.model
-    def add_next_picking(self):
-        """ assign next picking to this user"""
-        picking_type = self.env.ref('stock.picking_type_out')
-
-        picking_ids = self.env['stock.picking'].search([
-            ('user_id', '=', False),
-            ('picking_type_id', '=', picking_type.id),
-            ('state', 'in', ['assigned', 'confirmed', 'waiting'])
-        ], order='sequence', limit=1)
-        if picking_ids:
-            picking_ids.user_id = self.env.user
-
-        return self.get_user_picking()
-
-    def get_next_picking_line(self):
-        """ Return the next preparation line to do"""
-        self.ensure_one()
-        # define the priority of the stock.move.line, by location name
-        moves_line_ids = self.env['stock.move.line'].search([
-            ('picking_id', '=', self.id)
-        ], order='priority', limit=1)
-        return moves_line_ids
-
     def order_move_line(self):
         """ Order the move line priority"""
         for picking in self:

@@ -27,6 +27,7 @@
                         <field name="data"/>
                         <field name="message"/>
                     </group>
+                    <field name="error"/>
                 </sheet>
             </form>
         </field>

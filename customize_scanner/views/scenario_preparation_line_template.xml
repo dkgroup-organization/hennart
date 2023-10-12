@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <template id="scanner_scenario_preparation" name="scanner_scenario_preparation">
+            <html>
+                <t t-call="wms_scanner.scanner_html_head"/>
+                <body class="font-poppins duration-500 min-h-screen">
+                    <t t-call="wms_scanner.scanner_menu_body_header"/>
+                    <t t-call="customize_scanner.scanner_preparation_body_main"/>
+                    <t t-call="wms_scanner.scanner_script_js"/>
+                </body>
+            </html>
+        </template>
+
+        <template id="scanner_preparation_body_main" name="scanner_preparation_body_main">
+            <main class="relative">
+                <section id="preparation" class="screen_title">
+                    <div class="container mx-auto px-5 pb-5 relative">
+                        <div class="flex items-center gap-2.5 mb-10 landscape:mb-6">
+                            <t t-call="wms_scanner.wms_scanner_image_box"/>
+                            <h1>preparation</h1>
+                        </div>
+
+                        <t t-if="data.get('move_line')" t-call="customize_scanner.scanner_line_preparation"/>
+
+                    </div>
+                </section>
+            </main>
+        </template>
+
+        <template id="scanner_line_preparation" name="scanner_line_preparation">
+                <form class="flex flex-col items-center gap-2 landscape:gap-1 landscape:w-[49%]"
+                      t-att-action="'./scanner?scenario={}&amp;step={}'.format(data['scenario'].id, data['step'].id)"
+                      method="post">
+                    <t t-call="customize_scanner.scanner_preparation_location_id"/>
+                    <t t-call="customize_scanner.scanner_preparation_product_id"/>
+                    <t t-call="customize_scanner.scanner_preparation_input_lot_id"/>
+                    <t t-call="customize_scanner.scanner_preparation_input_quantity"/>
+
+                    <button type="submit" class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">Valid</button>
+                </form>
+        </template>
+
+        <template id="scanner_preparation_location_id" name="scanner_preparation_location_id">
+            <div id="location_id" name="location_id" class="relative input-default">
+                <t t-out="data['move_line'].location_id.name or 'Origin location'"/>
+                <t t-if="len(data['move_line'].location_id.name) > 4">
+                    <span t-out="data['move_line'].location_id.name[-5:]" class="absolute right-4" />
+                </t>
+            </div>
+        </template>
+
+        <template id="scanner_preparation_product_id" name="scanner_preparation_product_id">
+            <div id="product_id" name="product_id" class="relative input-default">
+                <t t-out="data['move_line'].product_id.name or 'Product'"/>
+                    <span t-out="data['move_line'].product_id.default_code" class="absolute right-4" />
+            </div>
+        </template>
+
+        <template id="scanner_preparation_input_lot_id" name="scanner_preparation_input_lot_id">
+            <t t-if="data['step'].action_variable == 'lot_id'">
+                <t t-call="wms_scanner.scanner_input_text_id"/>
+            </t>
+            <t t-else="">
+                <div name="lot_id" class="relative input-default">
+                    <t t-out="data.get('lot_id') and data['lot_id'].ref or '?'"/>
+                    <span t-esc="data.get('lot_id') and data['lot_id'].expiration_date"
+                          t-options="{'widget': 'date', 'format': 'dd/MM/YYYY'}"
+                          class="absolute right-4" />
+                </div>
+            </t>
+        </template>
+
+        <template id="scanner_preparation_input_quantity" name="scanner_preparation_input_quantity">
+            <t t-if="data['step'].action_variable == 'quantity'">
+                <t t-call="wms_scanner.scanner_input_text_id"/>
+            </t>
+            <t t-else="">
+                <div id="quantity" name="quantity" class="relative input-default">
+                    <t t-out="data.get('quantity') or 'Quantity'"/>
+                </div>
+            </t>
+        </template>
+
+
+    </data>
+</odoo>

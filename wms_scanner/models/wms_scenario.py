@@ -98,7 +98,7 @@ class WmsScenario(models.Model):
         """ initiate data"""
         self.ensure_one()
         # init data if first time
-        if not data or not data.get('scenario') or data.get('scenario') != self or not data.get('step'):
+        if not data or (not data.get('scenario')) or data.get('scenario') != self or not data.get('step'):
             # start new scenario
             if self.step_ids:
                 start_step = self.step_ids.search([

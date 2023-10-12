@@ -17,7 +17,6 @@ BARCODE_LOCATION = '(01)'
 BARCODE_PRODLOT = '(10)'
 
 
-
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
@@ -31,6 +30,7 @@ class WmsScenarioStep(models.Model):
         6 char: weight
         """
         self.ensure_one()
+        print('\n-------------scan_multi----------', data,scan, action_variable )
 
         # Detect the old barcode (reference used by V7) 24 or 25 or 26 length
         # 53201523101X010120000000  -24 DIGI machine frais emballé [11], la date est inversé
@@ -184,10 +184,10 @@ class WmsScenarioStep(models.Model):
        "This product {} is not registred in this location {}"
        "This product {} need a production lot "
         """
-        if data.get('location_origin_id') and data.get('product_id'):
+        if data.get('product_id') and (data.get('location_id') or data.get('location_origin_id')):
             condition = [
                 ('product_id', '=', data['product_id'].id),
-                ('location_id', '=', data['location_origin_id'].id)]
+                ('location_id', '=', (data['location_id'] or data['location_origin_id']).id)]
 
             if data.get('lot_id'):
                 condition.append(('lot_id', '=', data['lot_id'].id))
@@ -280,14 +280,3 @@ class WmsScenarioStep(models.Model):
             data['result'] = False
 
         return data
-
-
-    @api.model
-    def init_data(self, data):
-        """ return init data"""
-        new_data = {
-            'step': data['step'],
-            'scenario': data['step'].scenario_id,
-        }
-        return new_data
-
