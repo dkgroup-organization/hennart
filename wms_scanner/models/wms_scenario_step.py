@@ -203,6 +203,7 @@ class WmsScenarioStep(models.Model):
     def execute_step(self, data):
         """ compute the step:
         there are 3 actions: scan - compute - choice next step"""
+
         self.ensure_one()
         original_data = data.copy()
         data = self.read_button(data)
@@ -223,7 +224,7 @@ class WmsScenarioStep(models.Model):
             original_data['debug'] = data['debug']
             data = original_data.copy()
 
-        elif data.get('warning') or data.get('debug'):
+        elif data.get('warning'):
             # If warning, restore previous data.
             logger.warning("Warning_data: {}".format(data))
             original_data['warning'] = data.get('warning', '')
@@ -242,12 +243,12 @@ class WmsScenarioStep(models.Model):
             scan_model = data.get(self.action_variable or 'scan')
             message = ""
             if hasattr(scan_model, '_name') and hasattr(scan_model, 'ids'):
-                listt = []
+                field_list = []
                 for scan_model_id in scan_model:
 
                     if scan_model_id._name in ['product.product', 'stock.lot']:
 
-                        listt = ['default_code', 'barcode', 'name']
+                        field_list = ['default_code', 'barcode', 'name']
                         if scan_model_id._name == 'product.product':
                             product = scan_model_id
                         else:
@@ -270,7 +271,6 @@ class WmsScenarioStep(models.Model):
                             message += "<b>%s:</b> %s<br/>" % (_('Quantity'), quant.quantity)
                             message += " </p>"
 
-
                     elif scan_model_id._name == 'stock.location':
                         stock_quants = self.env['stock.quant'].search([
                             ('location_id', '=', scan_model_id.id),
@@ -288,9 +288,9 @@ class WmsScenarioStep(models.Model):
                             message += "<b> %s:</b> %s <br/>" % (_('Quantity'), quant.quantity)
                             message += "</p>"
                     else:
-                        listt = ['barcode', 'name']
+                        field_list = ['barcode', 'name']
                         message += "<p><b> %s </b></p>" % scan_model_id._description or scan_model_id._name
-                        for field_name in listt:
+                        for field_name in field_list:
                             if hasattr(scan_model_id, field_name):
                                 message += "<p> %s </p>" % (getattr(scan_model, field_name))
                         message += "<br/>"
@@ -303,14 +303,17 @@ class WmsScenarioStep(models.Model):
         if self.python_code:
             try:
                 localdict = {
-                    'object': self,
+                    'step': self,
                     'env': self.env,
                     'data': data.copy()}
                 safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
                 data = localdict.get('data')
-            except:
+            except Exception as e:
                 debug = _("This code generate an error: %s" % (self.python_code or ''))
                 data.update({'debug': debug})
+                session = self.env['wms.session'].get_session()
+                session.error = str(e)
+                logger.warning(e)
 
         return data
 
@@ -322,13 +325,17 @@ class WmsScenarioStep(models.Model):
             if not transition.condition:
                 continue
             localdict = {'data': data.copy()}
+
             try:
-                eval = safe_eval(transition.condition, localdict, mode="eval", nocopy=True)
-            except:
+                res_eval = safe_eval(transition.condition, localdict, mode="eval", nocopy=True)
+                if res_eval:
+                    data['step'] = transition.to_id
+                    break
+            except Exception as e:
                 data['debug'] = _("this code generate a error: {}".format(transition.condition))
-            if eval:
-                data['step'] = transition.to_id
-                break
+                session = self.env['wms.session'].get_session()
+                session.error = str(e)
+                logger.warning(e)
 
         if not data.get('warning') and self.action_scanner in ['routing', 'start'] and (
                 not data.get('step') or data['step'] == self):
@@ -344,3 +351,9 @@ class WmsScenarioStep(models.Model):
         location_ids |= warehouse.wh_output_stock_loc_id
         location_ids |= warehouse.wh_pack_stock_loc_id
         return location_ids
+
+    def get_message(self, data):
+        """ get message to display about this step"""
+        self.ensure_one()
+        res = "message to user"
+        return res

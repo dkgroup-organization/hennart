@@ -26,6 +26,7 @@ class WmsSession(models.Model):
     data = fields.Char('data')
     message = fields.Char('log last message')
     warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse', default=_default_warehouse)
+    error = fields.Text('Error')
 
     state = fields.Selection(string='Status', selection=[
         ('draft', 'Draft'),

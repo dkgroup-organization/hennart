@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    'name': 'WMS Scanner custom',
+    'name': 'Stock custom',
     'summary': 'Custom barcode management',
     'version': '16.0.1.0.1',
     'category': 'Generic Modules/Inventory Control',

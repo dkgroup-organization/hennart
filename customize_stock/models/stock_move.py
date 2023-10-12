@@ -52,7 +52,7 @@ class StockMove(models.Model):
                     continue
                 if move_line.lot_id and not move_line.lot_id.expiration_date:
                     message += _(f"\nThis lot need a expiration date: {move.name} {move_line.lot_id.name}")
-                if move_line.weight == 0.0 and move_line.quantity_done > 0.0:
+                if move_line.weight == 0.0 and move_line.qty_done > 0.0:
                     message += _(f"\nThis line need a weight: {move.name}")
 
         if message:

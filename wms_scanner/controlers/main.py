@@ -25,6 +25,8 @@ class WmsController(http.Controller):
         if not request.session.uid:
             return http.local_redirect('/web/login?redirect=%2Fscanner')
 
+        print('\n-----request---method------------', request.httprequest.method)
+
         # Get session data
         session = request.env['wms.session'].get_session()
         data = session.get_data()
@@ -110,7 +112,7 @@ class WmsController(http.Controller):
             for key in list(sub_data.keys()):
                 if type(sub_data[key]) in [list, dict]:
                     html += '<li><b>%s: </b></li>' % (key)
-                    html += self.data_debug(sub_data[key])
+                    html += self.format_debug(sub_data[key])
                 else:
                     html += '<li><b>%s: </b>%s</li>' % (key, sub_data[key])
             html += "</ul>"
@@ -120,7 +122,7 @@ class WmsController(http.Controller):
             for idx, item in enumerate(sub_data):
                 if type(item) in [list, dict]:
                     html += '<li>[%s]:</li>' % (idx)
-                    html += self.data_debug(item)
+                    html += self.format_debug(item)
                 else:
                     html += '<li>[%s]: %s</li>' % (idx, item)
             html += "</ul>"
