@@ -2,6 +2,7 @@
 from odoo import fields, models, api, _
 import logging
 from odoo.fields import Command
+from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 from odoo.exceptions import UserError, ValidationError
 _logger = logging.getLogger(__name__)
 
@@ -50,8 +51,7 @@ class StockMove(models.Model):
             for move_line in move.move_line_ids:
                 if move_line.state == "cancel":
                     continue
-                if move_line.weight == 0.0 and move_line.qty_done == 0.0:
-                    move_line.unlink()
+                if not move_line.qty_done:
                     continue
                 if move_line.lot_id and not move_line.lot_id.expiration_date:
                     message += _(f"\nThis lot need a expiration date: {move.name} {move_line.lot_id.name}")
@@ -123,12 +123,13 @@ class StockMove(models.Model):
     def get_quantity_done(self):
         """ Get quantity_done"""
         for line in self:
-            if line.state in ['cancel', 'done']:
+            if line.state == 'done':
                 continue
 
             quantity_done = 0.0
-            for stock_move_line in line.move_line_ids:
-                quantity_done += stock_move_line.qty_done
+            if line.state != 'cancel':
+                for stock_move_line in line.move_line_ids:
+                    quantity_done += stock_move_line.qty_done
             line.quantity_done = quantity_done
 
     def put_quantity_done(self):
@@ -149,12 +150,13 @@ class StockMove(models.Model):
     def get_weight(self):
         """ Get weight"""
         for line in self:
-            if line.state in ['cancel', 'done']:
+            if line.state == 'done':
                 continue
 
             weight = 0.0
-            for stock_move_line in line.move_line_ids:
-                weight += stock_move_line.weight
+            if line.state != 'cancel':
+                for stock_move_line in line.move_line_ids:
+                    weight += stock_move_line.weight
             line.weight = weight
 
     def put_weight(self):
@@ -185,4 +187,15 @@ class StockMove(models.Model):
                         lot_description += "({})".format(move_line.qty_done)
                     lot_description += ", "
             move.lot_description = lot_description
+
+    def write(self, vals):
+        # By pass quantity_done constraint
+        if 'state' in vals and vals['state'] == 'cancel':
+            for move in self:
+                if move.state != 'cancel':
+                    move.move_line_ids.write({'qty_done': 0.0, 'weight': 0.0})
+        if 'quantity_done' in vals and any(move.state == 'cancel' for move in self):
+            del vals['quantity_done']
+        return super().write(vals)
+
 

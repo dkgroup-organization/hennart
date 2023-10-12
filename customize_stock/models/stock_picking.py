@@ -36,7 +36,11 @@ class StockPicking(models.Model):
     def button_validate(self):
         """ Add some checking before validation """
         self.move_ids_without_package.check_line()
-        return super().button_validate()
+        self.move_ids_without_package.move_line_ids.filtered(lambda x: x.qty_done == 0.0).unlink()
+        res = super().button_validate()
+        canceled_move = self.move_ids_without_package.filtered(lambda x: x.state == 'cancel')
+        canceled_move.sudo().move_line_ids.unlink()
+        return res
 
     def order_move_line(self):
         """ Order the move line priority"""
