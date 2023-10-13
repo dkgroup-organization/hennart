@@ -98,7 +98,10 @@ class WmsScenario(models.Model):
         """ initiate data"""
         self.ensure_one()
         # init data if first time
-        if not data or (not data.get('scenario')) or data.get('scenario') != self or not data.get('step'):
+        params = dict(request.params) or {}
+
+        if ((not data.get('step')) or (params.get('step') == '0') or (not data)
+                or data.get('scenario') != self):
             # start new scenario
             if self.step_ids:
                 start_step = self.step_ids.search([
@@ -113,10 +116,3 @@ class WmsScenario(models.Model):
                 warning = _("There is no step in this scenario")
                 data.update({'warning': warning})
         return data
-
-
-
-
-
-
-

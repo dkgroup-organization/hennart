@@ -14,6 +14,17 @@ class StockPicking(models.Model):
     picking_type_code = fields.Selection(string='Code', related="picking_type_id.code")
     sequence = fields.Integer(string='Sequence', compute='_compute_sequence', store=True)
 
+    def get_theoric_weight(self):
+        """ return theorical weight to qweb"""
+        weight = 0
+        nb_lines = 0
+        for picking in self:
+            for move in picking.move_ids_without_package:
+                weight += move.product_uom_qty * move.product_id.weight
+                nb_lines += len(picking.move_ids_without_package)
+        res = str(nb_lines) + _(" lines, ") + str(int(weight)) + " Kg"
+        return res
+
     @api.depends('scheduled_date')
     def _compute_sequence(self):
         for picking in self:

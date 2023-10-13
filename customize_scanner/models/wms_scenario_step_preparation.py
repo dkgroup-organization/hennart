@@ -59,6 +59,17 @@ class WmsScenarioStep(models.Model):
         if move_line:
             if self.action_variable == 'lot_id':
                 res = _(f'Scan lot: {move_line.lot_id.ref}')
+            if self.action_variable == 'quantity':
+                res = _(f'Quantity: {move_line.reserved_uom_qty}')
+        return res
+
+    def get_input_type(self, data):
+        """ Return input class to qweb template"""
+        self.ensure_one()
+        res = "text"
+        if self.action_scanner == 'scan_quantity':
+            res = 'number'
+
         return res
 
     def get_input_class(self, data):
@@ -80,6 +91,7 @@ class WmsScenarioStep(models.Model):
             ('picking_type_id', '=', picking_type.id),
             ('state', 'in', ['assigned', 'confirmed', 'waiting'])
         ], order='sequence')
+        picking_ids.action_assign()
         data.update({'picking_ids': picking_ids})
         return data
 
