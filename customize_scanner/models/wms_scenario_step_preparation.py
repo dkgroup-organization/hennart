@@ -58,9 +58,45 @@ class WmsScenarioStep(models.Model):
         move_line = data.get('move_line')
         if move_line:
             if self.action_variable == 'lot_id':
-                res = _(f'Scan lot: {move_line.lot_id.ref}')
+                res = _('Lot:') + f"{move_line.lot_id.ref}  {move_line.lot_id.expiration_date.strftime('%d/%m/%Y')}"
             if self.action_variable == 'quantity':
-                res = _(f'Quantity: {move_line.reserved_uom_qty}')
+                res = _('Quantity: ') + f'{move_line.reserved_uom_qty}'
+        return res
+
+    def get_input_description_left(self, data, action_variable):
+        """ Return input description when the input is not focused"""
+        self.ensure_one()
+        res = 'Scan'
+        move_line = data.get('move_line')
+        if action_variable == 'product_id':
+            product = data.get('product_id') or move_line and move_line.product_id
+            res = product and f'{product.name}' or '????'
+        if action_variable == 'location_id':
+            location = data.get('location_id') or move_line and move_line.location_id
+            res = location and f'{location.name}' or '????'
+        if action_variable == 'lot_id':
+            lot = data.get('lot_id') or move_line and move_line.lot_id
+            res = lot and f'{lot.ref}' or '????'
+        if action_variable == 'quantity':
+            quantity = data.get('quantity') or move_line.reserved_uom_qty or '????'
+            res = f'{quantity}'
+        return res
+
+    def get_input_description_right(self, data, action_variable):
+        """ Return input description when the input is not focused"""
+        self.ensure_one()
+        res = ''
+        move_line = data.get('move_line')
+        if action_variable == 'product_id':
+            product = data.get('product_id') or move_line and move_line.product_id
+            res = product and f'{product.default_code}' or '????'
+        if action_variable == 'location_id':
+            location = data.get('location_id') or move_line and move_line.location_id
+            res = location and len(location.name) > 5 and location.name[-5:] or ''
+        if action_variable == 'lot_id':
+            lot = data.get('lot_id') or move_line and move_line.lot_id
+            res = lot.expiration_date and f"{lot.expiration_date.strftime('%d/%m/%Y')}" or '??/??/????'
+
         return res
 
     def get_input_type(self, data):

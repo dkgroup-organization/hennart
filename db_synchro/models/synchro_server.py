@@ -250,7 +250,7 @@ class BaseSynchroServer(models.Model):
         started_delay = datetime.now() - timedelta(minutes=10)
         job_ids = self.env['queue.job'].search([('state', '=', 'started'),
                                                 ('date_started', '<', started_delay)])
-        job_ids.button_cancelled()
+        job_ids.button_done()
 
         requeue_delay = datetime.now() - timedelta(hours=1)
         job_ids = self.env['queue.job'].search([('state', '=', 'pending'),

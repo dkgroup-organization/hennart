@@ -2156,6 +2156,9 @@ input{
 .p-6{
   padding: 1.5rem;
 }
+.p-3{
+  padding: 1rem;
+}
 
 .p-2{
   padding: 0.5rem;
@@ -2179,6 +2182,11 @@ input{
 .py-12{
   padding-top: 3rem;
   padding-bottom: 3rem;
+}
+
+.py-3{
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
 .py-4{
