@@ -3,7 +3,7 @@
 import logging
 from odoo import api, fields, models, _
 from . import synchro_data
-import datetime
+from datetime import datetime, timedelta
 
 OPTIONS_OBJ = synchro_data.OPTIONS_OBJ
 
@@ -243,13 +243,23 @@ class BaseSynchroServer(models.Model):
         self.env.cr.execute(sql)
 
         self.env.cr.commit()
-        self.invalidate_recordset()
+        self.env['stock.lot'].invalidate_recordset(['expiration_date'])
+        self.env['account.move.line'].invalidate_model()
 
         # Start update
-        pool_invoice = 5 * limit
+        started_delay = datetime.now() - timedelta(minutes=10)
+        job_ids = self.env['queue.job'].search([('state', '=', 'started'),
+                                                ('date_started', '<', started_delay)])
+        job_ids.button_cancelled()
 
-        job_ids = self.env['queue.job'].search([('state', '=', 'pending')])
+        requeue_delay = datetime.now() - timedelta(hours=1)
+        job_ids = self.env['queue.job'].search([('state', '=', 'pending'),
+                                                ('date_created', '<', requeue_delay)])
+        job_ids.requeue()
+        job_ids = self.env['queue.job'].search([('state', 'in', ['pending', 'started'])])
+
         nb_invoice = 0
+        pool_invoice = 5 * limit
         synchro_line_ids = self.env['synchro.obj.line']
 
         if len(job_ids) < pool_invoice:

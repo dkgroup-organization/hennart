@@ -23,6 +23,7 @@
                             <h1>preparation</h1>
                         </div>
 
+
                         <t t-call="customize_scanner.scanner_list_preparation"/>
 
                     </div>
@@ -42,7 +43,9 @@
                                     <p t-esc="picking.name" class="font-bold mb-1"/>
                                     <p t-esc="picking.carrier_id.name" class="font-bold mb-1"/>
                                 </div>
-
+                                <div class="flex items-center justify-between">
+                                    <p t-esc="picking.get_theoric_weight()"/>
+                                </div>
                                 <div class="flex justify-between">
                                     <p t-esc="picking.partner_id.name"/>
                                     <p t-esc="picking.scheduled_date"/>
@@ -52,13 +55,10 @@
                     </t>
                 </ul>
                 <a t-att-href="'./scanner?scenario={}&amp;step={}&amp;button=add_preparation'.format(data['scenario'].id, data['step'].id)">
-                    <button class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">Add preparation</button></a>
+                    <button class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">Add preparation</button>
+                </a>
             </div>
         </template>
-
-
-
-
 
 
     </data>

@@ -49,15 +49,15 @@
         <template id="scanner_input" name="preparation_input">
             <div class="w-full">
                     <input
-                            type="text"
+                            t-att-type="step.get_input_type(data)"
                             id="scan"
                             t-att-name="step.get_input_name(data)"
                             t-att-class="step.get_input_class(data)"
                             t-att-placeholder="step.get_input_placeholder(data)"
                     />
 
-                <div id="input_message" class="mt-4 w-90 flex flex-col gap-6 w-72 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:pr-5 landscape:m-auto">
-                    <p t-if="data.get('warning')" class="border-b-2 pb-5 mb-5 border-gray-300">
+                <div id="input_message" class="mt-4 w-90 flex flex-col gap-6 w-72 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:top-0 landscape:pr-5 landscape:m-auto">
+                    <p t-if="data.get('warning')" class="border-b-2 pb-5 mb-5 border-gray-300 input-warning">
                         <t t-out="data.get('warning')"/>
                     </p>
                     <p t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
@@ -98,12 +98,12 @@
         </template>
 
         <template id="scanner_preparation_input_quantity" name="scanner_preparation_input_quantity">
-            <t t-if="data['step'].action_variable == 'quantity'">
-                <t t-call="wms_scanner.scanner_input_text_id"/>
+            <t t-if="step.action_variable == 'quantity'">
+                <t t-call="customize_scanner.scanner_input"/>
             </t>
             <t t-else="">
                 <div id="quantity" name="quantity" class="relative input-default">
-                    <t t-out="data.get('quantity') or 'Quantity'"/>
+                    <t t-out="data.get('quantity') or data['move_line'].reserved_uom_qty or '?'"/>
                 </div>
             </t>
         </template>

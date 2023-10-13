@@ -2798,6 +2798,10 @@ html {
     top: 10px;
   }
 
+   .landscape\:top-0{
+    top: 4rem;
+  }
+
   .landscape\:-top-12{
     top: -3rem;
   }
