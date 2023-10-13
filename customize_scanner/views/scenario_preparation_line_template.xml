@@ -34,6 +34,7 @@
                 <t t-set="step" t-value="data.get('step')"/>
                 <form class="flex flex-col items-center gap-2 landscape:gap-1 landscape:w-[49%]"
                       t-att-action="'./scanner?scenario={}&amp;step={}'.format(step.scenario_id.id, step.id)"
+                      autoComplete="off"
                       method="post">
                     <t t-call="customize_scanner.scanner_preparation_location_id"/>
                     <t t-call="customize_scanner.scanner_preparation_product_id"/>
@@ -43,71 +44,62 @@
                     <button type="submit" class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">Valid</button>
                 </form>
             </t>
-
         </template>
 
         <template id="scanner_input" name="preparation_input">
-            <div class="w-full">
+            <t t-if="step.action_variable == action_variable">
+                <div class="w-full">
                     <input
                             t-att-type="step.get_input_type(data)"
                             id="scan"
                             t-att-name="step.get_input_name(data)"
                             t-att-class="step.get_input_class(data)"
                             t-att-placeholder="step.get_input_placeholder(data)"
+                            autoComplete="off"
                     />
 
-                <div id="input_message" class="mt-4 w-90 flex flex-col gap-6 w-72 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:top-0 landscape:pr-5 landscape:m-auto">
-                    <p t-if="data.get('warning')" class="border-b-2 pb-5 mb-5 border-gray-300 input-warning">
-                        <t t-out="data.get('warning')"/>
-                    </p>
-                    <p t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
-                        <t t-out="data.get('message')"/>
-                    </p>
+                    <div id="input_message"
+                         class="mt-4 w-90 flex flex-col gap-6 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:top-0 landscape:pr-5 landscape:m-auto">
+                        <p t-if="data.get('warning')" class="border-b-2 pb-5 mb-5 border-gray-300 input-warning">
+                            <t t-out="data.get('warning')"/>
+                        </p>
+                        <p t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
+                            <t t-out="data.get('message')"/>
+                        </p>
+                    </div>
                 </div>
-            </div>
+            </t>
+            <t t-else="">
+                <div class="relative input-default">
+                    <span t-esc="step.get_input_description_left(data, action_variable)"/>
+                    <span t-esc="step.get_input_description_right(data, action_variable)" class="absolute right-4"/>
+                </div>
+            </t>
         </template>
 
         <template id="scanner_preparation_location_id" name="scanner_preparation_location_id">
-            <div id="location_id" name="location_id" class="relative input-default">
-                <t t-out="data['move_line'].location_id.name or 'Origin location'"/>
-                <t t-if="len(data['move_line'].location_id.name) > 4">
-                    <span t-out="data['move_line'].location_id.name[-5:]" class="absolute right-4" />
-                </t>
-            </div>
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'location_id'"/>
+            </t>
         </template>
 
         <template id="scanner_preparation_product_id" name="scanner_preparation_product_id">
-            <div id="product_id" name="product_id" class="relative input-default">
-                <t t-out="data['move_line'].product_id.name or 'Product'"/>
-                    <span t-out="data['move_line'].product_id.default_code" class="absolute right-4" />
-            </div>
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'product_id'"/>
+            </t>
         </template>
 
         <template id="scanner_preparation_input_lot_id" name="scanner_preparation_input_lot_id">
-            <t t-if="step.action_variable == 'lot_id'">
-                <t t-call="customize_scanner.scanner_input"/>
-            </t>
-            <t t-else="">
-                <div name="lot_id" class="relative input-default">
-                    <t t-out="data.get('lot_id') and data['lot_id'].ref or '?'"/>
-                    <span t-esc="data.get('lot_id') and data['lot_id'].expiration_date"
-                          t-options="{'widget': 'date', 'format': 'dd/MM/YYYY'}"
-                          class="absolute right-4" />
-                </div>
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'lot_id'"/>
             </t>
         </template>
 
         <template id="scanner_preparation_input_quantity" name="scanner_preparation_input_quantity">
-            <t t-if="step.action_variable == 'quantity'">
-                <t t-call="customize_scanner.scanner_input"/>
-            </t>
-            <t t-else="">
-                <div id="quantity" name="quantity" class="relative input-default">
-                    <t t-out="data.get('quantity') or data['move_line'].reserved_uom_qty or '?'"/>
-                </div>
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'quantity'"/>
             </t>
         </template>
-
 
     </data>
 </odoo>
