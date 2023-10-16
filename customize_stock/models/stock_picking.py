@@ -72,7 +72,7 @@ class StockPicking(models.Model):
         for picking in self:
             for move_line in picking.move_line_ids:
                 # if move_line.state == 'assigned' and move_line.product_uom_qty > 0:
-                if move_line.state == 'assigned' and move_line.product_uom_qty > 0:
+                if move_line.product_uom_qty > 0:
 
                     production_order = self.env['mrp.production'].create({
                         'product_id': move_line.product_id.id,
