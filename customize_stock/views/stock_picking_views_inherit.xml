@@ -100,7 +100,7 @@
                 </xpath>
 
                 <xpath expr="//button[@name='action_assign']" position="after">
-                    <button name="action_mrp" attrs="{'invisible': [('state', 'not in', ('done', 'cancel', 'draft'))]}" string="Produire" groups="base.group_user" type="object" class="oe_highlight"/>
+                    <button name="action_mrp" attrs="{'invisible': [('state', 'in', ('done', 'cancel', 'draft'))]}" string="Produire" groups="base.group_user" type="object" class="oe_highlight"/>
                 </xpath>
 
             </field>
