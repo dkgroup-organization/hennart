@@ -68,3 +68,24 @@ class StockPicking(models.Model):
                 move_line.priority = priority
                 priority += 10
 
+    def action_mrp(self):
+        for picking in self:
+            for move_line in picking.move_lines:
+                if move_line.state == 'assigned' and move_line.product_uom_qty > 0:
+
+                    production_order = self.env['mrp.production'].create({
+                        'product_id': move_line.product_id.id,
+                        'product_qty': move_line.product_uom_qty,
+                        'picking_ids': [(6, 0, [picking.id])],  
+
+                    })
+
+                    production_order.action_confirm()  # Confirmer le MO
+                    production_order.button_plan()  # Planifier le MO
+                    production_order.action_produce()  # Démarrer la production du MO
+
+
+        # self.write({'is_ready_to_produce': False})
+
+        return True
+
