@@ -85,7 +85,7 @@ class StockPicking(models.Model):
                     production_order.action_produce()  # Démarrer la production du MO
 
 
-        # self.write({'is_ready_to_produce': False})
+        # self.write({'is_ready_to_produce': False})d
 
         return True
 
