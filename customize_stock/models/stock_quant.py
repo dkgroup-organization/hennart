@@ -14,14 +14,18 @@ class StockQuant(models.Model):
         for quant in self:
             if quant.location_id.blocked:
                 quant.blocked = True
+            if quant.location_id.location_id.blocked:
+                quant.blocked = True
             elif quant.lot_id.blocked:
                 quant.blocked = True
             else:
                 quant.blocked = False
 
     def _get_gather_domain(self, product_id, location_id, lot_id=None, package_id=None, owner_id=None, strict=False):
-        domain = [('product_id', '=', product_id.id), ('blocked', '!=', True)]
+
+        domain = [('product_id', '=', product_id.id)]
         if not strict:
+            domain = expression.AND([[('blocked', '!=', True)], domain])
             if lot_id:
                 domain = expression.AND([['|', ('lot_id', '=', lot_id.id), ('lot_id', '=', False)], domain])
             if package_id:
@@ -31,7 +35,7 @@ class StockQuant(models.Model):
             domain = expression.AND([[('location_id', 'child_of', location_id.id)], domain])
         else:
             domain = expression.AND(
-                [['|', ('lot_id', '=', lot_id.id), ('lot_id', '=', False)] if lot_id else [('lot_id', '=', False)], domain])
+                [[('lot_id', '=', lot_id.id)] if lot_id else [('lot_id', '=', False)], domain])
             domain = expression.AND([[('package_id', '=', package_id and package_id.id or False)], domain])
             domain = expression.AND([[('owner_id', '=', owner_id and owner_id.id or False)], domain])
             domain = expression.AND([[('location_id', '=', location_id.id)], domain])

@@ -82,3 +82,15 @@ class StockMoveLine(models.Model):
                 'expiration_date': False,
                 'lot_id': False
             })
+
+    def button_test(self):
+        """ Test futur function"""
+        for line in self:
+            # change location
+            # def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None, strict=False):
+            move_data = {
+                'move_line': line,
+                'quantity': 1.0,
+            }
+            res = self.env['wms.scenario.step'].move_preparation(move_data)
+            print('\n-----button_test----res---------', res)
