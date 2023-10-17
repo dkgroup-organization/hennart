@@ -59,7 +59,11 @@ class WmsScenarioStep(models.Model):
             if self.action_variable == 'lot_id':
                 res = _('Lot:') + f"{move_line.lot_id.ref}  {move_line.lot_id.expiration_date.strftime('%d/%m/%Y')}"
             if self.action_variable == 'quantity':
-                res = _('Quantity: ') + f'{move_line.reserved_uom_qty}'
+                qty_placeholder = self.get_input_description_right(data, 'quantity')
+                if qty_placeholder:
+                    qty_placeholder = ' (' + qty_placeholder + ')'
+                res = f'{int(move_line.reserved_uom_qty)}' + qty_placeholder
+
         return res
 
     def get_input_description_left(self, data, action_variable):
@@ -78,7 +82,7 @@ class WmsScenarioStep(models.Model):
             res = lot and f'{lot.ref}' or '????'
         if action_variable == 'quantity':
             quantity = data.get('quantity') or move_line.reserved_uom_qty or '????'
-            res = f'{quantity}'
+            res = f'{int(quantity)}'
         return res
 
     def get_input_description_right(self, data, action_variable):
@@ -95,7 +99,15 @@ class WmsScenarioStep(models.Model):
         if action_variable == 'lot_id':
             lot = data.get('lot_id') or move_line and move_line.lot_id
             res = lot.expiration_date and f"{lot.expiration_date.strftime('%d/%m/%Y')}" or '??/??/????'
-
+        if action_variable == 'quantity':
+            if move_line.move_id.bom_line_id.bom_id.type == 'phantom':
+                quantity = int(data.get('quantity') or move_line.reserved_uom_qty)
+                package_qty = int(move_line.move_id.bom_line_id.product_qty)
+                if package_qty:
+                    package_nb = int(int(quantity) / int(package_qty))
+                    res = f'{package_nb}' + _(" Pack of ") + f'{package_qty}'
+                else:
+                    res = ""
         return res
 
     def get_input_type(self, data):
