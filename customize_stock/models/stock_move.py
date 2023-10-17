@@ -189,7 +189,9 @@ class StockMove(models.Model):
             move.lot_description = lot_description
 
     def write(self, vals):
-        # By pass quantity_done constraint
+        """ By pass quantity_done constraint
+        put zero quantity and weight on cancel move
+        """
         if 'state' in vals and vals['state'] == 'cancel':
             for move in self:
                 if move.state != 'cancel':
@@ -198,4 +200,29 @@ class StockMove(models.Model):
             del vals['quantity_done']
         return super().write(vals)
 
+    def _do_unreserve(self):
+        """ Don't unreserve the product on preparation location, it's too late, the products are moving"""
+        super()._do_unreserve()
+        location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
+        # Do not uneserved preparatoin location
+        move_line_ids = self.env['stock.move.line'].search([
+            ('location_id', 'in', location_preparation_ids.ids),
+            ('move_id', 'in', self.ids),
+            ])
+        moves_to_recompute = self.env['stock.move']
+        for move_line in move_line_ids:
+            if move_line.reserved_uom_qty != move_line.qty_done:
+                move_line.reserved_uom_qty = move_line.qty_done
+                moves_to_recompute |= move_line.move_id
+        moves_to_recompute._recompute_state()
 
+        for move in moves_to_recompute:
+            quant_ids = self.env['stock.quant'].search([
+                ('product_id', '=', move.product_id.id),
+                ('location_id', 'in', location_preparation_ids.ids)
+            ])
+            for quant in quant_ids:
+                if quant.reserved_quantity != quant.quantity:
+                    quant.reserved_quantity = quant.quantity
+
+        return True

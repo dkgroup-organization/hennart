@@ -30,7 +30,6 @@ class WmsScenarioStep(models.Model):
         6 char: weight
         """
         self.ensure_one()
-        print('\n-------------scan_multi----------', data,scan, action_variable )
 
         # Detect the old barcode (reference used by V7) 24 or 25 or 26 length
         # 53201523101X010120000000  -24 DIGI machine frais emballé [11], la date est inversé
@@ -222,7 +221,7 @@ class WmsScenarioStep(models.Model):
 
         stock_location = self.env.ref('stock.stock_location_stock')
         picking_type = self.env.ref('stock.picking_type_internal')
-        location_origin_id = data.get('location_origin_id')
+        location_origin_id = data.get('location_origin_id') or data.get('location_id')
         location_dest_id = data.get('location_dest_id')
 
         product_id = data.get('product_id')
