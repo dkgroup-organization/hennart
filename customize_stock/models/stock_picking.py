@@ -70,13 +70,24 @@ class StockPicking(models.Model):
 
     def action_mrp(self):
         for picking in self:
-            for move_line in picking.move_ids_without_package:
+            for move in picking.move_ids_without_package:
+                product = move.product_id
+                min_production_qty = product.min_production_qty
+                quantity_to_produce = move.product_uom_qty
+
+                if move.product_uom_qty > 0:
+                    
+                    if quantity_to_produce < min_production_qty:
+                        quantity_to_produce = min_production_qty
+
+                    elif quantity_to_produce % min_production_qty != 0:
+                        quantity_to_produce = min_production_qty * ((quantity_to_produce // min_production_qty) + 1)
+
                 # if move_line.state == 'assigned' and move_line.product_uom_qty > 0:
-                if move_line.product_uom_qty > 0:
 
                     production_order = self.env['mrp.production'].create({
-                        'product_id': move_line.product_id.id,
-                        'product_qty': move_line.product_uom_qty,
+                        'product_id': move.product_id.id,
+                        'product_qty': quantity_to_produce,
                         'picking_ids': [(6, 0, [picking.id])],  
 
                     })
@@ -84,9 +95,3 @@ class StockPicking(models.Model):
                     # production_order.action_confirm()  # Confirmer le MO
                     # production_order.button_plan()  # Planifier le MO
                     # production_order.action_produce()  # Démarrer la production du MO
-
-
-        # self.write({'is_ready_to_produce': False})d
-
-        return True
-
