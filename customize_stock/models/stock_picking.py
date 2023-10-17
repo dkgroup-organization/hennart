@@ -70,7 +70,7 @@ class StockPicking(models.Model):
 
     def action_mrp(self):
         for picking in self:
-            for move_line in picking.move_line_ids:
+            for move_line in picking.move_ids_without_package:
                 # if move_line.state == 'assigned' and move_line.product_uom_qty > 0:
                 if move_line.product_uom_qty > 0:
 
