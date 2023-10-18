@@ -19,10 +19,13 @@ class WmsScenarioStep(models.Model):
 
         if data.get('picking'):
             picking = data.get('picking')
-        elif data.get('picking_id') and data['picking_id'].isnumeric():
-            picking = self.env['stock.picking'].browse(int(data['picking_id']))
-        else:
-            data['warning'] = data.get('warning', '') + _('No picking selected')
+        elif data.get('picking_id'):
+            if type(data['picking_id']) is str and data['picking_id'].isnumeric():
+                data['picking_id'] = int(data['picking_id'])
+
+            if type(data['picking_id']) is int:
+                picking = self.env['stock.picking'].browse(data['picking_id'])
+                del data['picking_id']
 
         if picking.exists():
             data = self.init_data(data)
@@ -39,6 +42,9 @@ class WmsScenarioStep(models.Model):
             ], order='priority', limit=1)
             if moves_line_ids:
                 data['move_line'] = moves_line_ids[0]
+        else:
+            data['warning'] = data.get('warning', '') + _('No picking selected')
+
         return data
 
     def get_input_name(self, data):
@@ -221,8 +227,9 @@ class WmsScenarioStep(models.Model):
 
         move_line = data.get('move_line')
         quantity = data.get('quantity')
+        # weight =
         product_id = move_line.product_id
-        lot_id = data.get('lot_id') or move_line.lot_id
+        lot_id = move_line.lot_id
         location_id = move_line.location_id
 
         # Check reserved quantity
@@ -245,7 +252,10 @@ class WmsScenarioStep(models.Model):
             result_data = self.move_product(move_data)
 
             if result_data.get('result'):
-                move_line.reserved_uom_qty -= move_data.get('quantity')
+                if move_line.reserved_uom_qty - move_data.get('quantity') <= 0.0:
+                    move_line.reserved_uom_qty = 0.0
+                else:
+                    move_line.reserved_uom_qty -= move_data.get('quantity')
 
                 new_move_line = move_line.copy({
                     'location_id':  move_data.get('location_dest_id').id,
@@ -268,3 +278,9 @@ class WmsScenarioStep(models.Model):
         if move_line.reserved_uom_qty == 0.0 and move_line.qty_done == 0.0:
             del data['move_line']
             move_line.unlink()
+        else:
+            data = self.init_data()
+            data['picking'] = move_line.picking_id
+            data['move_line'] = move_line
+
+        return data
