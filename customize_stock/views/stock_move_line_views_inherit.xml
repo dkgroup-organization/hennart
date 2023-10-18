@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+        <!-- used on picking form -->
         <record id="view_stock_move_line_detailed_operation_tree_inherit" model="ir.ui.view">
             <field name="name">stock.move.line.tree.inherit</field>
             <field name="model">stock.move.line</field>
@@ -14,16 +15,21 @@
 
                 <xpath expr="//field[@name='product_uom_id']" position="after">
                     <field name="weight" string="Weight"/>
+                    <field name="to_label" widget="boolean_toggle"/>
+                    <field name="to_weight" widget="boolean_toggle"/>
+                    <field name="to_pass" invisible="1"/>
+                    <field name="to_pick" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='product_uom_id']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <field name="package_id" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                    
+                    <attribute name="invisible">True</attribute>
+                    <attribute name="attrs">{}</attribute>
                 </field>
                 <field name="result_package_id" position="attributes">
-                    <attribute name="invisible">1</attribute>
+                    <attribute name="invisible">True</attribute>
+                    <attribute name="attrs">{}</attribute>
                 </field>
 
             </field>
@@ -47,10 +53,12 @@
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <field name="package_id" position="attributes">
-                    <attribute name="invisible">1</attribute>
+                    <attribute name="invisible">True</attribute>
+                    <attribute name="attrs">{}</attribute>
                 </field>
                 <field name="result_package_id" position="attributes">
-                    <attribute name="invisible">1</attribute>
+                    <attribute name="invisible">True</attribute>
+                    <attribute name="attrs">{}</attribute>
                 </field>
 
             </field>
