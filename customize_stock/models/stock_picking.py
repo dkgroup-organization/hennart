@@ -76,14 +76,14 @@ class StockPicking(models.Model):
                 quantity_to_produce = move.product_uom_qty
 
                 if move.product_id.bom_ids != False:
-                    if move.product_uom_qty != move.forcecast_availability:
+                    if move.product_uom_qty != move.forecast_availability:
                         if move.product_uom_qty > 0:
                             
                             if quantity_to_produce < min_production_qty:
                                 quantity_to_produce = min_production_qty
 
                             elif quantity_to_produce % min_production_qty != 0:
-                                quantity_to_produce = (min_production_qty * ((quantity_to_produce // min_production_qty) + 1)) - move.forcecast_availability
+                                quantity_to_produce = (min_production_qty * ((quantity_to_produce // min_production_qty) + 1)) - move.forecast_availability
 
                         # if move_line.state == 'assigned' and move_line.product_uom_qty > 0:
 
