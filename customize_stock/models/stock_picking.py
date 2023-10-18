@@ -75,23 +75,25 @@ class StockPicking(models.Model):
                 min_production_qty = product.min_production_qty
                 quantity_to_produce = move.product_uom_qty
 
-                if move.product_uom_qty > 0:
-                    
-                    if quantity_to_produce < min_production_qty:
-                        quantity_to_produce = min_production_qty
+                if move.product_id.bom_ids != False:
+                    if move.product_uom_qty != move.forcecast_availability:
+                        if move.product_uom_qty > 0:
+                            
+                            if quantity_to_produce < min_production_qty:
+                                quantity_to_produce = min_production_qty
 
-                    elif quantity_to_produce % min_production_qty != 0:
-                        quantity_to_produce = min_production_qty * ((quantity_to_produce // min_production_qty) + 1)
+                            elif quantity_to_produce % min_production_qty != 0:
+                                quantity_to_produce = (min_production_qty * ((quantity_to_produce // min_production_qty) + 1)) - move.forcecast_availability
 
-                # if move_line.state == 'assigned' and move_line.product_uom_qty > 0:
+                        # if move_line.state == 'assigned' and move_line.product_uom_qty > 0:
 
-                    production_order = self.env['mrp.production'].create({
-                        'product_id': move.product_id.id,
-                        'product_qty': quantity_to_produce,
-                        'picking_ids': [(6, 0, [picking.id])],  
+                            production_order = self.env['mrp.production'].create({
+                                'product_id': move.product_id.id,
+                                'product_qty': quantity_to_produce,
+                                # 'move_delivery_ids': [(4, 0, [move.id])],  
 
-                    })
+                            })
 
-                    # production_order.action_confirm()  # Confirmer le MO
-                    # production_order.button_plan()  # Planifier le MO
-                    # production_order.action_produce()  # Démarrer la production du MO
+                            # production_order.action_confirm()  # Confirmer le MO
+                            # production_order.button_plan()  # Planifier le MO
+                            # production_order.action_produce()  # Démarrer la production du MO
