@@ -65,6 +65,8 @@ class WmsScenarioStep(models.Model):
                 weight_kg = float(weight)
                 if weight_kg:
                     data['weight'] = weight_kg
+                    # in this case the weight is on a label of 1 product
+                    data['quantity'] = 1.0
             except:
                 data['warning'] = _("Reading weight error:") + " {}".format(weight)
 
@@ -112,8 +114,13 @@ class WmsScenarioStep(models.Model):
                 data['warning'] = _("Unknown lot: %s - %s" % (
                     data['lot_name'], data['lot_expiration_date']))
 
-            if action_variable:
-                data[action_variable] = data.get('lot_id') or data.get('product_id') or False
+        if len(scan) > 4 and scan[:4] == '(91)':
+            # In this case, it is a printer
+            printer_ids = self.env['stock.weight.device'].serach([('barcode', '=', scan)])
+            if printer_ids:
+                pass
+            else:
+                data['warning']
 
         if data.get('warning'):
             data_origin['warning'] = data.get('warning')
@@ -121,6 +128,8 @@ class WmsScenarioStep(models.Model):
             data_origin.update(data)
 
         return data_origin
+
+
 
     @api.model
     def write_inventory(self, data):

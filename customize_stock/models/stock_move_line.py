@@ -93,4 +93,4 @@ class StockMoveLine(models.Model):
                 'quantity': 1.0,
             }
             res = self.env['wms.scenario.step'].move_preparation(move_data)
-            print('\n-----button_test----res---------', res)
+

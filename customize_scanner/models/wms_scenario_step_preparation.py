@@ -11,12 +11,10 @@ import datetime
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
-    def get_next_picking_line(self, data):
-        """ Return the next preparation line to do, initialize the data with this new line"""
+    def get_picking(self,data):
+        """ get the picking to use"""
         self.ensure_one()
-        # define the priority of the stock.move.line, by location name
         picking = self.env['stock.picking']
-
         if data.get('picking'):
             picking = data.get('picking')
         elif data.get('picking_id'):
@@ -26,6 +24,13 @@ class WmsScenarioStep(models.Model):
             if type(data['picking_id']) is int:
                 picking = self.env['stock.picking'].browse(data['picking_id'])
                 del data['picking_id']
+        return picking
+
+    def get_next_picking_line(self, data, weight=False):
+        """ Return the next preparation line to do, initialize the data with this new line"""
+        self.ensure_one()
+        # define the priority of the stock.move.line, by location name
+        picking = self.get_picking(data)
 
         if picking.exists():
             data = self.init_data(data)
@@ -38,14 +43,48 @@ class WmsScenarioStep(models.Model):
             moves_line_ids = self.env['stock.move.line'].search([
                 ('picking_id', '=', picking.id),
                 ('location_id', 'not in', location_preparation_ids.ids),
-                ('reserved_uom_qty', '>', 0.0),
-            ], order='priority', limit=1)
+                ('reserved_uom_qty', '>', 0.0), ('qty_done', '=', 0.0),
+                ], order='priority', limit=1)
+
             if moves_line_ids:
                 data['move_line'] = moves_line_ids[0]
         else:
             data['warning'] = data.get('warning', '') + _('No picking selected')
 
         return data
+
+    def get_next_weight_line(self, data):
+        """ return the next line to weight"""
+        self.ensure_one()
+        picking = self.get_picking(data)
+        if picking.exists():
+            data = self.init_data(data)
+            data['picking'] = picking
+            location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
+
+            moves_line_ids = self.env['stock.move.line'].search([
+                ('picking_id', '=', picking.id),
+                ('location_id', 'in', location_preparation_ids.ids),
+                ('to_weight', '=', True), ('qty_done', '>', 0.0),
+            ], order='priority', limit=1)
+
+            if moves_line_ids:
+                data['weight_line'] = moves_line_ids[0]
+                data['product_id'] = data['weight_line'].product_id
+                data['lot_id'] = data['weight_line'].lot_id
+                data['quantity'] = data['weight_line'].qty_done
+
+        else:
+            data['warning'] = data.get('warning', '') + _('No picking selected')
+        return data
+
+    def get_title(self, data):
+        """ Get title at this step"""
+        self.ensure_one()
+        res = ""
+        if data.get('picking'):
+            res = data['picking'].name
+        return res
 
     def get_input_name(self, data):
         """ Return input-name to qweb template"""
@@ -220,7 +259,9 @@ class WmsScenarioStep(models.Model):
         reserve in preparation location
         """
         warehouse = self.env.ref('stock.warehouse0')
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
         location_dest_id = warehouse.wh_pack_stock_loc_id
+
         if not data.get('move_line'):
             data['Warning'] = _("No move line to move?")
             return data
@@ -246,7 +287,7 @@ class WmsScenarioStep(models.Model):
                 'product_id': product_id,
                 'location_dest_id': location_dest_id,
                 'lot_id': lot_id,
-                'weight': data.get('weight') or quantity * product_id.weight,
+                'weight': data.get('weight'),
                 'quantity': data.get('quantity')
                 }
             result_data = self.move_product(move_data)
@@ -264,23 +305,44 @@ class WmsScenarioStep(models.Model):
                     'qty_done':  move_data.get('quantity'),
                 })
 
+                # to Weight or not?
+                if not new_move_line.weight:
+                    if new_move_line.product_id.uos_id == uom_weight:
+                        new_move_line.to_weight = True
+                        new_move_line.weight = new_move_line.product_id.weight * new_move_line.qty_done
+                    else:
+                        new_move_line.weight = new_move_line.product_id.weight
+                        new_move_line.to_weight = False
+                else:
+                    new_move_line.to_weight = False
+
+                # Reserve the quants moved in preparation location
                 condition = [
                     ('product_id', '=', product_id.id),
                     ('location_id', '=', location_dest_id.id),
-                    ('lot_id', '=', lot_id.id)
+                    ('lot_id', '=', lot_id.id or False)
                 ]
-
                 quant_ids = self.env['stock.quant'].search(condition)
                 for quant in quant_ids:
                     if quant.reserved_quantity != quant.quantity:
                         quant.reserved_quantity = quant.quantity
 
+                # Init data for next line to prepare
+                data = self.init_data()
+                data['picking'] = move_line.picking_id
+                data['move_line'] = move_line
+                data['message'] = _('The product is moving to preparation')
+
         if move_line.reserved_uom_qty == 0.0 and move_line.qty_done == 0.0:
             del data['move_line']
             move_line.unlink()
-        else:
-            data = self.init_data()
-            data['picking'] = move_line.picking_id
-            data['move_line'] = move_line
+
+        return data
+
+    @api.model
+    def weight_preparation(self, data):
+        """ Weight product in preparation location
+        """
+        warehouse = self.env.ref('stock.warehouse0')
 
         return data
