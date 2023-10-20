@@ -68,3 +68,8 @@ class StockPicking(models.Model):
                 move_line.priority = priority
                 priority += 10
 
+    def action_assign(self):
+        """ order stock.move.line by location name"""
+        res = super().action_assign()
+        self.order_move_line()
+        return res
