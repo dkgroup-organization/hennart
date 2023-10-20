@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models, api
+from odoo import fields, models, api, _
 import urllib3
 
 class StockWeightDevice(models.Model):
@@ -15,21 +15,22 @@ class StockWeightDevice(models.Model):
         self.ensure_one()
 
         res = {}
+        body = ''
 
-        http = urllib3.PoolManager()
-        resp = http.request('GET', self.address)
-        html = resp.data.decode('utf-8')
-        if html:
-            try:
-                body = html.split('<body>')[1].split('</body>')[0]
-            except:
-                body = ''
+        try:
+            http = urllib3.PoolManager()
+            resp = http.request('GET', self.address)
+            html = resp.data.decode('utf-8')
+            body = html.split('<body>')[1].split('</body>')[0]
+        except:
+            res['warning'] = _("Weighted error, Network or device is unreachable")
+
         if body:
             remove_txt = ['<h1>', '</h1>', 'kg', ' ', '<p>', '</p>']
             for balise in remove_txt:
                 body = body.replace(balise, '')
             if 'ERR' in body:
-                res['warning'] = "Erreur balance: %s" % body
+                res['warning'] = _("Weighted device in error")
             else:
                 body = body.split(',')
 
@@ -37,21 +38,20 @@ class StockWeightDevice(models.Model):
                     try:
                         res['weight'] = float(body[2])
                         res['tare'] = float(body[3])
+                        res['number'] = body[4]
                     except:
                         res['weight'] = 0.0
                         res['tare'] = 0.0
+                        res['warning'] = _("Weighted error, the weight value is not correct")
 
-                    res['number'] = body[4]
                     res['device_id'] = self.id
                 else:
-                    res['warning'] = "Erreur de lecture balance"
-        else:
-            res['warning'] = "Erreur de lecture balance"
+                    res['warning'] = _("Weighted error, the weight value is not correct")
         
         if res.get('number'):
             weight_value_obj = self.env['stock.weight.value']
-
             weight_value_ids = weight_value_obj.search([('name', '=', res['number'])])
+
             if not weight_value_ids:
                 vals = {
                     'name': res['number'],

@@ -5,6 +5,7 @@
         <record id="view_stock_move_line_detailed_operation_tree_inherit" model="ir.ui.view">
             <field name="name">stock.move.line.tree.inherit</field>
             <field name="model">stock.move.line</field>
+            <field name="priority">10000</field>
             <field name="inherit_id" ref="stock.view_stock_move_line_detailed_operation_tree"/>
             <field name="arch" type="xml">
 
@@ -14,7 +15,7 @@
                 </xpath>
 
                 <xpath expr="//field[@name='product_uom_id']" position="after">
-                    <field name="weight" string="Weight"/>
+                    <field name="weight" string="Weight" context="{'manual_weight': True}"/>
                     <field name="to_label" widget="boolean_toggle"/>
                     <field name="to_weight" widget="boolean_toggle"/>
                     <field name="to_pass" invisible="1"/>
@@ -38,6 +39,7 @@
         <record id="view_stock_move_line_operation_tree_inherit" model="ir.ui.view">
             <field name="name">stock.move.line.tree.inherit</field>
             <field name="model">stock.move.line</field>
+            <field name="priority">10000</field>
             <field name="inherit_id" ref="stock.view_stock_move_line_operation_tree"/>
             <field name="arch" type="xml">
 
@@ -47,13 +49,16 @@
                 </xpath>
 
                 <xpath expr="//field[@name='product_uom_id']" position="after">
-                    <field name="weight" string="Weight"/>
-                    <field name="to_label" widget="boolean_toggle"/>
+                    <field name="weight" string="Weight" context="{'manual_weight': True}"/>
+                    <field name="to_label" invisible="1"/>
                     <field name="to_weight" widget="boolean_toggle"/>
                     <field name="to_pass" invisible="1"/>
                     <field name="to_pick" invisible="1"/>
                 </xpath>
                 <xpath expr="//field[@name='product_uom_id']" position="attributes">
+                    <attribute name="invisible">True</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="attributes">
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <field name="package_id" position="attributes">
