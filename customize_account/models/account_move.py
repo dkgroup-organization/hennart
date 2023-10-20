@@ -192,7 +192,7 @@ class AccountMove(models.Model):
             move.invoice_line_ids.get_product_uom_id()
 
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
-                if (move.partner_id.vat and move.fiscal_position_id and move.piece_comptable and
+                if (move.fiscal_position_id and move.piece_comptable and
                         int(move.total_ttc * 100.0) == int(move.amount_total * 100.0)):
                     move.sudo().action_post()
                     if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):

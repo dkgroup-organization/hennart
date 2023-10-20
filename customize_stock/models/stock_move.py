@@ -195,7 +195,7 @@ class StockMove(models.Model):
                     lot_description += " {:%d/%m/%Y}".format(lot.expiration_date)
                 lot_description += "({})".format(lots[lot])
                 lot_description += ", "
-                
+
             move.lot_description = lot_description
 
     def write(self, vals):
