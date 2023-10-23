@@ -90,7 +90,7 @@ class StockPicking(models.Model):
                             production_order = self.env['mrp.production'].create({
                                 'product_id': move.product_id.id,
                                 'product_qty': quantity_to_produce,
-                                # 'move_delivery_ids': [(4, 0, [move.id])],  
+                                'move_from_picking_ids': [(4, 0, [move.id])],  
 
                             })
 
