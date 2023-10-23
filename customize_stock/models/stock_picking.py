@@ -78,8 +78,13 @@ class StockPicking(models.Model):
                 if move.product_id.bom_ids != False:
                     if move.product_uom_qty != move.forecast_availability:
                         if move.product_uom_qty > 0:
+
+                            in_process_productions = self.env['mrp.production'].search([
+                            ('product_id', '=', product.id),
+                            ('state', '=', 'draft'),
+                            ])
                             
-                            if quantity_to_produce < min_production_qty:
+                            if quantity_to_produce <= min_production_qty:
                                 quantity_to_produce = min_production_qty
 
                             elif quantity_to_produce % min_production_qty != 0:
@@ -87,12 +92,19 @@ class StockPicking(models.Model):
 
                         # if move_line.state == 'assigned' and move_line.product_uom_qty > 0:
 
-                            production_order = self.env['mrp.production'].create({
-                                'product_id': move.product_id.id,
-                                'product_qty': quantity_to_produce,
-                                'move_from_picking_ids': [(4, move.id)],  
+                            if in_process_productions:
+                                quantity = in_process_productions.product_qty + quantity_to_produce
+                                in_process_productions.write({
+                                    'product_qty': quantity
+                                    })
+                                
+                            else:
+                                production_order = self.env['mrp.production'].create({
+                                    'product_id': move.product_id.id,
+                                    'product_qty': quantity_to_produce,
+                                    'move_from_picking_ids': [(4, move.id)],  
 
-                            })
+                                })
 
                             # production_order.action_confirm()  # Confirmer le MO
                             # production_order.button_plan()  # Planifier le MO
