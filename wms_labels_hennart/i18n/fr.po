@@ -1,0 +1,138 @@
+# Translation of OpenERP Server.
+# This file contains the translation of the following modules:
+#	* wms_labels_hennart
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenERP Server 7.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-03-30 16:18+0000\n"
+"PO-Revision-Date: 2016-03-30 16:18+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,barcode:0
+msgid "Barcode"
+msgstr "Code barre"
+
+#. module: wms_labels_hennart
+#: code:addons/wms_labels_hennart/wizard/label_stock_move.py:104
+#, python-format
+msgid "Best before:"
+msgstr "A consommer de préference avant le:"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,default_code:0
+msgid "Code"
+msgstr "Code"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,code_label:0
+msgid "Code label"
+msgstr "Code texte"
+
+#. module: wms_labels_hennart
+#: code:addons/wms_labels_hennart/wizard/label_stock_move.py:84
+#, python-format
+msgid "Code:"
+msgstr "Code:"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,date:0
+msgid "Date"
+msgstr "Date"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,date_label:0
+msgid "Date label"
+msgstr "Date texte"
+
+#. module: wms_labels_hennart
+#: help:label.stock.move,lang:0
+msgid "If the selected language is loaded in the system, all documents related to this contact will be printed in this language. If not, it will be English."
+msgstr "If the selected language is loaded in the system, all documents related to this contact will be printed in this language. If not, it will be English."
+
+#. module: wms_labels_hennart
+#: view:label.stock.move:0
+msgid "Informations"
+msgstr "Informations"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,prodlot_label:0
+msgid "Label production lot"
+msgstr "Lot de production texte"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,lang:0
+msgid "Language"
+msgstr "Language"
+
+#. module: wms_labels_hennart
+#: code:addons/wms_labels_hennart/wizard/label_stock_move.py:86
+#, python-format
+msgid "Net weight:"
+msgstr "Poids net:"
+
+#. module: wms_labels_hennart
+#: view:label.stock.move:0
+msgid "Print"
+msgstr "Imprimer"
+
+#. module: wms_labels_hennart
+#: code:_description:0
+#: model:ir.actions.act_window,name:wms_labels_hennart.action_label_stock_move
+#: model:ir.model,name:wms_labels_hennart.model_label_stock_move
+#: view:label.stock.move:0
+#: view:stock.picking.in:0
+#, python-format
+msgid "Print Label"
+msgstr "Imprimer l'étiquette"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,product_id:0
+msgid "Product"
+msgstr "Produit"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,name:0
+msgid "Product name"
+msgstr "Nom du produit"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,prodlot_id:0
+msgid "Production lot"
+msgstr "Production lot"
+
+#. module: wms_labels_hennart
+#: code:addons/wms_labels_hennart/wizard/label_stock_move.py:83
+#, python-format
+msgid "Production lot:"
+msgstr "Lot de production:"
+
+#. module: wms_labels_hennart
+#: code:addons/wms_labels_hennart/wizard/label_stock_move.py:85
+#: code:addons/wms_labels_hennart/wizard/label_stock_move.py:102
+#, python-format
+msgid "Use by:"
+msgstr "a consommer jusqu'au:"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,weight:0
+msgid "Weight"
+msgstr "Poids"
+
+#. module: wms_labels_hennart
+#: field:label.stock.move,weight_label:0
+msgid "Weight label"
+msgstr "Poids texte"
+
+#. module: wms_labels_hennart
+#: view:label.stock.move:0
+msgid "_Cancel"
+msgstr "_Cancel"
+

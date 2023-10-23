@@ -126,7 +126,7 @@ class WmsScenarioStep(models.Model):
             lot = data.get('lot_id') or move_line and move_line.lot_id
             res = lot and f'{lot.ref}' or '????'
         if action_variable == 'quantity':
-            quantity = data.get('quantity') or move_line.reserved_uom_qty or '????'
+            quantity = data.get('quantity') or move_line.reserved_uom_qty
             res = f'{int(quantity)}'
         return res
 
@@ -148,7 +148,7 @@ class WmsScenarioStep(models.Model):
             if move_line.move_id.bom_line_id.bom_id.type == 'phantom':
                 quantity = int(data.get('quantity') or move_line.reserved_uom_qty)
                 package_qty = int(move_line.move_id.bom_line_id.product_qty)
-                if package_qty:
+                if quantity and package_qty:
                     package_nb = int(int(quantity) / int(package_qty))
                     res = f'{package_nb}' + _(" Pack of ") + f'{package_qty}'
                 else:
