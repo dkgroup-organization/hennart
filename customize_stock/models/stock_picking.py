@@ -77,8 +77,8 @@ class StockPicking(models.Model):
                 quantity_to_produce = move.product_uom_qty
 
                 if move.product_id.bom_ids != False:
-                    if move.product_uom_qty != move.forecast_availability:
-                        if move.product_uom_qty > 0:
+                    if move.product_uom_qty != move.forecast_availability and move.product_uom_qty > 0:
+                        if move.mrp_id == False:
 
                             in_process_productions = self.env['mrp.production'].search([
                             ('product_id', '=', product.id),
@@ -96,7 +96,8 @@ class StockPicking(models.Model):
                             if in_process_productions:
                                 quantity = in_process_productions.product_qty + quantity_to_produce
                                 in_process_productions.write({
-                                    'product_qty': quantity
+                                    'product_qty': quantity,
+                                    'move_from_picking_ids': [(4, move.id)],  
                                     })
                                 
                             else:
