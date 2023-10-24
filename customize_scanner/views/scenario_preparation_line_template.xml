@@ -61,10 +61,13 @@
                       t-att-action="'./scanner?scenario={}&amp;step={}'.format(step.scenario_id.id, step.id)"
                       autoComplete="off"
                       method="post">
-                    <t t-call="customize_scanner.scanner_preparation_product_id"/>
-                    <t t-call="customize_scanner.scanner_preparation_input_lot_id"/>
-                    <t t-call="customize_scanner.scanner_preparation_input_quantity"/>
-                    <t t-call="customize_scanner.scanner_preparation_input_weight"/>
+
+                    <t t-if="not data.get('printer')" t-call="customize_scanner.scanner_preparation_input_printer"/>
+
+                    <t t-if="data.get('printer')" t-call="customize_scanner.scanner_preparation_product_id"/>
+                    <t t-if="data.get('printer')" t-call="customize_scanner.scanner_preparation_input_lot_id"/>
+                    <t t-if="data.get('printer')" t-call="customize_scanner.scanner_preparation_input_quantity"/>
+                    <t t-if="data.get('printer')" t-call="customize_scanner.scanner_preparation_input_weight"/>
 
                     <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
                 </form>
@@ -72,6 +75,7 @@
         </template>
 
         <template id="scanner_input" name="preparation_input">
+            <div class="relative" t-if="step.action_presentation" t-esc="step.action_presentation"/>
             <t t-if="step.action_variable == action_variable">
                 <div class="w-full">
                     <input
@@ -123,6 +127,12 @@
         <template id="scanner_preparation_input_quantity" name="scanner_preparation_input_quantity">
             <t t-call="customize_scanner.scanner_input">
                 <t t-set="action_variable" t-value="'quantity'"/>
+            </t>
+        </template>
+
+        <template id="scanner_preparation_input_printer" name="scanner_preparation_input_printer">
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'printer'"/>
             </t>
         </template>
 

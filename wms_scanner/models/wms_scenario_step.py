@@ -39,6 +39,8 @@ class WmsScenarioStep(models.Model):
     action_variable = fields.Char(string='Input name', default='scan',
                                   help="Define a name for the result of the scan at this step ")
     action_message = fields.Char(string='Input Placeholder', translate=True)
+    action_presentation = fields.Html('Screen presentation', translate=True)
+
     step_qweb = fields.Char(
         string='QWEB Template',
         help="Use a specific QWEB template at this step (optional).")
