@@ -98,7 +98,6 @@ class StockPicking(models.Model):
                                 in_process_productions.write({
                                     'product_qty': quantity
                                     })
-                                raise UserError('TEST 1')
                                 
                             else:
                                 production_order = self.env['mrp.production'].create({
@@ -107,7 +106,6 @@ class StockPicking(models.Model):
                                     'move_from_picking_ids': [(4, move.id)],  
 
                                 })
-                                raise UserError('TEST 2')
 
                             # production_order.action_confirm()  # Confirmer le MO
                             # production_order.button_plan()  # Planifier le MO
