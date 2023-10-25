@@ -9,7 +9,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-class ResPartner(models.Model):
+class MRPProduction(models.Model):
     _inherit = 'mrp.production'
 
     # move_from_picking_ids = fields.Many2many('stock.move')
