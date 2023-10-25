@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class StockMove(models.Model):
     _inherit = "stock.move"
 
-    default_code = fields.Char(string='Code', related="product_id.default_code")
+    default_code = fields.Char('Code', related="product_id.default_code")
     product_packaging_qty = fields.Float('Packaging Quantity')
     weight = fields.Float(
         string="Weight",
