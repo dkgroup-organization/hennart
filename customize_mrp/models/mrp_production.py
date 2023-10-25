@@ -13,7 +13,6 @@ class ResPartner(models.Model):
     _inherit = 'mrp.production'
 
     # move_from_picking_ids = fields.Many2many('stock.move')
-
-    move_from_picking_ids = fields.One2many('stock.move', 'mrp_id', string='')
+    
 
     
