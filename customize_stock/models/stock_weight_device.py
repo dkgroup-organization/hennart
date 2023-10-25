@@ -11,7 +11,7 @@ class StockWeightDevice(models.Model):
     barcode = fields.Char('Barcode', index=True)
     address = fields.Char('Network address')
 
-    def get_weight(self, data):
+    def get_weight(self, data={}):
         self.ensure_one()
 
         res = {}
@@ -62,4 +62,4 @@ class StockWeightDevice(models.Model):
                     }
                 weight_value_obj.create(vals)
 
-        return res
+        return data.update(res)

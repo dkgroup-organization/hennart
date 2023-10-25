@@ -8,6 +8,7 @@ from odoo.exceptions import MissingError, UserError, ValidationError
 import time
 import datetime
 
+
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
@@ -15,6 +16,9 @@ class WmsScenarioStep(models.Model):
         """ get the picking to use"""
         self.ensure_one()
         picking = self.env['stock.picking']
+        if data.get('picking_id') and data.get('picking') and str(data.get('picking').id) != data.get('picking_id'):
+            del data['picking']
+
         if data.get('picking'):
             picking = data.get('picking')
         elif data.get('picking_id'):
@@ -57,9 +61,13 @@ class WmsScenarioStep(models.Model):
         """ return the next line to weight"""
         self.ensure_one()
         picking = self.get_picking(data)
+        printer = data.get('printer')
         if picking.exists():
             data = self.init_data(data)
             data['picking'] = picking
+            if printer:
+                data['printer'] = printer
+                
             location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
 
             moves_line_ids = self.env['stock.move.line'].search([
@@ -99,15 +107,33 @@ class WmsScenarioStep(models.Model):
         """ Return input-placeholder to qweb template"""
         self.ensure_one()
         res = 'Scan'
-        move_line = data.get('move_line')
-        if move_line:
-            if self.action_variable == 'lot_id':
-                res = _('Lot:') + f"{move_line.lot_id.ref}  {move_line.lot_id.expiration_date.strftime('%d/%m/%Y')}"
-            if self.action_variable == 'quantity':
+        move_line = data.get('move_line') or data.get('weight_line')
+
+        if self.action_message:
+            return self.action_message
+
+        if self.action_variable == 'lot_id':
+            if move_line:
+                res = _('Lot: ') + f"{move_line.lot_id.ref}  {move_line.lot_id.expiration_date.strftime('%d/%m/%Y')}"
+            else:
+                res = _('Scan lot')
+
+        if self.action_variable == 'quantity':
+            if move_line:
                 qty_placeholder = self.get_input_description_right(data, 'quantity')
                 if qty_placeholder:
                     qty_placeholder = ' (' + qty_placeholder + ')'
                 res = f'{int(move_line.reserved_uom_qty)}' + qty_placeholder
+            else:
+                res = _('Enter Quantity')
+
+        if self.action_variable == 'printer':
+            res = _('Scan Printer')
+
+        if self.action_variable == 'weight':
+            res = _('Enter Weight:')
+            if move_line and move_line.product_id.weight:
+                res += '~ {} Kg'.format(move_line.product_id.weight * move_line.qty_done)
 
         return res
 
@@ -115,7 +141,7 @@ class WmsScenarioStep(models.Model):
         """ Return input description when the input is not focused"""
         self.ensure_one()
         res = 'Scan'
-        move_line = data.get('move_line')
+        move_line = data.get('move_line') or data.get('weight_line')
         if action_variable == 'product_id':
             product = data.get('product_id') or move_line and move_line.product_id
             res = product and f'{product.name}' or '????'
@@ -126,15 +152,18 @@ class WmsScenarioStep(models.Model):
             lot = data.get('lot_id') or move_line and move_line.lot_id
             res = lot and f'{lot.ref}' or '????'
         if action_variable == 'quantity':
-            quantity = data.get('quantity') or move_line.reserved_uom_qty or '????'
+            quantity = data.get('quantity') or move_line and move_line.reserved_uom_qty or 0.0
             res = f'{int(quantity)}'
+        if action_variable == 'printer':
+            printer = data.get('printer')
+            res = printer and printer.name or _('scan printer')
         return res
 
     def get_input_description_right(self, data, action_variable):
         """ Return input description when the input is not focused"""
         self.ensure_one()
         res = ''
-        move_line = data.get('move_line')
+        move_line = data.get('move_line') or data.get('weight_line')
         if action_variable == 'product_id':
             product = data.get('product_id') or move_line and move_line.product_id
             res = product and f'{product.default_code}' or '????'
@@ -145,10 +174,10 @@ class WmsScenarioStep(models.Model):
             lot = data.get('lot_id') or move_line and move_line.lot_id
             res = lot.expiration_date and f"{lot.expiration_date.strftime('%d/%m/%Y')}" or '??/??/????'
         if action_variable == 'quantity':
-            if move_line.move_id.bom_line_id.bom_id.type == 'phantom':
+            if data.get('move_line') and move_line.move_id.bom_line_id.bom_id.type == 'phantom':
                 quantity = int(data.get('quantity') or move_line.reserved_uom_qty)
                 package_qty = int(move_line.move_id.bom_line_id.product_qty)
-                if package_qty:
+                if quantity and package_qty:
                     package_nb = int(int(quantity) / int(package_qty))
                     res = f'{package_nb}' + _(" Pack of ") + f'{package_qty}'
                 else:
@@ -250,7 +279,6 @@ class WmsScenarioStep(models.Model):
                         data['warning'] = _("The maximum quantity to pick is {}".format(max_quantity))
         else:
             data['warning'] = _("Some information are missing to check product on location.")
-
         return data
 
     @api.model
