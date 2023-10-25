@@ -2,14 +2,14 @@
 # Based on the work of sylvain Garancher <sylvain.garancher@syleam.fr>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
 
-import logging
+
 import string
 from odoo.tools.safe_eval import safe_eval, test_python_expr
 from odoo import models, api, fields, _
 from odoo.http import request
 from odoo.exceptions import MissingError, UserError, ValidationError
 import markupsafe
-
+import logging
 logger = logging.getLogger('wms_scanner')
 
 

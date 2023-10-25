@@ -1,4 +1,8 @@
 from odoo import fields, models, api, Command
+import logging
+import datetime
+logger = logging.getLogger('wms_scanner')
+
 
 PAYMENT_STATE_SELECTION = [
         ('not_paid', 'Not Paid'),
@@ -163,11 +167,17 @@ class AccountMove(models.Model):
 
     def action_valide_imported(self):
         """ Valid a imported move, there is some correction todo"""
+
         uom_weight = self.env['product.template'].sudo()._get_weight_uom_id_from_ir_config_parameter()
         remote_server = self.env['synchro.server'].search([])
         sync_obj = remote_server[0].obj_ids.search([('model_name', '=', 'account.invoice.line')])
 
         for move in self:
+            if move.invoice_date < datetime.date(2017, 1, 1):
+                if move.state != 'draft':
+                    move.button_draft()
+                move.unlink()
+
             if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
                 continue
 
