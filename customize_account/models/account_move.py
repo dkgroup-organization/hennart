@@ -177,6 +177,7 @@ class AccountMove(models.Model):
                 if move.state != 'draft':
                     move.button_draft()
                 move.unlink()
+                continue
 
             if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
                 continue
