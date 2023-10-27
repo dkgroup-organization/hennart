@@ -22,5 +22,12 @@ class MRPProduction(models.Model):
     )
     
     
+class StockMove2(models.Model):
+    _inherit = "stock.move"
+
+    mrp_id = fields.Many2one(
+        'mrp.production',
+        string='mrp',
+        )
 
     

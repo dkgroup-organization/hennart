@@ -44,10 +44,6 @@ class StockMove(models.Model):
     lot_description = fields.Text("Lot description", compute="get_lot_description", store=False,
                                   readonly=True, sanitize=False)
     
-    mrp_id = fields.Many2one(
-        'mrp.production',
-        string='mrp',
-        )
 
     def check_line(self):
         """ check if all line has production lot information"""
