@@ -157,7 +157,7 @@ class WmsScenarioStep(models.Model):
                 data['warning'] = _('Please, enter a numeric value')
 
         elif action_scanner == 'scan_multi':
-            data = self.scan_multi(data, scan)
+            data = self.scan_multi(data, scan, action_variable)
 
         elif action_scanner in ['scan_model', 'scan_info']:
             models_ids = action_model
