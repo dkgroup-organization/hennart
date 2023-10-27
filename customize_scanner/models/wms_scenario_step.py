@@ -20,6 +20,13 @@ BARCODE_PRODLOT = '(10)'
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
+
+    @api.model
+    def get_date_scanning(self, scan):
+        """ Check and return the date"""
+
+
+
     def scan_multi(self, data, scan, action_variable=""):
         """Function to return value when the scan is custom:
         lot production construction code
@@ -30,91 +37,114 @@ class WmsScenarioStep(models.Model):
         6 char: weight
         """
         self.ensure_one()
-        print('\n-------------scan_multi----------', data,scan, action_variable )
 
         # Detect the old barcode (reference used by V7) 24 or 25 or 26 length
         # 53201523101X010120000000  -24 DIGI machine frais emballé [11], la date est inversé
         # 53201523101X01012020000000 -26 espera: no id , external production [11]
         # 532010004459X010120000000 -25 old id - [:5][5:12][12][13:19][19:]
         # 01013-0066036B090320000000 -26 new_id [13]
+
         data_origin = data.copy()
         data = {}
 
         if len(scan) >= 24:
+            # In this case , the barcode is composite and it is customer barcode
 
-            # detection of date
-            if scan[-10:-8] == '20':
-                # specificity of ESPERA machine, the year is on 4 char
-                date = scan[-14:-6]
+            # detect the product
+            product = self.env['product.product']
+            affinage = -13
+            if not scan[affinage].isalpha():
                 affinage = -15
-            else:
-                date = scan[-12:-6]
-                affinage = -13
-
-            # construction of the product code
-            product_code = scan[:5]
-            if scan[affinage] != 'X':
-                product_code += scan[affinage]
-
-            # get the weight
-            weight = scan[-6:]
-            if not '.' in weight:
-                # By convention, if there is no dote, the decimal is three digit.
-                weight = weight[:3] + '.' + weight[3:]
-
-            try:
-                weight_kg = float(weight)
-                if weight_kg:
-                    data['weight'] = weight_kg
-            except:
-                data['warning'] = _("Reading weight error:") + " {}".format(weight)
-
-            # lot
-            lot_name = scan[5:affinage]
-            # by convention new lot_id start with '-'
-            if (lot_name[0] == '-') and lot_name[1:].isnumeric():
-                lot_id = int(lot_name[1:])
-                lot_ids = self.env['stock.lot'].search([('id', '=', lot_id)])
-                if len(lot_ids) == 1:
-                    data['lot_id'] = lot_ids
-                    data['product_id'] = lot_ids.product_id
+            if scan[affinage].isalpha():
+                if scan[affinage] == "X":
+                    product_code = scan[:5]
                 else:
-                    data['warning'] = _("This lot is removing.")
-            else:
-                old_barcode = scan[:-6] + "000000"
-                for barcode_field in ['barcode_ext', 'temp_old_barcode', 'temp2_old_barcode']:
-                    lot_ids = self.env['stock.lot'].search([(barcode_field, '=', old_barcode)])
-                    if len(lot_ids) > 1:
-                        data['warning'] = _("There is more than one lot with the same name and date: {}".format(old_barcode))
-                    elif lot_ids:
-                        data['lot_id'] = lot_ids[0]
-                        data['product_id'] = lot_ids[0].product_id
-                        break
+                    product_code = scan[:5] + scan[affinage]
 
-                if not data.get('lot_id'):
-                    data['lot_name'] = scan[5:affinage]
-                    date_year = scan[-8:-6]
-                    date_day = scan[affinage+1:affinage+3]
-                    date_month = scan[affinage+3:affinage+5]
-                    data['lot_date'] = "20{year}-{month}-{day}".format(year=date_year, month=date_month, day=date_day)
-
-            if not data.get('product_id'):
-                # product
+                # Check if the product exist
                 product_ids = self.env['product.product'].search([('default_code', '=', product_code)])
                 if len(product_ids) == 1:
-                    data['product_id'] = product_ids
+                    data['lot_code'] = product_code
+                    product = product_ids
+                else:
+                    data['warning'] = _("Barcode error, The product is unknown: ") + product_code
+            else:
+                data['warning'] = _("Barcode format error.")
 
-            if not data.get('lot_id'):
+            # get the weight
+            if not data.get('warning'):
+                weight = scan[-6:]
+                if '.' not in weight:
+                    # By convention, if there is no dote, the decimal is three digit.
+                    weight = weight[:3] + '.' + weight[3:]
+                try:
+                    weight_kg = float(weight)
+                    if weight_kg:
+                        data['weight'] = weight_kg
+                except:
+                    data['warning'] = _("Reading weight error:") + " {}".format(weight)
+
+            # if there is a weight this barcode is a label, use base unit count to have package quantity
+            if product and data.get('weight') and not data.get('warning'):
+                data['quantity'] = product.base_unit_count
+
+            # Define the date
+            if not data.get('warning'):
+                if scan[affinage + 1:affinage + 5].isnumeric() and scan[-8:-6].isnumeric():
+                    date_year = '20' + scan[-8:-6]
+                    date_day = scan[affinage + 1:affinage + 3]
+                    date_month = scan[affinage + 3:affinage + 5]
+                    try:
+                        data['lot_date'] = fields.Datetime.from_string(f"{date_year}-{date_month}-{date_day} 12:00:00")
+                    except:
+                        data['warning'] = _("Error on date format.")
+                else:
+                    data['warning'] = _("Error on date format.")
+
+            # find the lot
+            if product and not data.get('warning'):
+                lot_name = scan[5:affinage]
+                # by convention new lot_id (2023) start with '-'
+                if (lot_name[0] == '-') and lot_name[1:].isnumeric():
+                    lot_id = int(lot_name[1:])
+                    lot_ids = self.env['stock.lot'].search([('id', '=', lot_id)])
+                    if lot_ids:
+                        if lot_ids.product_id == (product.base_product_tmpl_id or product):
+                            data['lot_id'] = lot_ids
+                        else:
+                            data['warning'] = _("This lot has not the good product.")
+                    else:
+                        data['warning'] = _("This lot is removing.")
+                else:
+                    old_barcode = scan[:-6] + "000000"
+                    for barcode_field in ['barcode_ext', 'temp_old_barcode', 'temp2_old_barcode']:
+                        lot_ids = self.env['stock.lot'].search([(barcode_field, '=', old_barcode)])
+                        if len(lot_ids) > 1:
+                            data['warning'] = _("There is more than one lot with the same name and date: {}".format(old_barcode))
+                        elif lot_ids and lot_ids.product_id == (product.base_product_tmpl_id or product):
+                            data['lot_id'] = lot_ids[0]
+                            break
+
+            # Get the lot name to possible creation if lot is finding
+            if product and data.get('lot_date') and not data.get('lot_id'):
+                # In this case the lot is to create by use lot_name, lot_product, lot_date
                 data['lot_name'] = scan[5:affinage]
-                year = '20' + scan[-8:-6]
-                day = scan[affinage + 1:affinage + 3]
-                month = scan[affinage + 3:affinage + 5]
-                data['lot_expiration_date'] = "{}-{}-{} 05:00:00".format(year, month, day)
-                data['warning'] = _("Unknown lot: %s - %s" % (
-                    data['lot_name'], data['lot_expiration_date']))
+                data['lot_product'] = product.base_product_tmpl_id or product
 
-            if action_variable:
-                data[action_variable] = data.get('lot_id') or data.get('product_id') or False
+        if len(scan) > 4 and scan[:4] == BARCODE_WEIGHT:
+            # In this case, it is a printer
+            weight_device_ids = self.env['stock.weight.device'].search([('barcode', '=', scan)])
+            if len(weight_device_ids) == 1:
+                data['weight_id'] = weight_device_ids
+            else:
+                data['warning'] = "No Weight device finding"
+
+        if len(scan) > 4 and scan[:4] == BARCODE_PRINTER:
+            # In this case, it is a printer
+            pass
+
+
+
 
         if data.get('warning'):
             data_origin['warning'] = data.get('warning')
@@ -222,7 +252,7 @@ class WmsScenarioStep(models.Model):
 
         stock_location = self.env.ref('stock.stock_location_stock')
         picking_type = self.env.ref('stock.picking_type_internal')
-        location_origin_id = data.get('location_origin_id')
+        location_origin_id = data.get('location_origin_id') or data.get('location_id')
         location_dest_id = data.get('location_dest_id')
 
         product_id = data.get('product_id')

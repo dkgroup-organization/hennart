@@ -8,42 +8,94 @@ from odoo.exceptions import MissingError, UserError, ValidationError
 import time
 import datetime
 
+
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
-    def get_next_picking_line(self, data):
-        """ Return the next preparation line to do, initialize the data with this new line"""
+    def get_picking(self,data):
+        """ get the picking to use"""
         self.ensure_one()
-        # define the priority of the stock.move.line, by location name
         picking = self.env['stock.picking']
+        if data.get('picking_id') and data.get('picking') and str(data.get('picking').id) != data.get('picking_id'):
+            del data['picking']
 
         if data.get('picking'):
             picking = data.get('picking')
-        elif data.get('picking_id') and data['picking_id'].isnumeric():
-            picking = self.env['stock.picking'].browse(int(data['picking_id']))
-        else:
-            data['warning'] = data.get('warning', '') + _('No picking selected')
+        elif data.get('picking_id'):
+            if type(data['picking_id']) is str and data['picking_id'].isnumeric():
+                data['picking_id'] = int(data['picking_id'])
+
+            if type(data['picking_id']) is int:
+                picking = self.env['stock.picking'].browse(data['picking_id'])
+                del data['picking_id']
+        return picking
+
+    def get_next_picking_line(self, data, weight=False):
+        """ Return the next preparation line to do, initialize the data with this new line"""
+        self.ensure_one()
+        # define the priority of the stock.move.line, by location name
+        picking = self.get_picking(data)
 
         if picking.exists():
             data = self.init_data(data)
             data['picking'] = picking
-            print('\n---------get_next_picking_line---4------', data)
 
             if picking.state in ['confirmed', 'waiting']:
                 picking.action_assign()
 
-            # Todo: define the rule to apply,
+            location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
             moves_line_ids = self.env['stock.move.line'].search([
-                ('picking_id', '=', picking.id)
-            ], order='priority', limit=1)
+                ('picking_id', '=', picking.id),
+                ('location_id', 'not in', location_preparation_ids.ids),
+                ('reserved_uom_qty', '>', 0.0), ('qty_done', '=', 0.0),
+                ], order='priority', limit=1)
 
-            data['move_line'] = moves_line_ids
+            if moves_line_ids:
+                data['move_line'] = moves_line_ids[0]
+        else:
+            data['warning'] = data.get('warning', '') + _('No picking selected')
 
-        print('\n---------get_next_picking_line---------', data)
         return data
 
+    def get_next_weight_line(self, data):
+        """ return the next line to weight"""
+        self.ensure_one()
+        picking = self.get_picking(data)
+        printer = data.get('printer')
+        if picking.exists():
+            data = self.init_data(data)
+            data['picking'] = picking
+            if printer:
+                data['printer'] = printer
+                
+            location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
+
+            moves_line_ids = self.env['stock.move.line'].search([
+                ('picking_id', '=', picking.id),
+                ('location_id', 'in', location_preparation_ids.ids),
+                ('to_weight', '=', True), ('qty_done', '>', 0.0),
+            ], order='priority', limit=1)
+
+            if moves_line_ids:
+                data['weight_line'] = moves_line_ids[0]
+                data['product_id'] = data['weight_line'].product_id
+                data['lot_id'] = data['weight_line'].lot_id
+                data['quantity'] = data['weight_line'].qty_done
+
+        else:
+            data['warning'] = data.get('warning', '') + _('No picking selected')
+        return data
+
+    def get_title(self, data):
+        """ Get title at this step"""
+        self.ensure_one()
+        res = ""
+        if data.get('picking'):
+            res = data['picking'].name
+        return res
+
     def get_input_name(self, data):
-        """ Return input name to qweb template"""
+        """ Return input-name to qweb template"""
         self.ensure_one()
         if self.action_variable:
             res = self.action_variable
@@ -52,22 +104,44 @@ class WmsScenarioStep(models.Model):
         return res
 
     def get_input_placeholder(self, data):
-        """ Return input placeholder to qweb template"""
+        """ Return input-placeholder to qweb template"""
         self.ensure_one()
         res = 'Scan'
-        move_line = data.get('move_line')
-        if move_line:
-            if self.action_variable == 'lot_id':
-                res = _('Lot:') + f"{move_line.lot_id.ref}  {move_line.lot_id.expiration_date.strftime('%d/%m/%Y')}"
-            if self.action_variable == 'quantity':
-                res = _('Quantity: ') + f'{move_line.reserved_uom_qty}'
+        move_line = data.get('move_line') or data.get('weight_line')
+
+        if self.action_message:
+            return self.action_message
+
+        if self.action_variable == 'lot_id':
+            if move_line:
+                res = _('Lot: ') + f"{move_line.lot_id.ref}  {move_line.lot_id.expiration_date.strftime('%d/%m/%Y')}"
+            else:
+                res = _('Scan lot')
+
+        if self.action_variable == 'quantity':
+            if move_line:
+                qty_placeholder = self.get_input_description_right(data, 'quantity')
+                if qty_placeholder:
+                    qty_placeholder = ' (' + qty_placeholder + ')'
+                res = f'{int(move_line.reserved_uom_qty)}' + qty_placeholder
+            else:
+                res = _('Enter Quantity')
+
+        if self.action_variable == 'printer':
+            res = _('Scan Printer')
+
+        if self.action_variable == 'weight':
+            res = _('Enter Weight:')
+            if move_line and move_line.product_id.weight:
+                res += '~ {} Kg'.format(move_line.product_id.weight * move_line.qty_done)
+
         return res
 
     def get_input_description_left(self, data, action_variable):
         """ Return input description when the input is not focused"""
         self.ensure_one()
         res = 'Scan'
-        move_line = data.get('move_line')
+        move_line = data.get('move_line') or data.get('weight_line')
         if action_variable == 'product_id':
             product = data.get('product_id') or move_line and move_line.product_id
             res = product and f'{product.name}' or '????'
@@ -78,15 +152,18 @@ class WmsScenarioStep(models.Model):
             lot = data.get('lot_id') or move_line and move_line.lot_id
             res = lot and f'{lot.ref}' or '????'
         if action_variable == 'quantity':
-            quantity = data.get('quantity') or move_line.reserved_uom_qty or '????'
-            res = f'{quantity}'
+            quantity = data.get('quantity') or move_line and move_line.reserved_uom_qty or 0.0
+            res = f'{int(quantity)}'
+        if action_variable == 'printer':
+            printer = data.get('printer')
+            res = printer and printer.name or _('scan printer')
         return res
 
     def get_input_description_right(self, data, action_variable):
         """ Return input description when the input is not focused"""
         self.ensure_one()
         res = ''
-        move_line = data.get('move_line')
+        move_line = data.get('move_line') or data.get('weight_line')
         if action_variable == 'product_id':
             product = data.get('product_id') or move_line and move_line.product_id
             res = product and f'{product.default_code}' or '????'
@@ -96,7 +173,15 @@ class WmsScenarioStep(models.Model):
         if action_variable == 'lot_id':
             lot = data.get('lot_id') or move_line and move_line.lot_id
             res = lot.expiration_date and f"{lot.expiration_date.strftime('%d/%m/%Y')}" or '??/??/????'
-
+        if action_variable == 'quantity':
+            if data.get('move_line') and move_line.move_id.bom_line_id.bom_id.type == 'phantom':
+                quantity = int(data.get('quantity') or move_line.reserved_uom_qty)
+                package_qty = int(move_line.move_id.bom_line_id.product_qty)
+                if quantity and package_qty:
+                    package_nb = int(int(quantity) / int(package_qty))
+                    res = f'{package_nb}' + _(" Pack of ") + f'{package_qty}'
+                else:
+                    res = ""
         return res
 
     def get_input_type(self, data):
@@ -127,8 +212,9 @@ class WmsScenarioStep(models.Model):
             ('picking_type_id', '=', picking_type.id),
             ('state', 'in', ['assigned', 'confirmed', 'waiting'])
         ], order='sequence')
-        picking_ids.action_assign()
-        data.update({'picking_ids': picking_ids})
+        if picking_ids:
+            picking_ids.action_assign()
+            data.update({'picking_ids': picking_ids})
         return data
 
     def add_next_picking(self, data):
@@ -143,6 +229,7 @@ class WmsScenarioStep(models.Model):
 
         if picking_ids:
             picking_ids.user_id = self.env.user
+            picking_ids.action_assign()
 
         return self.get_user_picking(data)
 
@@ -192,15 +279,98 @@ class WmsScenarioStep(models.Model):
                         data['warning'] = _("The maximum quantity to pick is {}".format(max_quantity))
         else:
             data['warning'] = _("Some information are missing to check product on location.")
+        return data
+
+    @api.model
+    def move_preparation(self, data):
+        """ Move product to preparation location, unreserve quant in previews location,
+        reserve in preparation location
+        """
+        warehouse = self.env.ref('stock.warehouse0')
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+        location_dest_id = warehouse.wh_pack_stock_loc_id
+
+        if not data.get('move_line'):
+            data['Warning'] = _("No move line to move?")
+            return data
+
+        move_line = data.get('move_line')
+        quantity = data.get('quantity')
+        # weight =
+        product_id = move_line.product_id
+        lot_id = move_line.lot_id
+        location_id = move_line.location_id
+
+        # Check reserved quantity
+        condition = [
+            ('product_id', '=', product_id.id),
+            ('location_id', '=', location_id.id),
+            ('lot_id', '=', lot_id.id)
+            ]
+        quant_ids = self.env['stock.quant'].search(condition)
+
+        if sum(quant_ids.mapped('quantity')) >= quantity:
+            move_data = {
+                'location_id': location_id,
+                'product_id': product_id,
+                'location_dest_id': location_dest_id,
+                'lot_id': lot_id,
+                'weight': data.get('weight'),
+                'quantity': data.get('quantity')
+                }
+            result_data = self.move_product(move_data)
+
+            if result_data.get('result'):
+                if move_line.reserved_uom_qty - move_data.get('quantity') <= 0.0:
+                    move_line.reserved_uom_qty = 0.0
+                else:
+                    move_line.reserved_uom_qty -= move_data.get('quantity')
+
+                new_move_line = move_line.copy({
+                    'location_id':  move_data.get('location_dest_id').id,
+                    'weight': move_data.get('weight'),
+                    'reserved_uom_qty': move_data.get('quantity'),
+                    'qty_done':  move_data.get('quantity'),
+                })
+
+                # to Weight or not?
+                if not new_move_line.weight:
+                    if new_move_line.product_id.uos_id == uom_weight:
+                        new_move_line.to_weight = True
+                        new_move_line.weight = new_move_line.product_id.weight * new_move_line.qty_done
+                    else:
+                        new_move_line.weight = new_move_line.product_id.weight
+                        new_move_line.to_weight = False
+                else:
+                    new_move_line.to_weight = False
+
+                # Reserve the quants moved in preparation location
+                condition = [
+                    ('product_id', '=', product_id.id),
+                    ('location_id', '=', location_dest_id.id),
+                    ('lot_id', '=', lot_id.id or False)
+                ]
+                quant_ids = self.env['stock.quant'].search(condition)
+                for quant in quant_ids:
+                    if quant.reserved_quantity != quant.quantity:
+                        quant.reserved_quantity = quant.quantity
+
+                # Init data for next line to prepare
+                data = self.init_data()
+                data['picking'] = move_line.picking_id
+                data['move_line'] = move_line
+                data['message'] = _('The product is moving to preparation')
+
+        if move_line.reserved_uom_qty == 0.0 and move_line.qty_done == 0.0:
+            del data['move_line']
+            move_line.unlink()
 
         return data
 
-    def move_line_to_prepa(self, data):
-        """ move the quant to preparation location after user scanning """
-        self.ensure_one()
-        data = self.check_move_line_scan(data)
-        if data.get('warning'):
-            return data
+    @api.model
+    def weight_preparation(self, data):
+        """ Weight product in preparation location
+        """
+        warehouse = self.env.ref('stock.warehouse0')
 
-        if data.get('move_line') and data.get('quantity'):
-            pass
+        return data
