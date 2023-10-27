@@ -29,9 +29,9 @@
                                 <strong style ="margin-left: 10px !important;">Delivery:</strong>
                                 <p style ="margin-left: 10px !important;" t-field="o.picking_ids[0].name"/>
                             </div>
-                            <div class="col-auto col-3 mw-100 mb-2" t-if="o.partner_id.ref" name="customer_ref" style="border: 1px solid black !important;">
+                            <div class="col-auto col-3 mw-100 mb-2" t-if="o.invoice_origin" name="customer_ref" style="border: 1px solid black !important;">
                                 <strong style ="margin-left: 10px !important;">Customer order:</strong>
-                                <p style ="margin-left: 10px !important;" t-field="o.partner_id.ref"/>
+                                <p style ="margin-left: 10px !important;" t-field="o.invoice_origin"/>
                             </div>
                             <div class="col-auto col-3 mw-100 mb-2" t-if="o.partner_id.ref" name="client_code" style="border: 1px solid black !important;"> 
                                 <strong style ="margin-left: 10px !important;">Customer:</strong>
