@@ -24,8 +24,7 @@ class WmsScenarioStep(models.Model):
     @api.model
     def get_date_scanning(self, scan):
         """ Check and return the date"""
-
-
+        pass
 
     def scan_multi(self, data, scan, action_variable=""):
         """Function to return value when the scan is custom:
