@@ -43,6 +43,7 @@ class StockMove(models.Model):
     picking_type_use_create_lots = fields.Boolean(related='picking_type_id.use_create_lots', readonly=True)
     lot_description = fields.Text("Lot description", compute="get_lot_description", store=False,
                                   readonly=True, sanitize=False)
+    
 
     def check_line(self):
         """ check if all line has production lot information"""

@@ -13,4 +13,21 @@ class MRPProduction(models.Model):
     _inherit = 'mrp.production'
 
     # move_from_picking_ids = fields.Many2many('stock.move')
+
+    
+    move_from_picking_ids = fields.One2many(
+        string='Moves from Pickings',
+        comodel_name='stock.move',
+        inverse_name='mrp_id',
+    )
+    
+    
+class StockMove2(models.Model):
+    _inherit = "stock.move"
+
+    mrp_id = fields.Many2one(
+        'mrp.production',
+        string='mrp',
+        )
+
     
