@@ -4,6 +4,7 @@
 from odoo import api, fields, models, _
 import json
 from odoo.http import request
+import datetime
 
 # Reserved variable term in data
 DATA_RESERVED_NAME = ['user', 'warning', 'scan', 'function', 'message', 'button', 'result']
@@ -73,6 +74,13 @@ class WmsSession(models.Model):
                 if key in DATA_RESERVED_NAME:
                     # Don't save this objects, juste log for debug
                     session_message.update({key: "{}".format(data[key])})
+                elif isinstance(data[key], (datetime.date, datetime.datetime)):
+                    date_format = "%Y-%m-%d"
+                    if isinstance(data[key], datetime.datetime):
+                        date_format += " %H:%M:%S"
+                    if data[key]:
+                        session_data.update({key: data[key].strftime(date_format)})
+                    #datetime.strptime(date_string, format)
                 else:
                     if hasattr(data[key], '_name') and hasattr(data[key], 'ids'):
                         # Odoo model name
