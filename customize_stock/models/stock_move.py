@@ -55,7 +55,7 @@ class StockMove(models.Model):
                     continue
                 if move_line.lot_id and not move_line.lot_id.expiration_date:
                     message += _(f"\nThis lot need a expiration date: {move.name} {move_line.lot_id.name}")
-                if move_line.weight == 0.0 and move_line.qty_done > 0.0:
+                if (move_line.weight == 0.0 or move_line.to_weight) and move_line.qty_done > 0.0:
                     message += _(f"\nThis line need a weight: {move.name}")
 
         if message:
@@ -136,6 +136,9 @@ class StockMove(models.Model):
         """ Create move_line_ids to save value"""
         for line in self:
             move_line_vals = line.get_default_value({'qty_done': line.quantity_done})
+            if line.product_id.uos_id == self.env['product.template']._get_weight_uom_id_from_ir_config_parameter():
+                move_line_vals['to_weight'] = True
+            move_line_vals['weight'] = line.product_id.weight * line.quantity_done
 
             if not line.move_line_ids:
                 line.move_line_ids.create(move_line_vals)
@@ -163,6 +166,7 @@ class StockMove(models.Model):
         """ Create move_line_ids to save value"""
         for line in self:
             move_line_vals = line.get_default_value({'weight': line.weight})
+            move_line_vals['to_weight'] = False
 
             if not line.move_line_ids:
                 line.move_line_ids.create(move_line_vals)
@@ -178,18 +182,26 @@ class StockMove(models.Model):
         """ Get lot description"""
         for move in self:
             lot_description = ""
+            lots = {}
             for move_line in move.move_line_ids:
-                if move_line.lot_id:
-                    lot_description += "{}".format(move_line.lot_id.ref or '?')
-                    if move_line.lot_id.expiration_date:
-                        lot_description += " {:%d/%m/%Y}".format(move_line.lot_id.expiration_date)
-                    if move_line.qty_done != move.quantity_done:
-                        lot_description += "({})".format(move_line.qty_done)
-                    lot_description += ", "
+                if move_line.lot_id and move_line.lot_id not in lots:
+                    lots[move_line.lot_id] = move_line.qty_done
+                elif move_line.lot_id:
+                    lots[move_line.lot_id] += move_line.qty_done
+
+            for lot in lots:
+                lot_description += "{}".format(lot.ref or '?')
+                if lot.expiration_date:
+                    lot_description += " {:%d/%m/%Y}".format(lot.expiration_date)
+                lot_description += "({})".format(lots[lot])
+                lot_description += ", "
+
             move.lot_description = lot_description
 
     def write(self, vals):
-        # By pass quantity_done constraint
+        """ By pass quantity_done constraint
+        put zero quantity and weight on cancel move
+        """
         if 'state' in vals and vals['state'] == 'cancel':
             for move in self:
                 if move.state != 'cancel':
@@ -198,4 +210,29 @@ class StockMove(models.Model):
             del vals['quantity_done']
         return super().write(vals)
 
+    def _do_unreserve(self):
+        """ Don't unreserve the product on preparation location, it's too late, the products are moving"""
+        super()._do_unreserve()
+        location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
+        # Do not uneserved preparatoin location
+        move_line_ids = self.env['stock.move.line'].search([
+            ('location_id', 'in', location_preparation_ids.ids),
+            ('move_id', 'in', self.ids),
+            ])
+        moves_to_recompute = self.env['stock.move']
+        for move_line in move_line_ids:
+            if move_line.reserved_uom_qty != move_line.qty_done:
+                move_line.reserved_uom_qty = move_line.qty_done
+                moves_to_recompute |= move_line.move_id
+        moves_to_recompute._recompute_state()
 
+        for move in moves_to_recompute:
+            quant_ids = self.env['stock.quant'].search([
+                ('product_id', '=', move.product_id.id),
+                ('location_id', 'in', location_preparation_ids.ids)
+            ])
+            for quant in quant_ids:
+                if quant.reserved_quantity != quant.quantity:
+                    quant.reserved_quantity = quant.quantity
+
+        return True

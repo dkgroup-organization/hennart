@@ -48,6 +48,30 @@ class StockMoveLine(models.Model):
         for line in self:
             line.product_uom_id = line.product_id.uom_id
 
+    @api.onchange('weight')
+    def onchange_weight(self):
+        """ valid to_weight """
+        res = {}
+        if self.env.context.get('manual_weight'):
+            if self.qty_done <= 0.0 or self.weight <= 0.0:
+                res['weight'] = 0.0
+                res['to_weight'] = False
+            else:
+                res['to_weight'] = False
+        self.update(res)
+
+    @api.onchange('qty_done')
+    def onchange_qty_done(self):
+        """ define theoretical weight """
+        res = {'weight': 0.0, 'to_weight': False}
+        if self.qty_done > 0.0:
+            res['weight'] = self.qty_done * self.product_id.weight
+            if self.product_id.uos_id == self.env['product.template']._get_weight_uom_id_from_ir_config_parameter():
+                res['to_weight'] = True
+            else:
+                res['to_weight'] = False
+        self.update(res)
+
     @api.onchange('lot_name', 'lot_id', 'expiration_date')
     def onchange_lot_name(self):
         """ rewrite the function to limit the check for this project
@@ -82,3 +106,15 @@ class StockMoveLine(models.Model):
                 'expiration_date': False,
                 'lot_id': False
             })
+
+    def button_test(self):
+        """ Test futur function"""
+        for line in self:
+            # change location
+            # def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None, strict=False):
+            move_data = {
+                'move_line': line,
+                'quantity': 1.0,
+            }
+            res = self.env['wms.scenario.step'].move_preparation(move_data)
+

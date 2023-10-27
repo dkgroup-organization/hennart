@@ -111,3 +111,8 @@ class StockPicking(models.Model):
                             # production_order.action_confirm()  # Confirmer le MO
                             # production_order.button_plan()  # Planifier le MO
                             # production_order.action_produce()  # Démarrer la production du MO
+    def action_assign(self):
+        """ order stock.move.line by location name"""
+        res = super().action_assign()
+        self.order_move_line()
+        return res
