@@ -77,9 +77,6 @@ class WmsScenarioStep(models.Model):
         for step in self:
             name = "%s: " % (step.sequence)
             name += "%s " % (step.action_scanner)
-
-            if step.action_variable:
-                name += " -> %s " % (step.action_variable)
             step.name = name
 
     @api.onchange('action_variable')

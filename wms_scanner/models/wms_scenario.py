@@ -72,6 +72,17 @@ class WmsScenario(models.Model):
         column2='user_id',
         string='Allowed Users')
 
+    scenario_id = fields.Integer(
+        string='technical field to filter', store=True, compute="get_scenario_id")
+
+    def get_scenario_id(self):
+        """ technical field used to filter multiple object in once domain"""
+        for scenario in self:
+            if scenario._origin.id:
+                scenario.scenario_id = scenario._origin.id
+            else:
+                scenario.scenario_id = False
+
     def copy(self, default=None):
         default = default or {}
         default['name'] = _('Copy of %s') % self.name
