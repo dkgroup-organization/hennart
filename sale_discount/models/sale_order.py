@@ -18,18 +18,19 @@ class SaleOrderInherit(models.Model):
         self.ensure_one()
 
         discount_product = self.env['product.pricelist.discount'].search(
-            [('partner_id', '=', self.partner_id.id)], order="logistical_weight DESC")
-
-        if discount_product and 'no_discount' in discount_product.mapped('discount_choice'):
-            return False
+            [('pricelist_id.id', '=', self.pricelist_id.id), ('partner_id', '=', self.partner_id.id)],
+            order="logistical_weight DESC")
 
         if not discount_product:
             discount_product = self.env['product.pricelist.discount'].search(
-                [('pricelist_id.id', '=', self.pricelist_id.id)], order="logistical_weight DESC")
+                [('pricelist_id.id', '=', self.pricelist_id.id), ('partner_id', '=', False)],
+                order="logistical_weight DESC")
 
-        if discount_product:
-            for discount in discount_product:
-                if self.total_weight >= discount.logistical_weight:
+        for discount in discount_product:
+            if self.total_weight >= discount.logistical_weight:
+                if discount.discount_choice == 'no_discount':
+                    return False
+                else:
                     return discount
         return False
 

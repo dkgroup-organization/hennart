@@ -26,7 +26,7 @@ class PriceListDiscount(models.Model):
         string='Methode',
         selection=[('pricelist_discount', 'Remise Liste de prix'),
                    ('product_discount', 'Remise article'),
-                   ('no_discount', 'No discount')],
+                   ('no_discount', 'No discount, exception')],
         default='no_discount'
     )
 

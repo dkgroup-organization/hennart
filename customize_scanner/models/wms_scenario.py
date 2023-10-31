@@ -18,10 +18,15 @@ class WmsScenario(models.Model):
         """ Save in xml format with base_module_record """
         self.ensure_one()
         search_condition = [('scenario_id', '=', self.id)]
+
         save_vals = {
             'search_condition': search_condition,
+            'filter_cond': 'all',
         }
-        save_xml = self.env['base.module.data']
+        save_xml = self.env['base.module.data'].create(save_vals)
+        model_ids = self.env["ir.model"].search([("model", "in", [
+            'wms.scenario', 'wms.scenario.step', 'wms.scenario.transition'])])
+        save_xml.objects = model_ids
         res = save_xml.record_objects()
         return res
 
