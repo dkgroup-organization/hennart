@@ -52,7 +52,13 @@ class BaseSynchroServer(models.Model):
 
         if not obj_ids:
             obj_ids = self.create_obj([model_name])
-        return obj_ids and obj_ids[0] or obj_ids
+        elif len(obj_ids) > 1:
+            for state in ['synchronise', 'auto', 'manual', 'draft']:
+                for obj_test in obj_ids:
+                    if obj_test.state == state:
+                        return obj_test
+
+        return obj_ids
 
     def create_obj(self, object_list):
         "create object to synchronyze"
