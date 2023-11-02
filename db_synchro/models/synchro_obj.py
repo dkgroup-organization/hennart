@@ -250,13 +250,16 @@ class BaseSynchroObj(models.Model):
                     remote_ids = remote_ids[:limit]
                     break
 
-            remote_values = obj.remote_read(remote_ids)
-            if obj.model_id.model == 'product.product':
-                obj.load_remote_product(remote_values)
-            elif obj.model_id.model == 'product.template':
-                obj.load_remote_product_template(remote_values)
-            else:
-                obj.write_local_value(remote_values)
+            if remote_ids:
+                remote_values = obj.remote_read(remote_ids)
+                if obj.model_id.model == 'product.product':
+                    obj.load_remote_product(remote_values)
+                elif obj.model_id.model == 'product.template':
+                    obj.load_remote_product_template(remote_values)
+                elif obj.model_id.model == 'stock.quant':
+                    obj.load_remote_stock_quant(remote_values)
+                else:
+                    obj.write_local_value(remote_values)
 
             obj.synchronize_date = fields.Datetime.now()
 
@@ -269,7 +272,7 @@ class BaseSynchroObj(models.Model):
                 partner_obj = self.server_id.get_obj('res.partner')
                 partner_local_id = partner_obj.get_local_id(remote_partner_id[0])
 
-    def load_remote_product(self, remote_values={}):
+    def load_remote_product(self, remote_values=[]):
         """ exception for product, create template and variant in the same time"""
         self.ensure_one()
 
@@ -301,7 +304,7 @@ class BaseSynchroObj(models.Model):
                         local_ids.create(vals_line)
             self.write_local_value(remote_values)
 
-    def load_remote_product_template(self, remote_values={}):
+    def load_remote_product_template(self, remote_values=[]):
         """ exception for product, create template and variant in the same time"""
         self.ensure_one()
 
@@ -313,6 +316,16 @@ class BaseSynchroObj(models.Model):
                 remote_ids = product_obj.remote_search(domain)
                 remote_values2 = product_obj.remote_read(remote_ids)
                 product_obj.load_remote_product(remote_values2)
+
+    def load_remote_stock_quant(self, remote_values=[]):
+        """ exception for production lot, check the data """
+        self.ensure_one()
+        if self.model_id.model == 'stock.quant':
+            remote_values_ok = []
+            for values in remote_values:
+                if values.get('product_id') and values.get('location_id'):
+                    remote_values_ok.append(values)
+            self.write_local_value(remote_values_ok)
 
     def check_childs(self):
         "check the child of this object"
@@ -484,10 +497,6 @@ class BaseSynchroObj(models.Model):
                 'update_date': fields.Datetime.now(),
                 })
 
-        for line in local_ids:
-            if line.error:
-                return False
-
         if check_local_id:
             # Check if there is a local object pointing by these ids
             checking_local_ids = self.env['synchro.obj.line']
@@ -623,6 +632,14 @@ class BaseSynchroObj(models.Model):
 
         return remote_value
 
+    def local_values_ok(self, values):
+        """ Check values before write, there is an error when product_id is not find"""
+        self.ensure_one()
+        if self.model_id.model in ['stock.quant', 'stock.lot']:
+            if 'product_id' not in values:
+                return False
+        return True
+
     def write_local_value(self, remote_values, commit=True):
         """write in local database the values, the values is a list of dic vals
             values: [{'id': 1, 'name': 'My object name', ....}, {'id': 2, ...}]
@@ -649,14 +666,18 @@ class BaseSynchroObj(models.Model):
                 # Create
                 remote_value = self.exception_value_create(remote_value)
                 local_value = self.get_local_value(remote_value)
-                _logger.info("create: %s: %s" % (self.model_id.model, local_value))
-                try:
-                    new_obj = self.env[self.model_id.model].sudo().with_context(synchro=True).create(local_value)
-                    local_id = new_obj.id
 
-                except Exception as e:
-                    local_id = 0
-                    error = "%s" % e
+                if self.local_values_ok(local_value):
+                    _logger.info("create: %s: %s" % (self.model_id.model, local_value))
+                    try:
+                        new_obj = self.env[self.model_id.model].sudo().with_context(synchro=True).create(local_value)
+                        local_id = new_obj.id
+
+                    except Exception as e:
+                        local_id = 0
+                        error = "%s" % e
+                else:
+                    _logger.info("Error on create: %s: %s\nremote value: %s" % (self.model_id.model, local_value, remote_value))
 
             condition = [('remote_id', '=', remote_id), ('obj_id', '=', self.id)]
             local_ids = self.env['synchro.obj.line'].search(condition)

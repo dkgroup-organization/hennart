@@ -15,9 +15,12 @@ class ProductProduct(models.Model):
     base_unit_price = fields.Float("Price", compute="compute_base_product", store=True)
     base_unit_name = fields.Char('Name', compute="compute_base_product", store=True)
     lst_price = fields.Float("Product price", compute="compute_base_product", store=True)
-
     # default_code <= 6
 
+    @api.constrains('barcode')
+    def _check_barcode_uniqueness(self):
+        """ No verification in this project, there is some case when multiple product has the same barcode"""
+        pass
 
     def name_get(self):
         # TDE: this could be cleaned a bit I think
