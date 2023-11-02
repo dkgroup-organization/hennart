@@ -66,6 +66,8 @@
                                     /<field name="base_unit_name" class="oe_inline" readonly="1"/>)
                                 </div>
                                 <field name="base_package_price"/>
+
+                                <field name="min_production_qty"/>
                             </group>
                             <group>
                                 <field name="type_milk"/>
@@ -119,7 +121,6 @@
                         <group>
                             <group name="Weight" string="Weight">
                                 <field name="volume"/>
-                                <field name="to_weight"/>
                                 <field name="tare"/>
                                 <field name="weight" string="Net weight"/>
                                 <field name="weight_gross"/>
@@ -137,12 +138,12 @@
                         <group>
                             <group name="label" string="Label">
                                 <field name="format_etiquette"/>
-                                <field name="to_label"/>
                             </group>
 
                             <group name="production" string="Production">
                                 <field name="gestion_affinage"/>
                                 <field name="to_personnalize"/>
+                                <field name="min_production_qty"/>
                             </group>
                         </group>
 

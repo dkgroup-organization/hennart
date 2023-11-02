@@ -149,6 +149,7 @@ class BaseSynchroServer(models.Model):
             quants = self.env['stock.quant'].search([])
             for quant in quants:
                 quant.quantity = 0
+                quant.sudo().unlink()
 
             if len(obj_ids) == 1:
                 obj_ids[0].load_remote_record(limit=-1)
@@ -255,7 +256,7 @@ class BaseSynchroServer(models.Model):
         requeue_delay = datetime.now() - timedelta(hours=1)
         job_ids = self.env['queue.job'].search([('state', '=', 'pending'),
                                                 ('date_created', '<', requeue_delay)])
-        job_ids.requeue()
+        job_ids.button_done()
         job_ids = self.env['queue.job'].search([('state', 'in', ['pending', 'started'])])
 
         nb_invoice = 0

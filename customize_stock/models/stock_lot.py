@@ -25,6 +25,18 @@ class Stock_lot(models.Model):
     expiration_date = fields.Datetime(
         string='Expiration Date', compute=False, store=True, readonly=False, default=False,
         help='This is the date on which the goods with this Serial Number may become dangerous and must not be consumed.')
+    date_label = fields.Char("label date text:", compute="get_date_text")
+
+    def get_date_text(self):
+        """ Define the legal text to put on label, best before or expiration dates"""
+        for lot in self:
+            if lot.product_id.life_date:
+                text = _("Expiration date:")
+            elif lot.product_id.use_date:
+                text = _("Best before date:")
+            else:
+                text = _("Date:")
+            lot.date_label = text
 
     def name_get(self):
         res = []

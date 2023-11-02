@@ -34,6 +34,7 @@
                         <page string="Steps">
                             <field name="step_ids" nolabel="1" context="{'default_scenario_id': id}">
                                 <tree string="Step">
+                                    <field name="id" readonly="1"/>
                                     <field name="sequence" widget="handled"/>
                                     <field name="name"/>
                                     <field name="description"/>
@@ -52,6 +53,7 @@
                                             <group>
                                                 <field name="sequence"/>
                                                 <field name="step_qweb"/>
+                                                <field name="action_presentation"/>
                                                 <field name="action_scanner"/>
                                                 <field name="action_model"
                                                        attrs="{'invisible':[('action_scanner','!=', 'scan_model')]}"/>
@@ -63,7 +65,7 @@
                                             </group>
                                             <separator string="Enter the python code here" colspan="4"/>
                                             <div>
-                                                <p>You can use the object: object and env to acces to all functions and environment</p>
+                                                <p>You can use the object: step and env to acces to all functions and environment</p>
                                                 <p>Some name variables is used by the system in data:</p>
                                                 <p>user, warning, scan, function, message, button, result</p>
                                             </div>
@@ -82,12 +84,10 @@
                                                 <form string="Transition">
                                                     <field name="name"/>
                                                     <group>
-
                                                         <field name="sequence"/>
                                                         <field name="to_id"
                                                                domain="[('scenario_id','=', parent.scenario_id)]"/>
                                                         <field name="condition"/>
-
                                                     </group>
                                                 </form>
                                             </field>

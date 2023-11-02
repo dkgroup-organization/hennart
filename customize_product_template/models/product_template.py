@@ -154,15 +154,18 @@ class ProductTemplate(models.Model):
     nv_protein = fields.Char(string=' Protein (g)')
     nv_salt = fields.Char(string='Salt (g)')
 
-    life_date = fields.Boolean(string='DLC : End of Life Date')
+    life_date = fields.Boolean(string='DLC : Expiration Date')
     use_date = fields.Boolean(string='DDM : Best before Date')
 
-    to_weight = fields.Boolean(string='to weight')
-    tare = fields.Float(string='Tare', help='Tare')
-    weight_gross = fields.Float(string='Gross Weight',help='The gross weight in Kg.', digits="Stock Weight")
-    format_etiquette =  fields.Char('Format d\'etiquette', size=128)
-    to_label = fields.Boolean(string='to label')
+    tare = fields.Float(string='Tare', digits="Stock Weight",
+        help='Tare, this value will be subtracted from the weight returned by the device to obtain the net weight. ')
+    weight_gross = fields.Float(string='Gross Weight', help='The gross weight in Kg.', digits="Stock Weight")
+    format_etiquette = fields.Char('Format d\'etiquette', size=128)
+
+    # Production
     gestion_affinage = fields.Boolean(string='Refining management')
+    min_production_qty = fields.Float(string='Batch production quantity',
+                                help = "The production is manufactured in multiples of this number.")
     to_personnalize = fields.Boolean(string='Customer specifity',
                                      help="This product need a production opération to be personnalized."
                                           " For exemple, label with brand."
@@ -194,6 +197,8 @@ class ProductTemplate(models.Model):
 
     base_unit_name = fields.Char(compute='_compute_base_unit_name',
                                  help='Displays the custom unit for the products if defined or the selected unit of measure otherwise.')
+    
+    min_production_qty = fields.Float(string='Batch production quantity')
 
     def _compute_service_type(self):
         """ only one case manually"""

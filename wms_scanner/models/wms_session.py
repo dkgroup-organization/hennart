@@ -4,6 +4,7 @@
 from odoo import api, fields, models, _
 import json
 from odoo.http import request
+import datetime
 
 # Reserved variable term in data
 DATA_RESERVED_NAME = ['user', 'warning', 'scan', 'function', 'message', 'button', 'result']
@@ -12,6 +13,7 @@ DATA_RESERVED_NAME = ['user', 'warning', 'scan', 'function', 'message', 'button'
 class WmsSession(models.Model):
     _name = "wms.session"
     _description = "Scanner session"
+    _order = "write_date"
 
     def _default_warehouse(self):
         "find the user warehouse"
@@ -24,6 +26,10 @@ class WmsSession(models.Model):
     end_date = fields.Datetime('End Date')
     user_id = fields.Many2one('res.users', 'User')
     data = fields.Char('data')
+    data_previous = fields.Char('Previous data')
+    data_end = fields.Char('End data')
+    request_method = fields.Char('Request metode')
+    request_param = fields.Char('Request parameters')
     message = fields.Char('log last message')
     warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse', default=_default_warehouse)
     error = fields.Text('Error')
@@ -62,11 +68,19 @@ class WmsSession(models.Model):
         for session in self:
             session_data = {}
             session_message = {}
+            session.data_end = str(data)
 
             for key in list(data.keys()):
                 if key in DATA_RESERVED_NAME:
                     # Don't save this objects, juste log for debug
                     session_message.update({key: "{}".format(data[key])})
+                elif isinstance(data[key], (datetime.date, datetime.datetime)):
+                    date_format = "%Y-%m-%d"
+                    if isinstance(data[key], datetime.datetime):
+                        date_format += " %H:%M:%S"
+                    if data[key]:
+                        session_data.update({key: data[key].strftime(date_format)})
+                    #datetime.strptime(date_string, format)
                 else:
                     if hasattr(data[key], '_name') and hasattr(data[key], 'ids'):
                         # Odoo model name
@@ -89,12 +103,20 @@ class WmsSession(models.Model):
             self.init_data()
 
         session_data = json.loads(self.data)
+
+        self.request_method = request.httprequest.method
+        self.request_param = dict(request.params)
+        self.error = ''
+        self.message = ''
+
         for data_key, data_value in session_data.items():
             if len(data_key) > 6 and data_key[:6] == "model.":
                 # restore this odoo object
                 data[data_key[6:]] = request.env[data_value[0]].browse(data_value[1])
             else:
                 data[data_key] = data_value
+
+        self.data_previous = str(data)
         return data
 
 

@@ -2,14 +2,14 @@
 # Based on the work of sylvain Garancher <sylvain.garancher@syleam.fr>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
 
-import logging
+
 import string
 from odoo.tools.safe_eval import safe_eval, test_python_expr
 from odoo import models, api, fields, _
 from odoo.http import request
 from odoo.exceptions import MissingError, UserError, ValidationError
 import markupsafe
-
+import logging
 logger = logging.getLogger('wms_scanner')
 
 
@@ -39,6 +39,8 @@ class WmsScenarioStep(models.Model):
     action_variable = fields.Char(string='Input name', default='scan',
                                   help="Define a name for the result of the scan at this step ")
     action_message = fields.Char(string='Input Placeholder', translate=True)
+    action_presentation = fields.Html('Screen presentation', translate=True)
+
     step_qweb = fields.Char(
         string='QWEB Template',
         help="Use a specific QWEB template at this step (optional).")
@@ -75,9 +77,6 @@ class WmsScenarioStep(models.Model):
         for step in self:
             name = "%s: " % (step.sequence)
             name += "%s " % (step.action_scanner)
-
-            if step.action_variable:
-                name += " -> %s " % (step.action_variable)
             step.name = name
 
     @api.onchange('action_variable')
@@ -155,7 +154,7 @@ class WmsScenarioStep(models.Model):
                 data['warning'] = _('Please, enter a numeric value')
 
         elif action_scanner == 'scan_multi':
-            data = self.scan_multi(data, scan)
+            data = self.scan_multi(data, scan, action_variable)
 
         elif action_scanner in ['scan_model', 'scan_info']:
             models_ids = action_model
