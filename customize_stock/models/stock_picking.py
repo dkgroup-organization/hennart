@@ -16,13 +16,14 @@ class StockPicking(models.Model):
     sequence = fields.Integer(string='Sequence', compute='_compute_sequence', store=True)
 
     def get_theoric_weight(self):
-        """ return theorical weight to qweb"""
+        """ return theoretical weight to qweb"""
         weight = 0
         nb_lines = 0
         for picking in self:
+            nb_lines += len(picking.move_ids_without_package)
             for move in picking.move_ids_without_package:
                 weight += move.product_uom_qty * move.product_id.weight
-                nb_lines += len(picking.move_ids_without_package)
+
         res = str(nb_lines) + _(" lines, ") + str(int(weight)) + " Kg"
         return res
 
