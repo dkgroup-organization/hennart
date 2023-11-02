@@ -250,13 +250,14 @@ class BaseSynchroObj(models.Model):
                     remote_ids = remote_ids[:limit]
                     break
 
-            remote_values = obj.remote_read(remote_ids)
-            if obj.model_id.model == 'product.product':
-                obj.load_remote_product(remote_values)
-            elif obj.model_id.model == 'product.template':
-                obj.load_remote_product_template(remote_values)
-            else:
-                obj.write_local_value(remote_values)
+            if remote_ids:
+                remote_values = obj.remote_read(remote_ids)
+                if obj.model_id.model == 'product.product':
+                    obj.load_remote_product(remote_values)
+                elif obj.model_id.model == 'product.template':
+                    obj.load_remote_product_template(remote_values)
+                else:
+                    obj.write_local_value(remote_values)
 
             obj.synchronize_date = fields.Datetime.now()
 
@@ -269,7 +270,7 @@ class BaseSynchroObj(models.Model):
                 partner_obj = self.server_id.get_obj('res.partner')
                 partner_local_id = partner_obj.get_local_id(remote_partner_id[0])
 
-    def load_remote_product(self, remote_values={}):
+    def load_remote_product(self, remote_values=[]):
         """ exception for product, create template and variant in the same time"""
         self.ensure_one()
 
@@ -301,7 +302,7 @@ class BaseSynchroObj(models.Model):
                         local_ids.create(vals_line)
             self.write_local_value(remote_values)
 
-    def load_remote_product_template(self, remote_values={}):
+    def load_remote_product_template(self, remote_values=[]):
         """ exception for product, create template and variant in the same time"""
         self.ensure_one()
 
@@ -484,10 +485,6 @@ class BaseSynchroObj(models.Model):
                 'update_date': fields.Datetime.now(),
                 })
 
-        for line in local_ids:
-            if line.error:
-                return False
-
         if check_local_id:
             # Check if there is a local object pointing by these ids
             checking_local_ids = self.env['synchro.obj.line']
@@ -496,7 +493,7 @@ class BaseSynchroObj(models.Model):
                     if self.env[self.model_id.model].browse(checking_local_id.local_id):
                         checking_local_ids |= checking_local_id
                 except:
-                    checking_local_id.error = "local Deleting"
+                    checking_local_id.unlink()
 
             local_ids = checking_local_ids
 
