@@ -15,12 +15,13 @@ class AccountMoveLine(models.Model):
         """ return compte tiers, or tag the line with a '?' """
         for line in self:
             partner = line.partner_id
-            if line.account_id.user_type_id.type == "receivable":
+
+            if line.account_id.account_type == "asset_receivable":
                 if not line.partner_id.third_account_customer and line.partner_id.parent_id:
                     partner = line.partner_id.parent_id
                 line.compte_tiers = partner.third_account_customer or '?'
 
-            elif line.account_id.user_type_id.type == "payable":
+            elif line.account_id.account_type == "liability_payable":
                 if not line.partner_id.third_account_supplier and line.partner_id.parent_id:
                     partner = line.partner_id.parent_id
                 line.compte_tiers = partner.third_account_supplier or '?'

@@ -25,8 +25,6 @@ class WmsController(http.Controller):
         if not request.session.uid:
             return http.local_redirect('/web/login?redirect=%2Fscanner')
 
-        print('\n-----request---method------------', request.httprequest.method)
-
         # Get session data
         session = request.env['wms.session'].get_session()
         data = session.get_data()
@@ -44,7 +42,7 @@ class WmsController(http.Controller):
         return res
 
     def init_qweb_data(self):
-        """ Add standard information to data"""
+        """ Add standard information to data to send to qweb render"""
         qweb_data = {}
         qweb_data['user'] = request.env['res.users'].browse(request.uid)
         qweb_data['header_menu'] = request.env['wms.menu'].search([('parent_id', '=', False)])

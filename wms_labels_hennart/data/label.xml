@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+		
+		<record id="labels_hennart_stock_prodlot" model="labels.templates">
+			<field name="model_id" ref="stock.model_stock_lot"/>
+			<field name="name">Lot de production Hennart</field>
+			<field name="label_zpl">^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
+^XA
+^MMT
+^PW1004
+^LL0531
+^LS0
+^FT17,54^A0N,22,36^FH\^FDHENNART FRERES S.A.S^FS
+^FT157,246^A0N,29,28^FH\^FD00.000 Kg^FS
+^FT22,245^A0N,29,28^FH\^FDPoids Net:^FS
+^FT23,204^A0N,33,33^FH\^FD${object.life_date[:10]}^FS
+^FT331,235^A0N,29,28^FH\^FD${object.ref}^FS
+^FT87,84^A0N,29,28^FH\^FD${object.product_id.default_code}^FS
+^FT332,198^A0N,29,28^FH\^FD${object.ref}^FS
+^FT17,84^A0N,21,19^FH\^FDCode:^FS
+^FT23,128^A0N,30,40^FH\^FD${object.product_id.name}^FS
+^BY2,3,81^FT21,336^BCN,,Y,N
+^FD>:${object.barcode}^FS
+^FO16,91^GB606,51,2^FS
+^FO524,24^GE97,60,2^FS
+^FT536,60^A0N,13,16^FH\^FD62.215.030^FS
+^FT555,42^A0N,13,31^FH\^FDFR^FS
+^FT566,78^A0N,17,14^FH\^FDCE^FS
+^FT333,162^A0N,17,21^FH\^FDLot de production^FS
+^FT23,163^A0N,17,21^FH\^FD\85 consommer jusqu'au^FS
+^PQ1,0,1,Y^XZ</field>
+		</record>
+
+
+		<record id="labels_hennart_printer" model="labels.templates">
+			<field name="model_id" ref="wms_label.model_barcodes_printers"/>
+			<field name="name">Imprimante</field>
+			<field name="label_zpl">^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
+^XA
+^MMT
+^PW945
+^LL0827
+^LS0
+^FT45,55^A0N,62,62^FH\^FDImprimante^FS
+^FT55,120^A0N,42,40^FH\^FD${object.name}^FS
+^BY2,3,105^FT45,250^BCN,,Y,N
+^FD>:${object.barcode}^FS
+^PQ1,0,1,Y^XZ</field>
+		</record>
+
+	<!-- 	<record id="labels_hennart_weight_device" model="labels.templates">
+			<field name="model_id" ref="stock_wms.model_stock_weight_device"/>
+			<field name="name">Balance</field>
+			<field name="label_zpl">^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
+^XA
+^MMT
+^PW945
+^LL0827
+^LS0
+^FT45,55^A0N,62,62^FH\^FDBalance^FS
+^FT55,120^A0N,42,40^FH\^FD${object.name}^FS
+^BY2,3,105^FT45,250^BCN,,Y,N
+^FD>:${object.barcode}^FS
+^PQ1,0,1,Y^XZ</field>
+		</record> -->
+
+		<record id="labels_hennart_location" model="labels.templates">
+			<field name="model_id" ref="stock.model_stock_location"/>
+			<field name="name">Emplacement</field>
+			<field name="label_zpl">^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
+^XA
+^MMT
+^PW945
+^LL0827
+^LS0
+^FT45,55^A0N,62,62^FH\^FDEmplacement^FS
+^FT55,120^A0N,42,40^FH\^FD${object.name[:4]} / ${object.name[4:]}^FS
+^BY2,3,105^FT45,250^BCN,,Y,N
+^FD>:${object.ean13}^FS
+^PQ1,0,1,Y^XZ</field>
+		</record>
+
+
+		<record id="label_stock_move_wizard" model="labels.templates">
+			<field name="model_id" ref="wms_labels_hennart.model_label_stock_move"/>
+			<field name="name">Wizard etiquette Hennart</field>
+			<field name="label_zpl">^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
+^XA
+^MMT
+^PW1004
+^LL0531
+^LS0
+^FT23,65^A0N,22,36^FH\^FDHENNART FRERES S.A.S^FS
+^FT425,245^A0N,29,28^FH\^FD${object.weight or ''} ${object.weight and ' Kg' or ''}^FS
+^FT425,215^A0N,17,21^FH\^FD${object.weight_label}^FS
+^FT425,190^A0N,33,33^FH\^FD${object.date_format}^FS
+^FT23,245^A0N,29,28^FH\^FD${object.prodlot_id.ref or ''}^FS
+^FT90,90^A0N,29,28^FH\^FD${object.product_id.default_code or ''}^FS
+^FT23,90^A0N,21,19^FH\^FD${object.code_label}^FS
+^FT23,135^A0N,30,40^FH\^FD${object.product_id.name}^FS
+^BY2,3,81^FT21,345^BCN,,Y,N
+^FD>:${object.barcode}^FS
+^FO15,100^GB610,60,2^FS
+^FO524,34^GE97,60,2^FS
+^FT536,70^A0N,13,16^FH\^FD62.215.030^FS
+^FT555,52^A0N,13,31^FH\^FDFR^FS
+^FT566,88^A0N,17,14^FH\^FDCE^FS
+^FT23,215^A0N,17,21^FH\^FD${object.prodlot_label}^FS
+^FT23,180^A0N,17,21^FH\^FD${object.date_label}^FS
+^PQ1,0,1,Y^XZ</field>
+		</record>
+
+
+		<record id="label_hennart_container" model="labels.templates">
+			<field name="model_id" ref="wms_labels_hennart.model_label_container"/>
+			<field name="name">Container</field>
+			<field name="label_zpl">^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
+^XA
+^MMT
+^PW1004
+^LL0531
+^LS0
+
+
+
+^FT23,65^A0N,45,35^FH\^FDSSCC:^FS
+^FT23,115^A0N,20,20^FH\^FDHennart Freres SAS^FS
+
+^BY2,3,70^FT120,90^BCN,,Y,N^FD${ctx.get('barcode') or ''}^FS
+
+^FO15,120^GB640,182,2^FS
+^FT23,145^A0N,20,20^FH\^FDAdresse de livraison:^FS
+^FT203,145^A0N,25,25^FH\^FD${object.country or ''}^FS
+^FT370,145^A0N,20,20^FH\^FDDate de livraison:^FS
+^FT530,145^A0N,25,25^FH\^FD${ctx.get('date') or ''}^FS
+
+^FT23,185^A0N,35,35^FH\^FD${object.partner_name or ''}^FS
+^FT23,218^A0N,30,30^FH\^FD${object.street or ''}^FS
+^FT23,250^A0N,30,30^FH\^FD${object.street2 or ''}^FS
+^FT23,285^A0N,30,30^FH\^FD${object.zip or ''}^FS
+^FT150,285^A0N,30,30^FH\^FD${object.city or ''}^FS
+
+^FO15,300^GB640,70,2^FS
+^FT23,345^A0N,40,40^FH\^FD${object.name}^FS
+^FT350,345^A0N,40,40^FH\^FD${ctx.get('name2') or ''}^FS
+^FT500,350^A0N,60,60^FH\^FD${ctx.get('nb_container') or ''} / ${ctx.get('nb_total_container') or ''} ^FS
+
+
+^PQ1,0,1,Y^XZ</field>
+		</record>
+
+
+    </data>
+
+
+</odoo>
