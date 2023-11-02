@@ -632,14 +632,6 @@ class BaseSynchroObj(models.Model):
 
         return remote_value
 
-    def local_values_ok(self, values):
-        """ Check values before write, there is an error when product_id is not find"""
-        self.ensure_one()
-        if self.model_id.model in ['stock.quant', 'stock.lot']:
-            if 'product_id' not in values:
-                return False
-        return True
-
     def write_local_value(self, remote_values, commit=True):
         """write in local database the values, the values is a list of dic vals
             values: [{'id': 1, 'name': 'My object name', ....}, {'id': 2, ...}]
@@ -666,18 +658,14 @@ class BaseSynchroObj(models.Model):
                 # Create
                 remote_value = self.exception_value_create(remote_value)
                 local_value = self.get_local_value(remote_value)
+                _logger.info("create: %s: %s" % (self.model_id.model, local_value))
+                try:
+                    new_obj = self.env[self.model_id.model].sudo().with_context(synchro=True).create(local_value)
+                    local_id = new_obj.id
 
-                if self.local_values_ok(local_value):
-                    _logger.info("create: %s: %s" % (self.model_id.model, local_value))
-                    try:
-                        new_obj = self.env[self.model_id.model].sudo().with_context(synchro=True).create(local_value)
-                        local_id = new_obj.id
-
-                    except Exception as e:
-                        local_id = 0
-                        error = "%s" % e
-                else:
-                    _logger.info("Error on create: %s: %s\nremote value: %s" % (self.model_id.model, local_value, remote_value))
+                except Exception as e:
+                    local_id = 0
+                    error = "%s" % e
 
             condition = [('remote_id', '=', remote_id), ('obj_id', '=', self.id)]
             local_ids = self.env['synchro.obj.line'].search(condition)
