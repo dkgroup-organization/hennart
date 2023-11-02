@@ -256,8 +256,6 @@ class BaseSynchroObj(models.Model):
                     obj.load_remote_product(remote_values)
                 elif obj.model_id.model == 'product.template':
                     obj.load_remote_product_template(remote_values)
-                elif obj.model_id.model == 'stock.quant':
-                    obj.load_remote_stock_quant(remote_values)
                 else:
                     obj.write_local_value(remote_values)
 
@@ -316,16 +314,6 @@ class BaseSynchroObj(models.Model):
                 remote_ids = product_obj.remote_search(domain)
                 remote_values2 = product_obj.remote_read(remote_ids)
                 product_obj.load_remote_product(remote_values2)
-
-    def load_remote_stock_quant(self, remote_values=[]):
-        """ exception for production lot, check the data """
-        self.ensure_one()
-        if self.model_id.model == 'stock.quant':
-            remote_values_ok = []
-            for values in remote_values:
-                if values.get('product_id') and values.get('location_id'):
-                    remote_values_ok.append(values)
-            self.write_local_value(remote_values_ok)
 
     def check_childs(self):
         "check the child of this object"
@@ -505,7 +493,7 @@ class BaseSynchroObj(models.Model):
                     if self.env[self.model_id.model].browse(checking_local_id.local_id):
                         checking_local_ids |= checking_local_id
                 except:
-                    checking_local_id.error = "local Deleting"
+                    checking_local_id.unlink()
 
             local_ids = checking_local_ids
 
