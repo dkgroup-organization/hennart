@@ -154,7 +154,7 @@ class ProductTemplate(models.Model):
     nv_protein = fields.Char(string=' Protein (g)')
     nv_salt = fields.Char(string='Salt (g)')
 
-    life_date = fields.Boolean(string='DLC : End of Life Date')
+    life_date = fields.Boolean(string='DLC : Expiration Date')
     use_date = fields.Boolean(string='DDM : Best before Date')
 
     to_weight = fields.Boolean(string='to weight')

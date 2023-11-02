@@ -775,4 +775,21 @@ class BaseSynchroObj(models.Model):
                     list_line.update_values()
                     list_line = self.env[obj.line_id._name]
 
-
+    def unlink_local_void(self):
+        """ Unlink the line with local object deleted """
+        for obj in self:
+            table = obj.model_id.model.replace('.', '_')
+            sql = """
+                select sol.id
+                from synchro_obj_line sol
+                Left JOIN {table} pt ON sol.local_id = pt.id
+                where sol.obj_id = {obj_id}
+                and pt.id is null;
+                """.format(table=table, obj_id=obj.id)
+            self.env.cr.execute(sql)
+            result_sql = self.env.cr.fetchall()
+            unlink_ids = []
+            for row in result_sql:
+                if len(row):
+                    unlink_ids.append(int(row[0]))
+            obj.line_id.search([('id', 'in', unlink_ids)]).unlink()
