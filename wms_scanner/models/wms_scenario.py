@@ -75,6 +75,10 @@ class WmsScenario(models.Model):
     scenario_id = fields.Integer(
         string='technical field to filter', store=True, compute="get_scenario_id")
 
+    def button_save_xml(self):
+        """ Save the scenario in xml"""
+        pass
+
     def get_scenario_id(self):
         """ technical field used to filter multiple object in once domain"""
         for scenario in self:

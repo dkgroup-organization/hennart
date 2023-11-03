@@ -80,6 +80,7 @@
                 <div class="w-full">
                     <input
                             t-att-type="step.get_input_type(data)"
+
                             id="scan"
                             name="scan"
                             t-att-class="step.get_input_class(data)"

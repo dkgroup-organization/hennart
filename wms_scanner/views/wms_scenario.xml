@@ -23,6 +23,13 @@
                                    options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
                         </button>
                     </div>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="button_save_xml" type="object" class="oe_stat_button" icon="fa-save"/>
+
+                    </div>
+
+
+
                     <group colspan="4" col="4">
                         <field name="name"/>
                         <field name="sequence"/>
