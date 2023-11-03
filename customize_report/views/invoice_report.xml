@@ -33,7 +33,7 @@
                             <div class="col-auto col-3 mw-100 mb-2" t-if="o.partner_id.ref" name="customer_ref" style="border: 1px solid black !important;">
                                 <strong style ="margin-left: 10px !important;">Customer:</strong>
                                 <p style ="margin-left: 10px !important;" t-field="o.partner_id.ref"/>
-
+                            </div>
                             <div class="col-auto col-3 mw-100 mb-2" t-if="o.partner_id.ref" name="client_code" style="border: 1px solid black !important;"> 
                                 <strong style ="margin-left: 10px !important;">Reference:</strong>
                                 <p style ="margin-left: 10px !important;" t-field="o.invoice_origin"/>
