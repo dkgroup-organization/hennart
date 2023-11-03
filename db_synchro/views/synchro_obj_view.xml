@@ -111,7 +111,7 @@
                             </field>
 
                             <button name="unlink_local_void" string="Unlink void mapping" type="object"/>
-                            <button name="unlink_mapping" string="!!! Reset All mapping !!!!" type="object"/>
+                            <!--<button name="unlink_mapping" string="!!! Reset All mapping !!!!" type="object"/>-->
 
                         </page>
                     </notebook>

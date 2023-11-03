@@ -11,7 +11,7 @@
     "maintainer": "DKGROUP",
     "images": [],
     "depends": [
-        "base", "account",
+        "base", "account", "base_report_to_printer"
     ],
     "data": [
         "view/menu_export_compta.xml",

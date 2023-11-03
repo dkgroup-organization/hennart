@@ -21,4 +21,4 @@ class PrintingPrinter(models.Model):
 
     _inherit = "printing.printer"
 
-    barcode = fields.Char("Barcode", index=True)
+    barcode = fields.Char("Barcode")

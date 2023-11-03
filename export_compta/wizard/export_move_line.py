@@ -115,15 +115,13 @@ class AccountExportMoveLine(models.TransientModel):
                 ]
             move_ids = self.env['account.move'].search(condition)
 
-            column_template = ['Code journal', 'N° compte général', 'Intitulé compte général', 'N° compte tiers',
-                               'Intitulé compte tiers', 'Numéro facture', 'Date de pièce', 'Libellé écriture',
-                               'Montant débit', 'Montant crédit', 'Lettre de Letrage', 'inutilisé', 'Mode de règlement',
-                               "Date d'échéance", "Référence rapprochement", "Date rapprochement"]
+            column_template = ["account", "third", "debit", "credit", "amount_currency", "journal", "currency_rate",
+                               "invoice", "date", "date_maturity", "libelle", "currency"]
 
             datas = []
 
             move_ids.check_tiers_account()
-            move_ids.check_account()
+            #move_ids.check_account()
 
             # Start extract line
             for move in move_ids:
@@ -133,33 +131,30 @@ class AccountExportMoveLine(models.TransientModel):
                         continue
 
                     data_line = {}
+                    data_line['account'] = line.account_id.export_code or line.account_id.code or ''
+                    data_line['third'] = line.compte_tiers or ''
+                    data_line['debit'] = line.debit
+                    data_line['credit'] = line.credit
+                    data_line['amount_currency'] = abs(line.amount_currency)
+                    data_line['journal'] = line.journal_id.export_code or line.journal_id.code or ''
+                    data_line['currency_rate'] = line.currency_rate
+                    data_line['invoice'] = move.name or ''
+                    data_line['date'] = move.invoice_date or move.date
+                    data_line["date_maturity"] = line.date_maturity
+                    data_line['libelle'] = move.partner_id.name or ''
+                    data_line['currency'] = line.currency_id.name
 
-                    data_line['Code journal'] = line.journal_id.export_code or line.journal_id.code or ''
-                    data_line['Date de pièce'] = move.invoice_date or move.date
-                    data_line['REF_PIECE'] = move.ref or ''
-                    data_line['Numéro facture'] = move.name or ''
-
-                    data_line['N° compte général'] = line.account_id.code or ''
-                    data_line['Intitulé compte général'] = line.account_id.name or ''
-
-                    data_line['N° compte tiers'] = line.compte_tiers or ''
-                    data_line['Intitulé compte tiers'] = line.partner_id.name or ''
-
-                    data_line['Libellé écriture'] = line.name or ''
-                    data_line['Montant débit'] = line.debit
-                    data_line['Montant crédit'] = line.credit
-                    data_line['DEV'] = 'EUR'
-
-                    data_line["Date d'échéance"] = line.date_maturity
-
-                    # Unicode, pas d'accent
-                    for key in ['Intitulé compte général', 'Intitulé compte tiers', 'Libellé écriture']:
+                    # Unicode,currency_rate
+                    for key in ['libelle']:
                         data_line[key] = txt_cleanup(data_line[key])
 
+
+
                     # Date format
-                    for key in ['Date de pièce', "Date d'échéance"]:
+                    for key in ['date', "date_maturity"]:
                         if data_line[key]:
-                            data_line[key] = data_line[key].strftime('%d/%m/%Y')
+                            date_txt = data_line.get(key).strftime('%d%m%Y')
+                            data_line[key] = date_txt
                         else:
                             data_line[key] = ''
 

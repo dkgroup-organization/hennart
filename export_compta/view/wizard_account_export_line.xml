@@ -30,11 +30,8 @@
     <field name="name">Export move line</field>
     <field name="res_model">account.export.moveline</field>
     <field name="view_mode">form</field>
-    <field name="help" type="html">
-      <p class="o_view_nocontent_smiling_face">
-                Add a new tag
-              </p>
-    </field>
+    <field name="target">new</field>
+
   </record>
   <menuitem id="menu_wizard_account_move_line" action="action_wizard_account_move_line" parent="menu_export_compta_export" sequence="1" />
 </odoo>

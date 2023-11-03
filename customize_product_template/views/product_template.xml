@@ -36,6 +36,9 @@
                         <group/>
                     </group>
                 </div>
+                <field name="public_categ_ids" position="after">
+                   <field name="product_tag_ids" widget="many2many_tags"/>
+                </field>
 
                 <div name="options" position="inside">
                     <span class="d-inline-block">
@@ -66,8 +69,6 @@
                                     /<field name="base_unit_name" class="oe_inline" readonly="1"/>)
                                 </div>
                                 <field name="base_package_price"/>
-
-                                <field name="min_production_qty"/>
                             </group>
                             <group>
                                 <field name="type_milk"/>
