@@ -9,6 +9,8 @@ import time
 import datetime
 
 
+WEIGTH_DEVICE = 910000
+
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
@@ -114,7 +116,10 @@ class WmsScenarioStep(models.Model):
 
         if self.action_variable == 'lot_id':
             if move_line:
-                res = _('Lot: ') + f"{move_line.lot_id.ref}  {move_line.lot_id.expiration_date.strftime('%d/%m/%Y')}"
+                expiration_date = move_line.lot_id.expiration_date or move_line.lot_id.use_date
+                res = _('Lot: ') + f"{move_line.lot_id.ref}"
+                if expiration_date:
+                    res += f" {expiration_date.strftime('%d/%m/%Y')}"
             else:
                 res = _('Scan lot')
 
@@ -173,6 +178,7 @@ class WmsScenarioStep(models.Model):
         if action_variable == 'lot_id':
             lot = data.get('lot_id') or move_line and move_line.lot_id
             res = lot.expiration_date and f"{lot.expiration_date.strftime('%d/%m/%Y')}" or '??/??/????'
+
         if action_variable == 'quantity':
             if data.get('move_line') and move_line.move_id.bom_line_id.bom_id.type == 'phantom':
                 quantity = int(data.get('quantity') or move_line.reserved_uom_qty)
@@ -371,6 +377,22 @@ class WmsScenarioStep(models.Model):
     def weight_preparation(self, data):
         """ Weight product in preparation location
         """
+        print('\n---------------', data)
         warehouse = self.env.ref('stock.warehouse0')
+        if data.get('weight') and data['weight'] > WEIGTH_DEVICE:
+            barcode = str(data.get('weight')).split('.')[0]
+            if len(barcode) > 2:
+                barcode = f"({barcode[:2]}){barcode[2:]}"
+            print('\n-------------------------', barcode)
+
+        elif data.get('weight') and data.get('sum_weight'):
+            pass
+            # check if it is a device
+        elif data.get('weight'):
+            move_line = data.get('weight_line')
+            move_line.weight = data.get('weight')
+            move_line.to_weight = False
+        else:
+            move_line = data.get('move_line')
 
         return data
