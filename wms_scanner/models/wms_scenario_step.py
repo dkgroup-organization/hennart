@@ -155,6 +155,7 @@ class WmsScenarioStep(models.Model):
 
         elif action_scanner == 'scan_multi':
             data = self.scan_multi(data, scan, action_variable)
+            print('read_scan scan_multi', data)
 
         elif action_scanner in ['scan_model', 'scan_info']:
             models_ids = action_model
@@ -180,10 +181,11 @@ class WmsScenarioStep(models.Model):
             if action_scanner == "scan_info" and not data.get(action_variable):
                 data = self.scan_multi(data, scan, action_variable)
 
-            if not data.get(action_variable) and not data.get('warning'):
+            elif not data.get(action_variable) and not data.get('warning'):
                 data['warning'] = _('The barcode is unknown')
         else:
             data['warning'] = _('The barcode is unknown')
+        print('read scan ', data)
         return data
 
     def scan_multi(self, data, scan, action_variable):

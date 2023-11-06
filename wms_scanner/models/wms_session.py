@@ -71,9 +71,12 @@ class WmsSession(models.Model):
             session.data_end = str(data)
 
             for key in list(data.keys()):
-                if key in DATA_RESERVED_NAME:
+                if not key:
+                    continue
+                elif key in DATA_RESERVED_NAME:
                     # Don't save this objects, juste log for debug
                     session_message.update({key: "{}".format(data[key])})
+
                 elif isinstance(data[key], (datetime.date, datetime.datetime)):
                     date_format = "%Y-%m-%d"
                     if isinstance(data[key], datetime.datetime):
@@ -81,12 +84,13 @@ class WmsSession(models.Model):
                     if data[key]:
                         session_data.update({key: data[key].strftime(date_format)})
                     #datetime.strptime(date_string, format)
+
+                elif hasattr(data[key], '_name') and hasattr(data[key], 'ids'):
+                    # Odoo model name
+                    session_data['model.' + key] = (data[key]._name, data[key].ids)
+
                 else:
-                    if hasattr(data[key], '_name') and hasattr(data[key], 'ids'):
-                        # Odoo model name
-                        session_data['model.' + key] = (data[key]._name, data[key].ids)
-                    else:
-                        session_data.update({key: data[key]})
+                    session_data.update({key: data[key]})
 
             session.data = json.dumps(session_data)
             session.message = json.dumps(session_message)

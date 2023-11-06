@@ -51,6 +51,7 @@ class WmsScenarioStep(models.Model):
 
             # detect the product
             product = self.env['product.product']
+            product_tmpl = self.env['product.product']
             affinage = -13
             if not scan[affinage].isalpha():
                 affinage = -15
@@ -63,8 +64,10 @@ class WmsScenarioStep(models.Model):
                 # Check if the product exist
                 product_ids = self.env['product.product'].search([('default_code', '=', product_code)])
                 if len(product_ids) == 1:
-                    data['lot_code'] = product_code
-                    product = product_ids
+                    product_tmpl = product_ids
+                    product = product_tmpl.base_product_tmpl_id.product_variant_id or product_tmpl
+                    data['lot_code'] = product.default_code
+
                 else:
                     data['warning'] = _("Barcode error, The product is unknown: ") + product_code
             else:
@@ -85,7 +88,7 @@ class WmsScenarioStep(models.Model):
 
             # if there is a weight this barcode is a label, use base unit count to have package quantity
             if product and data.get('weight') and not data.get('warning'):
-                data['quantity'] = product.base_unit_count
+                data['quantity'] = product_tmpl.base_unit_count
 
             # Define the date
             if not data.get('warning'):
@@ -108,7 +111,7 @@ class WmsScenarioStep(models.Model):
                     lot_id = int(lot_name[1:])
                     lot_ids = self.env['stock.lot'].search([('id', '=', lot_id)])
                     if lot_ids:
-                        if lot_ids.product_id == (product.base_product_tmpl_id or product):
+                        if lot_ids.product_id == product:
                             data['lot_id'] = lot_ids
                         else:
                             data['warning'] = _("This lot has not the good product.")
@@ -116,22 +119,37 @@ class WmsScenarioStep(models.Model):
                         data['warning'] = _("This lot is removing.")
                 else:
                     old_barcode = scan[:-6] + "000000"
+                    if product != product_tmpl:
+                        old_barcode = product.default_code[:5] + old_barcode[5:]
+
+                    # old_barcode or barcode_ext is external barcode making by another system
                     for barcode_field in ['barcode_ext', 'temp_old_barcode', 'temp2_old_barcode']:
                         lot_ids = self.env['stock.lot'].search([(barcode_field, '=', old_barcode)])
                         if len(lot_ids) > 1:
                             data['warning'] = _("There is more than one lot with the same name and date: {}".format(old_barcode))
-                        elif lot_ids and lot_ids.product_id == (product.base_product_tmpl_id or product):
+                        elif lot_ids and lot_ids.product_id == product:
                             data['lot_id'] = lot_ids[0]
                             break
+                        elif lot_ids:
+                            data['warning'] = _("This lot has not the good product.")
+                            print(lot_ids, lot_ids.product_id , product, product_tmpl)
+
+                    if data.get('lot_date') and not data.get('lot_id'):
+                        # Maybe there is a error on date
+                        lot_ids = self.env['stock.lot'].search([('name', '=', lot_name),
+                                                                ('product_id', '=', product.id)])
+                        if len(lot_ids) == 1 and \
+                                lot_ids.expiration_date.strftime('%Y-%m-%d') != data['lot_date'].strftime('%Y-%m-%d'):
+                            data['warning'] = _("The expiration date of this label is not correct: {}".format(data['lot_date'].strftime('%d-%m-%T')))
 
             # Get the lot name to possible creation if lot is finding
             if product and data.get('lot_date') and not data.get('lot_id'):
                 # In this case the lot is to create by use lot_name, lot_product, lot_date
                 data['lot_name'] = scan[5:affinage]
-                data['lot_product'] = product.base_product_tmpl_id or product
+                data['lot_product'] = product
 
         if len(scan) > 4 and scan[:4] == BARCODE_WEIGHT:
-            # In this case, it is a printer
+            # In this case, it is a weighted device
             weight_device_ids = self.env['stock.weight.device'].search([('barcode', '=', scan)])
             if len(weight_device_ids) == 1:
                 data['weight_id'] = weight_device_ids
@@ -142,13 +160,15 @@ class WmsScenarioStep(models.Model):
             # In this case, it is a printer
             pass
 
-
-
-
         if data.get('warning'):
             data_origin['warning'] = data.get('warning')
         else:
             data_origin.update(data)
+
+        if self.action_scanner in ['scan_info']:
+            for odj_name in ['lot_id', 'product_id', 'weight_id']:
+                if data_origin.get(odj_name):
+                    data_origin['scan'] = data_origin[odj_name]
 
         return data_origin
 
