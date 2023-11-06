@@ -34,6 +34,8 @@ class WmsScenarioStep(models.Model):
         1 char: product code end
         6-8 char: expiration date
         6 char: weight
+
+        The product code is to check if there is a package.
         """
         self.ensure_one()
 
@@ -65,6 +67,7 @@ class WmsScenarioStep(models.Model):
                 product_ids = self.env['product.product'].search([('default_code', '=', product_code)])
                 if len(product_ids) == 1:
                     product_tmpl = product_ids
+                    # check if it is a package
                     product = product_tmpl.base_product_tmpl_id.product_variant_id or product_tmpl
                     data['lot_code'] = product.default_code
 
@@ -152,7 +155,8 @@ class WmsScenarioStep(models.Model):
             # In this case, it is a weighted device
             weight_device_ids = self.env['stock.weight.device'].search([('barcode', '=', scan)])
             if len(weight_device_ids) == 1:
-                data['weight_id'] = weight_device_ids
+                # weighting_device
+                data['weighting_device'] = weight_device_ids
             else:
                 data['warning'] = "No Weight device finding"
 
@@ -165,11 +169,11 @@ class WmsScenarioStep(models.Model):
         else:
             data_origin.update(data)
 
-        if self.action_scanner in ['scan_info']:
-            for odj_name in ['lot_id', 'product_id', 'weight_id']:
-                if data_origin.get(odj_name):
-                    data_origin['scan'] = data_origin[odj_name]
-
+            if self.action_scanner in ['scan_info']:
+                for odj_name in ['lot_id', 'product_id', 'weight_id']:
+                    if data_origin.get(odj_name):
+                        data_origin['scan'] = data_origin[odj_name]
+        print('\n------------------------', data_origin)
         return data_origin
 
     @api.model

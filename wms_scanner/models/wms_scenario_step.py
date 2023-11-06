@@ -24,10 +24,11 @@ class WmsScenarioStep(models.Model):
         store=True)
     description = fields.Char('Description')
     action_scanner = fields.Selection(
-        [('start', 'Start scenario, no scan, routing'),
+        [('start', 'Start scenario, no scan, initialize and go to next step'),
          ('routing', 'Routing choice, no scan, go to next step'),
          ('no_scan', 'Message, no scan'),
          ('scan_quantity', 'Enter quantity'),
+         ('scan_weight', 'Enter Weight'),
          ('scan_text', 'Enter Text'),
          ('scan_model', 'Scan model'),
          ('scan_info', 'Scan search'),
@@ -70,6 +71,16 @@ class WmsScenarioStep(models.Model):
         new_data['step'] = data.get('step') or self
         new_data['scenario'] = new_data['step'].scenario_id
         return new_data
+
+    @api.onchange('action_scanner')
+    def weighting_device(self):
+        """ defined standard variable """
+        vals = {}
+        if self.action_scanner == "scan_weight":
+            vals['action_variable'] = "weighting_device"
+        if self.action_scanner == "scan_quantity":
+            vals['action_variable'] = "quantity"
+        self.update(vals)
 
     @api.depends('sequence', 'action_scanner', 'action_variable')
     def compute_name(self):
@@ -153,9 +164,8 @@ class WmsScenarioStep(models.Model):
             except:
                 data['warning'] = _('Please, enter a numeric value')
 
-        elif action_scanner == 'scan_multi':
+        elif action_scanner in ['scan_weight', 'scan_multi']:
             data = self.scan_multi(data, scan, action_variable)
-            print('read_scan scan_multi', data)
 
         elif action_scanner in ['scan_model', 'scan_info']:
             models_ids = action_model
@@ -185,7 +195,6 @@ class WmsScenarioStep(models.Model):
                 data['warning'] = _('The barcode is unknown')
         else:
             data['warning'] = _('The barcode is unknown')
-        print('read scan ', data)
         return data
 
     def scan_multi(self, data, scan, action_variable):

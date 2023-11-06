@@ -196,7 +196,16 @@ class WmsScenarioStep(models.Model):
         res = "text"
         if self.action_scanner == 'scan_quantity':
             res = 'number'
+        if self.action_scanner == 'scan_weight' and self.action_variable == 'weight':
+            res = 'hidden'
+        return res
 
+    def get_input_step(self, data):
+        """ Return step to number manual entry"""
+        self.ensure_one()
+        res = "1"
+        if self.action_variable == 'weight':
+            res = '0.001'
         return res
 
     def get_input_class(self, data):
@@ -238,6 +247,31 @@ class WmsScenarioStep(models.Model):
             picking_ids.action_assign()
 
         return self.get_user_picking(data)
+
+    def get_button_option(self, data):
+        """ Get the configuration for add button in Qweb, on the message zone
+         return a list of tuple:
+         [{'text': 'the text in the button, 'href': 'the http link'},
+          {},
+          ...]
+         """
+        self.ensure_one()
+        scenario_id = data['step'].scenario_id.id
+        step_id = data['step'].id
+        href_base = f'./scanner?scenario={scenario_id}&amp;step={step_id}&amp;button='
+
+        if data['step'].action_scanner == 'scan_weight':
+            button_conf = [
+                {'text': _('Manual entry'),
+                 'href': href_base + 'manual_weight'
+                 },
+                {'text': _('Change Tare'),
+                 'href': href_base + 'manual_tare'
+                 }
+            ]
+            return button_conf
+
+        return []
 
     def check_move_line_scan(self, data):
         """ Check the lot and the quantity """
@@ -377,17 +411,12 @@ class WmsScenarioStep(models.Model):
     def weight_preparation(self, data):
         """ Weight product in preparation location
         """
-        print('\n---------------', data)
-        warehouse = self.env.ref('stock.warehouse0')
-        if data.get('weight') and data['weight'] > WEIGTH_DEVICE:
-            barcode = str(data.get('weight')).split('.')[0]
-            if len(barcode) > 2:
-                barcode = f"({barcode[:2]}){barcode[2:]}"
-            print('\n-------------------------', barcode)
+        if data.get('weighting_device'):
+            # currently in weighting process
+            if data.get('weight_line'):
+                # simulate process
+                data['weight'] = data['weight_line'].product_id.weight
 
-        elif data.get('weight') and data.get('sum_weight'):
-            pass
-            # check if it is a device
         elif data.get('weight'):
             move_line = data.get('weight_line')
             move_line.weight = data.get('weight')
