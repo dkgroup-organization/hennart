@@ -328,4 +328,3 @@ class BaseModuleRecord(models.Model):
                 elif rec[0] == "assert":
                     pass
             return doc.toprettyxml(indent="\t").encode("utf-8")
-

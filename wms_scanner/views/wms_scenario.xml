@@ -22,13 +22,9 @@
                             <field name="active" widget="boolean_button"
                                    options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
                         </button>
+                        <button name="button_save_xml_step" type="object" class="oe_stat_button" icon="fa-save">Step</button>
+                        <button name="button_save_xml_transition" type="object" class="oe_stat_button" icon="fa-save">Transition</button>
                     </div>
-                    <div class="oe_button_box" name="button_box">
-                        <button name="button_save_xml" type="object" class="oe_stat_button" icon="fa-save"/>
-
-                    </div>
-
-
 
                     <group colspan="4" col="4">
                         <field name="name"/>
@@ -48,7 +44,6 @@
                                     <field name="python_code"/>
                                     <field name="scenario_id" invisible="1"/>
                                     <field name="out_transition_ids" widget="many2many_tags"/>
-
                                 </tree>
                                 <form string="Step">
                                     <group>

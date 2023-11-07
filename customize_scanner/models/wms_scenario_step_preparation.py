@@ -6,10 +6,9 @@ import logging
 from odoo import models, api, fields, _
 from odoo.exceptions import MissingError, UserError, ValidationError
 import time
+import random
 import datetime
 
-
-WEIGTH_DEVICE = 910000
 
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
@@ -256,12 +255,13 @@ class WmsScenarioStep(models.Model):
           ...]
          """
         self.ensure_one()
+        res = []
         scenario_id = data['step'].scenario_id.id
         step_id = data['step'].id
-        href_base = f'./scanner?scenario={scenario_id}&amp;step={step_id}&amp;button='
+        href_base = f'./scanner?scenario={scenario_id}&step={step_id}&button='
 
         if data['step'].action_scanner == 'scan_weight':
-            button_conf = [
+            res = [
                 {'text': _('Manual entry'),
                  'href': href_base + 'manual_weight'
                  },
@@ -269,9 +269,7 @@ class WmsScenarioStep(models.Model):
                  'href': href_base + 'manual_tare'
                  }
             ]
-            return button_conf
-
-        return []
+        return res
 
     def check_move_line_scan(self, data):
         """ Check the lot and the quantity """
@@ -411,17 +409,20 @@ class WmsScenarioStep(models.Model):
     def weight_preparation(self, data):
         """ Weight product in preparation location
         """
+
         if data.get('weighting_device'):
             # currently in weighting process
+            # Return weight and remove  weighting_device
             if data.get('weight_line'):
                 # simulate process
-                data['weight'] = data['weight_line'].product_id.weight
+                alea_product = random.uniform(0.90, 1.1)
+                data['weight'] = data['weight_line'].product_id.weight * alea_product * data['weight_line'].qty_done + data.get('weight', 0.0)
 
         elif data.get('weight'):
             move_line = data.get('weight_line')
             move_line.weight = data.get('weight')
             move_line.to_weight = False
         else:
-            move_line = data.get('move_line')
+            pass
 
         return data

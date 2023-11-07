@@ -4,8 +4,7 @@
 
 import sys
 import traceback
-from odoo import models, api, fields, exceptions
-from odoo import _
+from odoo import models, api, fields, exceptions, _
 from odoo.tools.safe_eval import expr_eval
 import logging
 logger = logging.getLogger('wms_scanner')
@@ -22,6 +21,7 @@ class ScannerScenarioTransition(models.Model):
     name = fields.Char(
         string='Name',
         compute="compute_name",
+        store=True,
         help='Name of the transition.')
     sequence = fields.Integer(
         string='Sequence',
@@ -51,9 +51,18 @@ class ScannerScenarioTransition(models.Model):
         store=True,
         readonly=True)
 
-    @api.depends('from_id', 'to_id', 'condition')
+    @api.depends('from_id.sequence', 'to_id.sequence', 'sequence')
     def compute_name(self):
         """ compute name"""
         for transition in self:
-            transition.name = "[{} -> {}] {}".format(transition.from_id.sequence,
-                                                 transition.to_id.sequence, transition.condition)
+            transition.name = f"{transition.sequence}-[{transition.from_id.sequence}-{transition.to_id.sequence}]"
+
+    def name_get(self):
+        """ return name with a description of condition"""
+        res = []
+        for transition in self:
+            name = f"{transition.name}: {transition.condition}"
+            res.append((transition.id, name))
+        return res
+
+

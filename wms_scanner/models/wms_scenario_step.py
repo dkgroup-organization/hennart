@@ -20,7 +20,7 @@ class WmsScenarioStep(models.Model):
 
     sequence = fields.Integer('sequence')
     name = fields.Char(
-        string='Name', compute="compute_name",
+        string='index', compute="compute_name",
         store=True)
     description = fields.Char('Description')
     action_scanner = fields.Selection(
@@ -82,13 +82,12 @@ class WmsScenarioStep(models.Model):
             vals['action_variable'] = "quantity"
         self.update(vals)
 
-    @api.depends('sequence', 'action_scanner', 'action_variable')
+    @api.depends('sequence')
     def compute_name(self):
         """ Compute the name of the step"""
         for step in self:
-            name = "%s: " % (step.sequence)
-            name += "%s " % (step.action_scanner)
-            step.name = name
+            name = step.scenario_id.name
+            step.name = f"{name}-{step.sequence}"
 
     @api.onchange('action_variable')
     def onchange_action_variable(self):
@@ -119,17 +118,18 @@ class WmsScenarioStep(models.Model):
             data['button'] = params.get('button')
             if params.get('scan'):
                 data[data['button']] = params.get('scan')
+
         return data
 
     def read_scan(self, data={}):
-        "Decode scan and return associated objects"
+        """Decode scan and return associated objects"""
         self.ensure_one()
         action_scanner = self.action_scanner
         action_variable = self.action_variable
         action_model = self.action_model
 
         def is_alphanumeric(scan):
-            "check the scan string"
+            """check the scan string"""
             res = True
             for scan_char in scan:
                 if scan_char not in string.printable:
