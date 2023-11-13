@@ -10,6 +10,7 @@
                     <field name="name"/>
                     <field name="barcode"/>
                     <field name="address"/>
+                    <field name="simulation" widget="boolean_toggle"/>
                 </tree>
             </field>
         </record>

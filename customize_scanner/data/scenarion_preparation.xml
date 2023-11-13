@@ -122,13 +122,13 @@
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-		<field name="python_code">del(data['weighting_device'])</field>
+		<field name="python_code">data.pop('weighting_device', None)</field>
 	</record>
 
 	<record id="wms_scenario_step_preparation10" model="wms.scenario.step">
 		<field name="sequence" eval="90"/>
 		<field name="name">preparation-90</field>
-		<field name="description">pesage</field>
+		<field name="description">pesage manuel</field>
 		<field name="action_scanner">scan_quantity</field>
 		<field name="action_model" ref="customize_stock.model_stock_weight_device"/>
 		<field name="action_variable">weight</field>

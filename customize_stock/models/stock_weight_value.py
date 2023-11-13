@@ -14,5 +14,5 @@ class StockWeightValue(models.Model):
 
     move_line_id = fields.Many2one('stock.move.line', 'Move line')
 
-    state = fields.Selection([('draft', 'New'), ('cancel', 'Cancelled'), ('done', 'Done')],
+    state = fields.Selection([('draft', 'New'), ('cancel', 'Cancelled'), ('done', 'Done'), ('simulation', 'simulation')],
                              string='Status', default="draft")

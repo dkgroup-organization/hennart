@@ -151,7 +151,7 @@ class WmsScenarioStep(models.Model):
                 data['lot_name'] = scan[5:affinage]
                 data['lot_product'] = product
 
-        if len(scan) > 4 and scan[:4] == BARCODE_WEIGHT:
+        if data_origin.get('step') and data_origin['step'].action_scanner == 'scan_weight':
             # In this case, it is a weighted device
             weight_device_ids = self.env['stock.weight.device'].search([('barcode', '=', scan)])
             if len(weight_device_ids) == 1:
@@ -173,7 +173,6 @@ class WmsScenarioStep(models.Model):
                 for odj_name in ['lot_id', 'product_id', 'weight_id']:
                     if data_origin.get(odj_name):
                         data_origin['scan'] = data_origin[odj_name]
-        print('\n------------------------', data_origin)
         return data_origin
 
     @api.model

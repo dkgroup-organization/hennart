@@ -139,6 +139,12 @@ class WmsScenarioStep(models.Model):
             if move_line and move_line.product_id.weight:
                 res += '~ {} Kg'.format(move_line.product_id.weight * move_line.qty_done)
 
+        if self.action_variable == 'weighting_device':
+            if data.get('weight', 0.0) > 0.0:
+                res = f"{data.get('weight', 0.0):.3f} Kg"
+            else:
+                res = _("Scan weighting device")
+
         return res
 
     def get_input_description_left(self, data, action_variable):
@@ -161,6 +167,7 @@ class WmsScenarioStep(models.Model):
         if action_variable == 'printer':
             printer = data.get('printer')
             res = printer and printer.name or _('scan printer')
+
         return res
 
     def get_input_description_right(self, data, action_variable):
@@ -412,15 +419,16 @@ class WmsScenarioStep(models.Model):
 
         if data.get('weighting_device'):
             # currently in weighting process
-            # Return weight and remove  weighting_device
-            if data.get('weight_line'):
-                # simulate process
-                alea_product = random.uniform(0.90, 1.1)
-                data['weight'] = data['weight_line'].product_id.weight * alea_product * data['weight_line'].qty_done + data.get('weight', 0.0)
+            weight = data.get('weight')
+            if not weight:
+                weight = 0.0
+            weight_device = data['weighting_device'].get_weight(data=data)
+            data['weight'] = weight + weight_device
 
-        elif data.get('weight'):
+        elif data.get('weight') and data.get('weight_line'):
+            # save the weight
             move_line = data.get('weight_line')
-            move_line.weight = data.get('weight')
+            move_line.weight = data.get('weight') or 0.0
             move_line.to_weight = False
         else:
             pass
