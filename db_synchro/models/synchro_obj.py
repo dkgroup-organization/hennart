@@ -675,7 +675,7 @@ class BaseSynchroObj(models.Model):
         return line_ids and line_ids.mapped('remote_id') or []
 
     def update_remote_write_date(self, limit=10000):
-        """ approximate last remote write, used for the old import """
+        """ approximate last remote write, used for the old import V7, in futur the write_date is enough to manage this"""
         now = fields.Datetime.now()
 
         def remove_write_date_under(obj, last_date, remote_ids):

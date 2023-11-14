@@ -17,21 +17,10 @@
             <main class="relative">
                 <section id="preparation" class="screen_title">
                     <div class="container mx-auto px-5 pb-5 relative">
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <t t-call="wms_scanner.wms_scanner_image_box"/>
-                                    </td>
-                                    <td>
-                                        <h1>preparation</h1>
-                                        <span t-if="data.get('picking')" t-esc="data['picking'].name"/>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <t t-call="customize_scanner.scanner_body_title_preparation"/>
                         <t t-if="data.get('move_line')" t-call="customize_scanner.scanner_line_preparation"/>
                         <t t-if="data.get('weight_line')" t-call="customize_scanner.scanner_weight_preparation"/>
+                        <t t-if="data.get('end_preparation')" t-call="customize_scanner.scanner_end_preparation"/>
                     </div>
                 </section>
             </main>
@@ -81,6 +70,22 @@
             </t>
         </template>
 
+        <template id="scanner_end_preparation" name="scanner_end_preparation">
+            <t t-if="data.get('step')">
+                <t t-set="step" t-value="data.get('step')"/>
+                <form class="flex flex-col items-center gap-2 landscape:gap-1 landscape:w-[49%]"
+                      t-att-action="'./scanner?scenario={}&amp;step={}'.format(step.scenario_id.id, step.id)"
+                      autoComplete="off"
+                      method="post">
+                    <t t-call="customize_scanner.scanner_preparation_nb_package"/>
+                    <t t-call="customize_scanner.scanner_preparation_nb_container"/>
+                    <t t-call="customize_scanner.scanner_preparation_nb_pallet"/>
+
+                    <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
+                </form>
+            </t>
+        </template>
+
         <template id="scanner_input" name="preparation_input">
             <div class="relative" t-if="step.action_presentation" t-esc="step.action_presentation"/>
             <t t-if="step.action_variable == action_variable">
@@ -114,6 +119,22 @@
                     <span t-esc="step.get_input_description_right(data, action_variable)" class="absolute right-4"/>
                 </div>
             </t>
+        </template>
+
+        <template id="scanner_body_title_preparation" name="scanner_body_title_preparation">
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <t t-call="wms_scanner.wms_scanner_image_box"/>
+                        </td>
+                        <td>
+                            <h1>preparation</h1>
+                            <span t-if="data.get('picking')" t-esc="data['picking'].name"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </template>
 
         <template id="scanner_button_option" name="scanner_button_option">
@@ -175,7 +196,23 @@
             </t>
         </template>
 
+        <template id="scanner_preparation_input_nb_package" name="scanner_preparation_input_nb_package">
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'number_of_package'"/>
+            </t>
+        </template>
 
+        <template id="scanner_preparation_nb_container" name="scanner_preparation_nb_container">
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'nb_container'"/>
+            </t>
+        </template>
+
+        <template id="scanner_preparation_input_nb_pallet" name="scanner_preparation_input_nb_pallet">
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'nb_pallet'"/>
+            </t>
+        </template>
 
 
     </data>

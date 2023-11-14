@@ -24,11 +24,11 @@ class WmsScenarioStep(models.Model):
         store=True)
     description = fields.Char('Description')
     action_scanner = fields.Selection(
-        [('start', 'Start scenario, no scan, initialize and go to next step'),
-         ('routing', 'Routing choice, no scan, go to next step'),
+        [('start', 'Start, no scan'),
+         ('routing', 'Routing, no scan'),
          ('no_scan', 'Message, no scan'),
          ('scan_quantity', 'Enter quantity'),
-         ('scan_weight', 'Enter Weight'),
+         ('scan_weight', 'Scan Weight'),
          ('scan_text', 'Enter Text'),
          ('scan_model', 'Scan model'),
          ('scan_info', 'Scan search'),
@@ -157,7 +157,7 @@ class WmsScenarioStep(models.Model):
         elif action_scanner == 'scan_quantity':
             try:
                 quantity = float(scan)
-                if quantity > 0.0:
+                if quantity >= 0.0:
                     data[action_variable] = quantity
                 else:
                     data['warning'] = _('Please, enter a positive value')

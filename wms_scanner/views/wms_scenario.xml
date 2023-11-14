@@ -39,21 +39,33 @@
                                 <tree string="Step">
                                     <field name="id" readonly="1"/>
                                     <field name="sequence" widget="handled"/>
+
                                     <field name="name"/>
                                     <field name="description"/>
+                                    <field name="action_scanner"/>
                                     <field name="python_code"/>
                                     <field name="scenario_id" invisible="1"/>
                                     <field name="out_transition_ids" widget="many2many_tags"/>
                                 </tree>
                                 <form string="Step">
                                     <group>
+                                        <field name="sequence"/>
                                         <field name="name"/>
                                         <field name="description"/>
                                     </group>
                                     <notebook>
                                         <page string="Action">
-                                            <group>
-                                                <field name="sequence"/>
+
+                                            <separator string="1/ Python code preparation of data" colspan="4"/>
+                                            <div>
+                                                <p>You can use the object: step and env to acces to all functions and environment.
+                                                    Some name variables is used by the system in data:</p>
+                                                <p>user, warning, scan, function, message, button, result</p>
+                                            </div>
+                                            <field name="python_code" colspan="4" nolabel="1" widget="ace"
+                                                   options="{'mode': 'python'}"/>
+
+                                            <group string="2/ Qweb template configuration">
                                                 <field name="step_qweb"/>
                                                 <field name="action_presentation"/>
                                                 <field name="action_scanner"/>
@@ -65,17 +77,8 @@
                                                        attrs="{'invisible':[('action_scanner','in', ['none', 'start', 'routing'])]}"/>
                                                 <field name="scenario_id" invisible="1"/>
                                             </group>
-                                            <separator string="Enter the python code here" colspan="4"/>
-                                            <div>
-                                                <p>You can use the object: step and env to acces to all functions and environment</p>
-                                                <p>Some name variables is used by the system in data:</p>
-                                                <p>user, warning, scan, function, message, button, result</p>
-                                            </div>
-                                            <field name="python_code" colspan="4" nolabel="1" widget="ace"
-                                                   options="{'mode': 'python'}"/>
-                                        </page>
-                                        <page string="Transition out">
-                                            <separator string="Outgoing transitions"/>
+
+                                            <separator string="3/ Outgoing transitions"/>
                                             <field name="out_transition_ids" nolabel="1">
                                                 <tree string="Transition">
                                                     <field name="sequence"/>

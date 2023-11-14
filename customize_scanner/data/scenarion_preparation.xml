@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<odoo noupdate="1">
+<odoo>
 	<record id="wms_scenario_preparation0" model="wms.scenario">
 		<field name="name">preparation</field>
 		<field name="sequence" eval="20"/>
@@ -133,17 +133,52 @@
 		<field name="action_model" ref="customize_stock.model_stock_weight_device"/>
 		<field name="action_variable">weight</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-		<field name="python_code">data = step.weight_preparation(data)</field>
+
 	</record>
 
 	<record id="wms_scenario_step_preparation11" model="wms.scenario.step">
 		<field name="sequence" eval="110"/>
 		<field name="name">preparation-110</field>
 		<field name="description">fin de pesage</field>
-		<field name="action_scanner">no_scan</field>
-		<field name="action_variable">scan</field>
+		<field name="action_scanner">routing</field>
+		<field name="python_code">data['end_preparation'] = True</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 
+	<record id="wms_scenario_step_preparation120" model="wms.scenario.step">
+		<field name="sequence" eval="120"/>
+		<field name="name">preparation-120</field>
+		<field name="description">Nb package</field>
+		<field name="action_scanner">scan_quantity</field>
+		<field name="action_variable">number_of_package</field>
+		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+	</record>
+
+	<record id="wms_scenario_step_preparation130" model="wms.scenario.step">
+		<field name="sequence" eval="130"/>
+		<field name="name">preparation-130</field>
+		<field name="description">Nb container</field>
+		<field name="action_scanner">scan_quantity</field>
+		<field name="action_variable">nb_container</field>
+		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+	</record>
+
+	<record id="wms_scenario_step_preparation140" model="wms.scenario.step">
+		<field name="sequence" eval="140"/>
+		<field name="name">preparation-140</field>
+		<field name="description">Nb pallet</field>
+		<field name="action_scanner">scan_quantity</field>
+		<field name="action_variable">nb_pallet</field>
+		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+	</record>
+
+	<record id="wms_scenario_step_preparation150" model="wms.scenario.step">
+		<field name="sequence" eval="150"/>
+		<field name="name">preparation-150</field>
+		<field name="description">Fin de preparation</field>
+		<field name="action_scanner">no_scan</field>
+		<field name="action_presentation">End of this preparation</field>
+		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+	</record>
 
 </odoo>
