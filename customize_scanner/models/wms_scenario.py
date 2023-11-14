@@ -14,20 +14,24 @@ logger = logging.getLogger('wms_scanner')
 class WmsScenario(models.Model):
     _inherit = 'wms.scenario'
 
-    def button_save_xml(self):
+    def button_save_xml(self, model_ids):
         """ Save in xml format with base_module_record """
         self.ensure_one()
+        self.update_name()
         search_condition = [('scenario_id', '=', self.id)]
-
         save_vals = {
             'search_condition': search_condition,
             'filter_cond': 'all',
         }
         save_xml = self.env['base.module.data'].create(save_vals)
-        model_ids = self.env["ir.model"].search([("model", "in", [
-            'wms.scenario', 'wms.scenario.step', 'wms.scenario.transition'])])
         save_xml.objects = model_ids
         res = save_xml.record_objects()
         return res
 
-        
+    def update_name(self):
+        # Update name of step and transition to index the xml record
+        for scenario in self:
+            for step in scenario.step_ids:
+                step.compute_name()
+                for transition in step.out_transition_ids:
+                    transition.compute_name()

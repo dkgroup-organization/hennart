@@ -20,14 +20,15 @@ class WmsScenarioStep(models.Model):
 
     sequence = fields.Integer('sequence')
     name = fields.Char(
-        string='Name', compute="compute_name",
+        string='index', compute="compute_name",
         store=True)
     description = fields.Char('Description')
     action_scanner = fields.Selection(
-        [('start', 'Start scenario, no scan, routing'),
-         ('routing', 'Routing choice, no scan, go to next step'),
+        [('start', 'Start, no scan'),
+         ('routing', 'Routing, no scan'),
          ('no_scan', 'Message, no scan'),
          ('scan_quantity', 'Enter quantity'),
+         ('scan_weight', 'Scan Weight'),
          ('scan_text', 'Enter Text'),
          ('scan_model', 'Scan model'),
          ('scan_info', 'Scan search'),
@@ -71,13 +72,22 @@ class WmsScenarioStep(models.Model):
         new_data['scenario'] = new_data['step'].scenario_id
         return new_data
 
-    @api.depends('sequence', 'action_scanner', 'action_variable')
+    @api.onchange('action_scanner')
+    def weighting_device(self):
+        """ defined standard variable """
+        vals = {}
+        if self.action_scanner == "scan_weight":
+            vals['action_variable'] = "weighting_device"
+        if self.action_scanner == "scan_quantity":
+            vals['action_variable'] = "quantity"
+        self.update(vals)
+
+    @api.depends('sequence')
     def compute_name(self):
         """ Compute the name of the step"""
         for step in self:
-            name = "%s: " % (step.sequence)
-            name += "%s " % (step.action_scanner)
-            step.name = name
+            name = step.scenario_id.name
+            step.name = f"{name}-{step.sequence}"
 
     @api.onchange('action_variable')
     def onchange_action_variable(self):
@@ -108,17 +118,18 @@ class WmsScenarioStep(models.Model):
             data['button'] = params.get('button')
             if params.get('scan'):
                 data[data['button']] = params.get('scan')
+
         return data
 
     def read_scan(self, data={}):
-        "Decode scan and return associated objects"
+        """Decode scan and return associated objects"""
         self.ensure_one()
         action_scanner = self.action_scanner
         action_variable = self.action_variable
         action_model = self.action_model
 
         def is_alphanumeric(scan):
-            "check the scan string"
+            """check the scan string"""
             res = True
             for scan_char in scan:
                 if scan_char not in string.printable:
@@ -146,14 +157,14 @@ class WmsScenarioStep(models.Model):
         elif action_scanner == 'scan_quantity':
             try:
                 quantity = float(scan)
-                if quantity > 0.0:
+                if quantity >= 0.0:
                     data[action_variable] = quantity
                 else:
                     data['warning'] = _('Please, enter a positive value')
             except:
                 data['warning'] = _('Please, enter a numeric value')
 
-        elif action_scanner == 'scan_multi':
+        elif action_scanner in ['scan_weight', 'scan_multi']:
             data = self.scan_multi(data, scan, action_variable)
 
         elif action_scanner in ['scan_model', 'scan_info']:
@@ -180,7 +191,7 @@ class WmsScenarioStep(models.Model):
             if action_scanner == "scan_info" and not data.get(action_variable):
                 data = self.scan_multi(data, scan, action_variable)
 
-            if not data.get(action_variable) and not data.get('warning'):
+            elif not data.get(action_variable) and not data.get('warning'):
                 data['warning'] = _('The barcode is unknown')
         else:
             data['warning'] = _('The barcode is unknown')

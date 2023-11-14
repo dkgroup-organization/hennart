@@ -19,8 +19,7 @@ class WmsScenario(models.Model):
     name = fields.Char(
         string='Name',
         required=True,
-        translate=True,
-        help='Appear on barcode reader screen.')
+        translate=False,)
     sequence = fields.Integer(
         string='Sequence',
         default=100,
@@ -75,7 +74,19 @@ class WmsScenario(models.Model):
     scenario_id = fields.Integer(
         string='technical field to filter', store=True, compute="get_scenario_id")
 
-    def button_save_xml(self):
+    def button_save_xml_step(self):
+        """ Save xml step"""
+        model_ids = self.env["ir.model"].search([("model", "in", ['wms.scenario', 'wms.scenario.step'])])
+        res = self.button_save_xml(model_ids=model_ids)
+        return res
+
+    def button_save_xml_transition(self):
+        """ Save xml step"""
+        model_ids = self.env["ir.model"].search([("model", "=", 'wms.scenario.transition')])
+        res = self.button_save_xml(model_ids=model_ids)
+        return res
+
+    def button_save_xml(self, model_ids):
         """ Save the scenario in xml"""
         pass
 

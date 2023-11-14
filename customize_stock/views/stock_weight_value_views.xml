@@ -12,6 +12,7 @@
                     <field name="weight"/>
                     <field name="tare"/>
                     <field name="move_line_id"/>
+                    <field name="state"/>
                 </tree>
             </field>
         </record>

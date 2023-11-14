@@ -45,7 +45,14 @@
                                     <p t-esc="picking.get_theoric_weight()"/>
                                 </div>
                                 <div class="flex justify-between">
-                                    <p t-esc="picking.partner_id.name"/>
+                                    <p><span t-if="picking.parent_id" t-esc="picking.parent_id.partner_id.name"/>
+                                        <span t-if="not picking.parent_id" t-esc="picking.partner_id.name"/>
+                                        , <span t-esc="picking.partner_id.city"/>
+
+
+                                    </p>
+
+
                                     <p t-esc="picking.scheduled_date"/>
                                 </div>
                             </a>

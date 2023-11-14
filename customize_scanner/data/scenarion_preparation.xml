@@ -1,401 +1,184 @@
 <?xml version="1.0" ?>
 <odoo>
-	<record id="wms_scenario_step_noscanscan0" model="wms.scenario.step">
+	<record id="wms_scenario_preparation0" model="wms.scenario">
+		<field name="name">preparation</field>
+		<field name="sequence" eval="20"/>
+		<field name="scenario_image">construction.jpg</field>
+		<field name="scenario_qweb">customize_scanner.scanner_scenario_preparation</field>
+		<field name="debug_mode" eval="0"/>
+		<field name="active" eval="1"/>
+		<field name="warehouse_ids" eval="[(6,0,[])]"/>
+		<field name="company_id" ref="base.main_company"/>
+		<field name="group_ids" eval="[(6,0,[ref('stock.group_stock_user')])]"/>
+		<field name="user_ids" eval="[(6,0,[])]"/>
+		<field name="scenario_id" eval="2"/>
+	</record>
+	<record id="wms_scenario_step_preparation0" model="wms.scenario.step">
+		<field name="sequence" eval="1"/>
+		<field name="name">preparation-1</field>
+		<field name="action_scanner">start</field>
+		<field name="action_variable">scan</field>
+		<field name="action_message">test</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_list_preparation</field>
+		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="python_code">data = step.get_user_picking(data)</field>
+	</record>
+
+	<record id="wms_scenario_step_preparation1" model="wms.scenario.step">
 		<field name="sequence" eval="10"/>
-		<field name="name">10: no_scan  -&gt; scan </field>
+		<field name="name">preparation-10</field>
 		<field name="description">choix preparation</field>
 		<field name="action_scanner">no_scan</field>
 		<field name="action_variable">scan</field>
 		<field name="step_qweb">customize_scanner.scanner_scenario_list_preparation</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
-	<record id="wms_scenario_transition_datagetbuttonaddpreparation0" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '10: no_scan  -&gt; scan ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '20: routing  -&gt; scan ')]"/>
-		<field name="condition">data.get('button', '') == 'add_preparation'</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetpickingid0" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '10: no_scan  -&gt; scan ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '30: routing  -&gt; scan ')]"/>
-		<field name="condition">data.get('picking_id')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_true0" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '0: start  -&gt; scan ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '10: no_scan  -&gt; scan ')]"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_true1" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '20: routing  -&gt; scan ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '10: no_scan  -&gt; scan ')]"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_step_routingscan0" model="wms.scenario.step">
+
+	<record id="wms_scenario_step_preparation2" model="wms.scenario.step">
 		<field name="sequence" eval="20"/>
-		<field name="name">20: routing  -&gt; scan </field>
+		<field name="name">preparation-20</field>
 		<field name="description">ajouter une preparation</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 		<field name="python_code">data = step.add_next_picking(data)</field>
 	</record>
-	<record id="wms_scenario_transition_true2" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '20: routing  -&gt; scan ')]"/>
-		<field name="to_id" ref="wms_scenario_step_noscanscan0"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetbuttonaddpreparation1" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_noscanscan0"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '20: routing  -&gt; scan ')]"/>
-		<field name="condition">data.get('button', '') == 'add_preparation'</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_step_routingscan1" model="wms.scenario.step">
+
+	<record id="wms_scenario_step_preparation3" model="wms.scenario.step">
 		<field name="sequence" eval="30"/>
-		<field name="name">30: routing  -&gt; scan </field>
+		<field name="name">preparation-30</field>
 		<field name="description">sélectionner une ligne de préparation</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 		<field name="python_code">data = step.get_next_picking_line(data)</field>
 	</record>
-	<record id="wms_scenario_transition_datagetmoveline0" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '30: routing  -&gt; scan ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '40: scan_multi  -&gt; lot_id ')]"/>
-		<field name="condition">data.get('move_line')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_true3" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '30: routing  -&gt; scan ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '70: routing  -&gt; scan ')]"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_true4" model="wms.scenario.transition">
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '60: routing  -&gt; scan ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '30: routing  -&gt; scan ')]"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetpickingid1" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" ref="wms_scenario_step_noscanscan0"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '30: routing  -&gt; scan ')]"/>
-		<field name="condition">data.get('picking_id')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_step_scanmultilotid0" model="wms.scenario.step">
+
+	<record id="wms_scenario_step_preparation4" model="wms.scenario.step">
 		<field name="sequence" eval="40"/>
-		<field name="name">40: scan_multi  -&gt; lot_id </field>
+		<field name="name">preparation-40</field>
 		<field name="description">scan lot</field>
 		<field name="action_scanner">scan_multi</field>
 		<field name="action_variable">lot_id</field>
-		<field name="action_message">coucou  joannes</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 		<field name="python_code">data = step.check_move_line_scan(data)</field>
 	</record>
-	<record id="wms_scenario_transition_datagetlotid0" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '40: scan_multi  -&gt; lot_id ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '50: scan_quantity  -&gt; quantity ')]"/>
-		<field name="condition">data.get('lot_id')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetlotidanddatagetquantity0" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '40: scan_multi  -&gt; lot_id ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '60: routing  -&gt; scan ')]"/>
-		<field name="condition">data.get('lot_id') and data.get('quantity')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetmoveline1" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_routingscan1"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '40: scan_multi  -&gt; lot_id ')]"/>
-		<field name="condition">data.get('move_line')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_step_scanquantityquantity0" model="wms.scenario.step">
+
+	<record id="wms_scenario_step_preparation5" model="wms.scenario.step">
 		<field name="sequence" eval="50"/>
-		<field name="name">50: scan_quantity  -&gt; quantity </field>
+		<field name="name">preparation-50</field>
 		<field name="description">scan quantity</field>
 		<field name="action_scanner">scan_quantity</field>
 		<field name="action_variable">quantity</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 		<field name="python_code">data = step.check_move_line_scan(data)</field>
 	</record>
-	<record id="wms_scenario_transition_datagetquantity0" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '50: scan_quantity  -&gt; quantity ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '60: routing  -&gt; scan ')]"/>
-		<field name="condition">data.get('quantity')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetlotid1" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" ref="wms_scenario_step_scanmultilotid0"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '50: scan_quantity  -&gt; quantity ')]"/>
-		<field name="condition">data.get('lot_id')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_step_routingscan2" model="wms.scenario.step">
+
+	<record id="wms_scenario_step_preparation6" model="wms.scenario.step">
 		<field name="sequence" eval="60"/>
-		<field name="name">60: routing  -&gt; scan </field>
+		<field name="name">preparation-60</field>
 		<field name="description">fin de picking</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 		<field name="python_code">data = step.move_preparation(data)</field>
 	</record>
-	<record id="wms_scenario_transition_true5" model="wms.scenario.transition">
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '60: routing  -&gt; scan ')]"/>
-		<field name="to_id" ref="wms_scenario_step_routingscan1"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetquantity1" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_scanquantityquantity0"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '60: routing  -&gt; scan ')]"/>
-		<field name="condition">data.get('quantity')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetlotidanddatagetquantity1" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" ref="wms_scenario_step_scanmultilotid0"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '60: routing  -&gt; scan ')]"/>
-		<field name="condition">data.get('lot_id') and data.get('quantity')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_step_routingscan3" model="wms.scenario.step">
+
+	<record id="wms_scenario_step_preparation7" model="wms.scenario.step">
 		<field name="sequence" eval="70"/>
-		<field name="name">70: routing  -&gt; scan </field>
+		<field name="name">preparation-70</field>
 		<field name="description">debut pesage</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 		<field name="python_code">data = step.get_next_weight_line(data)</field>
 	</record>
-	<record id="wms_scenario_transition_datagetweightlineanddatagetprinter0" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '70: routing  -&gt; scan ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '90: scan_multi  -&gt; weight ')]"/>
-		<field name="condition">data.get('weight_line') and data.get('printer')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetweightlineandnotdatagetprinter0" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '70: routing  -&gt; scan ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '80: scan_model  -&gt; printer ')]"/>
-		<field name="condition">data.get('weight_line') and not data.get('printer')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_true6" model="wms.scenario.transition">
-		<field name="sequence" eval="3"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '70: routing  -&gt; scan ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '110: scan_model  -&gt; printer ')]"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_true7" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '90: scan_multi  -&gt; weight ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '70: routing  -&gt; scan ')]"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_true8" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" ref="wms_scenario_step_routingscan1"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '70: routing  -&gt; scan ')]"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_step_scanmodelprinter0" model="wms.scenario.step">
+
+	<record id="wms_scenario_step_preparation8" model="wms.scenario.step">
 		<field name="sequence" eval="80"/>
-		<field name="name">80: scan_model  -&gt; printer </field>
+		<field name="name">preparation-80</field>
 		<field name="description">scan printer</field>
 		<field name="action_scanner">scan_model</field>
 		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
 		<field name="action_variable">printer</field>
-		<field name="action_message">Scan the Printer</field>
-		<field name="action_presentation">&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;h2&gt;Weighing of products&lt;/h2&gt;&lt;h2&gt; &lt;/h2&gt;</field>
+		<field name="action_presentation">&lt;p&gt;Pesage des produits&lt;/p&gt;</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
-	<record id="wms_scenario_transition_datagetprinter0" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '80: scan_model  -&gt; printer ')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '90: scan_multi  -&gt; weight ')]"/>
-		<field name="condition">data.get('printer')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetweightlineandnotdatagetprinter1" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" ref="wms_scenario_step_routingscan3"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '80: scan_model  -&gt; printer ')]"/>
-		<field name="condition">data.get('weight_line') and not data.get('printer')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_step_scanmultiweight0" model="wms.scenario.step">
-		<field name="sequence" eval="90"/>
-		<field name="name">90: scan_multi  -&gt; weight </field>
-		<field name="description">pesage</field>
-		<field name="action_scanner">scan_multi</field>
-		<field name="action_variable">weight</field>
+
+	<record id="wms_scenario_step_preparation9" model="wms.scenario.step">
+		<field name="sequence" eval="85"/>
+		<field name="name">preparation-85</field>
+		<field name="description">scan device</field>
+		<field name="action_scanner">scan_weight</field>
+		<field name="action_variable">weighting_device</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 		<field name="python_code">data = step.weight_preparation(data)</field>
 	</record>
-	<record id="wms_scenario_transition_true9" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '90: scan_multi  -&gt; weight ')]"/>
-		<field name="to_id" ref="wms_scenario_step_routingscan3"/>
-		<field name="condition">True</field>
+
+	<record id="wms_scenario_step_preparation86" model="wms.scenario.step">
+		<field name="sequence" eval="86"/>
+		<field name="name">preparation-86</field>
+		<field name="description">rescan device</field>
+		<field name="action_scanner">routing</field>
+		<field name="action_variable">scan</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="python_code">data.pop('weighting_device', None)</field>
 	</record>
-	<record id="wms_scenario_transition_datagetweightlineanddatagetprinter1" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_routingscan3"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '90: scan_multi  -&gt; weight ')]"/>
-		<field name="condition">data.get('weight_line') and data.get('printer')</field>
+
+	<record id="wms_scenario_step_preparation10" model="wms.scenario.step">
+		<field name="sequence" eval="90"/>
+		<field name="name">preparation-90</field>
+		<field name="description">pesage manuel</field>
+		<field name="action_scanner">scan_quantity</field>
+		<field name="action_model" ref="customize_stock.model_stock_weight_device"/>
+		<field name="action_variable">weight</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+
 	</record>
-	<record id="wms_scenario_transition_datagetprinter1" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_scanmodelprinter0"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '90: scan_multi  -&gt; weight ')]"/>
-		<field name="condition">data.get('printer')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_step_scanmodelprinter1" model="wms.scenario.step">
+
+	<record id="wms_scenario_step_preparation11" model="wms.scenario.step">
 		<field name="sequence" eval="110"/>
-		<field name="name">110: scan_model  -&gt; printer </field>
+		<field name="name">preparation-110</field>
 		<field name="description">fin de pesage</field>
-		<field name="action_scanner">scan_model</field>
-		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
-		<field name="action_variable">printer</field>
+		<field name="action_scanner">routing</field>
+		<field name="python_code">data['end_preparation'] = True</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
-	<record id="wms_scenario_transition_true10" model="wms.scenario.transition">
-		<field name="sequence" eval="3"/>
-		<field name="from_id" ref="wms_scenario_step_routingscan3"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', '110: scan_model  -&gt; printer ')]"/>
-		<field name="condition">True</field>
+
+	<record id="wms_scenario_step_preparation120" model="wms.scenario.step">
+		<field name="sequence" eval="120"/>
+		<field name="name">preparation-120</field>
+		<field name="description">Nb package</field>
+		<field name="action_scanner">scan_quantity</field>
+		<field name="action_variable">number_of_package</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
-	<record id="wms_scenario_transition_true11" model="wms.scenario.transition">
-		<field name="from_id" ref="wms_scenario_step_routingscan2"/>
-		<field name="to_id" ref="wms_scenario_step_routingscan1"/>
-		<field name="condition">True</field>
+
+	<record id="wms_scenario_step_preparation130" model="wms.scenario.step">
+		<field name="sequence" eval="130"/>
+		<field name="name">preparation-130</field>
+		<field name="description">Nb container</field>
+		<field name="action_scanner">scan_quantity</field>
+		<field name="action_variable">nb_container</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
-	<record id="wms_scenario_transition_datagetbuttonaddpreparation2" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_noscanscan0"/>
-		<field name="to_id" ref="wms_scenario_step_routingscan0"/>
-		<field name="condition">data.get('button', '') == 'add_preparation'</field>
+
+	<record id="wms_scenario_step_preparation140" model="wms.scenario.step">
+		<field name="sequence" eval="140"/>
+		<field name="name">preparation-140</field>
+		<field name="description">Nb pallet</field>
+		<field name="action_scanner">scan_quantity</field>
+		<field name="action_variable">nb_pallet</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
-	<record id="wms_scenario_transition_true12" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_routingscan0"/>
-		<field name="to_id" ref="wms_scenario_step_noscanscan0"/>
-		<field name="condition">True</field>
+
+	<record id="wms_scenario_step_preparation150" model="wms.scenario.step">
+		<field name="sequence" eval="150"/>
+		<field name="name">preparation-150</field>
+		<field name="description">Fin de preparation</field>
+		<field name="action_scanner">no_scan</field>
+		<field name="action_presentation">End of this preparation</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
-	<record id="wms_scenario_transition_datagetmoveline2" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_routingscan1"/>
-		<field name="to_id" ref="wms_scenario_step_scanmultilotid0"/>
-		<field name="condition">data.get('move_line')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetquantity2" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_scanquantityquantity0"/>
-		<field name="to_id" ref="wms_scenario_step_routingscan2"/>
-		<field name="condition">data.get('quantity')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_true13" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', '0: start  -&gt; scan ')]"/>
-		<field name="to_id" ref="wms_scenario_step_noscanscan0"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_true14" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_scanmultiweight0"/>
-		<field name="to_id" ref="wms_scenario_step_routingscan3"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetweightlineanddatagetprinter2" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_routingscan3"/>
-		<field name="to_id" ref="wms_scenario_step_scanmultiweight0"/>
-		<field name="condition">data.get('weight_line') and data.get('printer')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetprinter2" model="wms.scenario.transition">
-		<field name="sequence" eval="1"/>
-		<field name="from_id" ref="wms_scenario_step_scanmodelprinter0"/>
-		<field name="to_id" ref="wms_scenario_step_scanmultiweight0"/>
-		<field name="condition">data.get('printer')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetlotidanddatagetquantity2" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" ref="wms_scenario_step_scanmultilotid0"/>
-		<field name="to_id" ref="wms_scenario_step_routingscan2"/>
-		<field name="condition">data.get('lot_id') and data.get('quantity')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetweightlineandnotdatagetprinter2" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" ref="wms_scenario_step_routingscan3"/>
-		<field name="to_id" ref="wms_scenario_step_scanmodelprinter0"/>
-		<field name="condition">data.get('weight_line') and not data.get('printer')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetpickingid2" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" ref="wms_scenario_step_noscanscan0"/>
-		<field name="to_id" ref="wms_scenario_step_routingscan1"/>
-		<field name="condition">data.get('picking_id')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_true15" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" ref="wms_scenario_step_routingscan1"/>
-		<field name="to_id" ref="wms_scenario_step_routingscan3"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_datagetlotid2" model="wms.scenario.transition">
-		<field name="sequence" eval="2"/>
-		<field name="from_id" ref="wms_scenario_step_scanmultilotid0"/>
-		<field name="to_id" ref="wms_scenario_step_scanquantityquantity0"/>
-		<field name="condition">data.get('lot_id')</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
-	<record id="wms_scenario_transition_true16" model="wms.scenario.transition">
-		<field name="sequence" eval="3"/>
-		<field name="from_id" ref="wms_scenario_step_routingscan3"/>
-		<field name="to_id" ref="wms_scenario_step_scanmodelprinter1"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-	</record>
+
 </odoo>

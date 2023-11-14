@@ -171,6 +171,7 @@ class AccountMove(models.Model):
         uom_weight = self.env['product.template'].sudo()._get_weight_uom_id_from_ir_config_parameter()
         remote_server = self.env['synchro.server'].search([])
         sync_obj = remote_server[0].obj_ids.search([('model_name', '=', 'account.invoice.line')])
+        self.env['synchro.obj.line'].search([('obj_id.model_name', '=', 'account.invoice')]).unlink_local_void()
 
         for move in self:
             if move.invoice_date < datetime.date(2017, 1, 1):
