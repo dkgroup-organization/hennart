@@ -43,17 +43,15 @@
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <p t-esc="picking.get_theoric_weight()"/>
+                                    <p t-esc="picking.scheduled_date" class="mb-1"/>
+
                                 </div>
                                 <div class="flex justify-between">
-                                    <p><span t-if="picking.parent_id" t-esc="picking.parent_id.partner_id.name"/>
-                                        <span t-if="not picking.parent_id" t-esc="picking.partner_id.name"/>
+                                    <p><span t-if="picking.partner_id.parent_id" t-esc="picking.partner_id.parent_id.name"/>
+                                        <span t-if="not picking.partner_id.parent_id" t-esc="picking.partner_id.name"/>
                                         , <span t-esc="picking.partner_id.city"/>
-
-
                                     </p>
 
-
-                                    <p t-esc="picking.scheduled_date"/>
                                 </div>
                             </a>
                         </li>
