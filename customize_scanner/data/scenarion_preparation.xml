@@ -150,7 +150,8 @@
 		<field name="name">preparation-120</field>
 		<field name="description">Nb package</field>
 		<field name="action_scanner">scan_quantity</field>
-		<field name="action_variable">number_of_package</field>
+		<field name="action_variable">number_of_packages</field>
+		<field name="python_code">step.package_preparation(data)</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 
@@ -160,6 +161,7 @@
 		<field name="description">Nb container</field>
 		<field name="action_scanner">scan_quantity</field>
 		<field name="action_variable">nb_container</field>
+		<field name="python_code">step.package_preparation(data)</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 
@@ -169,6 +171,7 @@
 		<field name="description">Nb pallet</field>
 		<field name="action_scanner">scan_quantity</field>
 		<field name="action_variable">nb_pallet</field>
+		<field name="python_code">step.package_preparation(data)</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 
@@ -178,6 +181,7 @@
 		<field name="description">Fin de preparation</field>
 		<field name="action_scanner">no_scan</field>
 		<field name="action_presentation">End of this preparation</field>
+		<field name="python_code">data.pop('end_preparation', None)</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 

@@ -203,15 +203,19 @@ class AccountMove(models.Model):
 
             move.invoice_line_ids.get_product_uom_id()
 
+            if move.piece_comptable and int(move.total_ttc * 100.0) != int(move.amount_total * 100.0):
+                # reload the data to have possible correction
+                # move.invoice_line_ids:
+                synchro_obj = self.env['synchro.obj'].search([('model_name', '=', 'account.invoice.line')])
+                mapping_line = self.env['synchro.obj.line'].search([('local_id', 'in', move.invoice_line_ids.ids)])
+                mapping_line.update_values()
+
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
                 if (move.fiscal_position_id and move.piece_comptable and
                         int(move.total_ttc * 100.0) == int(move.amount_total * 100.0)):
                     move.sudo().action_post()
                     if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
                         move.payment_state = 'paid'
-                else:
-                    # update this
-                    pass
         return True
 
     def compute_picking_ids(self):

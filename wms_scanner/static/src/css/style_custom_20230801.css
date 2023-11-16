@@ -7,12 +7,14 @@
 
 .warning {
   background-color: #DD2020;
-  
 }
 
 .warning::placeholder {
-  color: #300000;
-  
+  color: #400000;
+}
+
+input-green::placeholder {
+   color: #004000;
 }
 
 .section_up {
@@ -21,9 +23,9 @@ margin-top: -2rem;
 
 .logout {
     width: min-content;
-
 }
 
 .screen_title {
     margin-top: -2rem;
 }
+
