@@ -13,7 +13,7 @@ import datetime
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
-    def get_picking(self,data):
+    def get_picking(self, data):
         """ get the picking to use"""
         self.ensure_one()
         picking = self.env['stock.picking']
@@ -28,7 +28,7 @@ class WmsScenarioStep(models.Model):
 
             if type(data['picking_id']) is int:
                 picking = self.env['stock.picking'].browse(data['picking_id'])
-                del data['picking_id']
+
         return picking
 
     def get_next_picking_line(self, data, weight=False):
@@ -145,6 +145,27 @@ class WmsScenarioStep(models.Model):
             else:
                 res = _("Scan weighting device")
 
+        if self.action_variable == 'number_of_packages':
+            res = _("Nb of package: ")
+            if data.get('number_of_packages'):
+                res += f"{data['number_of_packages']}"
+            elif data.get('picking'):
+                res += f"{data['picking'].number_of_packages}"
+
+        if self.action_variable == 'nb_container':
+            res = _("Nb of container: ")
+            if data.get('nb_container'):
+                res += f"{data['nb_container']}"
+            elif data.get('picking'):
+                res += f"{data['picking'].nb_container}"
+
+        if self.action_variable == 'nb_pallet':
+            res = _("Nb of pallet: ")
+            if data.get('nb_pallet'):
+                res += f"{data['nb_pallet']}"
+            elif data.get('picking'):
+                res += f"{data['picking'].nb_pallet}"
+
         return res
 
     def get_input_description_left(self, data, action_variable):
@@ -167,6 +188,15 @@ class WmsScenarioStep(models.Model):
         if action_variable == 'printer':
             printer = data.get('printer')
             res = printer and printer.name or _('scan printer')
+
+        if action_variable == 'number_of_packages':
+            res = _("Nb of package: ")
+
+        if action_variable == 'nb_container':
+            res = _("Nb of container: ")
+
+        if action_variable == 'nb_pallet':
+            res = _("Nb of pallet: ")
 
         return res
 
@@ -194,6 +224,25 @@ class WmsScenarioStep(models.Model):
                     res = f'{package_nb}' + _(" Pack of ") + f'{package_qty}'
                 else:
                     res = ""
+
+        if action_variable == 'number_of_packages':
+            if data.get('number_of_packages'):
+                res = f"{data['number_of_packages']}"
+            elif data.get('picking'):
+                res = f"{data['picking'].number_of_packages}"
+
+        if action_variable == 'nb_container':
+            if data.get('nb_container'):
+                res = f"{data['nb_container']}"
+            elif data.get('picking'):
+                res = f"{data['picking'].nb_container}"
+
+        if action_variable == 'nb_pallet':
+            if data.get('nb_pallet'):
+                res = f"{data['nb_pallet']}"
+            elif data.get('picking'):
+                res = f"{data['picking'].nb_pallet}"
+
         return res
 
     def get_input_type(self, data):
@@ -434,3 +483,44 @@ class WmsScenarioStep(models.Model):
             pass
 
         return data
+
+    def package_preparation(self, data):
+        """ Update preparation package """
+        self.ensure_one()
+        if data.get('picking'):
+            if data.get('number_of_packages') and data['picking'].number_of_packages != int(data['number_of_packages']):
+                data['picking'].number_of_packages = int(data['number_of_packages'])
+            if data.get('nb_container') and data['picking'].nb_container != int(data['nb_container']):
+                data['picking'].nb_container = int(data['nb_container'])
+            if data.get('nb_pallet') and data['picking'].nb_pallet != int(data['nb_pallet']):
+                data['picking'].nb_pallet = int(data['nb_pallet'])
+
+    def picking_validation_print(self, data):
+        """ Valide the end of the preparation, and print documents"""
+        self.ensure_one()
+        if not data.get('warning'):
+            if data.get('picking'):
+                # Check the state of this picking
+                picking = data.get('picking')
+                stock_move_ok = True
+                for move in picking.move_ids:
+                    if move.product_uom_qty != move.quantity_done:
+                        if stock_move_ok:
+                            data['warning'] = data.get('warning', '') + _("This product is to do:")
+                        data['warning'] = data.get('warning', '') + f"[{move.product_id.default_code}] {move.product_id.name}"
+
+                if not data.get('warning'):
+                    for move_line in picking.move_line_ids:
+                        if move_line.to_weight or move_line.to_label:
+                            data['warning'] = data['warning'] = data.get('warning', '') + _("Some product need label and weight.")
+                            break
+            else:
+                data['warning'] = _("No picking to check")
+
+        if not data.get('warning'):
+            # picking validation and print document
+            pass
+
+
+        return data
+

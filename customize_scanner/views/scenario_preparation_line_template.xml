@@ -196,9 +196,9 @@
             </t>
         </template>
 
-        <template id="scanner_preparation_input_nb_package" name="scanner_preparation_input_nb_package">
+        <template id="scanner_preparation_nb_package" name="scanner_preparation_nb_package">
             <t t-call="customize_scanner.scanner_input">
-                <t t-set="action_variable" t-value="'number_of_package'"/>
+                <t t-set="action_variable" t-value="'number_of_packages'"/>
             </t>
         </template>
 
@@ -208,7 +208,7 @@
             </t>
         </template>
 
-        <template id="scanner_preparation_input_nb_pallet" name="scanner_preparation_input_nb_pallet">
+        <template id="scanner_preparation_nb_pallet" name="scanner_preparation_nb_pallet">
             <t t-call="customize_scanner.scanner_input">
                 <t t-set="action_variable" t-value="'nb_pallet'"/>
             </t>
