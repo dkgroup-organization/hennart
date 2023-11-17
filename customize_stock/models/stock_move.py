@@ -219,7 +219,7 @@ class StockMove(models.Model):
         """ Don't unreserve the product on preparation location, it's too late, the products are moving"""
         super()._do_unreserve()
         location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
-        # Do not uneserved preparatoin location
+        # Do not unreserved preparation location
         move_line_ids = self.env['stock.move.line'].search([
             ('location_id', 'in', location_preparation_ids.ids),
             ('move_id', 'in', self.ids),

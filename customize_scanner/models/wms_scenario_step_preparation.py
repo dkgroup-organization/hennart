@@ -141,7 +141,8 @@ class WmsScenarioStep(models.Model):
 
         if self.action_variable == 'weighting_device':
             if data.get('weight', 0.0) > 0.0:
-                res = f"{data.get('weight', 0.0):.3f} Kg"
+                tare = self.get_tare(data)
+                res = _("Valid:  ") + f"{data.get('weight', 0.0):.3f} Kg tare: {tare} Kg"
             else:
                 res = _("Scan weighting device")
 
@@ -317,15 +318,23 @@ class WmsScenarioStep(models.Model):
         href_base = f'./scanner?scenario={scenario_id}&step={step_id}&button='
 
         if data['step'].action_scanner == 'scan_weight':
+            tare = self.get_tare(data)
             res = [
                 {'text': _('Manual entry'),
                  'href': href_base + 'manual_weight'
                  },
-                {'text': _('Change Tare'),
-                 'href': href_base + 'manual_tare'
-                 }
             ]
+            # {'text': _('Change Tare: ') + f"{tare} Kg", 'href': href_base + 'manual_tare'}
         return res
+
+    def get_tare(self, data):
+        """ Return the tare of the line product"""
+        self.ensure_one()
+        move_line = data.get('weight_line')
+        tare = 0.0
+        if move_line:
+            tare = move_line.product_id.tare * move_line.reserved_uom_qty
+        return tare
 
     def check_move_line_scan(self, data):
         """ Check the lot and the quantity """
@@ -461,6 +470,12 @@ class WmsScenarioStep(models.Model):
 
         return data
 
+    def get_end_preparation_message(self, data):
+        """ Add som indication to user at the end of the preparation"""
+        message = _("End of the preparation")
+        res = f"<h1>{message}</h1>"
+        return res
+
     @api.model
     def weight_preparation(self, data):
         """ Weight product in preparation location
@@ -477,7 +492,8 @@ class WmsScenarioStep(models.Model):
         elif data.get('weight') and data.get('weight_line'):
             # save the weight
             move_line = data.get('weight_line')
-            move_line.weight = data.get('weight') or 0.0
+            tare = self.get_tare(data)
+            move_line.weight = data.get('weight', 0.0) - tare
             move_line.to_weight = False
         else:
             pass
@@ -506,8 +522,8 @@ class WmsScenarioStep(models.Model):
                 for move in picking.move_ids:
                     if move.product_uom_qty != move.quantity_done:
                         if stock_move_ok:
-                            data['warning'] = data.get('warning', '') + _("This product is to do:")
-                        data['warning'] = data.get('warning', '') + f"[{move.product_id.default_code}] {move.product_id.name}"
+                            data['warning'] = data.get('warning', '') + _("This product is to do:\n")
+                        data['warning'] = data.get('warning', '') + f"<br/>[{move.product_id.default_code}] {move.product_id.name}"
 
                 if not data.get('warning'):
                     for move_line in picking.move_line_ids:
@@ -517,9 +533,12 @@ class WmsScenarioStep(models.Model):
             else:
                 data['warning'] = _("No picking to check")
 
-        if not data.get('warning'):
-            # picking validation and print document
-            pass
+            # Invoice this picking
+            if not data.get('warning'):
+                # picking validation and print document
+                data.pop('end_preparation', None)
+                picking.preparation_state = 'ready'
+                picking.button_validate()
 
 
         return data

@@ -1,0 +1,318 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* customize_scanner
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-17 09:30+0000\n"
+"PO-Revision-Date: 2023-11-17 09:30+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid " Pack of "
+msgstr "Colis de "
+
+#. module: customize_scanner
+#: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_list_preparation
+msgid "Add preparation"
+msgstr "Ajouter une préparation"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "Barcode error, The product is unknown: "
+msgstr "Erreur de code barre, Le produit est inconnu"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "Barcode format error."
+msgstr "Le format du code barre est incorrect."
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Change Tare"
+msgstr "Modifier la tare: "
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Enter Quantity"
+msgstr "Entrez la quantité"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Enter Weight:"
+msgstr "Entrez le poids"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "Error on date format."
+msgstr "Erreur de format de date"
+
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Lot: "
+msgstr "Lot:"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Manual entry"
+msgstr "Entrée manuelle"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Nb of container: "
+msgstr "Nb de containaire"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Nb of package: "
+msgstr "Nb de colis"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Nb of pallet: "
+msgstr "Nb de palette"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "No move line to move?"
+msgstr "Pas de mouvement à faire"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "No picking selected"
+msgstr "Pas de préparation selectionnée"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "No picking to check"
+msgstr "Pas de préparation à vérifier"
+
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "Reading weight error:"
+msgstr "Erreur de lecture de la balance"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Scan Printer"
+msgstr "Scannez l'imprimante"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Scan lot"
+msgstr "Scannez le lot"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Scan the production lot: {}"
+msgstr "Scannez le lot: {}"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Scan weighting device"
+msgstr "Scannez la balance"
+
+#. module: customize_scanner
+#: model:ir.model,name:customize_scanner.model_wms_scenario
+msgid "Scenario for scanner"
+msgstr "Scenario du scanner"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Some information are missing to check product on location."
+msgstr "Des informations sont manquantes pour la vérification des quantités"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "Some product need label and weight."
+msgstr "Des produits doivent être étiquetés et pesés"
+
+#. module: customize_scanner
+#: model:ir.model,name:customize_scanner.model_wms_scenario_step
+msgid "Step for scenario"
+msgstr "Etape du scénario"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "The expiration date of this label is not correct: {}"
+msgstr "La date d'expiration de cette étiquette est incorrecte"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "The maximum quantity in this location is {}"
+msgstr "La quantité maximal à cet emplacement est {}"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "The maximum quantity to pick is {}"
+msgstr "La quantité maximal à prendre est de {}"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "The previews move is registered"
+msgstr "Le mouvement précédent est enregistré"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "The product is moving to preparation"
+msgstr "Le produit est déplacé en préparation"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "There is more than one lot with the same name and date: {}"
+msgstr "Plusieurs lots on le même nom avec la même date: {}"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "There is not enough quantity in this lot. The maximum is {}"
+msgstr "Il n'y a pas suffisament de quantité dans ce lot. The maximum est {}"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "There is not enough quantity on the location. The maximum is {}"
+msgstr "Il n'y a pas suffisament de quantité dans cet emplacement. The maximum est {}"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "This is not the lot to pick."
+msgstr "Ce n'est pas le bon lot à prendre."
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "This is not the product to pick."
+msgstr "Ce n'est pas le bon produit à prendre."
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "This lot has not the good product."
+msgstr "Ce lot ne correspond pas au bon produit"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "This lot is removing."
+msgstr "Ce lot est supprimé"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "This product is to do:"
+msgstr "Ce produit est à prendre"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "This product need a lot number"
+msgstr "Ce produit doit avoir un numéro de lot"
+
+#. module: customize_scanner
+#: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_end_preparation
+#: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_line_preparation
+#: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_weight_preparation
+msgid "Valid"
+msgstr "Valider"
+
+#. module: customize_scanner
+#: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_body_title_preparation
+#: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_list_preparation_body_main
+msgid "preparation"
+msgstr "préparation"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "scan printer"
+msgstr "Scanner l'imprimante"
+
+#. module: customize_scanner
+#: model:wms.scenario.step,action_message:customize_scanner.wms_scenario_step_preparation0
+msgid "test"
+msgstr "test"
+
