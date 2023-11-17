@@ -14,6 +14,9 @@ class StockPicking(models.Model):
     #date_delivered = fields.Datetime("delivered date", compute='compute_date_delivered', help="Customer delivered date")
     picking_type_code = fields.Selection(string='Code', related="picking_type_id.code")
     sequence = fields.Integer(string='Sequence', compute='_compute_sequence', store=True)
+    preparation_state = fields.Selection([
+        ('wait', 'wait'), ('pick', 'pick'), ('weight', 'weight'), ('ready', 'ready'), ('done', 'done')],
+        string='Preparation', default='wait')
 
     def get_theoric_weight(self):
         """ return theoretical weight to qweb"""
@@ -82,9 +85,9 @@ class StockPicking(models.Model):
                         if move.mrp_id == False:
 
                             in_process_productions = self.env['mrp.production'].search([
-                            ('product_id', '=', product.id),
-                            ('state', '=', 'draft'),
-                            ])
+                                ('product_id', '=', product.id),
+                                ('state', '=', 'draft'),
+                                ])
                             
                             if quantity_to_produce <= min_production_qty:
                                 quantity_to_produce = min_production_qty
@@ -112,6 +115,7 @@ class StockPicking(models.Model):
                             # production_order.action_confirm()  # Confirmer le MO
                             # production_order.button_plan()  # Planifier le MO
                             # production_order.action_produce()  # Démarrer la production du MO
+
     def action_assign(self):
         """ order stock.move.line by location name"""
         res = super().action_assign()

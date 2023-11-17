@@ -179,9 +179,10 @@
 		<field name="sequence" eval="150"/>
 		<field name="name">preparation-150</field>
 		<field name="description">Fin de preparation</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_message</field>
 		<field name="action_scanner">no_scan</field>
-		<field name="action_presentation">End of this preparation</field>
-		<field name="python_code">data.pop('end_preparation', None)</field>
+		<field name="action_presentation"/>
+		<field name="python_code">data = step.picking_validation_print(data)</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 

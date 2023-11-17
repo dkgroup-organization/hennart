@@ -164,25 +164,23 @@
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'preparation-120')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-130')]"/>
-		<field name="condition">data.get('number_of_packages')</field>
+		<field name="condition">'number_of_packages' in data</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 	<record id="wms_scenario_transition_130_140" model="wms.scenario.transition">
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'preparation-130')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-140')]"/>
-		<field name="condition">data.get('nb_container')</field>
+		<field name="condition">'nb_container' in data</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 	<record id="wms_scenario_transition_140_150" model="wms.scenario.transition">
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'preparation-140')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-150')]"/>
-		<field name="condition">data.get('nb_pallet')</field>
+		<field name="condition">'nb_pallet' in data</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
-
-
 
 
 </odoo>

@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <template id="scanner_scenario_message" name="scanner_scenario_message">
+            <html>
+                <t t-call="wms_scanner.scanner_html_head"/>
+                <body class="font-poppins duration-500 min-h-screen">
+                    <t t-call="wms_scanner.scanner_menu_body_header"/>
+                    <t t-call="customize_scanner.scanner_preparation_body_message_main"/>
+                    <t t-call="wms_scanner.scanner_script_js"/>
+                </body>
+            </html>
+        </template>
+
+        <template id="scanner_preparation_body_message_main" name="scanner_preparation_body_message_main">
+            <main class="relative">
+                <section id="preparation" class="screen_title">
+                    <div class="container mx-auto px-5 pb-5 relative">
+                        <div class="flex items-center gap-2.5 mb-10 landscape:mb-6">
+                            <t t-call="wms_scanner.wms_scanner_image_box"/>
+                            <h1>preparation</h1>
+                        </div>
+                        <div class="w-full">
+                            <t t-if="data.get('step')">
+                                <t t-set="step" t-value="data.get('step')"/>
+                                <p t-if="step.action_presentation" t-esc="step.action_presentation"/>
+                            </t>
+                            <p t-raw="step.get_end_preparation_message(data)"/>
+                            <p t-if="data.get('warning')" class="input-warning">
+                                <t t-raw="data.get('warning')"/>
+                            </p>
+
+                            <a t-att-href="'./scanner?scenario={}&amp;step={}&amp;button=ok'.format(data['scenario'].id, 0)">
+                                <button class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">ok</button>
+                            </a>
+                        </div>
+
+                    </div>
+                </section>
+            </main>
+        </template>
+
+    </data>
+</odoo>
