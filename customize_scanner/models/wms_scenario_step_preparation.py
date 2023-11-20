@@ -540,6 +540,4 @@ class WmsScenarioStep(models.Model):
                 picking.preparation_state = 'ready'
                 picking.button_validate()
 
-
         return data
-

@@ -2,6 +2,7 @@
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError, ValidationError
 import base64
+import re
 import time
 import logging
 import datetime
@@ -38,6 +39,15 @@ class ImportPriceList(models.TransientModel):
     file_name = fields.Char('File name')
 
     def action_valide(self):
+        """ import product"""
+
+        def replace_virgules(texte):
+            # Utilisez une expression régulière pour identifier les nombres avec des virgules
+            pattern = r'(\d+,\d+)'
+            # Utilisez la fonction sub() de la bibliothèque re pour effectuer la substitution
+            texte_modifie = re.sub(pattern, lambda match: match.group(0).replace(',', '.'), texte)
+            return texte_modifie
+
         self.ensure_one()
         if not self.file:
             raise UserError(_("Please select a file to import."))
@@ -68,25 +78,25 @@ class ImportPriceList(models.TransientModel):
             if not product:
                 raise UserError(f'Error! the product with default_code {product_code} is not found! Please correct the file !')
 
-            if sheet.cell_value(row, header.get('AOP')) == 'AOP':
+            if sheet.cell_value(row, header.get('aop')) == 'aop':
                 aop = True
             else:
                 aop = False
 
-            if sheet.cell_value(row, header.get('OGM')) == 'OGM':
+            if sheet.cell_value(row, header.get('ogm')) == 'ogm':
                 ogm = True
             else:
                 ogm = False
 
-            if sheet.cell_value(row, header.get('Type fermier')) == 'Farmer':
+            if sheet.cell_value(row, header.get('farmer_type')) == 'Farmer':
                 farmer_type = True
             else:
                 farmer_type = False
 
             # Mapper les autres champs du fichier Excel aux champs Odoo ici pour mettre à jour le produit
             product.write({
-                'name': sheet.cell_value(row, header.get('name')),
-                'approval_number': sheet.cell_value(row, header.get('N° Agrément')),
+                #'name': sheet.cell_value(row, header.get('name')),
+                'approval_number': sheet.cell_value(row, header.get('approval_number')),
                 'region': sheet.cell_value(row, header.get('region')),
                 'aop': aop,
                 'ogm': ogm,
@@ -107,12 +117,12 @@ class ImportPriceList(models.TransientModel):
             })
             
             # Récupérer les valeurs de la colonne ingredient et allergen et les diviser par ","
-            ingredient_values = sheet.cell_value(row, header.get('ingredient')).split(',')
-            allergen_values = sheet.cell_value(row, header.get('Allergen')).split(',')
-            
+            ingredient_values = replace_virgules(sheet.cell_value(row, header.get('ingredient'))).split(',')
+            allergen_values = replace_virgules(sheet.cell_value(row, header.get('allergen'))).split(',')
+
             ingredient_ids = []
             for ingredient_value in ingredient_values:
-                ingredient_name = ingredient_value.strip()
+                ingredient_name = ingredient_value.strip().replace('  ', ' ')
                 if ingredient_name:
                     ingredient = self.env['product.ingredient'].search([('name', '=', ingredient_name)], limit=1)
                     if not ingredient:
@@ -121,7 +131,7 @@ class ImportPriceList(models.TransientModel):
 
             allergen_ids = []
             for allergen_value in allergen_values:
-                allergen_name = allergen_value.strip()
+                allergen_name = allergen_value.strip().replace('  ', ' ')
                 if allergen_name:
                     allergen = self.env['product.allergen'].search([('name', '=', allergen_name)], limit=1)
                     if not allergen:
