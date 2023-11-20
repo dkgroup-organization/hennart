@@ -198,7 +198,7 @@ class ProductTemplate(models.Model):
     base_unit_name = fields.Char(compute='_compute_base_unit_name',
                                  help='Displays the custom unit for the products if defined or the selected unit of measure otherwise.')
     
-    min_production_qty = fields.Float(string='Batch production quantity')
+
 
     def _compute_service_type(self):
         """ only one case manually"""

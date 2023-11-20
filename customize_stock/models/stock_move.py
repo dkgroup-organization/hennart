@@ -49,6 +49,30 @@ class StockMove(models.Model):
         string='mrp',
         )
 
+    wh_filter = fields.Boolean('In/Out move', compute="get_wh_in_out", store=True, index=True)
+
+    @api.depends('location_id', 'location_dest_id', 'state', 'product_qty', 'product_id')
+    def get_wh_in_out(self):
+        """ filter the move to use in report quantity and prevision"""
+        for move in self:
+            if move.state in ['cancel', 'draft', 'done']:
+                move.wh_filter = False
+            elif move.product_id.product_tmpl_id.type != 'product':
+                move.wh_filter = False
+            elif move.product_qty == 0.0:
+                move.wh_filter = False
+            elif move.location_id.usage in ['internal', 'transit'] or \
+                    move.location_dest_id.usage in ['internal', 'transit']:
+                if move.location_id.warehouse_id != move.location_dest_id.warehouse_id:
+                    move.wh_filter = True
+                else:
+                    move.wh_filter = False
+            else:
+                move.wh_filter = False
+
+
+
+
     def check_line(self):
         """ check if all line has production lot information"""
         message = ""
