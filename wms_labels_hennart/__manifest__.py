@@ -11,7 +11,8 @@
     "data": [
         #"security/ir.model.access.csv","data/label.xml",
         #"wizard/label_stock_move_view.xml",
-        "views/printing_printer.xml"
+        "data/printing_label_zebra.xml",
+        "data/printing_label_component_zebra.xml",
     ],
     'installable': True,
     'active': False,

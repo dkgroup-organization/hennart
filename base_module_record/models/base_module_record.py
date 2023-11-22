@@ -140,6 +140,8 @@ class BaseModuleRecord(models.Model):
                     field.setAttribute("ref", id)
                 record.appendChild(field)
             elif fields[key]["type"] in ("one2many",):
+                continue
+                # TODO delete if no more used
                 for valitem in val or []:
                     if (
                         valitem[0] in (0, 1)

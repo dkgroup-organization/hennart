@@ -85,13 +85,14 @@ class WmsScenarioStep(models.Model):
                 try:
                     weight_kg = float(weight)
                     if weight_kg:
-                        data['weight'] = weight_kg
+                        data['label_weight'] = weight_kg
                 except:
                     data['warning'] = _("Reading weight error:") + " {}".format(weight)
 
             # if there is a weight this barcode is a label, use base unit count to have package quantity
-            if product and data.get('weight') and not data.get('warning'):
-                data['quantity'] = product_tmpl.base_unit_count
+            if product and not data.get('warning'):
+                if data.get('label_weight') or product != product_tmpl:
+                    data['label_quantity'] = product_tmpl.base_unit_count
 
             # Define the date
             if not data.get('warning'):
@@ -151,8 +152,7 @@ class WmsScenarioStep(models.Model):
                 data['lot_name'] = scan[5:affinage]
                 data['lot_product'] = product
 
-        if (len(scan) > 4 and scan[:4] == BARCODE_WEIGHT) or (
-                data_origin.get('step') and data_origin['step'].action_scanner == 'scan_weight'):
+        if len(scan) > 4 and scan[:4] == BARCODE_WEIGHT:
             # In this case, it is a weighted device
             weight_device_ids = self.env['stock.weight.device'].search([('barcode', '=', scan)])
             if len(weight_device_ids) == 1:
@@ -280,7 +280,7 @@ class WmsScenarioStep(models.Model):
 
         product_id = data.get('product_id')
         lot_id = data.get('lot_id')
-        weight = data.get('weight')
+        weight = data.get('weight') or data.get('label_weight')
         quantity = data.get('quantity', 0)
 
         date_now = time.strftime('MV-%Y-%m-%d-')

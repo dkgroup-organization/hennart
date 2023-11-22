@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+<odoo>
+	<record id="printing_label_zpl2_lot0" model="printing.label.zpl2">
+		<field name="name">LOT</field>
+		<field name="active" eval="1"/>
+		<field name="description">Etiquette Lot</field>
+		<field name="model_id" ref="customize_stock.model_stock_lot"/>
+		<field name="width" eval="85"/>
+		<field name="restore_saved_config" eval="1"/>
+		<field name="action_window_id" model="ir.actions.act_window" search="[('name', '=', 'Print Label')]"/>
+		<field name="test_print_mode" eval="0"/>
+		<field name="test_labelary_mode" eval="1"/>
+		<field name="extra">{}</field>
+		<field name="labelary_dpmm">8dpmm</field>
+		<field name="labelary_width" eval="85.0"/>
+		<field name="labelary_height" eval="45.0"/>
+	</record>
+	<record id="printing_label_zpl2_emplacement0" model="printing.label.zpl2">
+		<field name="name">emplacement</field>
+		<field name="active" eval="1"/>
+		<field name="description">Emplacement</field>
+		<field name="model_id" ref="customize_stock.model_stock_location"/>
+		<field name="width" eval="85"/>
+		<field name="restore_saved_config" eval="1"/>
+		<field name="test_print_mode" eval="0"/>
+		<field name="test_labelary_mode" eval="1"/>
+		<field name="extra">{}</field>
+		<field name="labelary_dpmm">8dpmm</field>
+		<field name="labelary_width" eval="85.0"/>
+		<field name="labelary_height" eval="45.0"/>
+	</record>
+	<record id="printing_label_zpl2_imprimante0" model="printing.label.zpl2">
+		<field name="name">Imprimante</field>
+		<field name="active" eval="1"/>
+		<field name="model_id" ref="base_report_to_printer.model_printing_printer"/>
+		<field name="width" eval="85"/>
+		<field name="restore_saved_config" eval="1"/>
+		<field name="action_window_id" model="ir.actions.act_window" search="[('name', '=', 'Print Label')]"/>
+		<field name="test_print_mode" eval="0"/>
+		<field name="test_labelary_mode" eval="1"/>
+		<field name="extra">{}</field>
+		<field name="labelary_dpmm">8dpmm</field>
+		<field name="labelary_width" eval="85.0"/>
+		<field name="labelary_height" eval="45.0"/>
+	</record>
+	<record id="printing_label_zpl2_stockmoveline0" model="printing.label.zpl2">
+		<field name="name">stock_move_line</field>
+		<field name="active" eval="1"/>
+		<field name="description">Label from move line</field>
+		<field name="model_id" ref="customize_stock.model_stock_move_line"/>
+		<field name="width" eval="85"/>
+		<field name="restore_saved_config" eval="1"/>
+		<field name="test_print_mode" eval="0"/>
+		<field name="test_labelary_mode" eval="1"/>
+		<field name="extra">{}</field>
+		<field name="labelary_dpmm">8dpmm</field>
+		<field name="labelary_width" eval="85.0"/>
+		<field name="labelary_height" eval="45.0"/>
+	</record>
+	<record id="printing_label_zpl2_balance0" model="printing.label.zpl2">
+		<field name="name">Balance</field>
+		<field name="active" eval="1"/>
+		<field name="description">Balance</field>
+		<field name="model_id" ref="customize_stock.model_stock_weight_device"/>
+		<field name="width" eval="85"/>
+		<field name="restore_saved_config" eval="1"/>
+		<field name="action_window_id" model="ir.actions.act_window" search="[('name', '=', 'Print Label')]"/>
+		<field name="test_print_mode" eval="0"/>
+		<field name="test_labelary_mode" eval="1"/>
+		<field name="extra">{}</field>
+		<field name="labelary_dpmm">8dpmm</field>
+		<field name="labelary_width" eval="85.0"/>
+		<field name="labelary_height" eval="45.0"/>
+	</record>
+</odoo>

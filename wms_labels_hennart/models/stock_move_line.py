@@ -14,7 +14,6 @@ class StockMoveLine(models.Model):
             line.print_label()
 
 
-
     def print_label(self, printer=None):
         """ Print label"""
         if not printer:

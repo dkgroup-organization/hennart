@@ -21,7 +21,7 @@
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'preparation-40')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-60')]"/>
-		<field name="condition">data.get('quantity')</field>
+		<field name="condition">data.get('label_quantity')</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 	<record id="wms_scenario_transition_3" model="wms.scenario.transition">
@@ -41,10 +41,10 @@
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 	<record id="wms_scenario_transition_5" model="wms.scenario.transition">
-		<field name="name">1-[70-90]</field>
+		<field name="name">1-[70-85]</field>
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'preparation-70')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-90')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-85')]"/>
 		<field name="condition">data.get('weight_line') and data.get('printer')</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
@@ -61,23 +61,32 @@
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'preparation-85')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-86')]"/>
-		<field name="condition">data.get('weighting_device')</field>
+		<field name="condition">data.get('weighting_device') or data.get('weight_label')</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 	<record id="wms_scenario_transition_86_85" model="wms.scenario.transition">
-		<field name="name">1-[86-85]</field>
-		<field name="sequence" eval="1"/>
+		<field name="name">2-[86-85]</field>
+		<field name="sequence" eval="2"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'preparation-86')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-85')]"/>
 		<field name="condition">True</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 
-	<record id="wms_scenario_transition_8" model="wms.scenario.transition">
-		<field name="name">1-[90-70]</field>
+	<record id="wms_scenario_transition_86_70" model="wms.scenario.transition">
+		<field name="name">1-[86-70]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'preparation-86')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-70')]"/>
+		<field name="condition">data.get('weight')</field>
+		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+	</record>
+
+	<record id="wms_scenario_transition_90_86" model="wms.scenario.transition">
+		<field name="name">1-[90-86]</field>
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'preparation-90')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-70')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-86')]"/>
 		<field name="condition">data.get('weight')</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>

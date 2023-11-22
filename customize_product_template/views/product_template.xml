@@ -144,6 +144,7 @@
                             <group name="production" string="Production">
                                 <field name="gestion_affinage"/>
                                 <field name="to_personnalize"/>
+                                <field name="to_label"/>
                                 <field name="min_production_qty"/>
                             </group>
                         </group>
