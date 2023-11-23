@@ -118,6 +118,16 @@
 	<record id="wms_scenario_step_preparation86" model="wms.scenario.step">
 		<field name="sequence" eval="86"/>
 		<field name="name">preparation-86</field>
+		<field name="description">weight another update</field>
+		<field name="action_scanner">routing</field>
+		<field name="action_variable">scan</field>
+		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="python_code">data = step.weight_preparation(data)</field>
+	</record>
+
+	<record id="wms_scenario_step_preparation87" model="wms.scenario.step">
+		<field name="sequence" eval="87"/>
+		<field name="name">preparation-87</field>
 		<field name="description">weight update</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>

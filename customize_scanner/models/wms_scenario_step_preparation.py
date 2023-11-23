@@ -483,17 +483,7 @@ class WmsScenarioStep(models.Model):
     def weight_preparation(self, data):
         """ Weight product in preparation location
         """
-
-        if data.get('weighting_device') and not data.get('label_weight'):
-            # currently in weighting process
-            weight = data.get('weight')
-            if not weight:
-                weight = 0.0
-            # get the weight by asking device
-            weight_device = data['weighting_device'].get_weight(data=data)
-            data['weight'] = weight + weight_device
-
-        elif data.get('label_weight'):
+        if data.get('label_weight'):
             # currently in weighting process use weight on label
             weight = data.get('weight')
             if not weight:
@@ -508,6 +498,15 @@ class WmsScenarioStep(models.Model):
                     data['weight'] = weight + data.get('label_weight')
                 else:
                     data['warning'] = _("This is not the good product")
+
+        elif data.get('weighting_device'):
+            # currently in weighting process
+            weight = data.get('weight')
+            if not weight:
+                weight = 0.0
+            # get the weight by asking device
+            weight_device = data['weighting_device'].get_weight(data=data)
+            data['weight'] = weight + weight_device
 
         elif data.get('weight') and data.get('weight_line'):
             # save the weight
