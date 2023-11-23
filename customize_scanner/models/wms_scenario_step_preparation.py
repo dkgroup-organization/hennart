@@ -484,7 +484,7 @@ class WmsScenarioStep(models.Model):
         """ Weight product in preparation location
         """
 
-        if data.get('weighting_device'):
+        if data.get('weighting_device') and not data.get('label_weight'):
             # currently in weighting process
             weight = data.get('weight')
             if not weight:
