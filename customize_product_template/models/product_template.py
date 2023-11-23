@@ -170,6 +170,8 @@ class ProductTemplate(models.Model):
                                      help="This product need a production opération to be personnalized."
                                           " For exemple, label with brand."
                                           "This product cannot be sold to another customer")
+    to_label = fields.Boolean(string='To label',
+                                     help="This product need a wheighted opération")
 
     # LABEL
     aop = fields.Boolean(string='AOP')

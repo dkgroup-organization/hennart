@@ -142,7 +142,7 @@ class WmsScenarioStep(models.Model):
         if self.action_variable == 'weighting_device':
             if data.get('weight', 0.0) > 0.0:
                 tare = self.get_tare(data)
-                res = _("Valid:  ") + f"{data.get('weight', 0.0):.3f} Kg tare: {tare} Kg"
+                res = _("Valid:  ") + f"{data.get('weight', 0.0):.3f} Kg, tare: {tare:.3f} Kg/Unit"
             else:
                 res = _("Scan weighting device")
 
@@ -323,8 +323,9 @@ class WmsScenarioStep(models.Model):
                 {'text': _('Manual entry'),
                  'href': href_base + 'manual_weight'
                  },
+                {'text': _('Change Tare: ') + f"{tare} Kg/Unit", 'href': href_base + 'manual_tare'}
             ]
-            # {'text': _('Change Tare: ') + f"{tare} Kg", 'href': href_base + 'manual_tare'}
+
         return res
 
     def get_tare(self, data):
@@ -332,8 +333,10 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         move_line = data.get('weight_line')
         tare = 0.0
-        if move_line:
-            tare = move_line.product_id.tare * move_line.reserved_uom_qty
+        if 'tare' in list(data.keys()):
+            tare = data.get('tare')
+        elif move_line:
+            tare = move_line.product_id.tare
         return tare
 
     def check_move_line_scan(self, data):
@@ -398,8 +401,8 @@ class WmsScenarioStep(models.Model):
             return data
 
         move_line = data.get('move_line')
-        quantity = data.get('quantity')
-        # weight =
+        quantity = data.get('quantity') or data.get('label_quantity')
+        weight = data.get('weight') or data.get('label_weight')
         product_id = move_line.product_id
         lot_id = move_line.lot_id
         location_id = move_line.location_id
@@ -418,8 +421,8 @@ class WmsScenarioStep(models.Model):
                 'product_id': product_id,
                 'location_dest_id': location_dest_id,
                 'lot_id': lot_id,
-                'weight': data.get('weight'),
-                'quantity': data.get('quantity')
+                'weight': weight,
+                'quantity': quantity
                 }
             result_data = self.move_product(move_data)
 
@@ -442,7 +445,7 @@ class WmsScenarioStep(models.Model):
                         new_move_line.to_weight = True
                         new_move_line.weight = new_move_line.product_id.weight * new_move_line.qty_done
                     else:
-                        new_move_line.weight = new_move_line.product_id.weight
+                        new_move_line.weight = new_move_line.product_id.weight * new_move_line.qty_done
                         new_move_line.to_weight = False
                 else:
                     new_move_line.to_weight = False
@@ -486,18 +489,38 @@ class WmsScenarioStep(models.Model):
             weight = data.get('weight')
             if not weight:
                 weight = 0.0
+            # get the weight by asking device
             weight_device = data['weighting_device'].get_weight(data=data)
             data['weight'] = weight + weight_device
+
+        elif data.get('label_weight'):
+            # currently in weighting process use weight on label
+            weight = data.get('weight')
+            if not weight:
+                weight = 0.0
+            # Check data label before add weight
+            move_line = data.get('move_line') or data.get('weight_line')
+            product = data.get('product_id')
+            if move_line and product:
+                if move_line.product_id == product:
+                    data['weighting_device'] = -1
+                    data['tare'] = 0.0
+                    data['weight'] = weight + data.get('label_weight')
+                else:
+                    data['warning'] = _("This is not the good product")
 
         elif data.get('weight') and data.get('weight_line'):
             # save the weight
             move_line = data.get('weight_line')
             tare = self.get_tare(data)
-            move_line.weight = data.get('weight', 0.0) - tare
+            move_line.weight = data.get('weight', 0.0) - tare * move_line.qty_done
             move_line.to_weight = False
+
         else:
             pass
 
+        data.pop('weighting_device', None)
+        data.pop('label_weight', None)
         return data
 
     def package_preparation(self, data):

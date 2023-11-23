@@ -112,17 +112,17 @@
 		<field name="action_scanner">scan_weight</field>
 		<field name="action_variable">weighting_device</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-		<field name="python_code">data = step.weight_preparation(data)</field>
+		<field name="python_code"></field>
 	</record>
 
 	<record id="wms_scenario_step_preparation86" model="wms.scenario.step">
 		<field name="sequence" eval="86"/>
 		<field name="name">preparation-86</field>
-		<field name="description">rescan device</field>
+		<field name="description">weight update</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-		<field name="python_code">data.pop('weighting_device', None)</field>
+		<field name="python_code">data = step.weight_preparation(data)</field>
 	</record>
 
 	<record id="wms_scenario_step_preparation10" model="wms.scenario.step">
