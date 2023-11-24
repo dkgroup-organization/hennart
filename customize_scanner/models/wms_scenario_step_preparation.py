@@ -5,6 +5,7 @@
 import logging
 from odoo import models, api, fields, _
 from odoo.exceptions import MissingError, UserError, ValidationError
+from odoo.http import request
 import time
 import random
 import datetime
@@ -347,7 +348,7 @@ class WmsScenarioStep(models.Model):
         location = data.get('location_id') or data.get('location_origin_id')
         lot = data.get('lot_id')
         move_line = data.get('move_line')
-        quantity = data.get('quantity', 0.0)
+        quantity = data.get('quantity') or data.get('label_quantity', 0.0)
 
         if move_line:
             location = move_line.location_id
@@ -382,7 +383,7 @@ class WmsScenarioStep(models.Model):
                     if quantity > max_quantity:
                         data['warning'] = _("The maximum quantity in this location is {}".format(max_quantity))
                     elif move_line and quantity > move_line.reserved_uom_qty:
-                        data['warning'] = _("The maximum quantity to pick is {}".format(max_quantity))
+                        data['warning'] = _("The maximum quantity to pick is {}".format(move_line.reserved_uom_qty))
         else:
             data['warning'] = _("Some information are missing to check product on location.")
         return data
@@ -407,7 +408,12 @@ class WmsScenarioStep(models.Model):
         lot_id = move_line.lot_id
         location_id = move_line.location_id
 
-        # Check reserved quantity
+        # Check reserved quantity on move_line
+        if quantity > move_line.reserved_uom_qty:
+            data['Warning'] = _("There is more quantity than needed: ") + f"{quantity} > {move_line.reserved_uom_qty}"
+            return data
+
+        # Check reserved quantity on location
         condition = [
             ('product_id', '=', product_id.id),
             ('location_id', '=', location_id.id),
@@ -443,6 +449,7 @@ class WmsScenarioStep(models.Model):
                 if not new_move_line.weight:
                     if new_move_line.product_id.uos_id == uom_weight:
                         new_move_line.to_weight = True
+                        new_move_line.to_label = True
                         new_move_line.weight = new_move_line.product_id.weight * new_move_line.qty_done
                     else:
                         new_move_line.weight = new_move_line.product_id.weight * new_move_line.qty_done
@@ -479,48 +486,69 @@ class WmsScenarioStep(models.Model):
         res = f"<h1>{message}</h1>"
         return res
 
-    @api.model
+    def check_weight(self, data):
+        """ Check the weight operation"""
+
+        params = dict(request.params) or {}
+        if params.get('scan', '') and not (data.get('label_weight') or data.get('weighting_device')):
+            data['warning'] = _("This is not a weight")
+
+        product = data.get('product_id') or data.get('label_product')
+        lot = data.get('lot_id') or data.get('label_lot')
+
+        move_line = data.get('move_line') or data.get('weight_line')
+        if lot and move_line.lot_id != lot:
+            data['warning'] = _("This is not the good lot")
+        if product and move_line.product_id != product:
+            data['warning'] = _("This is not the good product")
+
+        if data.get('weight') and not params.get('scan', ''):
+            # OK
+            pass
+        return data
+
     def weight_preparation(self, data):
         """ Weight product in preparation location
         """
-        if data.get('label_weight'):
+        move_line = data.get('move_line') or data.get('weight_line')
+        if data.get('lot_id') and move_line.lot_id != data.get('lot_id'):
+            data['warning'] = _("This is not the good lot")
+        if data.get('product_id') and move_line.product_id != data.get('product_id'):
+            data['warning'] = _("This is not the good product")
+
+        if data.get('warning'):
+            # Do nothing
+            pass
+        elif data.get('label_weight'):
             # currently in weighting process use weight on label
-            weight = data.get('weight')
-            if not weight:
-                weight = 0.0
-            # Check data label before add weight
-            move_line = data.get('move_line') or data.get('weight_line')
-            product = data.get('product_id')
-            if move_line and product:
-                if move_line.product_id == product:
-                    data['weighting_device'] = -1
-                    data['tare'] = 0.0
-                    data['weight'] = weight + data.get('label_weight')
-                else:
-                    data['warning'] = _("This is not the good product")
+            data['tare'] = 0.0
+            data['weighting_device'] = -1
+            data['weight'] = data.get('weight', 0.0) + data.get('label_weight')
 
         elif data.get('weighting_device'):
             # currently in weighting process
-            weight = data.get('weight')
-            if not weight:
-                weight = 0.0
             # get the weight by asking device
             weight_device = data['weighting_device'].get_weight(data=data)
-            data['weight'] = weight + weight_device
+            data['tare'] = self.get_tare(data)
+            data['weight'] = data.get('weight', 0.0) + weight_device
 
         elif data.get('weight') and data.get('weight_line'):
             # save the weight
             move_line = data.get('weight_line')
-            tare = self.get_tare(data)
-            move_line.weight = data.get('weight', 0.0) - tare * move_line.qty_done
+            move_line.weight = data.get('weight', 0.0) - move_line.qty_done * data.get('tare', 0.0)
             move_line.to_weight = False
-
+            if move_line.to_label and data.get('printer'):
+                move_line.print_label(printer=data.get('printer'))
+                move_line.to_label = False
         else:
-            pass
+            data['warning'] = _("This is not a weight")
 
-        data.pop('weighting_device', None)
-        data.pop('label_weight', None)
-        return data
+        # init data to new weighting operation
+        new_data = self.init_data()
+        for key in ['picking', 'weight_line', 'printer', 'weight', 'warning', 'tare']:
+            if data.get(key):
+                new_data[key] = data.get(key)
+        return new_data
 
     def package_preparation(self, data):
         """ Update preparation package """
@@ -550,7 +578,7 @@ class WmsScenarioStep(models.Model):
                 if not data.get('warning'):
                     for move_line in picking.move_line_ids:
                         if move_line.to_weight or move_line.to_label:
-                            data['warning'] = data['warning'] = data.get('warning', '') + _("Some product need label and weight.")
+                            data['warning'] = data.get('warning', '') + _("Some product need label and weight.")
                             break
             else:
                 data['warning'] = _("No picking to check")

@@ -112,7 +112,7 @@
 		<field name="action_scanner">scan_weight</field>
 		<field name="action_variable">weighting_device</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
-		<field name="python_code"></field>
+		<field name="python_code">data = step.check_weight(data)</field>
 	</record>
 
 	<record id="wms_scenario_step_preparation86" model="wms.scenario.step">

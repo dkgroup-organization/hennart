@@ -19,6 +19,8 @@
 ##############################################################################
 
 from . import printing_printer
+from . import stock_move_line
+
 
 
 
