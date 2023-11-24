@@ -219,7 +219,7 @@
 
 weight_label=&quot;Poids net:&quot;,
 weight=f&quot;{object.weight:.3f} Kg&quot;,
-product_code=object.product_id.default_code,
+product_code=object.label_code,
 product_name=object.product_id.name,
 
 prodlot_label=&quot;Lot:&quot;,

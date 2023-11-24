@@ -22,8 +22,11 @@
                             <field name="active" widget="boolean_button"
                                    options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
                         </button>
-                        <button name="button_save_xml_step" type="object" class="oe_stat_button" icon="fa-save">Step</button>
-                        <button name="button_save_xml_transition" type="object" class="oe_stat_button" icon="fa-save">Transition</button>
+                        <button name="button_save_xml_step" type="object" class="oe_stat_button" icon="fa-save">Step
+                        </button>
+                        <button name="button_save_xml_transition" type="object" class="oe_stat_button" icon="fa-save">
+                            Transition
+                        </button>
                     </div>
 
                     <group colspan="4" col="4">
@@ -56,27 +59,36 @@
                                     <notebook>
                                         <page string="Action">
 
-                                            <separator string="1/ Python code preparation of data" colspan="4"/>
+                                            <group string="1/ Qweb template configuration">
+                                                <group>
+                                                    <field name="step_qweb"/>
+                                                    <field name="action_scanner"/>
+                                                    <field name="action_model"
+                                                           attrs="{'invisible':[('action_scanner','!=', 'scan_model')]}"/>
+                                                    <field name="action_variable"
+                                                           attrs="{'invisible':[('action_scanner','in', ['none', 'start', 'routing'])]}"/>
+                                                </group>
+
+                                                <group invisible="[('action_scanner','in', ['none', 'start', 'routing'])]">
+
+                                                    <field name="action_presentation"/>
+                                                    <field name="action_message"/>
+                                                    <field name="scenario_id" invisible="1"/>
+                                                </group>
+
+                                            </group>
+
+                                            <separator string="2/ Python code preparation of data" colspan="4"/>
                                             <div>
-                                                <p>You can use the object: step and env to acces to all functions and environment.
-                                                    Some name variables is used by the system in data:</p>
+                                                <p>You can use the object: step and env to acces to all functions and
+                                                    environment.
+                                                    Some name variables is used by the system in data:
+                                                </p>
                                                 <p>user, warning, scan, function, message, button, result</p>
                                             </div>
                                             <field name="python_code" colspan="4" nolabel="1" widget="ace"
                                                    options="{'mode': 'python'}"/>
 
-                                            <group string="2/ Qweb template configuration">
-                                                <field name="step_qweb"/>
-                                                <field name="action_presentation"/>
-                                                <field name="action_scanner"/>
-                                                <field name="action_model"
-                                                       attrs="{'invisible':[('action_scanner','!=', 'scan_model')]}"/>
-                                                <field name="action_variable"
-                                                       attrs="{'invisible':[('action_scanner','in', ['none', 'start', 'routing'])]}"/>
-                                                <field name="action_message"
-                                                       attrs="{'invisible':[('action_scanner','in', ['none', 'start', 'routing'])]}"/>
-                                                <field name="scenario_id" invisible="1"/>
-                                            </group>
 
                                             <separator string="3/ Outgoing transitions"/>
                                             <field name="out_transition_ids" nolabel="1">

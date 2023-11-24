@@ -69,7 +69,7 @@ class WmsScenarioStep(models.Model):
                     product_tmpl = product_ids
                     # check if it is a package
                     product = product_tmpl.base_product_tmpl_id.product_variant_id or product_tmpl
-                    data['lot_code'] = product.default_code
+                    data['label_product'] = product
 
                 else:
                     data['warning'] = _("Barcode error, The product is unknown: ") + product_code
@@ -101,7 +101,7 @@ class WmsScenarioStep(models.Model):
                     date_day = scan[affinage + 1:affinage + 3]
                     date_month = scan[affinage + 3:affinage + 5]
                     try:
-                        data['lot_date'] = fields.Datetime.from_string(f"{date_year}-{date_month}-{date_day} 12:00:00")
+                        data['label_date'] = fields.Datetime.from_string(f"{date_year}-{date_month}-{date_day} 12:00:00")
                     except:
                         data['warning'] = _("Error on date format.")
                 else:
@@ -131,26 +131,22 @@ class WmsScenarioStep(models.Model):
                         lot_ids = self.env['stock.lot'].search([(barcode_field, '=', old_barcode)])
                         if len(lot_ids) > 1:
                             data['warning'] = _("There is more than one lot with the same name and date: {}".format(old_barcode))
-                        elif lot_ids and lot_ids.product_id == product:
+                        elif lot_ids:
                             data['lot_id'] = lot_ids[0]
                             break
-                        elif lot_ids:
-                            data['warning'] = _("This lot has not the good product.")
-                            print(lot_ids, lot_ids.product_id , product, product_tmpl)
 
-                    if data.get('lot_date') and not data.get('lot_id'):
+                    if data.get('label_date') and not data.get('lot_id'):
                         # Maybe there is a error on date
                         lot_ids = self.env['stock.lot'].search([('name', '=', lot_name),
                                                                 ('product_id', '=', product.id)])
                         if len(lot_ids) == 1 and \
-                                lot_ids.expiration_date.strftime('%Y-%m-%d') != data['lot_date'].strftime('%Y-%m-%d'):
-                            data['warning'] = _("The expiration date of this label is not correct: {}".format(data['lot_date'].strftime('%d-%m-%T')))
+                                lot_ids.expiration_date.strftime('%Y-%m-%d') != data['label_date'].strftime('%Y-%m-%d'):
+                            data['warning'] = _("The expiration date of this label is not correct: {}".format(data['label_date'].strftime('%d-%m-%T')))
 
             # Get the lot name to possible creation if lot is finding
-            if product and data.get('lot_date') and not data.get('lot_id'):
-                # In this case the lot is to create by use lot_name, lot_product, lot_date
+            if product and data.get('label_date') and not data.get('lot_id'):
+                # In this case the lot is to create by use lot_name, label_product, label_date
                 data['lot_name'] = scan[5:affinage]
-                data['lot_product'] = product
 
         if len(scan) > 4 and scan[:4] == BARCODE_WEIGHT:
             # In this case, it is a weighted device

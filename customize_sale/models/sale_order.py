@@ -106,6 +106,8 @@ class SaleOrder(models.Model):
         for sale in self:
             check_line = {}
             for line in sale.order_line:
+                if line.product_uom_qty == 0.0:
+                    continue
                 key = "{}-{}-{}".format(line.product_id.id, line.price_unit, line.discount)
                 if not key in check_line:
                     check_line[key] = line

@@ -12,7 +12,7 @@
     'application': True,
     'installable': True,
     'depends': [
-        'wms_scanner', 'customize_stock', 'base_module_record'
+        'wms_scanner', 'customize_stock', 'base_module_record', 'wms_labels_hennart'
     ],
     'data': [
         "views/scenario_preparation_list_template.xml",
