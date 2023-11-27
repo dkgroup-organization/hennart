@@ -357,13 +357,13 @@ class WmsScenarioStep(models.Model):
         if product and lot and product != lot.product_id:
             data['warning'] = _("This is not the product to pick.")
 
-        elif move_line and lot and lot != move_line.lot_id:
+        if move_line and lot and lot != move_line.lot_id:
             data['warning'] = _("This is not the lot to pick.")
 
-        elif move_line and move_line.lot_id and not lot:
+        if move_line and move_line.lot_id and not lot:
             data['warning'] = _("Scan the production lot: {}".format(move_line.lot_id.ref))
 
-        elif product and location:
+        if product and location:
             condition = [
                 ('product_id', '=', product.id),
                 ('location_id', '=', location.id)]
