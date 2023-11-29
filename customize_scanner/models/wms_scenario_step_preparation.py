@@ -94,6 +94,8 @@ class WmsScenarioStep(models.Model):
         res = ""
         if data.get('picking'):
             res = data['picking'].name
+            if data['picking'].partner_id:
+                res += data['picking'].partner_id.name
         return res
 
     def get_input_name(self, data):
@@ -136,16 +138,19 @@ class WmsScenarioStep(models.Model):
             res = _('Scan Printer')
 
         if self.action_variable == 'weight':
-            res = _('Enter Weight:')
+            res = _('Enter Net weight:')
             if move_line and move_line.product_id.weight:
                 res += '~ {} Kg'.format(move_line.product_id.weight * move_line.qty_done)
 
         if self.action_variable == 'weighting_device':
             if data.get('weight', 0.0) > 0.0:
                 tare = self.get_tare(data)
-                res = _("Valid:  ") + f"{data.get('weight', 0.0):.3f} Kg, tare: {tare:.3f} Kg/Unit"
+                res = _("Valid:  ") + f"{data.get('weight', 0.0):.3f}" + _(" Kg or scan")
             else:
                 res = _("Scan weighting device")
+
+        if self.action_variable == 'tare':
+            res = _('Enter tare by unit in Kg')
 
         if self.action_variable == 'number_of_packages':
             res = _("Nb of package: ")
@@ -175,21 +180,33 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         res = 'Scan'
         move_line = data.get('move_line') or data.get('weight_line')
+
         if action_variable == 'product_id':
             product = data.get('product_id') or move_line and move_line.product_id
-            res = product and f'{product.name}' or '????'
+            res = product and f'{product.name}' or _('Product')
         if action_variable == 'location_id':
             location = data.get('location_id') or move_line and move_line.location_id
-            res = location and f'{location.name}' or '????'
+            res = location and f'{location.name}' or _('location')
+        if action_variable == 'location_origin_id':
+            location = data.get('location_origin_id')
+            res = location and f'{location.name}' or _('location')
+        if action_variable == 'location_dest_id':
+            location = data.get('location_dest_id')
+            res = location and f'{location.name}' or _('location')
         if action_variable == 'lot_id':
             lot = data.get('lot_id') or move_line and move_line.lot_id
-            res = lot and f'{lot.ref}' or '????'
+            res = lot and f'{lot.ref}' or _('Lot')
         if action_variable == 'quantity':
             quantity = data.get('quantity') or move_line and move_line.reserved_uom_qty or 0.0
             res = f'{int(quantity)}'
         if action_variable == 'printer':
             printer = data.get('printer')
             res = printer and printer.name or _('scan printer')
+        if action_variable == 'weight':
+            if data.get('weight'):
+                res = f"{data.get('weight', 0.0):.3f} Kg"
+            else:
+                res = f"? Kg"
 
         if action_variable == 'number_of_packages':
             res = _("Nb of package: ")
@@ -209,13 +226,14 @@ class WmsScenarioStep(models.Model):
         move_line = data.get('move_line') or data.get('weight_line')
         if action_variable == 'product_id':
             product = data.get('product_id') or move_line and move_line.product_id
-            res = product and f'{product.default_code}' or '????'
-        if action_variable == 'location_id':
-            location = data.get('location_id') or move_line and move_line.location_id
+            res = product and f'{product.default_code}' or ''
+        if action_variable in ['location_id', 'location_origin_id', 'location_dest_id']:
+            location = data.get('location_id') or data.get('location_id') or (move_line and move_line.location_id) or False
             res = location and len(location.name) > 5 and location.name[-5:] or ''
         if action_variable == 'lot_id':
-            lot = data.get('lot_id') or move_line and move_line.lot_id
-            res = lot.expiration_date and f"{lot.expiration_date.strftime('%d/%m/%Y')}" or '??/??/????'
+            lot = data.get('lot_id') or (move_line and move_line.lot_id) or False
+            if lot:
+                res = lot.expiration_date and f"{lot.expiration_date.strftime('%d/%m/%Y')}" or '??/??/????'
 
         if action_variable == 'quantity':
             if data.get('move_line') and move_line.move_id.bom_line_id.bom_id.type == 'phantom':
@@ -224,8 +242,15 @@ class WmsScenarioStep(models.Model):
                 if quantity and package_qty:
                     package_nb = int(int(quantity) / int(package_qty))
                     res = f'{package_nb}' + _(" Pack of ") + f'{package_qty}'
-                else:
-                    res = ""
+            elif data.get('product_id') and data['product_id'].base_unit_count > 1:
+                res = _(" Pack of ") + f"{int(data['product_id'].base_unit_count)}"
+            else:
+                res = _("Unit")
+
+        if action_variable == 'weight':
+            res = _("Tare: ")
+            tare = data.get('tare') or self.get_tare(data)
+            res += f"{tare:.3f} Kg/Unit"
 
         if action_variable == 'number_of_packages':
             if data.get('number_of_packages'):
@@ -505,6 +530,7 @@ class WmsScenarioStep(models.Model):
         if data.get('weight') and not params.get('scan', ''):
             # OK
             pass
+
         return data
 
     def weight_preparation(self, data):
@@ -524,13 +550,24 @@ class WmsScenarioStep(models.Model):
             data['tare'] = 0.0
             data['weighting_device'] = -1
             data['weight'] = data.get('weight', 0.0) + data.get('label_weight')
+            weight_detail = data.get('weight_detail', []).copy()
+            weight_detail.append({'qty': data.get('label_qty', 1), 'weight': data['label_weight'], 'tare': 0.0})
+            data['weight_detail'] = weight_detail
 
         elif data.get('weighting_device'):
             # currently in weighting process
             # get the weight by asking device
             weight_device = data['weighting_device'].get_weight(data=data)
             data['tare'] = self.get_tare(data)
-            data['weight'] = data.get('weight', 0.0) + weight_device
+            if move_line.product_id.weight:
+                nb_product = round(weight_device/move_line.product_id.weight)
+            else:
+                nb_product = move_line.reserved_uom_qty
+
+            data['weight'] = data.get('weight', 0.0) + weight_device - nb_product * data['tare']
+            weight_detail = data.get('weight_detail', []).copy()
+            weight_detail.append({'qty': int(nb_product), 'weight': round(weight_device, 3), 'tare': data['tare']})
+            data['weight_detail'] = weight_detail
 
         elif data.get('weight') and data.get('weight_line'):
             # save the weight
@@ -545,7 +582,7 @@ class WmsScenarioStep(models.Model):
 
         # init data to new weighting operation
         new_data = self.init_data()
-        for key in ['picking', 'weight_line', 'printer', 'weight', 'warning', 'tare']:
+        for key in ['picking', 'weight_line', 'printer', 'weight', 'warning', 'tare', 'weight_detail']:
             if data.get(key):
                 new_data[key] = data.get(key)
         return new_data

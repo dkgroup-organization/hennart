@@ -113,6 +113,7 @@
 		<field name="action_variable">weighting_device</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 		<field name="python_code">data = step.check_weight(data)</field>
+
 	</record>
 
 	<record id="wms_scenario_step_preparation86" model="wms.scenario.step">
@@ -143,7 +144,16 @@
 		<field name="action_model" ref="customize_stock.model_stock_weight_device"/>
 		<field name="action_variable">weight</field>
 		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="python_code_before">data.pop('weight_detail', None)</field>
+	</record>
 
+	<record id="wms_scenario_step_preparation91" model="wms.scenario.step">
+		<field name="sequence" eval="91"/>
+		<field name="name">preparation-91</field>
+		<field name="description">Change tare</field>
+		<field name="action_scanner">scan_tare</field>
+		<field name="action_variable">tare</field>
+		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
 	</record>
 
 	<record id="wms_scenario_step_preparation11" model="wms.scenario.step">

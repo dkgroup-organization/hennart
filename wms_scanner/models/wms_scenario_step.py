@@ -29,6 +29,7 @@ class WmsScenarioStep(models.Model):
          ('no_scan', 'Message, no scan'),
          ('scan_quantity', 'Enter quantity'),
          ('scan_weight', 'Scan Weight'),
+         ('scan_tare', 'Scan Weight tare'),
          ('scan_text', 'Enter Text'),
          ('scan_model', 'Scan model'),
          ('scan_info', 'Scan search'),
@@ -61,8 +62,11 @@ class WmsScenarioStep(models.Model):
         string='Incoming transitions',
         help='Transitions which goes to the next step.')
     python_code = fields.Text(
-        string='Python code',
-        help='Python code to execute.')
+        string='Python code after form',
+        help='Python code to execute after qweb.')
+    python_code_before = fields.Text(
+        string='Python code before',
+        help='Python code to execute before qweb.')
     scenario_notes = fields.Text(related='scenario_id.notes')
 
     def init_data(self, data={}):
@@ -154,7 +158,7 @@ class WmsScenarioStep(models.Model):
             data['warning'] = _('The barcode is unreadable')
         elif action_scanner == 'scan_text':
             data[action_variable] = "%s" % (scan)
-        elif action_scanner == 'scan_quantity':
+        elif action_scanner in ['scan_quantity', 'scan_tare']:
             try:
                 quantity = float(scan)
                 if quantity >= 0.0:
@@ -240,6 +244,9 @@ class WmsScenarioStep(models.Model):
             original_data['warning'] = data.get('warning', '')
             data = original_data.copy()
 
+        if data.get('step'):
+            data = self.execute_code_before(data)
+
         message = self.info_message(data)
         if message:
             data["message"] = message
@@ -317,6 +324,26 @@ class WmsScenarioStep(models.Model):
                     'env': self.env,
                     'data': data.copy()}
                 safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
+                data = localdict.get('data')
+            except Exception as e:
+                debug = _("This code generate an error: %s" % (self.python_code or ''))
+                data.update({'debug': debug})
+                session = self.env['wms.session'].get_session()
+                session.error = str(e)
+                logger.warning(e)
+
+        return data
+
+    def execute_code_before(self, data={}):
+        "Eval the python code"
+        self.ensure_one()
+        if data['step'].python_code_before:
+            try:
+                localdict = {
+                    'step': self,
+                    'env': self.env,
+                    'data': data.copy()}
+                safe_eval(data['step'].python_code_before, localdict, mode="exec", nocopy=True)
                 data = localdict.get('data')
             except Exception as e:
                 debug = _("This code generate an error: %s" % (self.python_code or ''))

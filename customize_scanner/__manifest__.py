@@ -17,6 +17,7 @@
     'data': [
         "views/scenario_preparation_list_template.xml",
         "views/scenario_preparation_line_template.xml",
+        "views/scenario_move.xml",
         "views/scenario_preparation_message_template.xml",
         "data/scenarion_preparation.xml",
         "data/scenarion_preparation_transition.xml",

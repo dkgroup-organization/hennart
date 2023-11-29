@@ -233,10 +233,13 @@ class WmsScenarioStep(models.Model):
        "This product {} is not registred in this location {}"
        "This product {} need a production lot "
         """
+        if data.get('label_product') and not data.get('product_id') :
+            data['product_id'] = data.get('label_product')
+
         if data.get('product_id') and (data.get('location_id') or data.get('location_origin_id')):
             condition = [
                 ('product_id', '=', data['product_id'].id),
-                ('location_id', '=', (data['location_id'] or data['location_origin_id']).id)]
+                ('location_id', '=', (data.get('location_id') or data.get('location_origin_id')).id)]
 
             if data.get('lot_id'):
                 condition.append(('lot_id', '=', data['lot_id'].id))
