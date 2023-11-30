@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 16.0-20230328\n"
+"Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-26 15:13+0000\n"
-"PO-Revision-Date: 2023-07-26 15:13+0000\n"
+"POT-Creation-Date: 2023-11-28 14:14+0000\n"
+"PO-Revision-Date: 2023-11-28 14:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,14 @@ msgstr ""
 #: code:addons/customize_stock/models/stock_lot.py:0
 #, python-format
 msgid " - Product: %s, Serial Number: %s"
-msgstr ""
+msgstr " - Produit: %s, Numéro de série: %s"
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/stock_picking.py:0
+#, python-format
+msgid " lines, "
+msgstr " lignes"
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_lot__barcode
@@ -31,7 +38,44 @@ msgstr "Code barres"
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_lot__barcode_ext
 msgid "Barcode (external)"
-msgstr ""
+msgstr "Code barre (externe)"
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/stock_lot.py:0
+#, python-format
+msgid "Best before date:"
+msgstr "à consomer de préférence avant:"
+
+#. module: customize_stock
+#: model:ir.model.fields,help:customize_stock.field_stock_location__blocked
+msgid "Block the possibility of reserve the product in this location"
+msgstr "Bloquer la réservation des produits dans cet emplacement"
+
+#. module: customize_stock
+#: model:ir.model.fields,help:customize_stock.field_stock_lot__blocked
+msgid "Block the possibility of reserve this lot"
+msgstr "Bloquer la possibilité de réserver ce lot"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_location__blocked
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__blocked
+#: model:ir.model.fields,field_description:customize_stock.field_stock_quant__blocked
+#: model_terms:ir.ui.view,arch_db:customize_stock.view_stock_location_search_customize
+#: model_terms:ir.ui.view,arch_db:customize_stock.view_stock_quant_search_customize
+msgid "Blocked"
+msgstr "Bloqué"
+
+#. module: customize_stock
+#: model_terms:ir.ui.view,arch_db:customize_stock.view_stock_location_search_customize
+#: model_terms:ir.ui.view,arch_db:customize_stock.view_stock_quant_search_customize
+msgid "Blocked Locations"
+msgstr "Emplacement bloqué"
+
+#. module: customize_stock
+#: model_terms:ir.ui.view,arch_db:customize_stock.import_product_template_form_view
+msgid "Cancel"
+msgstr "Annulé"
 
 #. module: customize_stock
 #: model:ir.model.fields.selection,name:customize_stock.selection__stock_weight_value__state__cancel
@@ -39,9 +83,12 @@ msgid "Cancelled"
 msgstr "Annulé"
 
 #. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move__default_code
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__default_code
+#: model:ir.model.fields,field_description:customize_stock.field_stock_picking__picking_type_code
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__code
 msgid "Code"
-msgstr "Code"
+msgstr ""
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_lot__company_id
@@ -49,110 +96,190 @@ msgid "Company"
 msgstr "Société"
 
 #. module: customize_stock
-#: model:ir.model,name:customize_stock.model_res_config_settings
-msgid "Config Settings"
-msgstr "Paramètres de config"
+#: model_terms:ir.ui.view,arch_db:customize_stock.stock_picking_form_view_inherit
+msgid "Contact"
+msgstr ""
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_move__picking_type_use_create_lots
 msgid "Create New Lots/Serial Numbers"
-msgstr ""
+msgstr "Créer un nouveau numéro de lot"
 
 #. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_import_product_template__create_uid
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__create_uid
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__create_uid
 msgid "Created by"
 msgstr "Créé par"
 
 #. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_import_product_template__create_date
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__create_date
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__create_date
 msgid "Created on"
-msgstr "Créé le"
+msgstr "Crée le"
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_lot__date
 msgid "Date de création"
-msgstr "Date de création"
+msgstr ""
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_lot__life_date
 msgid "Date limite de consommation"
-msgstr "Date limite de consommation"
+msgstr ""
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/stock_lot.py:0
+#, python-format
+msgid "Date:"
+msgstr ""
+
+#. module: customize_stock
+#: model_terms:ir.ui.view,arch_db:customize_stock.stock_picking_form_view_inherit
+msgid "Delivery Address"
+msgstr "Adresse de livraison"
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__name
 msgid "Description"
-msgstr "Description"
+msgstr ""
 
 #. module: customize_stock
+#: model_terms:ir.ui.view,arch_db:customize_stock.stock_picking_form_view_inherit
+msgid "Detailed Operations"
+msgstr "Opérations détaillées"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_import_product_template__display_name
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__display_name
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__display_name
 msgid "Display Name"
 msgstr "Nom affiché"
 
 #. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move__quantity_done
 #: model:ir.model.fields.selection,name:customize_stock.selection__stock_weight_value__state__done
 msgid "Done"
 msgstr "Fait"
 
 #. module: customize_stock
-#. odoo-python
-#: code:addons/customize_stock/models/wms_scenario_step.py:0
-#, python-format
-msgid "Error, The move is not registered"
-msgstr ""
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__expiration_date
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move__lot_expiration_date
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__expiration_date
+msgid "Expiration Date"
+msgstr "Date de fin de validité"
 
 #. module: customize_stock
-#: model:ir.model.fields,field_description:customize_stock.field_stock_move__lot_expiration_date
-msgid "Expiration Date"
+#. odoo-python
+#: code:addons/customize_stock/models/stock_lot.py:0
+#, python-format
+msgid "Expiration date:"
 msgstr "Date d'expiration"
 
 #. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_import_product_template__file_name
+msgid "File name"
+msgstr "Nom de fichier"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_import_product_template__id
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__id
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: customize_stock
 #: model:ir.model.fields,help:customize_stock.field_stock_move__picking_type_use_create_lots
 msgid ""
 "If this is checked only, it will suppose you want to create new Lots/Serial "
 "Numbers, so you can provide them in a text field. "
+msgstr "Si cette case est coché, cela suppose que vous souhaitez créer "
+"des nouveaux numéros de lot, vous pouvez les inscrire dans le champ texte." 
+
+#. module: customize_stock
+#: model_terms:ir.ui.view,arch_db:customize_stock.import_product_template_form_view
+msgid "Import"
 msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_import_product_template__file
+msgid "Import File"
+msgstr "Importer le fichier"
+
+#. module: customize_stock
+#: model:ir.actions.act_window,name:customize_stock.action_import_product_template
+#: model:ir.ui.menu,name:customize_stock.menu_import_product_template
+#: model_terms:ir.ui.view,arch_db:customize_stock.import_product_template_form_view
+msgid "Import Product Template"
+msgstr "Importer les Produits"
+
+#. module: customize_stock
+#: model:ir.model,name:customize_stock.model_import_product_template
+msgid "Import product template"
+msgstr "Importer les produits"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move__wh_filter
+msgid "In/Out move"
+msgstr "Mouvements d'entée/sortie"
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_lot__ref
 msgid "Internal Reference"
-msgstr ""
+msgstr "Référence interne"
 
 #. module: customize_stock
 #: model:ir.model.fields,help:customize_stock.field_stock_lot__ref
 msgid "Internal reference with incremente index "
-msgstr ""
+msgstr "Réference interne incrémenté"
 
 #. module: customize_stock
+#: model:ir.model,name:customize_stock.model_stock_location
+msgid "Inventory Locations"
+msgstr "Emplacements de stock"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_import_product_template____last_update
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device____last_update
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value____last_update
 msgid "Last Modified on"
 msgstr "Dernière modification le"
 
 #. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_import_product_template__write_uid
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__write_uid
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__write_uid
 msgid "Last Updated by"
 msgstr "Dernière mise à jour par"
 
 #. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_import_product_template__write_date
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__write_date
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__write_date
 msgid "Last Updated on"
 msgstr "Dernière mise à jour le"
 
 #. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move__lot_description
+msgid "Lot description"
+msgstr ""
+
+#. module: customize_stock
 #: model:ir.model,name:customize_stock.model_stock_lot
 msgid "Lot/Serial"
 msgstr "Lot/N° série"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__move_line_id
+msgid "Move line"
+msgstr "Détail"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_import_product_template__name
+msgid "Name"
+msgstr "Nom"
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__address
@@ -170,14 +297,21 @@ msgid "Packaging Quantity"
 msgstr "Nbre de colis"
 
 #. module: customize_stock
-#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__user_prepa_id
-msgid "Preparator"
-msgstr "Préparateur"
+#. odoo-python
+#: code:addons/customize_stock/wizard/import_product_template.py:0
+#, python-format
+msgid "Please select a file to import."
+msgstr "Merci de sélectionner un fichier à importer"
 
 #. module: customize_stock
-#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__product_id
-msgid "Product"
-msgstr "Produit"
+#: model:ir.model.fields,field_description:customize_stock.field_stock_picking__preparation_state
+msgid "Preparation"
+msgstr "Préparation"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__priority
+msgid "Priority"
+msgstr "Priorité"
 
 #. module: customize_stock
 #: model:ir.model,name:customize_stock.model_stock_move_line
@@ -185,32 +319,28 @@ msgid "Product Moves (Stock Move Line)"
 msgstr "Mouvements d'article (Ligne de mouvement de stock)"
 
 #. module: customize_stock
-#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__prodlot_id
-msgid "Production lot"
-msgstr "Lot de production"
+#: model_terms:ir.ui.view,arch_db:customize_stock.stock_picking_form_view_inherit
+msgid "Produire"
+msgstr "Produire"
 
 #. module: customize_stock
-#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__product_qty
-msgid "Quantity"
-msgstr "Quantité"
+#: model:ir.model,name:customize_stock.model_stock_quant
+msgid "Quants"
+msgstr "Quantités"
 
 #. module: customize_stock
-#. odoo-python
-#: code:addons/customize_stock/models/wms_scenario_step.py:0
-#, python-format
-msgid "Reading weight error:"
-msgstr ""
+#: model_terms:ir.ui.view,arch_db:customize_stock.stock_picking_form_view_inherit
+msgid "Receive From"
+msgstr "Reçu de"
 
 #. module: customize_stock
-#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__picking_id
-msgid "Reference"
-msgstr "Référence"
+#: model:ir.model.fields,field_description:customize_stock.field_stock_picking__sequence
+msgid "Sequence"
+msgstr "Séquence"
 
 #. module: customize_stock
-#. odoo-python
-#: code:addons/customize_stock/models/wms_scenario_step.py:0
-#, python-format
-msgid "Some information are missing to check product on location."
+#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_device__simulation
+msgid "Simulation"
 msgstr ""
 
 #. module: customize_stock
@@ -219,8 +349,8 @@ msgid "Status"
 msgstr "Statut"
 
 #. module: customize_stock
-#: model:ir.model,name:customize_stock.model_wms_scenario_step
-msgid "Step for scenario"
+#: model_terms:ir.ui.view,arch_db:customize_stock.stock_picking_form_view_inherit
+msgid "Stock"
 msgstr ""
 
 #. module: customize_stock
@@ -246,49 +376,23 @@ msgstr "Tare"
 msgid ""
 "The combination of serial number and product must be unique across a company.\n"
 "Following combination contains duplicates:\n"
-msgstr ""
+msgstr "Le numéro de série doit être unique par produit. Ces dernièrs numéros contiennent des doublons"
 
 #. module: customize_stock
-#. odoo-python
-#: code:addons/customize_stock/models/wms_scenario_step.py:0
-#, python-format
-msgid "The move is registered"
-msgstr ""
+#: model:ir.model.fields,help:customize_stock.field_stock_move_line__expiration_date
+msgid ""
+"This is the date on which the goods with this Lot Number may become "
+"dangerous and must not be consumed."
+msgstr "Cette date est la date limite de consomation. Le produit est considéré comme dangereux après cette date et ne doit plus être consommé"
 
 #. module: customize_stock
-#. odoo-python
-#: code:addons/customize_stock/models/wms_scenario_step.py:0
-#, python-format
-msgid "There is more than one lot with the same name and date: {}"
-msgstr ""
-
-#. module: customize_stock
-#. odoo-python
-#: code:addons/customize_stock/models/wms_scenario_step.py:0
-#, python-format
-msgid "There is not enough quantity in this lot. The maximum is {}"
-msgstr ""
-
-#. module: customize_stock
-#. odoo-python
-#: code:addons/customize_stock/models/wms_scenario_step.py:0
-#, python-format
-msgid "There is not enough quantity on the location. The maximum is {}"
-msgstr ""
-
-#. module: customize_stock
+#: model:ir.model.fields,help:customize_stock.field_stock_lot__expiration_date
 #: model:ir.model.fields,help:customize_stock.field_stock_move__lot_expiration_date
 msgid ""
 "This is the date on which the goods with this Serial Number may become "
 "dangerous and must not be consumed."
 msgstr ""
-
-#. module: customize_stock
-#. odoo-python
-#: code:addons/customize_stock/models/wms_scenario_step.py:0
-#, python-format
-msgid "This lot is removing."
-msgstr ""
+"Cette date est la date limite de consomation. Le produit est considéré comme dangereux après cette date et ne doit plus être consommé."
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__weight
@@ -296,9 +400,19 @@ msgid "Total Weight"
 msgstr "Poids total"
 
 #. module: customize_stock
-#: model:ir.model.fields.selection,name:customize_stock.selection__stock_weight_value__type__1
-msgid "Type 1"
-msgstr ""
+#: model:ir.model,name:customize_stock.model_stock_picking
+msgid "Transfer"
+msgstr "Transfert"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__picking_type_code
+msgid "Type of Operation"
+msgstr "Type d'opération"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__product_uom_id
+msgid "Unit of Measure"
+msgstr "Unité de mesure"
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__name
@@ -306,8 +420,10 @@ msgid "Weighing number"
 msgstr "Numéro de pesée"
 
 #. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move__weight
 #: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__weight
-#: model_terms:ir.ui.view,arch_db:customize_stock.stock_move_line_operation_tree_view_inherit
+#: model_terms:ir.ui.view,arch_db:customize_stock.view_stock_move_line_detailed_operation_tree_inherit
+#: model_terms:ir.ui.view,arch_db:customize_stock.view_stock_move_line_operation_tree_inherit
 msgid "Weight"
 msgstr "Poids"
 
@@ -323,12 +439,12 @@ msgstr "Appareil de poids"
 #: model:ir.actions.act_window,name:customize_stock.action_stock_weight_value
 #: model:ir.ui.menu,name:customize_stock.menu_stock_weight_value
 msgid "Weight Value"
-msgstr "Valeur de poids"
+msgstr "Poids"
 
 #. module: customize_stock
 #: model:ir.model,name:customize_stock.model_stock_weight_device
 msgid "Weight device"
-msgstr "Appareil de poids"
+msgstr "Balance de pesée"
 
 #. module: customize_stock
 #: model:ir.ui.menu,name:customize_stock.menu_stock_weight
@@ -336,17 +452,47 @@ msgid "Weight management"
 msgstr "Gestion du poids"
 
 #. module: customize_stock
-#: model:ir.model.fields,field_description:customize_stock.field_stock_move__weight_manual
-#: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__weight_manual
-#: model_terms:ir.ui.view,arch_db:customize_stock.stock_move_line_operation_tree_view_inherit
-msgid "Weight manual"
-msgstr "Saisie poids"
-
-#. module: customize_stock
 #: model:ir.model,name:customize_stock.model_stock_weight_value
 #: model_terms:ir.ui.view,arch_db:customize_stock.stock_weight_value_tree_view
 msgid "Weight value"
-msgstr "Valeur de poids"
+msgstr "Poids"
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/stock_weight_device.py:0
+#, python-format
+msgid "Weighted device in error"
+msgstr "Balance en erreur"
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/stock_weight_device.py:0
+#, python-format
+msgid "Weighted error, Network or device is unreachable"
+msgstr "Erreur de pesée, le réseau ou la balance ne sont pas joignables"
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/stock_weight_device.py:0
+#: code:addons/customize_stock/models/stock_weight_device.py:0
+#, python-format
+msgid "Weighted error, the weight value is not correct"
+msgstr "Erreur de pesée, Le poids n'est pas correct"
+
+#. module: customize_stock
+#: model:ir.model.fields,help:customize_stock.field_stock_lot__use_expiration_date
+msgid ""
+"When this box is ticked, you have the possibility to specify dates to manage"
+" product expiration, on the product and on the corresponding lot/serial "
+"numbers"
+msgstr "Lorsque cette option est active, vous imposez une date d'expiration du produit."
+
+#. module: customize_stock
+#. odoo-python
+#: code:addons/customize_stock/models/stock_move_line.py:0
+#, python-format
+msgid "You can not delete product moves if the picking is done."
+msgstr "Vous ne pouvez pas supprimer les mouvements de stock si le transfert est terminé."
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__date
@@ -354,16 +500,81 @@ msgid "date"
 msgstr "Date"
 
 #. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__name
+msgid "description"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields.selection,name:customize_stock.selection__stock_picking__preparation_state__done
+msgid "done"
+msgstr "fait"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__date_label
+msgid "label date text:"
+msgstr "Terme étiqueté pour la date"
+
+#. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_lot__temp_old_barcode
 msgid "migration Barcode 1"
-msgstr ""
+msgstr "Code barre migré 1"
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_lot__temp2_old_barcode
 msgid "migration Barcode 2"
+msgstr "Code barre migré 2"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move__mrp_id
+msgid "mrp"
 msgstr ""
 
 #. module: customize_stock
-#: model:ir.model.fields,field_description:customize_stock.field_stock_weight_value__type
-msgid "type"
-msgstr "Type"
+#: model:ir.model.fields.selection,name:customize_stock.selection__stock_picking__preparation_state__pick
+msgid "pick"
+msgstr "Prélever"
+
+#. module: customize_stock
+#: model:ir.model.fields.selection,name:customize_stock.selection__stock_picking__preparation_state__ready
+msgid "ready"
+msgstr "Prêt"
+
+#. module: customize_stock
+#: model:ir.model.fields.selection,name:customize_stock.selection__stock_weight_value__state__simulation
+msgid "simulation"
+msgstr "Simulation"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__to_label
+msgid "to label"
+msgstr "à étiqueter"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__to_pass
+msgid "to pass"
+msgstr "à passer"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__to_pick
+msgid "to pick"
+msgstr "à prélever"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_move_line__to_weight
+msgid "to weight"
+msgstr "à peser"
+
+#. module: customize_stock
+#: model:ir.model.fields,field_description:customize_stock.field_stock_lot__use_expiration_date
+msgid "use_expiration_date"
+msgstr ""
+
+#. module: customize_stock
+#: model:ir.model.fields.selection,name:customize_stock.selection__stock_picking__preparation_state__wait
+msgid "wait"
+msgstr "attendre"
+
+#. module: customize_stock
+#: model:ir.model.fields.selection,name:customize_stock.selection__stock_picking__preparation_state__weight
+msgid "weight"
+msgstr "Poids"

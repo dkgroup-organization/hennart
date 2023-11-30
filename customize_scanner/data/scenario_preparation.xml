@@ -13,6 +13,7 @@
 		<field name="user_ids" eval="[(6,0,[])]"/>
 		<field name="scenario_id" eval="2"/>
 	</record>
+
 	<record id="wms_scenario_step_preparation0" model="wms.scenario.step">
 		<field name="sequence" eval="1"/>
 		<field name="name">preparation-1</field>
@@ -20,7 +21,7 @@
 		<field name="action_variable">scan</field>
 		<field name="action_message">test</field>
 		<field name="step_qweb">customize_scanner.scanner_scenario_list_preparation</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 		<field name="python_code">data = step.get_user_picking(data)</field>
 	</record>
 
@@ -31,7 +32,7 @@
 		<field name="action_scanner">no_scan</field>
 		<field name="action_variable">scan</field>
 		<field name="step_qweb">customize_scanner.scanner_scenario_list_preparation</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 
 	<record id="wms_scenario_step_preparation2" model="wms.scenario.step">
@@ -40,7 +41,7 @@
 		<field name="description">ajouter une preparation</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 		<field name="python_code">data = step.add_next_picking(data)</field>
 	</record>
 
@@ -50,7 +51,7 @@
 		<field name="description">sélectionner une ligne de préparation</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 		<field name="python_code">data = step.get_next_picking_line(data)</field>
 	</record>
 
@@ -60,7 +61,7 @@
 		<field name="description">scan lot</field>
 		<field name="action_scanner">scan_multi</field>
 		<field name="action_variable">lot_id</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 		<field name="python_code">data = step.check_move_line_scan(data)</field>
 	</record>
 
@@ -70,7 +71,7 @@
 		<field name="description">scan quantity</field>
 		<field name="action_scanner">scan_quantity</field>
 		<field name="action_variable">quantity</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 		<field name="python_code">data = step.check_move_line_scan(data)</field>
 	</record>
 
@@ -80,7 +81,7 @@
 		<field name="description">fin de picking</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 		<field name="python_code">data = step.move_preparation(data)</field>
 	</record>
 
@@ -90,7 +91,7 @@
 		<field name="description">debut pesage</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 		<field name="python_code">data = step.get_next_weight_line(data)</field>
 	</record>
 
@@ -102,7 +103,7 @@
 		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
 		<field name="action_variable">printer</field>
 		<field name="action_presentation">&lt;p&gt;Pesage des produits&lt;/p&gt;</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 
 	<record id="wms_scenario_step_preparation9" model="wms.scenario.step">
@@ -111,8 +112,9 @@
 		<field name="description">scan device</field>
 		<field name="action_scanner">scan_weight</field>
 		<field name="action_variable">weighting_device</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 		<field name="python_code">data = step.check_weight(data)</field>
+
 	</record>
 
 	<record id="wms_scenario_step_preparation86" model="wms.scenario.step">
@@ -121,7 +123,7 @@
 		<field name="description">weight another update</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 		<field name="python_code">data = step.weight_preparation(data)</field>
 	</record>
 
@@ -131,7 +133,7 @@
 		<field name="description">weight update</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 		<field name="python_code">data = step.weight_preparation(data)</field>
 	</record>
 
@@ -142,8 +144,17 @@
 		<field name="action_scanner">scan_quantity</field>
 		<field name="action_model" ref="customize_stock.model_stock_weight_device"/>
 		<field name="action_variable">weight</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
+		<field name="python_code_before">data.pop('weight_detail', None)</field>
+	</record>
 
+	<record id="wms_scenario_step_preparation91" model="wms.scenario.step">
+		<field name="sequence" eval="91"/>
+		<field name="name">preparation-91</field>
+		<field name="description">Change tare</field>
+		<field name="action_scanner">scan_tare</field>
+		<field name="action_variable">tare</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 
 	<record id="wms_scenario_step_preparation11" model="wms.scenario.step">
@@ -152,7 +163,7 @@
 		<field name="description">fin de pesage</field>
 		<field name="action_scanner">routing</field>
 		<field name="python_code">data['end_preparation'] = True</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 
 	<record id="wms_scenario_step_preparation120" model="wms.scenario.step">
@@ -162,7 +173,7 @@
 		<field name="action_scanner">scan_quantity</field>
 		<field name="action_variable">number_of_packages</field>
 		<field name="python_code">step.package_preparation(data)</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 
 	<record id="wms_scenario_step_preparation130" model="wms.scenario.step">
@@ -172,7 +183,7 @@
 		<field name="action_scanner">scan_quantity</field>
 		<field name="action_variable">nb_container</field>
 		<field name="python_code">step.package_preparation(data)</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 
 	<record id="wms_scenario_step_preparation140" model="wms.scenario.step">
@@ -182,7 +193,7 @@
 		<field name="action_scanner">scan_quantity</field>
 		<field name="action_variable">nb_pallet</field>
 		<field name="python_code">step.package_preparation(data)</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 
 	<record id="wms_scenario_step_preparation150" model="wms.scenario.step">
@@ -193,7 +204,7 @@
 		<field name="action_scanner">no_scan</field>
 		<field name="action_presentation"/>
 		<field name="python_code">data = step.picking_validation_print(data)</field>
-		<field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 
 </odoo>

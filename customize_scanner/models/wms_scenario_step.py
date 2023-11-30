@@ -184,6 +184,9 @@ class WmsScenarioStep(models.Model):
             }
         output: data add {'result' : True}
         """
+        if data.get('label_product') and not data.get('product_id'):
+            data['product_id'] = data.get('label_product')
+            
         if data.get('location_origin_id') and data.get('product_id') and data.get('quantity'):
             inventory_vals = {
                 'product_id': data['product_id'].id,
@@ -223,6 +226,25 @@ class WmsScenarioStep(models.Model):
             data['result'] = False
         return data
 
+    def get_default_origin_location(self, warehouse=None):
+        """ Get default location like output input preparation production"""
+        warehouse = warehouse or self.env.ref('stock.warehouse0')
+        location_ids = self.env['stock.location']
+        location_ids |= warehouse.wh_input_stock_loc_id
+        location_ids |= warehouse.pbm_loc_id
+        return location_ids
+    def get_default_dest_location(self, warehouse=None):
+        """ Get default location like output input preparation production"""
+        warehouse = warehouse or self.env.ref('stock.warehouse0')
+        location_ids = self.env['stock.location']
+        #location_ids |= warehouse.wh_input_stock_loc_id
+        #location_ids |= warehouse.wh_output_stock_loc_id
+        #location_ids |= warehouse.wh_pack_stock_loc_id
+        location_ids |= warehouse.pbm_loc_id
+        location_ids |= self.env['stock.location'].search([('scrap_location', '=', True)])
+
+        return location_ids
+
     def check_product_location_qty(self, data):
         """
         Vérifie que data contient location_origin_id, product_id,
@@ -233,10 +255,13 @@ class WmsScenarioStep(models.Model):
        "This product {} is not registred in this location {}"
        "This product {} need a production lot "
         """
+        if data.get('label_product') and not data.get('product_id'):
+            data['product_id'] = data.get('label_product')
+
         if data.get('product_id') and (data.get('location_id') or data.get('location_origin_id')):
             condition = [
                 ('product_id', '=', data['product_id'].id),
-                ('location_id', '=', (data['location_id'] or data['location_origin_id']).id)]
+                ('location_id', '=', (data.get('location_id') or data.get('location_origin_id')).id)]
 
             if data.get('lot_id'):
                 condition.append(('lot_id', '=', data['lot_id'].id))
@@ -327,5 +352,4 @@ class WmsScenarioStep(models.Model):
             data['result'] = True
         else:
             data['result'] = False
-
         return data

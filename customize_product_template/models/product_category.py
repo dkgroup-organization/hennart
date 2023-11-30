@@ -20,8 +20,7 @@ class ProductCategory(models.Model):
         ('service', 'Service')],
         string="type", default='product')
 
-    type = fields.Selection(related="detailed_type",
-        string="type", default='product')
+    type = fields.Selection(related="detailed_type", string="type")
 
     use_expiration_date = fields.Boolean("Use expiration date", default=True)
 

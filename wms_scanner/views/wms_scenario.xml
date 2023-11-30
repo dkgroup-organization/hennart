@@ -59,7 +59,11 @@
                                     <notebook>
                                         <page string="Action">
 
-                                            <group string="1/ Qweb template configuration">
+                                            <separator string="1/ Python code preparation of data" colspan="4"/>
+                                            <field name="python_code_before" colspan="4" nolabel="1" widget="ace"
+                                                   options="{'mode': 'python'}" placeholder="You can use variables: step, env and data, some data key is reserved: warning, scan, function, message, button, result"/>
+
+                                            <group string="2/ Qweb template configuration">
                                                 <group>
                                                     <field name="step_qweb"/>
                                                     <field name="action_scanner"/>
@@ -70,7 +74,6 @@
                                                 </group>
 
                                                 <group invisible="[('action_scanner','in', ['none', 'start', 'routing'])]">
-
                                                     <field name="action_presentation"/>
                                                     <field name="action_message"/>
                                                     <field name="scenario_id" invisible="1"/>
@@ -78,19 +81,12 @@
 
                                             </group>
 
-                                            <separator string="2/ Python code preparation of data" colspan="4"/>
-                                            <div>
-                                                <p>You can use the object: step and env to acces to all functions and
-                                                    environment.
-                                                    Some name variables is used by the system in data:
-                                                </p>
-                                                <p>user, warning, scan, function, message, button, result</p>
-                                            </div>
+                                            <separator string="3/ Python code analyse new data" colspan="4"/>
                                             <field name="python_code" colspan="4" nolabel="1" widget="ace"
-                                                   options="{'mode': 'python'}"/>
+                                                   options="{'mode': 'python'}" placeholder="You can use variables: step, env and data, some data key is reserved: warning, scan, function, message, button, result"/>
 
 
-                                            <separator string="3/ Outgoing transitions"/>
+                                            <separator string="4/ Outgoing transitions"/>
                                             <field name="out_transition_ids" nolabel="1">
                                                 <tree string="Transition">
                                                     <field name="sequence"/>

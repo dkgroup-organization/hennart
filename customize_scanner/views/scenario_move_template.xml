@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <template id="scenario_move" name="scenario_move">
+            <html>
+                <t t-call="wms_scanner.scanner_html_head"/>
+                <body class="font-poppins duration-500 min-h-screen">
+                    <t t-call="wms_scanner.scanner_menu_body_header"/>
+                    <t t-call="customize_scanner.move_body_main"/>
+                    <t t-call="wms_scanner.scanner_script_js"/>
+                </body>
+            </html>
+        </template>
+
+        <template id="move_body_main" name="move_body_main">
+            <main class="relative">
+                <section id="move" class="screen_title">
+                    <div class="container mx-auto px-5 pb-5 relative">
+                        <t t-call="customize_scanner.scanner_body_title_move"/>
+                        <t t-call="customize_scanner.scanner_line_move"/>
+                    </div>
+                </section>
+            </main>
+        </template>
+
+        <template id="scanner_body_title_move" name="scanner_body_title_move">
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <t t-call="wms_scanner.wms_scanner_image_move"/>
+                        </td>
+                        <td>
+                            <h1>Move</h1>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </template>
+
+        <template id="scanner_line_move" name="scanner_line_move">
+            <t t-if="data.get('step')">
+                <t t-set="step" t-value="data.get('step')"/>
+                <form class="flex flex-col items-center gap-2 landscape:gap-1 landscape:w-[49%]"
+                      t-att-action="'./scanner?scenario={}&amp;step={}'.format(step.scenario_id.id, step.id)"
+                      autoComplete="off"
+                      method="post">
+                    <t t-call="customize_scanner.scanner_input_location_origin_id"/>
+                    <t t-call="customize_scanner.scanner_input_product_id"/>
+                    <t t-call="customize_scanner.scanner_input_lot_id"/>
+                    <t t-call="customize_scanner.scanner_input_quantity"/>
+                    <t t-call="customize_scanner.scanner_input_location_dest_id"/>
+                    <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
+                </form>
+            </t>
+        </template>
+
+    </data>
+</odoo>

@@ -56,9 +56,9 @@ class ProductTemplate(models.Model):
         update product_template pt set use_expiration_date = pc.use_expiration_date from  product_category pc where pt.categ_id = pc.id and pt.use_expiration_date != pc.use_expiration_date;
         """
 
-    tracking = fields.Selection(compute="update_categ_value", store=True, precompute=False, default='lot')
-    type = fields.Selection(compute="update_categ_value", store=True, precompute=False, default='product')
-    detailed_type = fields.Selection(compute="update_categ_value", store=True, precompute=False, default='product')
+    tracking = fields.Selection(compute="update_categ_value", store=True, precompute=False)
+    type = fields.Selection(compute="update_categ_value", store=True, precompute=False)
+    detailed_type = fields.Selection(compute="update_categ_value", store=True, precompute=False)
     use_expiration_date = fields.Boolean(compute="update_categ_value", store=True, precompute=False, default=True)
 
     service_type = fields.Selection(

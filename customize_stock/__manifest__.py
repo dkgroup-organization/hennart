@@ -3,7 +3,7 @@
 
 {
     'name': 'Stock custom',
-    'summary': 'Custom barcode management',
+    'summary': 'Custom stock management',
     'version': '16.0.1.0.1',
     'category': 'Generic Modules/Inventory Control',
     'website': 'https://dkgroup.fr',

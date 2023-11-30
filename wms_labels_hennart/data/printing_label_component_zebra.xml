@@ -23,29 +23,40 @@
 		<field name="data">&quot;&quot;&quot;^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
 ^XA
 ^MMT
-^PW1004
+^PW679
 ^LL0531
 ^LS0
-^FT17,54^A0N,22,36^FH\^FDHENNART FRERES S.A.S^FS
-^FT157,246^A0N,29,28^FH\^FD00.000 Kg^FS
-^FT22,245^A0N,29,28^FH\^FDPoids Net:^FS
-^FT23,204^A0N,33,33^FH\^FD{life_date}^FS
-
-^FT87,84^A0N,29,28^FH\^FD{default_code}^FS
-^FT332,198^A0N,29,28^FH\^FD{ref}^FS
-^FT17,84^A0N,21,19^FH\^FDCode:^FS
-^FT23,128^A0N,30,40^FH\^FD{product}^FS
-^BY2,3,81^FT21,336^BCN,,Y,N
+^FT23,65^A0N,22,36^FH\^FDHENNART FRERES S.A.S^FS
+^FT425,245^A0N,29,28^FH\^FD{weight}^FS
+^FT425,215^A0N,17,21^FH\^FD{weight_label}^FS
+^FT425,190^A0N,33,33^FH\^FD{date}^FS
+^FT23,245^A0N,29,28^FH\^FD{prodlot_ref}^FS
+^FT90,90^A0N,29,28^FH\^FD{product_code}^FS
+^FT23,90^A0N,21,19^FH\^FDcode: ^FS
+^FT23,135^A0N,30,40^FH\^FD{product_name}^FS
+^BY2,3,81^FT21,345^BCN,,Y,N
 ^FD&gt;:{barcode}^FS
-^FO16,91^GB606,51,2^FS
-^FO524,24^GE97,60,2^FS
-^FT536,60^A0N,13,16^FH\^FD62.215.030^FS
-^FT555,42^A0N,13,31^FH\^FDFR^FS
-^FT566,78^A0N,17,14^FH\^FDCE^FS
-^FT333,162^A0N,17,21^FH\^FDLot de production^FS
-^FT23,163^A0N,17,21^FH\^FD\85 consommer jusqu'au^FS
-^PQ1,0,1,Y^XZ
-&quot;&quot;&quot;.format(life_date = object.expiration_date.strftime('%d-%m-%Y') or '',ref = object.ref, default_code = object.product_id.default_code, product = object.product_id.name, barcode = object.barcode)
+^FO15,100^GB610,60,2^FS
+^FO524,34^GE97,60,2^FS
+^FT536,70^A0N,13,16^FH\^FD62.215.030^FS
+^FT555,52^A0N,13,31^FH\^FDFR^FS
+^FT566,88^A0N,17,14^FH\^FDCE^FS
+^FT23,215^A0N,17,21^FH\^FD{prodlot_label}^FS
+^FT23,180^A0N,17,21^FH\^FD{date_label}^FS
+^PQ1,0,1,Y^XZ&quot;&quot;&quot;.format(
+
+weight_label=&quot;&quot;,
+weight=&quot;&quot;,
+product_code=object.product_id.default_code,
+product_name=object.product_id.name,
+
+prodlot_label=&quot;Lot:&quot;,
+prodlot_ref=object.ref,
+barcode=object.barcode,
+
+date_label=object.date_label,
+date=f&quot;{object.expiration_date:%d/%m/%Y}&quot;,
+)
 </field>
 		<field name="repeat" eval="0"/>
 		<field name="repeat_count" eval="1"/>

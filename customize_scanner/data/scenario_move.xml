@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<odoo>
+	<record id="wms_scenario_move" model="wms.scenario">
+		<field name="name">move</field>
+		<field name="sequence" eval="30"/>
+		<field name="scenario_image">move.svg</field>
+		<field name="scenario_qweb">customize_scanner.scenario_move</field>
+		<field name="debug_mode" eval="0"/>
+		<field name="active" eval="1"/>
+		<field name="warehouse_ids" eval="[(6,0,[])]"/>
+		<field name="company_id" ref="base.main_company"/>
+		<field name="group_ids" eval="[(6,0,[ref('stock.group_stock_user')])]"/>
+		<field name="user_ids" eval="[(6,0,[])]"/>
+	</record>
+	
+	
+	
+	<record id="wms_scenario_step_move_10" model="wms.scenario.step">
+		<field name="sequence" eval="10"/>
+		<field name="name">move-10</field>
+		<field name="action_scanner">scan_model</field>
+		<field name="action_model" ref="customize_stock.model_stock_location"/>
+		<field name="action_variable">location_origin_id</field>
+		<field name="action_message">Scan the origin location</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_move"/>
+		<field name="python_code_before"/>
+	</record>
+	<record id="wms_scenario_step_move_20" model="wms.scenario.step">
+		<field name="sequence" eval="20"/>
+		<field name="name">move-20</field>
+		<field name="action_scanner">scan_multi</field>
+		<field name="action_model" ref="account.model_product_product"/>
+		<field name="action_variable">product_id</field>
+		<field name="action_message">Scan the product to move</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_move"/>
+		<field name="python_code">data = step.check_product_location_qty(data)</field>
+	</record>
+	<record id="wms_scenario_step_move_30" model="wms.scenario.step">
+		<field name="sequence" eval="30"/>
+		<field name="name">move-30</field>
+		<field name="action_scanner">scan_quantity</field>
+		<field name="action_variable">quantity</field>
+		<field name="action_message">Enter the quantity</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_move"/>
+		<field name="python_code">data = step.check_product_location_qty(data)</field>
+	</record>
+	<record id="wms_scenario_step_move_40" model="wms.scenario.step">
+		<field name="sequence" eval="40"/>
+		<field name="name">move-40</field>
+		<field name="action_scanner">scan_model</field>
+		<field name="action_model" ref="customize_stock.model_stock_location"/>
+		<field name="action_variable">location_dest_id</field>
+		<field name="action_message">Scan the destination location</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_move"/>
+	</record>
+	<record id="wms_scenario_step_move_50" model="wms.scenario.step">
+		<field name="sequence" eval="50"/>
+		<field name="name">move-50</field>
+		<field name="action_scanner">routing</field>
+		<field name="action_variable">scan</field>
+		<field name="action_message">ok</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_move"/>
+		<field name="python_code">data = step.move_product(data)</field>
+	</record>
+
+</odoo>

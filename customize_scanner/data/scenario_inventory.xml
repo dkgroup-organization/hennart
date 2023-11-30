@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<odoo>
+    <record id="wms_scenario_inventory" model="wms.scenario">
+		<field name="name">inventory</field>
+		<field name="sequence" eval="50"/>
+		<field name="scenario_image">dashboard.svg</field>
+		<field name="scenario_qweb">customize_scanner.scenario_inventory</field>
+		<field name="debug_mode" eval="0"/>
+		<field name="active" eval="1"/>
+		<field name="warehouse_ids" eval="[(6,0,[])]"/>
+		<field name="company_id" ref="base.main_company"/>
+		<field name="group_ids" eval="[(6,0,[ref('stock.group_stock_user')])]"/>
+		<field name="user_ids" eval="[(6,0,[])]"/>
+		<field name="scenario_id" eval="4"/>
+	</record>
+
+	<record id="wms_scenario_step_inventory_10" model="wms.scenario.step">
+		<field name="sequence" eval="10"/>
+		<field name="name">inventory-10</field>
+		<field name="action_scanner">scan_model</field>
+		<field name="action_model" ref="customize_stock.model_stock_location"/>
+		<field name="action_variable">location_origin_id</field>
+		<field name="action_message">Scan the origin location</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
+	</record>
+	<record id="wms_scenario_step_inventory_20" model="wms.scenario.step">
+		<field name="sequence" eval="20"/>
+		<field name="name">inventory-20</field>
+		<field name="action_scanner">scan_multi</field>
+		<field name="action_variable">product_id</field>
+		<field name="action_message">Scan the product</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
+	</record>
+	<record id="wms_scenario_step_inventory_30" model="wms.scenario.step">
+		<field name="sequence" eval="30"/>
+		<field name="name">inventory-30</field>
+		<field name="action_scanner">scan_quantity</field>
+		<field name="action_variable">quantity</field>
+		<field name="action_message">scan the quantity</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
+	</record>
+	<record id="wms_scenario_step_inventory_40" model="wms.scenario.step">
+		<field name="sequence" eval="40"/>
+		<field name="name">inventory-40</field>
+		<field name="action_scanner">routing</field>
+		<field name="action_variable">scan</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
+		<field name="python_code">data = step.write_inventory(data)</field>
+	</record>
+
+</odoo>
