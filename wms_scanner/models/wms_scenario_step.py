@@ -12,6 +12,24 @@ import markupsafe
 import logging
 logger = logging.getLogger('wms_scanner')
 
+# Define standard name of variable to use. QWEB template and button react on this name
+ACTION_VARIABLE = {
+    'location_id': {'model': 'stock.location', 'type': 'Model'},
+    'location_origin_id': {'model': 'stock.location', 'type': 'Model'},
+    'location_dest_id': {'model': 'stock.location', 'type': 'Model'},
+    'product_id': {'model': 'product.product', 'type': 'Model'},
+    'product_dest_id': {'model': 'product.product', 'type': 'Model'},
+    'picking_id': {'model': 'stock.picking', 'type': 'Model'},
+    'quantity': {'model': '', 'type': 'Float'},
+    'tare': {'model': '', 'type': 'Float'},
+    'lot_id': {'model': 'stock.lot', 'type': 'Model'},
+    'weight': {'model': '', 'type': 'Float'},
+    'printer': {'model': '', 'type': 'Model'},
+    'weighting_device': {'model': '', 'type': 'Model'},
+    'number_of_packages': {'model': '', 'type': 'Float'},
+    'nb_container': {'model': '', 'type': 'Float'},
+    'nb_pallet': {'model': '', 'type': 'Float'},
+}
 
 class WmsScenarioStep(models.Model):
     _name = 'wms.scenario.step'
@@ -108,10 +126,7 @@ class WmsScenarioStep(models.Model):
         "get the response of the scanner, only one scan by session"
         self.ensure_one()
         params = dict(request.params) or {}
-        if self.action_variable and params.get(self.action_variable):
-            scan = params.get(self.action_variable, '')
-        else:
-            scan = params.get('scan', '')
+        scan = params.get('scan', '')
         return scan
 
     def read_button(self, data):
@@ -120,9 +135,19 @@ class WmsScenarioStep(models.Model):
         params = dict(request.params) or {}
         if params.get('button'):
             data['button'] = params.get('button')
-            if params.get('scan'):
-                data[data['button']] = params.get('scan')
 
+            if params.get('scan') and data['button'] in list(ACTION_VARIABLE.keys()):
+                var_name = data['button']
+                value = params.get('scan')
+                if ACTION_VARIABLE[var_name]['type'] == 'Model' and value.isnumeric():
+                    data[var_name] = self.env[ACTION_VARIABLE[var_name]['model']].search([('id', '=', int(value))])
+                elif ACTION_VARIABLE[var_name]['type'] == 'Float':
+                    try:
+                        data[var_name] = float(value)
+                    except ValueError:
+                        pass
+            elif params.get('scan'):
+                data[data['button']] = params.get('scan')
         return data
 
     def read_scan(self, data={}):

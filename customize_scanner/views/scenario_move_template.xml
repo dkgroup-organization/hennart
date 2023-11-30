@@ -33,10 +33,6 @@
                         </td>
                         <td>
                             <h1>Move</h1>
-                            <div t-if="data.get('step')">
-                                <span t-esc="data['step'].get_title(data)"/>
-                                -
-                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -50,12 +46,11 @@
                       t-att-action="'./scanner?scenario={}&amp;step={}'.format(step.scenario_id.id, step.id)"
                       autoComplete="off"
                       method="post">
-                    <t t-call="customize_scanner.scanner_preparation_location_origin_id"/>
-                    <t t-call="customize_scanner.scanner_preparation_product_id"/>
-                    <t t-call="customize_scanner.scanner_preparation_input_lot_id"/>
-                    <t t-call="customize_scanner.scanner_preparation_input_quantity"/>
-                    <t t-call="customize_scanner.scanner_preparation_location_dest_id"/>
-
+                    <t t-call="customize_scanner.scanner_input_location_origin_id"/>
+                    <t t-call="customize_scanner.scanner_input_product_id"/>
+                    <t t-call="customize_scanner.scanner_input_lot_id"/>
+                    <t t-call="customize_scanner.scanner_input_quantity"/>
+                    <t t-call="customize_scanner.scanner_input_location_dest_id"/>
                     <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
                 </form>
             </t>

@@ -17,19 +17,10 @@ class WmsScenarioStep(models.Model):
     def get_picking(self, data):
         """ get the picking to use"""
         self.ensure_one()
-        picking = self.env['stock.picking']
-        if data.get('picking_id') and data.get('picking') and str(data.get('picking').id) != data.get('picking_id'):
-            del data['picking']
-
-        if data.get('picking'):
-            picking = data.get('picking')
-        elif data.get('picking_id'):
-            if type(data['picking_id']) is str and data['picking_id'].isnumeric():
-                data['picking_id'] = int(data['picking_id'])
-
-            if type(data['picking_id']) is int:
-                picking = self.env['stock.picking'].browse(data['picking_id'])
-
+        picking = data.get('picking') or self.env['stock.picking']
+        picking_id = data.get('picking_id') or self.env['stock.picking']
+        if picking_id and picking_id != picking:
+            picking = picking_id
         return picking
 
     def get_next_picking_line(self, data, weight=False):
@@ -229,7 +220,8 @@ class WmsScenarioStep(models.Model):
             res = product and f'{product.default_code}' or ''
         if action_variable in ['location_id', 'location_origin_id', 'location_dest_id']:
             location = data.get('location_id') or data.get('location_id') or (move_line and move_line.location_id) or False
-            res = location and len(location.name) > 5 and location.name[-5:] or ''
+            if location and len(location.name) > 5 and location.name[-2:].isnumeric():
+                res = location.name[-5:]
         if action_variable == 'lot_id':
             lot = data.get('lot_id') or (move_line and move_line.lot_id) or False
             if lot:
@@ -352,6 +344,14 @@ class WmsScenarioStep(models.Model):
                 {'text': _('Change Tare: ') + f"{tare} Kg/Unit", 'href': href_base + 'manual_tare'}
             ]
 
+        if data['step'].action_variable == 'location_origin_id':
+            location_ids = self.get_default_origin_location()
+            for location in location_ids:
+                res.append({'text': location.name, 'href': href_base + f'location_origin_id&scan={location.id}'})
+        if data['step'].action_variable == 'location_dest_id':
+            location_ids = self.get_default_dest_location()
+            for location in location_ids:
+                res.append({'text': location.name, 'href': href_base + f'location_dest_id&scan={location.id}'})
         return res
 
     def get_tare(self, data):

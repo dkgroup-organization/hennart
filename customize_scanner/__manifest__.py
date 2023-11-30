@@ -15,12 +15,19 @@
         'wms_scanner', 'customize_stock', 'base_module_record', 'wms_labels_hennart'
     ],
     'data': [
+        "views/scenario_input_template.xml",
         "views/scenario_preparation_list_template.xml",
         "views/scenario_preparation_line_template.xml",
-        "views/scenario_move.xml",
         "views/scenario_preparation_message_template.xml",
-        "data/scenarion_preparation.xml",
-        "data/scenarion_preparation_transition.xml",
+        "views/scenario_move_template.xml",
+        "views/scenario_inventory_template.xml",
+
+        "data/scenario_preparation.xml",
+        "data/scenario_preparation_transition.xml",
+        "data/scenario_move.xml",
+        "data/scenario_move_transition.xml",
+        "data/scenario_inventory.xml",
+        "data/scenario_inventory_transition.xml",
 
     ],
     'demo': [
