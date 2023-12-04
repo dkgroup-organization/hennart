@@ -3,7 +3,7 @@
 "name" : "Carrier module of the WMS",
     "category" : "Generic Modules",
     "version" : "16.0",
-    "depends": ["delivery", "sale"],
+    "depends": ["delivery", "sale", "wms_sscc"],
     "author" : "Abdelghani KHALIDI DK Group",
     "license": "AGPL-3",
     "description": """

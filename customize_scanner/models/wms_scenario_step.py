@@ -96,10 +96,16 @@ class WmsScenarioStep(models.Model):
 
             # Define the date
             if not data.get('warning'):
+
                 if scan[affinage + 1:affinage + 5].isnumeric() and scan[-8:-6].isnumeric():
                     date_year = '20' + scan[-8:-6]
                     date_day = scan[affinage + 1:affinage + 3]
                     date_month = scan[affinage + 3:affinage + 5]
+                    if len(scan) >= 24:
+                        # Specificity of DIGIT MACHINE, Inversion of date
+                        date_year = '20' + scan[-12:-10]
+                        date_month = scan[-10:-8]
+                        date_day = scan[-8:-6]
                     try:
                         data['label_date'] = fields.Datetime.from_string(f"{date_year}-{date_month}-{date_day} 12:00:00")
                     except:
@@ -127,7 +133,7 @@ class WmsScenarioStep(models.Model):
                         old_barcode = product.default_code[:5] + old_barcode[5:]
 
                     # old_barcode or barcode_ext is external barcode making by another system
-                    for barcode_field in ['barcode_ext', 'temp_old_barcode', 'temp2_old_barcode']:
+                    for barcode_field in ['barcode_ext', 'barcode_ext2', 'temp_old_barcode', 'temp2_old_barcode']:
                         lot_ids = self.env['stock.lot'].search([(barcode_field, '=', old_barcode)])
                         if len(lot_ids) > 1:
                             data['warning'] = _("There is more than one lot with the same name and date: {}".format(old_barcode))
@@ -141,7 +147,7 @@ class WmsScenarioStep(models.Model):
                                                                 ('product_id', '=', product.id)])
                         if len(lot_ids) == 1 and \
                                 lot_ids.expiration_date.strftime('%Y-%m-%d') != data['label_date'].strftime('%Y-%m-%d'):
-                            data['warning'] = _("The expiration date of this label is not correct: {}".format(data['label_date'].strftime('%d-%m-%T')))
+                            data['warning'] = _("The expiration date of this label is not correct: {}".format(data['label_date'].strftime('%d-%m-%y')))
 
             # Get the lot name to possible creation if lot is finding
             if product and data.get('label_date') and not data.get('lot_id'):
