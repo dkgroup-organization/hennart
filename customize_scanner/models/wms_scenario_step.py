@@ -145,7 +145,7 @@ class WmsScenarioStep(models.Model):
                         # Maybe there is a error on date
                         lot_ids = self.env['stock.lot'].search([('name', '=', lot_name),
                                                                 ('product_id', '=', product.id)])
-                        if len(lot_ids) == 1 and \
+                        if len(lot_ids) == 1 and lot_ids.expiration_date and data.get('label_date') and \
                                 lot_ids.expiration_date.strftime('%Y-%m-%d') != data['label_date'].strftime('%Y-%m-%d'):
                             data['warning'] = _("The expiration date of this label is not correct: {}".format(data['label_date'].strftime('%d-%m-%y')))
 

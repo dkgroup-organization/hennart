@@ -160,6 +160,10 @@ class BaseSynchroServer(models.Model):
             if len(obj_ids) == 1:
                 obj_ids[0].load_remote_record(limit=-1)
 
+            update_lot_ids = self.env['stock.lot'].search([('expiration_date', '=', False)])
+            for lot in update_lot_ids:
+                lot.expiration_date = lot.use_date or lot.removal_date or lot.alert_date
+
     def migrate_partner(self, limit=50):
         """ partner migration, look after active and used partner, don't load unused partner"""
 
