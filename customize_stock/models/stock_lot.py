@@ -1,6 +1,7 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+import datetime
 
 class Stock_lot(models.Model):
     _inherit = 'stock.lot'
@@ -19,7 +20,8 @@ class Stock_lot(models.Model):
     temp_old_barcode = fields.Char(string='migration Barcode 1', index=True)
     temp2_old_barcode = fields.Char(string='migration Barcode 2', index=True)
     barcode = fields.Char(string='Barcode', compute="get_barcode", store=True, index=True)
-    barcode_ext = fields.Char(string='Barcode (external)', compute="get_barcode", store=True, index=True)
+    barcode_ext = fields.Char(string='Barcode (ESPERA)', compute="get_barcode", store=True, index=True)
+    barcode_ext2 = fields.Char(string='Barcode (DIGI)', compute="get_barcode", store=True, index=True)
     use_expiration_date = fields.Boolean('use_expiration_date', store=True, compute="freeze_value")
     blocked = fields.Boolean('Blocked', help="Block the possibility of reserve this lot")
     expiration_date = fields.Datetime(
@@ -111,13 +113,19 @@ class Stock_lot(models.Model):
             else:
                 product_code = '00000X'
 
-            label_dlc = lot.expiration_date or lot.use_date or False
-            label_dlc_new = label_dlc and label_dlc.strftime("%d%m%y") or '000000'
-            label_dlc_old = label_dlc and label_dlc.strftime("%d%m%Y") or '000000'
+            label_dlc = lot.expiration_date or lot.use_date
+            if label_dlc:
+                if label_dlc.hour < 12:
+                    # timezone adjustement
+                    label_dlc += datetime.timedelta(hours=11)
+                label_dlc_new = label_dlc.strftime("%d%m%y")
+                label_dlc_old = label_dlc.strftime("%d%m%Y")
+                label_dlc_old2 = label_dlc.strftime("%y%m%d")
+            else:
+                label_dlc_new = '000000'
+                label_dlc_old = '00000000'
+                label_dlc_old2 = '000000'
 
             lot.barcode = product_code[:5] + '-' + str(lot.id).zfill(7) + product_code[5] + label_dlc_new + '000000'
-
-            if lot.temp_old_barcode:
-                lot.barcode_ext = lot.temp_old_barcode
-            else:
-                lot.barcode_ext = product_code[:5] + lot.name[:6] + product_code[5] + label_dlc_old + '000000'
+            lot.barcode_ext = product_code[:5] + lot.name + product_code[5] + label_dlc_old + '000000'
+            lot.barcode_ext2 = product_code[:5] + lot.name[:6] + product_code[5] + label_dlc_old2 + '000000'

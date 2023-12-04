@@ -2,9 +2,11 @@
 {
     "name": "Hennart Labels",
     "version": "1.0",
-    "depends": ["base_report_to_printer", "printer_zpl2", "customize_stock"],
-    "author": "DK group",
+    "depends": ["base_report_to_printer", "printer_zpl2", "customize_stock", "wms_sscc"],
+    'website': 'https://dkgroup.fr',
+    'author': 'DK Group',
     "category": "Stocks",
+    'summary': 'Custom label',
     "description": """
     Impression ZEBRA projet Hennart
     """,
@@ -14,6 +16,7 @@
         "data/printing_label_zebra.xml",
         "data/printing_label_component_zebra.xml",
         "views/printing_printer.xml",
+        "views/stock_picking_view.xml",
     ],
     'installable': True,
     'active': False,

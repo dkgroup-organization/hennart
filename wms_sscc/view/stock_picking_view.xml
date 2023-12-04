@@ -54,33 +54,6 @@
     <menuitem id="menu_stock_sscc" parent="stock.menu_warehouse_report" sequence="80" action="action_stock_sscc"/>
 
 
-
-<record id="view_picking_out_form_wms_sscc" model="ir.ui.view">
-      <field name="name">stock.picking.out.form.wms.sscc</field>
-      <field name="model">stock.picking</field>
-      <field name="inherit_id" ref="stock.view_picking_form"/>
-      <field name="priority">130</field>
-      <field name="arch" type="xml">
-       <xpath expr="//group[@name='carrier_data']" position="after">
-         <group>
-    
-                          
-          <field name="nb_sscc_label" class="oe_inline"/>
-          
-    
-  
-          <field name="sscc_lines_ids" readonly="1" class="oe_inline">
-            <tree>
-              <field name="name"/>
-            </tree>
-            </field>
-  
-      </group>
-        </xpath>
-      </field>
-    </record>
-    
-
 <record id="unique_sequence_id_sscc" model="ir.sequence">
    <field name="name">Sequence sscc</field>
    <field name="code">stock.sscc.code</field>

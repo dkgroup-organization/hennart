@@ -43,7 +43,6 @@ class StockPicking(models.Model):
          
                 for i in range(-todo_sscc):
                     test = self.env['stock.sscc'].search([('picking_id','=',picking.id)],order="id desc", limit=1)
-
                     test.unlink()
 
  
