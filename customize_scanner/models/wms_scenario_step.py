@@ -101,7 +101,7 @@ class WmsScenarioStep(models.Model):
                     date_year = '20' + scan[-8:-6]
                     date_day = scan[affinage + 1:affinage + 3]
                     date_month = scan[affinage + 3:affinage + 5]
-                    if len(scan) >= 24:
+                    if len(scan) == 24:
                         # Specificity of DIGIT MACHINE, Inversion of date
                         date_year = '20' + scan[-12:-10]
                         date_month = scan[-10:-8]
