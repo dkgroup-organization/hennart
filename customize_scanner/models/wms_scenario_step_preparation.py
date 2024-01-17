@@ -463,12 +463,13 @@ class WmsScenarioStep(models.Model):
                 else:
                     move_line.reserved_uom_qty -= move_data.get('quantity')
 
-                new_move_line = move_line.copy({
+                new_move_data = {
                     'location_id':  move_data.get('location_dest_id').id,
                     'weight': move_data.get('weight'),
                     'reserved_uom_qty': move_data.get('quantity'),
                     'qty_done':  move_data.get('quantity'),
-                })
+                    }
+                new_move_line = move_line.copy(new_move_data)
 
                 # to Weight or not?
                 if not new_move_line.weight:

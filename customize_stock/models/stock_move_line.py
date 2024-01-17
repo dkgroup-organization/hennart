@@ -22,7 +22,7 @@ class StockMoveLine(models.Model):
     to_weight = fields.Boolean(string='to weight')
     to_pass = fields.Boolean(string='to pass')
     to_pick = fields.Boolean(string='to pick')
-    label_pack = fields.Boolean('Pack label', help="This line need a label on the pack")
+    print_ok = fields.Boolean('print ok', help="This line is already labeled")
     number_of_pack = fields.Float('Nb pack', compute='compute_number_of_pack', store=True)
     quantity_per_pack = fields.Float('Quantity per pack', compute='compute_number_of_pack', store=True)
     pack_product_id = fields.Many2one('product.product', string="Pack reference",
@@ -147,23 +147,25 @@ class StockMoveLine(models.Model):
             }
             res = self.env['wms.scenario.step'].move_preparation(move_data)
 
-    def group_unpacking_line(self):
-        """ Group the line in pack if they have the same pack_product_id and lot_id and location_id is preparation
-        and quantity done is not modulo of quantity per pack """
+    def group_line(self):
+        """ Group the line in pack if they have the same:
+         pack_product_id and product_id and lot_id and location_id is preparation and quantity done and print is to do.
+        """
         location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
 
-        group_pack = {}
+        group_line = {}
         for line in self:
-            if line.location_id not in location_preparation_ids:
+            if line.picking_id.state in ['done', 'cancel'] or line.print_ok or line.qty_done != line.reserved_uom_qty \
+                    or line.location_id not in location_preparation_ids:
                 continue
-            if line.pack_product_id and line.qty_done % line.quantity_per_pack != 0.0:
-                pack_key = f'{line.pack_product_id.id}-{line.lot_id.id}'
-                if pack_key not in list(group_pack.keys()):
-                    group_pack[pack_key] = line
-                else:
-                    group_pack[pack_key] |= line
 
-        for line_ids in group_pack.values():
+            pack_key = f'{line.product_id.id}-{line.pack_product_id.id or 0}-{line.lot_id.id or 0}'
+            if pack_key not in list(group_line.keys()):
+                group_line[pack_key] = line
+            else:
+                group_line[pack_key] |= line
+
+        for line_ids in group_line.values():
             if len(line_ids) == 1:
                 continue
 
@@ -173,13 +175,15 @@ class StockMoveLine(models.Model):
             to_label = any(line_ids.mapped('to_label'))
             reserved_uom_qty = sum(line_ids.mapped('reserved_uom_qty'))
 
-            line = line_ids[0]
-            (line_ids - line).unlink()
-            line.qty_done = qty_done
-            line.weight = weight
-            line.to_weight = to_weight
-            line.to_label = to_label
-            line.reserved_uom_qty = reserved_uom_qty
+            line_to_write = line_ids[0]
+            unlink_move_line = line_ids - line_to_write
+            unlink_move_line.unlink()
+
+            line_to_write.reserved_uom_qty = reserved_uom_qty
+            line_to_write.qty_done = qty_done
+            line_to_write.weight = weight
+            line_to_write.to_weight = to_weight
+            line_to_write.to_label = to_label
 
     def split_by_pack(self):
         """ Split this line by pack, create new line with 1 pack per line if unit of sale is weight """

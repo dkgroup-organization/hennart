@@ -11,17 +11,17 @@
 
                 <xpath expr="//field[@name='product_id']" position="before">
                     <field name="default_code"/>
-
                 </xpath>
 
                 <xpath expr="//field[@name='product_uom_id']" position="after">
                     <field name="weight" string="Weight" context="{'manual_weight': True}"/>
-                    <field name="to_label" widget="boolean_toggle"/>
+
                     <field name="to_weight" widget="boolean_toggle"/>
                     <field name="to_pass" invisible="1"/>
                     <field name="to_pick" invisible="1"/>
                     <field name="number_of_pack"/>
-                    <field name="label_pack"/>
+                    <field name="print_ok"/>
+                    <field name="to_label" widget="boolean_toggle"/>
                 </xpath>
                 <xpath expr="//field[@name='product_uom_id']" position="attributes">
                     <attribute name="invisible">True</attribute>
@@ -57,7 +57,7 @@
                     <field name="to_pass" invisible="1"/>
                     <field name="to_pick" invisible="1"/>
                     <field name="number_of_pack"/>
-                    <field name="label_pack"/>
+                    <field name="print_ok"/>
 
                 </xpath>
                 <xpath expr="//field[@name='product_uom_id']" position="attributes">

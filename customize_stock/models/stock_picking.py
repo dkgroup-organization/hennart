@@ -15,13 +15,51 @@ class StockPicking(models.Model):
     picking_type_code = fields.Selection(string='Code', related="picking_type_id.code")
     sequence = fields.Integer(string='Sequence', compute='_compute_sequence', store=True)
     preparation_state = fields.Selection([
-        ('wait', 'wait'), ('pick', 'pick'), ('weight', 'weight'), ('ready', 'ready'), ('done', 'done')],
-        string='Preparation', default='wait')
+        ('wait', 'wait'), ('pick', 'pick'), ('weight', 'weight'), ('label', 'label'),
+        ('ready', 'ready'), ('done', 'done')],
+        string='Preparation', compute="compute_preparation_state", default='wait')
 
     label_type = fields.Selection(
         [('no_label', 'No label'), ('lot_label', 'Label all lots'),
          ('pack_label', 'Label all packs'), ('product_label', 'Label all products')],
         default="lot_label", string="Label strategy")
+
+    def compute_preparation_state(self):
+        """ Compute preparation state """
+        for picking in self:
+            preparation_state = ''
+            if picking.state in ['done', 'cancel']:
+                preparation_state = 'done'
+            elif picking.state == 'draft' or not picking.move_line_ids:
+                preparation_state = 'wait'
+            else:
+                for move_line in picking.move_line_ids:
+                    if move_line.qty_done < move_line.reserved_uom_qty:
+                        preparation_state = 'pick'
+                        break
+
+                if not preparation_state:
+                    for move_line in picking.move_line_ids:
+                        if move_line.to_weight:
+                            preparation_state = 'weight'
+                            break
+
+                if not preparation_state:
+                    for move_line in picking.move_line_ids:
+                        if move_line.to_label:
+                            preparation_state = 'label'
+                            break
+
+                if not preparation_state:
+                    for move in picking.move_ids_without_package:
+                        if move.product_uom_qty > move.quantity_done:
+                            preparation_state = 'wait'
+                            break
+
+                if not preparation_state:
+                    preparation_state = 'ready'
+
+            picking.preparation_state = preparation_state
 
     def get_theoric_weight(self):
         """ return theoretical weight to qweb"""
@@ -131,11 +169,11 @@ class StockPicking(models.Model):
         """ compute number of pack on each line """
         self.move_line_ids.compute_number_of_pack()
 
-    def group_unpacking_line(self):
-        """ Group the line in pack if they have the same pack_product_id and lot_id and location_id is preparation
+    def group_line(self):
+        """ Group the move line if they have the same pack_product_id and lot_id and location_id is preparation
         quantity done is not modulo of quantity per pack """
         for picking in self:
-            picking.move_line_ids.group_unpacking_line()
+            picking.move_line_ids.group_line()
 
     def split_by_pack(self):
         """ Split the line by pack if the unit of sale is weight, in this case the line is to weight  """
