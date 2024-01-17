@@ -149,7 +149,7 @@ class StockMoveLine(models.Model):
 
     def group_unpacking_line(self):
         """ Group the line in pack if they have the same pack_product_id and lot_id and location_id is preparation
-        quantity done is not modulo of quantity per pack """
+        and quantity done is not modulo of quantity per pack """
         location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
 
         group_pack = {}
