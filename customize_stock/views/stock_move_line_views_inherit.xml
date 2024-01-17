@@ -20,6 +20,8 @@
                     <field name="to_weight" widget="boolean_toggle"/>
                     <field name="to_pass" invisible="1"/>
                     <field name="to_pick" invisible="1"/>
+                    <field name="number_of_pack"/>
+                    <field name="label_pack"/>
                 </xpath>
                 <xpath expr="//field[@name='product_uom_id']" position="attributes">
                     <attribute name="invisible">True</attribute>
@@ -54,6 +56,9 @@
                     <field name="to_weight" widget="boolean_toggle"/>
                     <field name="to_pass" invisible="1"/>
                     <field name="to_pick" invisible="1"/>
+                    <field name="number_of_pack"/>
+                    <field name="label_pack"/>
+
                 </xpath>
                 <xpath expr="//field[@name='product_uom_id']" position="attributes">
                     <attribute name="invisible">True</attribute>

@@ -16,7 +16,7 @@
         "data/printing_label_zebra.xml",
         "data/printing_label_component_zebra.xml",
         "views/printing_printer.xml",
-        "views/stock_picking_view.xml",
+
     ],
     'installable': True,
     'active': False,

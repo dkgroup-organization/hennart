@@ -18,6 +18,11 @@ class StockPicking(models.Model):
         ('wait', 'wait'), ('pick', 'pick'), ('weight', 'weight'), ('ready', 'ready'), ('done', 'done')],
         string='Preparation', default='wait')
 
+    label_type = fields.Selection(
+        [('no_label', 'No label'), ('lot_label', 'Label all lots'),
+         ('pack_label', 'Label all packs'), ('product_label', 'Label all products')],
+        default="lot_label", string="Label strategy")
+
     def get_theoric_weight(self):
         """ return theoretical weight to qweb"""
         weight = 0
@@ -121,3 +126,32 @@ class StockPicking(models.Model):
         res = super().action_assign()
         self.order_move_line()
         return res
+
+    def compute_number_of_pack(self):
+        """ compute number of pack on each line """
+        self.move_line_ids.compute_number_of_pack()
+
+    def group_unpacking_line(self):
+        """ Group the line in pack if they have the same pack_product_id and lot_id and location_id is preparation
+        quantity done is not modulo of quantity per pack """
+        for picking in self:
+            picking.move_line_ids.group_unpacking_line()
+
+    def split_by_pack(self):
+        """ Split the line by pack if the unit of sale is weight, in this case the line is to weight  """
+        self.move_line_ids.split_by_pack()
+
+    def label_all_pack(self):
+        """ Label all pack, create and weight all pack, no exception """
+        for picking in all:
+            pass
+
+    def label_all_product(self):
+        """ All product need a label """
+        for picking in self:
+            pass
+
+    def label_all_lot(self):
+        """ all lot need a label, one is enought by lot, use product configuration to know the need """
+        for picking in self:
+            pass

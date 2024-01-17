@@ -22,7 +22,36 @@ class StockMoveLine(models.Model):
     to_weight = fields.Boolean(string='to weight')
     to_pass = fields.Boolean(string='to pass')
     to_pick = fields.Boolean(string='to pick')
+    label_pack = fields.Boolean('Pack label', help="This line need a label on the pack")
+    number_of_pack = fields.Float('Nb pack', compute='compute_number_of_pack', store=True)
+    quantity_per_pack = fields.Float('Quantity per pack', compute='compute_number_of_pack', store=True)
+    pack_product_id = fields.Many2one('product.product', string="Pack reference",
+                                      compute='compute_number_of_pack', store=True)
     priority = fields.Integer("Priority", store=True, default=0)
+
+    @api.onchange('label_pack')
+    def check_label_pack(self):
+        """ Check if this product has a pack """
+        if not self.pack_product_id:
+            raise UserError(_('This product has no pack definition.'))
+
+    @api.depends('qty_done', 'move_id')
+    def compute_number_of_pack(self):
+        """ Count the number of pack, this is based on the stock_move and kit BOM """
+        for line in self:
+            number_of_pack = 0.0
+            quantity_per_pack = 1.0
+            pack_product_id = False
+            if line.move_id.bom_line_id:
+                bom = line.move_id.bom_line_id.bom_id
+                pack_product_id = bom.product_id
+                if bom.type == 'phantom':
+                    quantity_per_pack = line.move_id.bom_line_id.product_qty
+                    if quantity_per_pack:
+                        number_of_pack = line.qty_done / quantity_per_pack
+            line.number_of_pack = number_of_pack
+            line.pack_product_id = pack_product_id
+            line.quantity_per_pack = quantity_per_pack
 
     @api.depends('picking_id', 'product_id')
     def compute_name(self):
@@ -118,3 +147,61 @@ class StockMoveLine(models.Model):
             }
             res = self.env['wms.scenario.step'].move_preparation(move_data)
 
+    def group_unpacking_line(self):
+        """ Group the line in pack if they have the same pack_product_id and lot_id and location_id is preparation
+        quantity done is not modulo of quantity per pack """
+        location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
+
+        group_pack = {}
+        for line in self:
+            if line.location_id not in location_preparation_ids:
+                continue
+            if line.pack_product_id and line.qty_done % line.quantity_per_pack != 0.0:
+                pack_key = f'{line.pack_product_id.id}-{line.lot_id.id}'
+                if pack_key not in list(group_pack.keys()):
+                    group_pack[pack_key] = line
+                else:
+                    group_pack[pack_key] |= line
+
+        for line_ids in group_pack.values():
+            if len(line_ids) == 1:
+                continue
+
+            qty_done = sum(line_ids.mapped('qty_done'))
+            weight = sum(line_ids.mapped('weight'))
+            to_weight = any(line_ids.mapped('to_weight'))
+            to_label = any(line_ids.mapped('to_label'))
+            reserved_uom_qty = sum(line_ids.mapped('reserved_uom_qty'))
+
+            line = line_ids[0]
+            (line_ids - line).unlink()
+            line.qty_done = qty_done
+            line.weight = weight
+            line.to_weight = to_weight
+            line.to_label = to_label
+            line.reserved_uom_qty = reserved_uom_qty
+
+    def split_by_pack(self):
+        """ Split this line by pack, create new line with 1 pack per line if unit of sale is weight """
+        weight_uom = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+
+        for line in self:
+            if line.number_of_pack > 1.0 and line.product_id.uos_id == weight_uom:
+                pack_weight = line.weight / line.number_of_pack
+                quantity_per_pack = line.quantity_per_pack
+
+                while line.qty_done > quantity_per_pack:
+                    line.qty_done -= quantity_per_pack
+                    line.reserved_uom_qty -= quantity_per_pack
+                    line.weight -= pack_weight
+                    line.copy({
+                        'qty_done': quantity_per_pack,
+                        'reserved_uom_qty': quantity_per_pack,
+                        'weight': pack_weight,
+                        'to_weight': True,
+                    })
+                line.to_weight = True
+
+    def print_label(self, printer=None):
+        """ Print label, futur function """
+        pass
