@@ -29,11 +29,6 @@ class StockMoveLine(models.Model):
                                       compute='compute_number_of_pack', store=True)
     priority = fields.Integer("Priority", store=True, default=0)
 
-    @api.onchange('label_pack')
-    def check_label_pack(self):
-        """ Check if this product has a pack """
-        if not self.pack_product_id:
-            raise UserError(_('This product has no pack definition.'))
 
     @api.depends('qty_done', 'move_id')
     def compute_number_of_pack(self):
@@ -92,14 +87,20 @@ class StockMoveLine(models.Model):
     @api.onchange('qty_done')
     def onchange_qty_done(self):
         """ define theoretical weight """
+        self.ensure_one()
         res = {'weight': 0.0, 'to_weight': False}
         if self.qty_done > 0.0:
             res['weight'] = self.qty_done * self.product_id.weight
-            if self.product_id.uos_id == self.env['product.template']._get_weight_uom_id_from_ir_config_parameter():
-                res['to_weight'] = True
-            else:
-                res['to_weight'] = False
+            res.update(self.get_to_weight())
         self.update(res)
+
+    def get_to_weight(self):
+        """ Check if the to_weight field has to be changed return dictionary"""
+        self.ensure_one()
+        res = {'to_weight': False}
+        if self.product_id.uos_id == self.env['product.template']._get_weight_uom_id_from_ir_config_parameter():
+            res['to_weight'] = True
+        return res
 
     @api.onchange('lot_name', 'lot_id', 'expiration_date')
     def onchange_lot_name(self):
@@ -147,16 +148,27 @@ class StockMoveLine(models.Model):
             }
             res = self.env['wms.scenario.step'].move_preparation(move_data)
 
-    def group_line(self):
+    def protected_line(self):
+        """ Protected line, rules to bypass the group and split operation """
+        res = False
+        for line in self:
+            if line.picking_id.state in ['done', 'cancel'] or line.print_ok or line.qty_done != line.reserved_uom_qty \
+                    or line.location_id != line.location_id.warehouse_id.wh_pack_stock_loc_id:
+                res = True
+                break
+        return res
+
+    def group_line(self, weighted=None):
         """ Group the line in pack if they have the same:
          pack_product_id and product_id and lot_id and location_id is preparation and quantity done and print is to do.
         """
-        location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
-
+        weighted = weighted or False
+        weight_uom = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
         group_line = {}
         for line in self:
-            if line.picking_id.state in ['done', 'cancel'] or line.print_ok or line.qty_done != line.reserved_uom_qty \
-                    or line.location_id not in location_preparation_ids:
+            if line.protected_line():
+                continue
+            if weighted and line.product_id.uos_id != weight_uom:
                 continue
 
             pack_key = f'{line.product_id.id}-{line.pack_product_id.id or 0}-{line.lot_id.id or 0}'
@@ -179,33 +191,58 @@ class StockMoveLine(models.Model):
             unlink_move_line = line_ids - line_to_write
             unlink_move_line.unlink()
 
-            line_to_write.reserved_uom_qty = reserved_uom_qty
+            line_to_write.reserved_uom_qty = reserved_uom_qty > 0.0 and reserved_uom_qty or 0.0
             line_to_write.qty_done = qty_done
             line_to_write.weight = weight
             line_to_write.to_weight = to_weight
             line_to_write.to_label = to_label
 
     def split_by_pack(self):
-        """ Split this line by pack, create new line with 1 pack per line if unit of sale is weight """
+        """ Split this line by pack to weight, create new line with 1 pack per line if unit of sale is weight """
         weight_uom = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
 
         for line in self:
+            if line.protected_line():
+                continue
+
             if line.number_of_pack > 1.0 and line.product_id.uos_id == weight_uom:
                 pack_weight = line.weight / line.number_of_pack
                 quantity_per_pack = line.quantity_per_pack
+                sequence = line.sequence
 
                 while line.qty_done > quantity_per_pack:
                     line.qty_done -= quantity_per_pack
                     line.reserved_uom_qty -= quantity_per_pack
+                    if line.reserved_uom_qty < 0.0:
+                        line.reserved_uom_qty = 0.0
                     line.weight -= pack_weight
-                    line.copy({
+                    if line.weight < 0.0:
+                        line.weight = 0.0
+                    line_vals = {
                         'qty_done': quantity_per_pack,
                         'reserved_uom_qty': quantity_per_pack,
                         'weight': pack_weight,
-                        'to_weight': True,
-                    })
-                line.to_weight = True
+                    }
+                    line_vals.update(line.get_to_weight())
+                    line.copy(line_vals)
+                line.update(line.get_to_weight())
+
+    def put_to_label(self):
+        """ Check if the line is to label """
+        # label_type in ['no_label', 'weight_label', 'lot_label', 'pack_label', 'product_label'],
+        for line in self:
+            label_type = line.picking_id.label_type
+            if label_type == 'no_label' or line.protected_line():
+                line.to_label = False
+            elif line.product_id.to_label or label_type == 'product_label':
+                line.to_label = True
+            elif label_type == 'weight_label':
+                line.to_label = line.to_weight
+            elif label_type in ['lot_label', 'pack_label']:
+                line.to_label = True
+            else:
+                line.to_label = False
 
     def print_label(self, printer=None):
-        """ Print label, futur function """
+        """ Print label, future function """
         pass

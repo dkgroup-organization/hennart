@@ -36,6 +36,10 @@
                                 attrs="{'invisible': [('state', 'in', ('draft', 'done', 'cancel'))]}"
                                 groups="stock.group_tracking_lot" data-hotkey="shift+g"/>-->
 
+                        <button name="label_nothing" type="object" string="Label nothing"
+                                class="btn btn-secondary"/>
+                        <button name="label_all_weighted" type="object" string="Label weighted"
+                                class="btn btn-secondary"/>
                         <button name="label_all_lot" type="object" string="Label all lot"
                                 class="btn btn-secondary"/>
                         <button name="label_all_pack" type="object" string="Label all pack"

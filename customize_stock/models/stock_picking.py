@@ -20,7 +20,7 @@ class StockPicking(models.Model):
         string='Preparation', compute="compute_preparation_state", default='wait')
 
     label_type = fields.Selection(
-        [('no_label', 'No label'), ('lot_label', 'Label all lots'),
+        [('no_label', 'No label'), ('weight_label', 'Label all weighted'), ('lot_label', 'Label all lots'),
          ('pack_label', 'Label all packs'), ('product_label', 'Label all products')],
         default="lot_label", string="Label strategy")
 
@@ -85,7 +85,7 @@ class StockPicking(models.Model):
             picking.sequence = int(date_score * 10000 + weight_score)
 
     def compute_date_delivered(self):
-        """ Custom delivery, Always delivery at one time with no backorder"""
+        """ Custom delivery, Always delivery at one time with no backorder """
         for picking in self:
             if picking.state in ['done', 'cancel']:
                 continue
@@ -169,27 +169,47 @@ class StockPicking(models.Model):
         """ compute number of pack on each line """
         self.move_line_ids.compute_number_of_pack()
 
-    def group_line(self):
-        """ Group the move line if they have the same pack_product_id and lot_id and location_id is preparation
-        quantity done is not modulo of quantity per pack """
-        for picking in self:
-            picking.move_line_ids.group_line()
-
     def split_by_pack(self):
         """ Split the line by pack if the unit of sale is weight, in this case the line is to weight  """
         self.move_line_ids.split_by_pack()
 
+    def group_line(self):
+        """ Group the line by lot and product  """
+        for picking in self:
+            picking.move_line_ids.group_line()
+
+    def label_nothing(self):
+        """ Label nothing """
+        for picking in self:
+            picking.label_type = 'no_label'
+            picking.move_line_ids.put_to_label()
+
     def label_all_pack(self):
         """ Label all pack, create and weight all pack, no exception """
-        for picking in all:
-            pass
+        for picking in self:
+            picking.label_type = 'pack_label'
+            picking.move_line_ids.group_line()
+            picking.move_line_ids.split_by_pack()
+            picking.move_line_ids.put_to_label()
+
+    def label_all_weighted(self):
+        """ Label only the product which need a new weighted """
+        for picking in self:
+            picking.label_type = 'weight_label'
+            picking.move_line_ids.group_line(weighted=True)
+            picking.move_line_ids.put_to_label()
 
     def label_all_product(self):
         """ All product need a label """
+        # label_type in ['no_label', 'weight_label', 'lot_label', 'pack_label', 'product_label'],
         for picking in self:
-            pass
+            picking.label_type = 'product_label'
+            picking.move_line_ids.group_line()
+            picking.move_line_ids.put_to_label()
 
     def label_all_lot(self):
-        """ all lot need a label, one is enought by lot, use product configuration to know the need """
+        """ all lot need a label, one is enough by lot """
         for picking in self:
-            pass
+            picking.label_type = 'lot_label'
+            picking.move_line_ids.group_line()
+            picking.move_line_ids.put_to_label()

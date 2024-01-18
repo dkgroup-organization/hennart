@@ -1,8 +1,8 @@
-
 from odoo import api, fields, models, _
 from odoo.osv import expression
 from odoo.exceptions import ValidationError, UserError
 from odoo.tools.float_utils import float_compare, float_is_zero
+
 
 class StockQuant(models.Model):
     _inherit = 'stock.quant'
@@ -22,13 +22,16 @@ class StockQuant(models.Model):
             else:
                 quant.blocked = False
 
-    def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None, strict=False):
-        """ Remove constraint to unreserve quantity because when a quant is unlinked , the picking is blocked
+    def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None,
+                                  strict=False):
+        """ Remove constraint to unreserve more quantity than there is in stock.
+        because when a quant is unlinked , the picking is blocked
         it 's not possible to cancel it.
         """
         self = self.sudo()
         rounding = product_id.uom_id.rounding
-        quants = self._gather(product_id, location_id, lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=strict)
+        quants = self._gather(product_id, location_id, lot_id=lot_id, package_id=package_id, owner_id=owner_id,
+                              strict=strict)
 
         if float_compare(quantity, 0, precision_rounding=rounding) < 0:
             # if we want to unreserve
@@ -39,10 +42,11 @@ class StockQuant(models.Model):
                 else:
                     quantity = - available_quantity
         res = super()._update_reserved_quantity(product_id, location_id, quantity,
-                                          lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=strict)
+                                                lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=strict)
         return res
 
     def _get_gather_domain(self, product_id, location_id, lot_id=None, package_id=None, owner_id=None, strict=False):
+        """ Remove blocked location of the domain used to search reserved product """
 
         domain = [('product_id', '=', product_id.id)]
         if not strict:
