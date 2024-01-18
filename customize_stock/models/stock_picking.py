@@ -105,16 +105,13 @@ class StockPicking(models.Model):
         """ Order the move line priority"""
         for picking in self:
             # the order is defined by location
-            moves_line_ids = self.env['stock.move.line'].search([
-                ('picking_id', '=', picking.id)
-                ])
-
+            moves_line_ids = self.env['stock.move.line'].search([('picking_id', '=', picking.id)])
             moves_line_ids = sorted(moves_line_ids, key=lambda ml: ml.location_id.complete_name)
 
-            priority = 100
+            priority = 1000
             for move_line in moves_line_ids:
                 move_line.priority = priority
-                priority += 10
+                priority += 1000
 
     def action_mrp(self):
         for picking in self:
@@ -177,6 +174,24 @@ class StockPicking(models.Model):
         """ Group the line by lot and product  """
         for picking in self:
             picking.move_line_ids.group_line()
+
+    def label_preparation(self):
+        """ Choice action to label """
+        for picking in self:
+            partner = picking.partner_id.parent_id or picking.partner_id
+            picking.compute_preparation_state()
+            if picking.preparation_state not in ['label', 'weight']:
+                continue
+            if not partner:
+                picking.label_nothing()
+            elif partner.label_forced:
+                picking.label_all_pack()
+            elif partner.label_all_product:
+                picking.label_all_product()
+            elif partner.label_needed:
+                picking.label_all_lot()
+            else:
+                picking.label_all_weighted()
 
     def label_nothing(self):
         """ Label nothing """

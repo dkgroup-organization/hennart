@@ -23,7 +23,7 @@ class WmsScenarioStep(models.Model):
             picking = picking_id
         return picking
 
-    def get_next_picking_line(self, data, weight=False):
+    def get_next_picking_line(self, data):
         """ Return the next preparation line to do, initialize the data with this new line"""
         self.ensure_one()
         # define the priority of the stock.move.line, by location name
@@ -33,8 +33,9 @@ class WmsScenarioStep(models.Model):
             data = self.init_data(data)
             data['picking'] = picking
 
-            if picking.state in ['confirmed', 'waiting']:
+            if picking.state in ['confirmed', 'waiting'] or picking.preparation_state == 'wait':
                 picking.action_assign()
+            picking.compute_preparation_state()
 
             location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
             moves_line_ids = self.env['stock.move.line'].search([
@@ -55,14 +56,14 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         picking = self.get_picking(data)
         printer = data.get('printer')
+
         if picking.exists():
             data = self.init_data(data)
             data['picking'] = picking
             if printer:
                 data['printer'] = printer
-                
-            location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
 
+            location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
             moves_line_ids = self.env['stock.move.line'].search([
                 ('picking_id', '=', picking.id),
                 ('location_id', 'in', location_preparation_ids.ids),
@@ -74,7 +75,8 @@ class WmsScenarioStep(models.Model):
                 data['product_id'] = data['weight_line'].product_id
                 data['lot_id'] = data['weight_line'].lot_id
                 data['quantity'] = data['weight_line'].qty_done
-
+            else:
+                picking.compute_preparation_state()
         else:
             data['warning'] = data.get('warning', '') + _('No picking selected')
         return data
@@ -560,20 +562,25 @@ class WmsScenarioStep(models.Model):
             # get the weight by asking device
             weight_device = data['weighting_device'].get_weight(data=data)
             data['tare'] = self.get_tare(data)
-            if move_line.product_id.weight:
-                nb_product = round(weight_device/move_line.product_id.weight)
-            else:
-                nb_product = move_line.reserved_uom_qty
 
-            data['weight'] = data.get('weight', 0.0) + weight_device - nb_product * data['tare']
+            data['weight'] = data.get('weight', 0.0) + weight_device
             weight_detail = data.get('weight_detail', []).copy()
-            weight_detail.append({'qty': int(nb_product), 'weight': round(weight_device, 3), 'tare': data['tare']})
+            weight_detail.append({'qty': 0.0, 'weight': round(weight_device, 3), 'tare': data['tare']})
             data['weight_detail'] = weight_detail
 
         elif data.get('weight') and data.get('weight_line'):
             # save the weight
             move_line = data.get('weight_line')
-            move_line.weight = data.get('weight', 0.0) - move_line.qty_done * data.get('tare', 0.0)
+            qty_tare = move_line.qty_done
+            if data.get('weight_detail'):
+                # look if some product has label, in this case don't soustracte the tare
+                for weighted_line in data['weight_detail']:
+                    if weighted_line.get('qty') and weighted_line.get('tare', 0.0) == 0.0:
+                        qty_tare -= weighted_line['qty']
+                    if not data.get('tare', 0.0) and weighted_line.get('tare', 0.0) != 0.0:
+                        data['tare'] = weighted_line['tare']
+
+            move_line.weight = data.get('weight', 0.0) - qty_tare * data.get('tare', 0.0)
             move_line.to_weight = False
             if move_line.to_label and data.get('printer'):
                 move_line.print_label(printer=data.get('printer'))
@@ -600,24 +607,18 @@ class WmsScenarioStep(models.Model):
                 data['picking'].nb_pallet = int(data['nb_pallet'])
 
     def picking_validation_print(self, data):
-        """ Valide the end of the preparation, and print documents"""
+        """ Valid the end of the preparation, and print documents"""
         self.ensure_one()
         if not data.get('warning'):
             if data.get('picking'):
                 # Check the state of this picking
                 picking = data.get('picking')
-                stock_move_ok = True
-                for move in picking.move_ids:
-                    if move.product_uom_qty != move.quantity_done:
-                        if stock_move_ok:
-                            data['warning'] = data.get('warning', '') + _("This product is to do:\n")
-                        data['warning'] = data.get('warning', '') + f"<br/>[{move.product_id.default_code}] {move.product_id.name}"
+                picking.compute_preparation_state()
 
-                if not data.get('warning'):
-                    for move_line in picking.move_line_ids:
-                        if move_line.to_weight or move_line.to_label:
-                            data['warning'] = data.get('warning', '') + _("Some product need label and weight.")
-                            break
+                if picking.preparation_state == 'wait':
+                    data['warning'] = _("This preparation is waiting after product to finish.")
+                elif picking.preparation_state in ['pick', 'weight', 'label']:
+                    data['warning'] = _("The preparation is not finish.")
             else:
                 data['warning'] = _("No picking to check")
 

@@ -208,7 +208,7 @@ class StockMoveLine(models.Model):
             if line.number_of_pack > 1.0 and line.product_id.uos_id == weight_uom:
                 pack_weight = line.weight / line.number_of_pack
                 quantity_per_pack = line.quantity_per_pack
-                sequence = line.sequence
+                priority = line.priority
 
                 while line.qty_done > quantity_per_pack:
                     line.qty_done -= quantity_per_pack
@@ -218,10 +218,12 @@ class StockMoveLine(models.Model):
                     line.weight -= pack_weight
                     if line.weight < 0.0:
                         line.weight = 0.0
+                    priority += 1
                     line_vals = {
                         'qty_done': quantity_per_pack,
                         'reserved_uom_qty': quantity_per_pack,
                         'weight': pack_weight,
+                        'priority': priority,
                     }
                     line_vals.update(line.get_to_weight())
                     line.copy(line_vals)
