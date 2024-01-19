@@ -46,6 +46,9 @@ class WmsScenarioStep(models.Model):
 
             if moves_line_ids:
                 data['move_line'] = moves_line_ids[0]
+            else:
+                # There is no more line to pick, check the label process
+                picking.label_preparation()
         else:
             data['warning'] = data.get('warning', '') + _('No picking selected')
 

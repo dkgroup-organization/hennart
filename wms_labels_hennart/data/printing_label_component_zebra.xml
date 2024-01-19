@@ -229,7 +229,7 @@ date=f&quot;{object.expiration_date:%d/%m/%Y}&quot;,
 ^PQ1,0,1,Y^XZ&quot;&quot;&quot;.format(
 
 weight_label=&quot;Poids net:&quot;,
-weight=f&quot;{object.weight:.3f} Kg&quot;,
+weight=f&quot;{object.weight_label_value:.3f} Kg&quot;,
 product_code=object.label_code,
 product_name=object.product_id.name,
 
