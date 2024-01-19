@@ -12,6 +12,17 @@
                 <page name="operations" position="after">
                     <page string="Detailed Operations" name="detailed_operations"
                           attrs="{'invisible': [('show_operations', '=', False)]}">
+
+
+                        <group>
+                            <group>
+                                <field name="label_type"/>
+                            </group>
+                            <group>
+                                <field name="preparation_state" widget="statusbar"/>
+                            </group>
+                        </group>
+
                         <field name="move_line_nosuggest_ids"
                                attrs="{'readonly': ['|', '|', ('show_operations', '=', False), ('state', '=', 'cancel'), '&amp;', ('state', '=', 'done'), ('is_locked', '=', True)], 'invisible': [('show_reserved', '=', True)]}"
                                context="{'tree_view_ref': 'stock.view_stock_move_line_detailed_operation_tree', 'default_picking_id': id, 'default_location_id': location_id, 'default_location_dest_id': location_dest_id, 'default_company_id': company_id}"/>
@@ -24,15 +35,30 @@
                         <!--<button class="oe_highlight" name="action_put_in_pack" type="object" string="Put in Pack"
                                 attrs="{'invisible': [('state', 'in', ('draft', 'done', 'cancel'))]}"
                                 groups="stock.group_tracking_lot" data-hotkey="shift+g"/>-->
+
+                        <button name="label_nothing" type="object" string="Label nothing"
+                                class="btn btn-secondary"/>
+                        <button name="label_all_weighted" type="object" string="Label weighted"
+                                class="btn btn-secondary"/>
+                        <button name="label_all_lot" type="object" string="Label all lot"
+                                class="btn btn-secondary"/>
+                        <button name="label_all_pack" type="object" string="Label all pack"
+                                class="btn btn-secondary"/>
+                        <button name="label_all_product" type="object" string="Label all product"
+                                class="btn btn-secondary"/>
+                        <button name="group_line" type="object" string="Group line"
+                                class="btn btn-secondary"/>
+                        <button name="split_by_pack" type="object" string="Split line"
+                                class="btn btn-secondary"/>
                     </page>
                 </page>
-
 
                 <xpath expr="//page[@name='operations']//button[@name='action_put_in_pack']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
-                <xpath expr="//page[@name='operations']//field[@name='move_ids_without_package']/tree" position="attributes">
+                <xpath expr="//page[@name='operations']//field[@name='move_ids_without_package']/tree"
+                       position="attributes">
                     <attribute name="decoration-warning">state=='cancel'</attribute>
                 </xpath>
 
@@ -50,11 +76,12 @@
                 </xpath>
 
                 <xpath expr="//page[@name='operations']//field[@name='lot_ids']" position="before">
-                  <field name="lot_description"/>
+                    <field name="lot_description"/>
                 </xpath>
 
                 <xpath expr="//page[@name='operations']//field[@name='product_packaging_id']" position="attributes">
-                    <attribute name="attrs">{'column_invisible': [('parent.picking_type_code', '!=', 'incoming')]}</attribute>
+                    <attribute name="attrs">{'column_invisible': [('parent.picking_type_code', '!=', 'incoming')]}
+                    </attribute>
                 </xpath>
 
                 <xpath expr="//field[@name='backorder_id']/.." position="replace">
@@ -95,12 +122,15 @@
                     <field name="product_packaging_id"/>-->
                     <field name="weight"/>
                     <field name="move_line_ids" invisible="1"/>
-                    <field name="prodlot_inv" string="Supplier N° lot" attrs="{'column_invisible': [('parent.picking_type_code', '!=', 'incoming')]}"/>
-                    <field name="lot_expiration_date" readonly="0" widget="date" attrs="{'column_invisible': [('parent.picking_type_code', '!=', 'incoming')]}"/>
+                    <field name="prodlot_inv" string="Supplier N° lot"
+                           attrs="{'column_invisible': [('parent.picking_type_code', '!=', 'incoming')]}"/>
+                    <field name="lot_expiration_date" readonly="0" widget="date"
+                           attrs="{'column_invisible': [('parent.picking_type_code', '!=', 'incoming')]}"/>
                 </xpath>
 
                 <xpath expr="//button[@name='action_assign']" position="after">
-                    <button name="action_mrp" attrs="{'invisible': [('state', 'in', ('done', 'cancel', 'draft'))]}" string="Produire" groups="base.group_user" type="object" class="oe_highlight"/>
+                    <button name="action_mrp" attrs="{'invisible': [('state', 'in', ('done', 'cancel', 'draft'))]}"
+                            string="Produire" groups="base.group_user" type="object" class="oe_highlight"/>
                 </xpath>
 
             </field>

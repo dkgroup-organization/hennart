@@ -41,8 +41,7 @@ class StockMove(models.Model):
                 ' become dangerous and must not be consumed.')
 
     picking_type_use_create_lots = fields.Boolean(related='picking_type_id.use_create_lots', readonly=True)
-    lot_description = fields.Text("Lot description", compute="get_lot_description", store=False,
-                                  readonly=True, sanitize=False)
+    lot_description = fields.Text("Lot description", compute="get_lot_description", store=False, readonly=True)
     
     mrp_id = fields.Many2one(
         'mrp.production',
@@ -69,9 +68,6 @@ class StockMove(models.Model):
                     move.wh_filter = False
             else:
                 move.wh_filter = False
-
-
-
 
     def check_line(self):
         """ check if all line has production lot information"""
@@ -131,12 +127,14 @@ class StockMove(models.Model):
                      'expiration_date': line.lot_expiration_date})
                 line.move_line_ids.create(move_line_vals)
                 line.move_line_ids._create_and_assign_production_lot()
+
             elif len(line.move_line_ids) == 1:
                 if not line.move_line_ids.lot_id:
                     line.move_line_ids.update(
                         {'lot_name': line.prodlot_inv,
                          'expiration_date': line.lot_expiration_date})
                     line.move_line_ids._create_and_assign_production_lot()
+
                 else:
                     line.move_line_ids.update(
                         {'lot_name': line.prodlot_inv,
