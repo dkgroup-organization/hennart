@@ -12,7 +12,7 @@
           <field name="prefixe" invisible="1"/>
           <field name="cnuf" invisible="1"/>
           <field name="serial" invisible="1"/>
-          <field name="number" invisible="1"/>
+          <field name="nb_sscc" invisible="1"/>
           <field name="picking_id"/>
         </tree>
       </field>
@@ -29,7 +29,7 @@
           <field name="cnuf"/>
           <field name="serial"/>
           <field name="picking_id"/>
-          <field name="number"/>
+          <field name="nb_sscc"/>
         </form>
       </field>
     </record>
