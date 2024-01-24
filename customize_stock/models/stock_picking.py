@@ -179,7 +179,6 @@ class StockPicking(models.Model):
         """ Choice action to label """
         for picking in self:
             partner = picking.partner_id.parent_id or picking.partner_id
-            picking.compute_preparation_state()
             if picking.preparation_state not in ['label', 'weight']:
                 continue
             if not partner:

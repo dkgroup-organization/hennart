@@ -8,5 +8,8 @@ class stock_picking(models.Model):
     def print_container_label(self):
         """ Create package to label"""
         for picking in self:
-            pass
+            picking.update_sscc()
+            for line in picking.sscc_lines_ids():
+                line.print_label()
+
 

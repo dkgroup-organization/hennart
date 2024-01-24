@@ -21,7 +21,7 @@ class StockPicking(models.Model):
         self.update_sscc()
         return override_write
 
-    # @api.onchange('nb_sscc_label')
+    # @api.depends('nb_sscc_label')
     def update_sscc(self):
         for picking in self:
             # nb_total_container = picking.nb_container + picking.nb_pallet

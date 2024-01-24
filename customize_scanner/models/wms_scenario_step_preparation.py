@@ -46,9 +46,6 @@ class WmsScenarioStep(models.Model):
 
             if moves_line_ids:
                 data['move_line'] = moves_line_ids[0]
-            else:
-                # There is no more line to pick, check the label process
-                picking.label_preparation()
         else:
             data['warning'] = data.get('warning', '') + _('No picking selected')
 
@@ -539,6 +536,18 @@ class WmsScenarioStep(models.Model):
 
         return data
 
+    def start_weight_preparation(self, data):
+        """ After the choice of printer, do some action:
+        - update the preparation_state:
+        - print the label if no weighted needed
+        """
+        self.ensure_one()
+        picking = data.get('picking')
+        printer = data.get('printer')
+        if picking and printer:
+            picking.compute_preparation_state()
+            picking.label_preparation()
+
     def weight_preparation(self, data):
         """ Weight product in preparation location
         """
@@ -613,9 +622,9 @@ class WmsScenarioStep(models.Model):
         """ Valid the end of the preparation, and print documents"""
         self.ensure_one()
         if not data.get('warning'):
-            if data.get('picking'):
+            picking = data.get('picking')
+            if picking:
                 # Check the state of this picking
-                picking = data.get('picking')
                 picking.compute_preparation_state()
 
                 if picking.preparation_state == 'wait':
@@ -626,10 +635,9 @@ class WmsScenarioStep(models.Model):
                 data['warning'] = _("No picking to check")
 
             # Invoice this picking
-            if not data.get('warning'):
+            if picking and not data.get('warning'):
                 # picking validation and print document
                 data.pop('end_preparation', None)
-                picking.preparation_state = 'ready'
+                picking.print_container_label()
                 picking.button_validate()
-
         return data

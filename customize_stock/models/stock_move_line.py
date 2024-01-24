@@ -29,7 +29,6 @@ class StockMoveLine(models.Model):
                                       compute='compute_number_of_pack', store=True)
     priority = fields.Integer("Priority", store=True, default=0)
 
-
     @api.depends('qty_done', 'move_id')
     def compute_number_of_pack(self):
         """ Count the number of pack, this is based on the stock_move and kit BOM """
@@ -168,6 +167,7 @@ class StockMoveLine(models.Model):
         for line in self:
             if line.protected_line():
                 continue
+            # Exclude the product which no need weighted operation
             if weighted and line.product_id.uos_id != weight_uom:
                 continue
 
@@ -179,6 +179,7 @@ class StockMoveLine(models.Model):
 
         for line_ids in group_line.values():
             if len(line_ids) == 1:
+                # No need grouping if only one line
                 continue
 
             qty_done = sum(line_ids.mapped('qty_done'))

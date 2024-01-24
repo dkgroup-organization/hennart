@@ -103,6 +103,7 @@
 		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
 		<field name="action_variable">printer</field>
 		<field name="action_presentation">&lt;p&gt;Pesage des produits&lt;/p&gt;</field>
+		<field name="python_code">step.start_weight_preparation(data)</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 
