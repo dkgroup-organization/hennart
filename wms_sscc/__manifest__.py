@@ -11,7 +11,7 @@
     """,
     "data": [
     "security/ir.model.access.csv",
-    "view/stock_picking_view.xml",
+    "view/stock_sscc_view.xml",
     ],
     'demo_xml': [],
     'installable': True,

@@ -2,7 +2,7 @@
 from odoo import models, fields ,api
 
 
-class stock_picking(models.Model):
+class StockPicking(models.Model):
     _inherit = "stock.picking"
 
     def action_confirm(self):
@@ -11,7 +11,8 @@ class stock_picking(models.Model):
             if picking.carrier_id:
                 date_pikcing = picking.scheduled_date.date()
 
-                carrier_order_id = carrier_order_obj.search([('carrier_id', '=', picking.carrier_id.id),('date_expected2','=',date_pikcing)])
+                carrier_order_id = carrier_order_obj.search([('carrier_id', '=', picking.carrier_id.id),
+                                                             ('date_expected2','=',date_pikcing)])
                 if carrier_order_id:
                     picking.carrier_order_id = carrier_order_id.id
                 else:
@@ -29,16 +30,15 @@ class stock_picking(models.Model):
                         }
                     carrier_order_id = carrier_order_obj.create(carrier_order_vals)
                     picking.carrier_order_id = carrier_order_id.id
-        return super(stock_picking,self).action_confirm()
+        return super(StockPicking, self).action_confirm()
 
-        
     carrier_order_id = fields.Many2one('delivery.carrier.order',string='Carrier order')
-    nb_container = fields.Integer('Number of container')
-    nb_pallet = fields.Integer('Number of palet')
-    number_of_packages = fields.Integer(string='Nb packages')
+    nb_container = fields.Integer('Nb container')
+    nb_pallet = fields.Integer('Nb pallet')
+    number_of_packages = fields.Integer('Nb packages')
     nb_pallet_europe = fields.Integer('Nb Pallets europe')
     nb_pallet_perdu = fields.Integer('Nb Pallets Perdu')
-    
+
     def check_carrier(self):
         context = {}
         carrier_obj = self.env['delivery.carrier.order']

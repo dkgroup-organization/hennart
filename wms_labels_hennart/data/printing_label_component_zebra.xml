@@ -247,4 +247,79 @@ date=f&quot;{object.lot_id.expiration_date:%d/%m/%Y}&quot;,
 		<field name="block_lines" eval="1"/>
 		<field name="block_justify">L</field>
 	</record>
+
+
+	<record id="printing_label_zpl2_component_sscc" model="printing.label.zpl2.component">
+		<field name="label_id" model="printing.label.zpl2" search="[('name', '=', 'SSCC')]"/>
+		<field name="name">SSCC label</field>
+		<field name="component_type">text</field>
+		<field name="font">0</field>
+		<field name="color">B</field>
+		<field name="orientation">N</field>
+		<field name="diagonal_orientation">L</field>
+		<field name="data_autofill" eval="0"/>
+		<field name="check_digits" eval="0"/>
+		<field name="interpretation_line" eval="0"/>
+		<field name="interpretation_line_above" eval="0"/>
+		<field name="module_width" eval="2"/>
+		<field name="bar_width_ratio" eval="3.0"/>
+		<field name="truncate" eval="0"/>
+		<field name="model">2</field>
+		<field name="magnification_factor" eval="1"/>
+		<field name="only_product_barcode" eval="0"/>
+		<field name="error_correction">Q</field>
+		<field name="mask_value" eval="7"/>
+		<field name="data">&quot;&quot;&quot;^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
+^XA
+^MMT
+^PW1004
+^LL0531
+^LS0
+
+^FT23,65^A0N,45,35^FH\^FDSSCC:^FS
+^FT23,115^A0N,20,20^FH\^FDHennart Freres SAS^FS
+
+^BY2,3,70^FT120,90^BCN,,Y,N^FD{name}^FS
+
+^FO15,120^GB640,182,2^FS
+^FT23,145^A0N,20,20^FH\^FDAdresse de livraison:^FS
+^FT203,145^A0N,25,25^FH\^FD{country}^FS
+^FT370,145^A0N,20,20^FH\^FDDate de livraison:^FS
+^FT530,145^A0N,25,25^FH\^FD{date}^FS
+
+^FT23,185^A0N,35,35^FH\^FD{partner_name}^FS
+^FT23,218^A0N,30,30^FH\^FD{street}^FS
+^FT23,250^A0N,30,30^FH\^FD{street2}^FS
+^FT23,285^A0N,30,30^FH\^FD{zip}^FS
+^FT150,285^A0N,30,30^FH\^FD{city}^FS
+
+^FO15,300^GB640,70,2^FS
+^FT23,345^A0N,40,40^FH\^FD{partner_name}^FS
+^FT350,345^A0N,40,40^FH\^FD{carrier_zone}^FS
+^FT500,350^A0N,60,60^FH\^FD{nb_sscc} / {nb_total_sscc}^FS
+
+^PQ1,0,1,Y^XZ""".format(
+			name=object.name,
+			partner_name=object.picking_id.partner_id.name or '',
+			carrier_zone=object.picking_id.partner_id.carrier_zone or '',
+			street=object.picking_id.partner_id.street or '',
+			street2=object.picking_id.partner_id.street2 or '',
+			zip=object.picking_id.partner_id.zip or '',
+			city=object.picking_id.partner_id.city or '',
+			country=object.picking_id.partner_id.country_id.name or '',
+			nb_sscc=object.nb_sscc,
+			nb_total_sscc=object.nb_total_sscc,
+			date=object.picking_id.date_delivered and object.picking_id.date_delivered.strftime('%d/%m/%Y') or '',
+			)
+		</field>
+		<field name="repeat" eval="0"/>
+		<field name="repeat_count" eval="1"/>
+		<field name="reverse_print" eval="0"/>
+		<field name="in_block" eval="0"/>
+		<field name="block_lines" eval="1"/>
+		<field name="block_justify">L</field>
+	</record>
+
+
+
 </odoo>

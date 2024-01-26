@@ -14,8 +14,9 @@ class StockMoveLine(models.Model):
     def _compute_product_code(self):
         """ return product code to print, check if there is kit"""
         for line in self:
-            default_code = line.product_id.default_code or ''
-            if line.pack_product_id:
+            picking = line.picking_id
+            default_code = line.product_id.default_code or '?????'
+            if line.pack_product_id and line.number_of_pack >= 1.0 and picking.label_type != 'product_label':
                 default_code = line.pack_product_id.default_code
             line.label_code = default_code
 
@@ -29,13 +30,14 @@ class StockMoveLine(models.Model):
             label_qty = 1
             if label_type == 'no_label':
                 label_qty = 0
+
             elif label_type == 'pack_label':
-                if line.number_of_pack:
+                if line.number_of_pack >= 1.0:
                     weight_label_value = line.weight / line.number_of_pack
                     label_qty = int(line.number_of_pack)
-                else:
-                    weight_label_value = line.weight
-                    label_qty = 1
+                elif line.qty_done >= 1.0:
+                    weight_label_value = line.weight / line.qty_done
+                    label_qty = int(line.qty_done)
 
             elif label_type == 'product_label':
                 weight_label_value = line.weight / (line.qty_done or 1.0)
@@ -44,9 +46,9 @@ class StockMoveLine(models.Model):
             line.weight_label_value = weight_label_value
             line.label_qty = label_qty
 
-    def print_label(self, printer=None):
+    def print_label(self, printer=None, label_id=None):
         """ Print label """
-        label_id = self.env['printing.label.zpl2'].search([('model_id.model', '=', self._name)])
+        label_id = label_id or self.env['printing.label.zpl2'].search([('model_id.model', '=', self._name)])
         if printer and label_id:
             for line in self:
                 if line.print_ok or line.to_weight:

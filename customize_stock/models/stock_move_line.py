@@ -9,7 +9,7 @@ class StockMoveLine(models.Model):
 
     default_code = fields.Char('Code', related="product_id.default_code")
     weight = fields.Float("Weight", compute=False, digits='Stock Weight', store=True)
-    picking_type_code = fields.Selection('Type', related="picking_type_id.code", store=True, index=True)
+    picking_type_code = fields.Selection(related="picking_type_id.code", store=True, index=True)
     expiration_date = fields.Datetime(
         string='Expiration Date', compute=False, store=True, readonly=False, default=False,
         help='This is the date on which the goods with this Lot Number may become dangerous and must not be consumed.')
@@ -28,7 +28,6 @@ class StockMoveLine(models.Model):
     pack_product_id = fields.Many2one('product.product', string="Pack reference",
                                       compute='compute_number_of_pack', store=True)
     priority = fields.Integer("Priority", store=True, default=0)
-
 
     @api.depends('qty_done', 'move_id')
     def compute_number_of_pack(self):
@@ -168,6 +167,7 @@ class StockMoveLine(models.Model):
         for line in self:
             if line.protected_line():
                 continue
+            # Exclude the product which no need weighted operation
             if weighted and line.product_id.uos_id != weight_uom:
                 continue
 
@@ -179,6 +179,7 @@ class StockMoveLine(models.Model):
 
         for line_ids in group_line.values():
             if len(line_ids) == 1:
+                # No need grouping if only one line
                 continue
 
             qty_done = sum(line_ids.mapped('qty_done'))

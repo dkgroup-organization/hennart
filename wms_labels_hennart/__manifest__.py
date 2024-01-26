@@ -6,6 +6,7 @@
     'website': 'https://dkgroup.fr',
     'author': 'DK Group',
     "category": "Stocks",
+    "license": "AGPL-3",
     'summary': 'Custom label',
     "description": """
     Impression ZEBRA projet Hennart

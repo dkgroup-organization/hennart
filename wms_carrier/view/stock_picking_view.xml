@@ -1,50 +1,42 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-  <data>
-    <record id="view_picking_out_form_wms_carrier" model="ir.ui.view">
-      <field name="name">stock.picking.out.form.wms.carrier</field>
-      <field name="model">stock.picking</field>
-      <field name="inherit_id" ref="stock.view_picking_form"/>
-      <field name="priority">130</field>
-      <field name="arch" type="xml">
+    <data>
+        <record id="view_picking_out_form_wms_carrier" model="ir.ui.view">
+            <field name="name">stock.picking.out.form.wms.carrier</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="priority">130</field>
+            <field name="arch" type="xml">
 
-          <notebook>
-            <page string="Pallet">
+                <notebook>
+                    <page string="Pallet">
+                        <group>
+                            <group string="Preparation">
+                                <field name="number_of_packages"/>
+                                <field name="nb_container"/>
+                                <field name="nb_pallet"/>
+                            </group>
+                            <group string="SSCC">
+                                <button name="update_sscc" type="object" string="Update SSCC label"
+                                        class="btn btn-lg btn-outline-light btn-secondary"/>
+                                <field name="sscc_line_ids" readonly="1" nolabel="1">
+                                    <tree>
+                                        <field name="nb_sscc"/>
+                                        <field name="name"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Incomming/ougoing">
+                                <field name="nb_pallet_europe"/>
+                                <field name="nb_pallet_perdu"/>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
 
-                        <group string="Pallet">
-
-
-
-          <field name="number_of_packages"/>
-          <field name="nb_container"/>
-          <field name="nb_pallet"/>
-          <field name="nb_pallet_europe"/>
-          <field name="nb_pallet_perdu"/>
-                    </group>
-         <group>
-
-
-          <field name="nb_sscc_label" class="oe_inline"/>
-
-
-
-          <field name="sscc_lines_ids" readonly="1" class="oe_inline">
-            <tree>
-              <field name="name"/>
-                <field name="number"/>
-
-            </tree>
             </field>
-
-      </group>
-
-            </page>
-
-          </notebook>
-
-
-
-      </field>
-    </record>
-  </data>
+        </record>
+    </data>
 </openerp>

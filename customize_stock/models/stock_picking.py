@@ -11,7 +11,7 @@ from odoo.exceptions import UserError
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
-    #date_delivered = fields.Datetime("delivered date", compute='compute_date_delivered', help="Customer delivered date")
+    date_delivered = fields.Datetime("delivered date", help="Customer delivered date")
     picking_type_code = fields.Selection(string='Code', related="picking_type_id.code")
     sequence = fields.Integer(string='Sequence', compute='_compute_sequence', store=True)
     preparation_state = fields.Selection([
@@ -81,7 +81,7 @@ class StockPicking(models.Model):
             date_score = dt.month * 100 + dt.day
             weight_score = int(sum(move.product_uom_qty * move.product_id.weight for move in picking.move_ids_without_package))
 
-            # Adaptez les coefficients, TODO: add carrier and disponibility priority
+            # Adaptez les coefficients, TODO: add carrier and disponibility priority hour
             picking.sequence = int(date_score * 10000 + weight_score)
 
     def compute_date_delivered(self):
@@ -176,10 +176,11 @@ class StockPicking(models.Model):
             picking.move_line_ids.group_line()
 
     def label_preparation(self):
-        """ Choice action to label """
+        """ Choice action to label
+        label_type in ['no_label', 'weight_label', 'lot_label', 'pack_label', 'product_label'],
+        """
         for picking in self:
             partner = picking.partner_id.parent_id or picking.partner_id
-            picking.compute_preparation_state()
             if picking.preparation_state not in ['label', 'weight']:
                 continue
             if not partner:
@@ -216,7 +217,6 @@ class StockPicking(models.Model):
 
     def label_all_product(self):
         """ All product need a label """
-        # label_type in ['no_label', 'weight_label', 'lot_label', 'pack_label', 'product_label'],
         for picking in self:
             picking.label_type = 'product_label'
             picking.move_line_ids.group_line()
@@ -228,3 +228,4 @@ class StockPicking(models.Model):
             picking.label_type = 'lot_label'
             picking.move_line_ids.group_line()
             picking.move_line_ids.put_to_label()
+
