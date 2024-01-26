@@ -9,7 +9,7 @@ class StockMoveLine(models.Model):
 
     default_code = fields.Char('Code', related="product_id.default_code")
     weight = fields.Float("Weight", compute=False, digits='Stock Weight', store=True)
-    picking_type_code = fields.Selection('Type', related="picking_type_id.code", store=True, index=True)
+    picking_type_code = fields.Selection(related="picking_type_id.code", store=True, index=True)
     expiration_date = fields.Datetime(
         string='Expiration Date', compute=False, store=True, readonly=False, default=False,
         help='This is the date on which the goods with this Lot Number may become dangerous and must not be consumed.')

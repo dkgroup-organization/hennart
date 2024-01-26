@@ -32,17 +32,12 @@ class StockPicking(models.Model):
                     picking.carrier_order_id = carrier_order_id.id
         return super(StockPicking, self).action_confirm()
 
-
     carrier_order_id = fields.Many2one('delivery.carrier.order',string='Carrier order')
-    nb_container = fields.Integer('Number of container')
-    nb_pallet = fields.Integer('Number of palet')
-    number_of_packages = fields.Integer(string='Nb packages')
+    nb_container = fields.Integer('Nb container')
+    nb_pallet = fields.Integer('Nb pallet')
+    number_of_packages = fields.Integer('Nb packages')
     nb_pallet_europe = fields.Integer('Nb Pallets europe')
     nb_pallet_perdu = fields.Integer('Nb Pallets Perdu')
-
-    @api.onchange('nb_container', 'nb_pallet')
-    def onchange_sscc(self):
-        self.update_sscc()
 
     def check_carrier(self):
         context = {}

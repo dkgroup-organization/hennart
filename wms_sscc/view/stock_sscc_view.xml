@@ -1,69 +1,70 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-  <data>
-   <record id="view_stock_sscc_tree" model="ir.ui.view">
-      <field name="name">stock_sscc</field>
-      <field name="model">stock.sscc</field>
-      <field name="type">tree</field>
-      <field name="arch" type="xml">
-        <tree string="sscc" editable="bottom">
-          <field name="name"/>
-          <field name="identifier" invisible="1"/>
-          <field name="prefixe" invisible="1"/>
-          <field name="cnuf" invisible="1"/>
-          <field name="serial" invisible="1"/>
-          <field name="nb_sscc" invisible="1"/>
-          <field name="picking_id"/>
-        </tree>
-      </field>
-    </record>
-    <record id="view_stock_sscc_form" model="ir.ui.view">
-      <field name="name">stock_sscc</field>
-      <field name="model">stock.sscc</field>
-      <field name="type">form</field>
-      <field name="arch" type="xml">
-        <form string="sscc">
-          <field name="name"/>
-          <field name="identifier"/>
-          <field name="prefixe"/>
-          <field name="cnuf"/>
-          <field name="serial"/>
-          <field name="picking_id"/>
-          <field name="nb_sscc"/>
-        </form>
-      </field>
-    </record>
+    <data>
+        <record id="view_stock_sscc_tree" model="ir.ui.view">
+            <field name="name">stock_sscc</field>
+            <field name="model">stock.sscc</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="sscc" editable="bottom">
+                    <field name="name"/>
+                    <field name="identifier" invisible="1"/>
+                    <field name="prefixe" invisible="1"/>
+                    <field name="cnuf" invisible="1"/>
+                    <field name="serial" invisible="1"/>
+                    <field name="nb_sscc" invisible="1"/>
+                    <field name="picking_id"/>
+                </tree>
+            </field>
+        </record>
 
-  <record id="view_stock_sscc_search" model="ir.ui.view">
-      <field name="name">stock_sscc.search</field>
-      <field name="model">stock.sscc</field>
-    <field name="arch" type="xml">
-      <search string="transport Lists">
-        <field name="name" string="sscc" filter_domain="[('name','ilike', self)]"/>
-        <field name="picking_id" string="Bon de livraison" filter_domain="[('picking_id.name','ilike', self)]"/>
-      </search>
-    </field>
-  </record>
+        <record id="view_stock_sscc_form" model="ir.ui.view">
+            <field name="name">stock_sscc</field>
+            <field name="model">stock.sscc</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="sscc">
+                    <field name="name"/>
+                    <field name="identifier"/>
+                    <field name="prefixe"/>
+                    <field name="cnuf"/>
+                    <field name="serial"/>
+                    <field name="picking_id"/>
+                    <field name="nb_sscc"/>
+                </form>
+            </field>
+        </record>
 
-    <record id="action_stock_sscc" model="ir.actions.act_window">
-      <field name="name">sscc</field>
-      <field name="res_model">stock.sscc</field>
-      <field name="type">ir.actions.act_window</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-    <menuitem id="menu_stock_sscc" parent="stock.menu_warehouse_report" sequence="80" action="action_stock_sscc"/>
+        <record id="view_stock_sscc_search" model="ir.ui.view">
+            <field name="name">stock_sscc.search</field>
+            <field name="model">stock.sscc</field>
+            <field name="arch" type="xml">
+                <search string="transport Lists">
+                    <field name="name" string="sscc" filter_domain="[('name','ilike', self)]"/>
+                    <field name="picking_id" string="Bon de livraison"
+                           filter_domain="[('picking_id.name','ilike', self)]"/>
+                </search>
+            </field>
+        </record>
 
+        <record id="action_stock_sscc" model="ir.actions.act_window">
+            <field name="name">sscc</field>
+            <field name="res_model">stock.sscc</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_mode">tree,form</field>
+        </record>
 
-<record id="unique_sequence_id_sscc" model="ir.sequence">
-   <field name="name">Sequence sscc</field>
-   <field name="code">stock.sscc.code</field>
-   <field name="active">TRUE</field>
-   <field name="prefix">0</field>
-   <field name="padding">5</field>
-   <field name="number_next">1</field>
-   <field name="number_increment">1</field>
-</record>
+        <menuitem id="menu_stock_sscc" parent="stock.menu_warehouse_report" sequence="80" action="action_stock_sscc"/>
 
-  </data>
+        <record id="unique_sequence_id_sscc" model="ir.sequence">
+            <field name="name">Sequence sscc</field>
+            <field name="code">stock.sscc.code</field>
+            <field name="active">TRUE</field>
+            <field name="prefix">0</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
 
+    </data>
 </openerp>

@@ -11,7 +11,7 @@ from odoo.exceptions import UserError
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
-    #date_delivered = fields.Datetime("delivered date", compute='compute_date_delivered', help="Customer delivered date")
+    date_delivered = fields.Datetime("delivered date", help="Customer delivered date")
     picking_type_code = fields.Selection(string='Code', related="picking_type_id.code")
     sequence = fields.Integer(string='Sequence', compute='_compute_sequence', store=True)
     preparation_state = fields.Selection([

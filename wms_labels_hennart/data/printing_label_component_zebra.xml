@@ -251,7 +251,7 @@ date=f&quot;{object.lot_id.expiration_date:%d/%m/%Y}&quot;,
 
 	<record id="printing_label_zpl2_component_sscc" model="printing.label.zpl2.component">
 		<field name="label_id" model="printing.label.zpl2" search="[('name', '=', 'SSCC')]"/>
-		<field name="name">Move line lot label</field>
+		<field name="name">SSCC label</field>
 		<field name="component_type">text</field>
 		<field name="font">0</field>
 		<field name="color">B</field>
@@ -285,35 +285,32 @@ date=f&quot;{object.lot_id.expiration_date:%d/%m/%Y}&quot;,
 ^FT23,145^A0N,20,20^FH\^FDAdresse de livraison:^FS
 ^FT203,145^A0N,25,25^FH\^FD{country}^FS
 ^FT370,145^A0N,20,20^FH\^FDDate de livraison:^FS
-^FT530,145^A0N,25,25^FH\^FD{date:%d/%m/%Y}^FS
+^FT530,145^A0N,25,25^FH\^FD{date}^FS
 
 ^FT23,185^A0N,35,35^FH\^FD{partner_name}^FS
 ^FT23,218^A0N,30,30^FH\^FD{street}^FS
-^FT23,250^A0N,30,30^FH\^FD{street}^FS
+^FT23,250^A0N,30,30^FH\^FD{street2}^FS
 ^FT23,285^A0N,30,30^FH\^FD{zip}^FS
 ^FT150,285^A0N,30,30^FH\^FD{city}^FS
 
 ^FO15,300^GB640,70,2^FS
-^FT23,345^A0N,40,40^FH\^FD{name}^FS
-^FT350,345^A0N,40,40^FH\^FD{name}^FS
+^FT23,345^A0N,40,40^FH\^FD{partner_name}^FS
+^FT350,345^A0N,40,40^FH\^FD{carrier_zone}^FS
 ^FT500,350^A0N,60,60^FH\^FD{nb_sscc} / {nb_total_sscc}^FS
 
-
 ^PQ1,0,1,Y^XZ""".format(
-
-			barcode=object.number,
-			partner_name=object.partner_id.name,
-			street=object.partner_id.street or '',
-			street2=object.partner_id.street2 or '',
-			zip=object.partner_id.zip or '',
-			city=object.partner_id.city or '',
+			name=object.name,
+			partner_name=object.picking_id.partner_id.name or '',
+			carrier_zone=object.picking_id.partner_id.carrier_zone or '',
+			street=object.picking_id.partner_id.street or '',
+			street2=object.picking_id.partner_id.street2 or '',
+			zip=object.picking_id.partner_id.zip or '',
+			city=object.picking_id.partner_id.city or '',
 			country=object.picking_id.partner_id.country_id.name or '',
 			nb_sscc=object.nb_sscc,
 			nb_total_sscc=object.nb_total_sscc,
-
-			date=object.picking_id.date_delivered,
-
-			})
+			date=object.picking_id.date_delivered and object.picking_id.date_delivered.strftime('%d/%m/%Y') or '',
+			)
 		</field>
 		<field name="repeat" eval="0"/>
 		<field name="repeat_count" eval="1"/>
