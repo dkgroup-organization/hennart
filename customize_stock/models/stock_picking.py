@@ -81,7 +81,7 @@ class StockPicking(models.Model):
             date_score = dt.month * 100 + dt.day
             weight_score = int(sum(move.product_uom_qty * move.product_id.weight for move in picking.move_ids_without_package))
 
-            # Adaptez les coefficients, TODO: add carrier and disponibility priority
+            # Adaptez les coefficients, TODO: add carrier and disponibility priority hour
             picking.sequence = int(date_score * 10000 + weight_score)
 
     def compute_date_delivered(self):
@@ -176,7 +176,9 @@ class StockPicking(models.Model):
             picking.move_line_ids.group_line()
 
     def label_preparation(self):
-        """ Choice action to label """
+        """ Choice action to label
+        label_type in ['no_label', 'weight_label', 'lot_label', 'pack_label', 'product_label'],
+        """
         for picking in self:
             partner = picking.partner_id.parent_id or picking.partner_id
             if picking.preparation_state not in ['label', 'weight']:
@@ -215,7 +217,6 @@ class StockPicking(models.Model):
 
     def label_all_product(self):
         """ All product need a label """
-        # label_type in ['no_label', 'weight_label', 'lot_label', 'pack_label', 'product_label'],
         for picking in self:
             picking.label_type = 'product_label'
             picking.move_line_ids.group_line()
