@@ -547,6 +547,7 @@ class WmsScenarioStep(models.Model):
         if picking and printer:
             picking.compute_preparation_state()
             picking.label_preparation()
+            picking.print_label(printer=printer)
 
     def weight_preparation(self, data):
         """ Weight product in preparation location

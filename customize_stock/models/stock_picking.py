@@ -227,3 +227,4 @@ class StockPicking(models.Model):
             picking.label_type = 'lot_label'
             picking.move_line_ids.group_line()
             picking.move_line_ids.put_to_label()
+
