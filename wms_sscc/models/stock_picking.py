@@ -19,8 +19,8 @@ class StockPicking(models.Model):
         for picking in self:
             picking.nb_total_sscc = len(picking.sscc_line_ids)
 
+    @api.depends('nb_container', 'nb_pallet')
     def update_sscc(self):
-        #     @api.depends('nb_container', 'nb_pallet')
         for picking in self:
             if picking.picking_type_code != 'outgoing':
                 continue

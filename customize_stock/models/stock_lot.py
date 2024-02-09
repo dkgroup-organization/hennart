@@ -38,6 +38,13 @@ class Stock_lot(models.Model):
                 text = _("Best before date:")
             else:
                 text = _("Date:")
+
+            CODE_CP850 = {'Ç': '\80', 'ü': '\81', 'é': '\82', 'â': '\83', 'ä': '\84', 'à': '\85', 'å': '\86',
+                          'ç': '\87', 'ê': '\88', 'ë': '\89',
+                          'è': '\8A', 'ï': '\8B', 'î': '\8C', 'ì': '\8D', 'Ä': '\8E', 'Å': '\8F', '°': '\F8'}
+            for key in CODE_CP850.keys():
+                if key in text:
+                    text = text.replace(key, CODE_CP850[key])
             lot.date_label = text
 
     def name_get(self):

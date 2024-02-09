@@ -539,15 +539,29 @@ class WmsScenarioStep(models.Model):
     def start_weight_preparation(self, data):
         """ After the choice of printer, do some action:
         - update the preparation_state:
+
+        """
+        self.ensure_one()
+        picking = data.get('picking')
+        if picking:
+            picking.label_preparation()
+            picking.compute_preparation_state()
+
+        if picking.preparation_state in ['weight', 'label']:
+            data.update({'print_label': True})
+        return data
+
+    def print_label_preparation(self, data):
+        """ After the choice of printer, do some action:
         - print the label if no weighted needed
         """
         self.ensure_one()
         picking = data.get('picking')
         printer = data.get('printer')
         if picking and printer:
-            picking.compute_preparation_state()
-            picking.label_preparation()
             picking.print_label(printer=printer)
+        if 'print_label' in list(data.keys()):
+            del data['print_label']
         return data
 
     def weight_preparation(self, data):
@@ -611,13 +625,14 @@ class WmsScenarioStep(models.Model):
 
     def package_preparation(self, data):
         """ Update preparation package """
+        # TODO: not used?
         self.ensure_one()
         if data.get('picking'):
-            if data.get('number_of_packages') and data['picking'].number_of_packages != int(data['number_of_packages']):
+            if 'number_of_packages' in list(data.keys()) and data['picking'].number_of_packages != int(data['number_of_packages']):
                 data['picking'].number_of_packages = int(data['number_of_packages'])
-            if data.get('nb_container') and data['picking'].nb_container != int(data['nb_container']):
+            if 'nb_container' in list(data.keys()) and data['picking'].nb_container != int(data['nb_container']):
                 data['picking'].nb_container = int(data['nb_container'])
-            if data.get('nb_pallet') and data['picking'].nb_pallet != int(data['nb_pallet']):
+            if 'nb_pallet' in list(data.keys()) and data['picking'].nb_pallet != int(data['nb_pallet']):
                 data['picking'].nb_pallet = int(data['nb_pallet'])
 
     def picking_validation_print(self, data):
@@ -625,6 +640,11 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         if not data.get('warning'):
             picking = data.get('picking')
+            printer = data.get('printer')
+
+            if picking and printer:
+                picking.print_container_label(printer=printer)
+
             if picking:
                 # Check the state of this picking
                 picking.compute_preparation_state()
@@ -640,6 +660,5 @@ class WmsScenarioStep(models.Model):
             if picking and not data.get('warning'):
                 # picking validation and print document
                 data.pop('end_preparation', None)
-                picking.print_container_label()
                 picking.button_validate()
         return data

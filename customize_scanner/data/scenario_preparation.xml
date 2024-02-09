@@ -85,6 +85,37 @@
 		<field name="python_code">data = step.move_preparation(data)</field>
 	</record>
 
+	<record id="wms_scenario_step_preparation65" model="wms.scenario.step">
+		<field name="sequence" eval="65"/>
+		<field name="name">preparation-65</field>
+		<field name="description">debut pesage</field>
+		<field name="action_scanner">routing</field>
+		<field name="action_variable">scan</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
+		<field name="python_code">data = step.start_weight_preparation(data)</field>
+	</record>
+
+	<record id="wms_scenario_step_preparation66" model="wms.scenario.step">
+		<field name="sequence" eval="66"/>
+		<field name="name">preparation-66</field>
+		<field name="description">scan printer</field>
+		<field name="action_scanner">scan_model</field>
+		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
+		<field name="action_variable">printer</field>
+		<field name="action_presentation">&lt;p&gt;Impresion des etiquettes&lt;/p&gt;</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
+	</record>
+
+	<record id="wms_scenario_step_preparation67" model="wms.scenario.step">
+		<field name="sequence" eval="67"/>
+		<field name="name">preparation-67</field>
+		<field name="description">Impression etiquettes</field>
+		<field name="action_scanner">routing</field>
+		<field name="action_variable">scan</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
+		<field name="python_code">data = step.print_label_preparation(data)</field>
+	</record>
+
 	<record id="wms_scenario_step_preparation7" model="wms.scenario.step">
 		<field name="sequence" eval="70"/>
 		<field name="name">preparation-70</field>
@@ -115,23 +146,12 @@
 		<field name="action_variable">weighting_device</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 		<field name="python_code">data = step.check_weight(data)</field>
-
 	</record>
 
 	<record id="wms_scenario_step_preparation86" model="wms.scenario.step">
 		<field name="sequence" eval="86"/>
 		<field name="name">preparation-86</field>
 		<field name="description">weight another update</field>
-		<field name="action_scanner">routing</field>
-		<field name="action_variable">scan</field>
-		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
-		<field name="python_code">data = step.weight_preparation(data)</field>
-	</record>
-
-	<record id="wms_scenario_step_preparation87" model="wms.scenario.step">
-		<field name="sequence" eval="87"/>
-		<field name="name">preparation-87</field>
-		<field name="description">weight update</field>
 		<field name="action_scanner">routing</field>
 		<field name="action_variable">scan</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
@@ -156,6 +176,16 @@
 		<field name="action_scanner">scan_tare</field>
 		<field name="action_variable">tare</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
+	</record>
+
+	<record id="wms_scenario_step_preparation100" model="wms.scenario.step">
+		<field name="sequence" eval="100"/>
+		<field name="name">preparation-100</field>
+		<field name="description">weight update</field>
+		<field name="action_scanner">routing</field>
+		<field name="action_variable">scan</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
+		<field name="python_code">data = step.weight_preparation(data)</field>
 	</record>
 
 	<record id="wms_scenario_step_preparation11" model="wms.scenario.step">
@@ -194,6 +224,17 @@
 		<field name="action_scanner">scan_quantity</field>
 		<field name="action_variable">nb_pallet</field>
 		<field name="python_code">step.package_preparation(data)</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
+	</record>
+
+	<record id="wms_scenario_step_preparation145" model="wms.scenario.step">
+		<field name="sequence" eval="145"/>
+		<field name="name">preparation-145</field>
+		<field name="description">scan printer</field>
+		<field name="action_scanner">scan_model</field>
+		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
+		<field name="action_variable">printer</field>
+		<field name="action_presentation">&lt;p&gt;Impresion des etiquettes&lt;/p&gt;</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 

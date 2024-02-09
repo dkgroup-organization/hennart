@@ -13,7 +13,7 @@ DATA_RESERVED_NAME = ['user', 'warning', 'scan', 'function', 'message', 'button'
 class WmsSession(models.Model):
     _name = "wms.session"
     _description = "Scanner session"
-    _order = "write_date"
+    _order = "start_date desc"
 
     def _default_warehouse(self):
         "find the user warehouse"
@@ -92,6 +92,7 @@ class WmsSession(models.Model):
                 else:
                     session_data.update({key: data[key]})
 
+            session_data.update({'start_date': fields.Datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
             session.data = json.dumps(session_data)
             session.message = json.dumps(session_message)
 
