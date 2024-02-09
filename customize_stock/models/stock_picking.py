@@ -181,8 +181,7 @@ class StockPicking(models.Model):
         """
         for picking in self:
             partner = picking.partner_id.parent_id or picking.partner_id
-            if picking.preparation_state not in ['label', 'weight']:
-                continue
+
             if not partner:
                 picking.label_nothing()
             elif partner.label_forced:
