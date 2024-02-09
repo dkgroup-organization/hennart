@@ -189,7 +189,7 @@ class StockPicking(models.Model):
             elif partner.label_all_product:
                 picking.label_all_product()
             elif partner.label_needed:
-                picking.label_all_lot()
+                picking.label_all_weighted()
             else:
                 picking.label_all_weighted()
 
@@ -205,6 +205,8 @@ class StockPicking(models.Model):
             picking.label_type = 'pack_label'
             picking.move_line_ids.group_line()
             picking.move_line_ids.split_by_pack()
+
+            # TODO: reweight all pack
             picking.move_line_ids.put_to_label()
 
     def label_all_weighted(self):
