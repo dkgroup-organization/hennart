@@ -233,6 +233,8 @@ class StockMoveLine(models.Model):
     def put_to_label(self):
         """ Check if the line is to label """
         # label_type in ['no_label', 'weight_label', 'lot_label', 'pack_label', 'product_label'],
+        weight_uom = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+
         for line in self:
             label_type = line.picking_id.label_type
             if label_type == 'no_label' or line.protected_line():
@@ -243,6 +245,8 @@ class StockMoveLine(models.Model):
                 line.to_label = line.to_weight
             elif label_type in ['lot_label', 'pack_label']:
                 line.to_label = True
+                if label_type == 'pack_label' and line.product_id.uos_id == weight_uom:
+                    line.to_weight = True
             else:
                 line.to_label = False
 
