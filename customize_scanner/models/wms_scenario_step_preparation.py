@@ -28,6 +28,7 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         # define the priority of the stock.move.line, by location name
         picking = self.get_picking(data)
+        move_line = data.get('move_line')
 
         if picking.exists():
             data = self.init_data(data)
@@ -38,14 +39,14 @@ class WmsScenarioStep(models.Model):
             picking.compute_preparation_state()
 
             location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
-            moves_line_ids = self.env['stock.move.line'].search([
+            move_line_ids = self.env['stock.move.line'].search([
                 ('picking_id', '=', picking.id),
                 ('location_id', 'not in', location_preparation_ids.ids),
                 ('reserved_uom_qty', '>', 0.0), ('qty_done', '=', 0.0),
                 ], order='priority', limit=1)
 
-            if moves_line_ids:
-                data['move_line'] = moves_line_ids[0]
+            if move_line_ids:
+                data['move_line'] = move_line_ids[0]
         else:
             data['warning'] = data.get('warning', '') + _('No picking selected')
 
@@ -434,6 +435,7 @@ class WmsScenarioStep(models.Model):
         product_id = move_line.product_id
         lot_id = move_line.lot_id
         location_id = move_line.location_id
+        priority = move_line.priority
 
         # Check reserved quantity on move_line
         if quantity > move_line.reserved_uom_qty:
@@ -455,7 +457,8 @@ class WmsScenarioStep(models.Model):
                 'location_dest_id': location_dest_id,
                 'lot_id': lot_id,
                 'weight': weight,
-                'quantity': quantity
+                'quantity': quantity,
+                'priority': priority,
                 }
             result_data = self.move_product(move_data)
 
@@ -470,6 +473,7 @@ class WmsScenarioStep(models.Model):
                     'weight': move_data.get('weight'),
                     'reserved_uom_qty': move_data.get('quantity'),
                     'qty_done':  move_data.get('quantity'),
+                    'priority': priority,
                     }
                 new_move_line = move_line.copy(new_move_data)
 
@@ -553,7 +557,7 @@ class WmsScenarioStep(models.Model):
 
     def print_label_preparation(self, data):
         """ After the choice of printer, do some action:
-        - print the label if no weighted needed
+        - print the label if no weighted is needed
         """
         self.ensure_one()
         picking = data.get('picking')
