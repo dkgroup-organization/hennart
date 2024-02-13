@@ -29,24 +29,40 @@ class WmsScenarioStep(models.Model):
         # define the priority of the stock.move.line, by location name
         picking = self.get_picking(data)
         move_line = data.get('move_line')
+        print('----get_next_picking_line------------------move_line-----------------', move_line)
 
         if picking.exists():
             data = self.init_data(data)
             data['picking'] = picking
+            print('----get_next_picking_line----------------------data-------------', data)
+            print('----get_next_picking_line----------------------move_line-------------', move_line)
 
-            if picking.state in ['confirmed', 'waiting'] or picking.preparation_state == 'wait':
-                picking.action_assign()
-            picking.compute_preparation_state()
 
-            location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
-            move_line_ids = self.env['stock.move.line'].search([
-                ('picking_id', '=', picking.id),
-                ('location_id', 'not in', location_preparation_ids.ids),
-                ('reserved_uom_qty', '>', 0.0), ('qty_done', '=', 0.0),
-                ], order='priority', limit=1)
+            if move_line and move_line.qty_done == 0.0 and move_line.reserved_uom_qty > 0.0:
+                # this move line is to finish
+                print('----get_next_picking_line-------------------------this move line is to finish----------', data)
+                data['move_line'] = move_line
+            else:
+                location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
+                move_line_todo = [
+                    ('picking_id', '=', picking.id),
+                    ('location_id', 'not in', location_preparation_ids.ids),
+                    ('reserved_uom_qty', '>', 0.0), ('qty_done', '=', 0.0),
+                    ]
+                move_line_ids = self.env['stock.move.line'].search(move_line_todo, order='priority', limit=1)
+                print('----get_next_picking_line----------------------move_line_todo-------------', move_line_todo)
 
-            if move_line_ids:
-                data['move_line'] = move_line_ids[0]
+                if move_line_ids:
+                    data['move_line'] = move_line_ids
+                else:
+                    # New checking before weight and label step
+                    picking.compute_preparation_state()
+                    print('----get_next_picking_line------------------preparation_state-----------------', picking.preparation_state)
+                    if picking.preparation_state in ['wait', 'pick']:
+                        picking.action_assign()
+                        move_line_ids = self.env['stock.move.line'].search(move_line_todo, order='priority', limit=1)
+                        if move_line_ids:
+                            data['move_line'] = move_line_ids
         else:
             data['warning'] = data.get('warning', '') + _('No picking selected')
 
@@ -297,6 +313,7 @@ class WmsScenarioStep(models.Model):
     def get_user_picking(self, data):
         """ return the set of picking currently in preparation by this user"""
         self.ensure_one()
+        data = self.init_data()
         picking_type = self.env.ref('stock.picking_type_out')
 
         picking_ids = self.env['stock.picking'].search([
@@ -442,7 +459,7 @@ class WmsScenarioStep(models.Model):
             data['Warning'] = _("There is more quantity than needed: ") + f"{quantity} > {move_line.reserved_uom_qty}"
             return data
 
-        # Check reserved quantity on location
+        # Check quantity on location
         condition = [
             ('product_id', '=', product_id.id),
             ('location_id', '=', location_id.id),
@@ -450,65 +467,67 @@ class WmsScenarioStep(models.Model):
             ]
         quant_ids = self.env['stock.quant'].search(condition)
 
-        if sum(quant_ids.mapped('quantity')) >= quantity:
-            move_data = {
-                'location_id': location_id,
-                'product_id': product_id,
-                'location_dest_id': location_dest_id,
-                'lot_id': lot_id,
-                'weight': weight,
-                'quantity': quantity,
+        if sum(quant_ids.mapped('quantity')) < quantity:
+            data['Warning'] = _("There is not enough quantity on location: ") + f"{quantity}"
+
+        # Move product on preparation
+        move_data = {
+            'location_id': location_id,
+            'product_id': product_id,
+            'location_dest_id': location_dest_id,
+            'lot_id': lot_id,
+            'weight': weight,
+            'quantity': quantity,
+            'priority': priority,
+            }
+        result_data = self.move_product(move_data)
+
+        # Update product on preparation
+        if result_data.get('result'):
+            new_move_data = {
+                'location_id': move_data.get('location_dest_id').id,
+                'weight': move_data.get('weight'),
+                'reserved_uom_qty': move_data.get('quantity'),
+                'qty_done': move_data.get('quantity'),
                 'priority': priority,
                 }
-            result_data = self.move_product(move_data)
-
-            if result_data.get('result'):
-                if move_line.reserved_uom_qty - move_data.get('quantity') <= 0.0:
-                    move_line.reserved_uom_qty = 0.0
-                else:
-                    move_line.reserved_uom_qty -= move_data.get('quantity')
-
-                new_move_data = {
-                    'location_id':  move_data.get('location_dest_id').id,
-                    'weight': move_data.get('weight'),
-                    'reserved_uom_qty': move_data.get('quantity'),
-                    'qty_done':  move_data.get('quantity'),
-                    'priority': priority,
-                    }
+            if move_line.reserved_uom_qty - move_data.get('quantity') <= 0.0:
+                # In this case, all quantity reserved is move the line is finish
+                move_line.write(new_move_data)
+                new_move_line = move_line
+            else:
+                # In this case, all quantity is not moving, the line is not finish, a new line is to create
+                move_line.reserved_uom_qty -= move_data.get('quantity')
                 new_move_line = move_line.copy(new_move_data)
 
-                # to Weight or not?
-                if not new_move_line.weight:
-                    if new_move_line.product_id.uos_id == uom_weight:
-                        new_move_line.to_weight = True
-                        new_move_line.to_label = True
-                        new_move_line.weight = new_move_line.product_id.weight * new_move_line.qty_done
-                    else:
-                        new_move_line.weight = new_move_line.product_id.weight * new_move_line.qty_done
-                        new_move_line.to_weight = False
+            # to Weight or not?
+            if not new_move_line.weight:
+                if new_move_line.product_id.uos_id == uom_weight:
+                    new_move_line.to_weight = True
+                    new_move_line.to_label = True
                 else:
                     new_move_line.to_weight = False
+                new_move_line.weight = new_move_line.product_id.weight * new_move_line.qty_done
+            else:
+                new_move_line.to_weight = False
 
-                # Reserve the quants moved in preparation location
-                condition = [
-                    ('product_id', '=', product_id.id),
-                    ('location_id', '=', location_dest_id.id),
-                    ('lot_id', '=', lot_id.id or False)
-                ]
-                quant_ids = self.env['stock.quant'].search(condition)
-                for quant in quant_ids:
-                    if quant.reserved_quantity != quant.quantity:
-                        quant.reserved_quantity = quant.quantity
+            # Reserve the quants moved in preparation location
+            condition = [
+                ('product_id', '=', product_id.id),
+                ('location_id', '=', location_dest_id.id),
+                ('lot_id', '=', lot_id.id or False)
+            ]
+            quant_ids = self.env['stock.quant'].search(condition)
+            for quant in quant_ids:
+                if quant.reserved_quantity != quant.quantity:
+                    quant.reserved_quantity = quant.quantity
 
-                # Init data for next line to prepare
-                data = self.init_data()
-                data['picking'] = move_line.picking_id
+            # Init data for next line to prepare
+            data = self.init_data()
+            data['picking'] = move_line.picking_id
+            data['message'] = _('The product is moving to preparation')
+            if move_line != new_move_line:
                 data['move_line'] = move_line
-                data['message'] = _('The product is moving to preparation')
-
-        if move_line.reserved_uom_qty == 0.0 and move_line.qty_done == 0.0:
-            del data['move_line']
-            move_line.unlink()
 
         return data
 
