@@ -314,7 +314,8 @@ class WmsScenarioStep(models.Model):
         session = self.env['wms.session'].get_session()
         picking_name = date_now + "{}-{}".format(session.id, self.env.user.login)
 
-        picking_stock = self.env['stock.picking'].search([('name', '=', picking_name), ('state', 'not in', ['cancel'])])
+        picking_stock = self.env['stock.picking'].search([('name', '=', picking_name),
+                                                          ('state', 'not in', ['cancel'])])
         if not picking_stock:
             picking_stock = self.env['stock.picking'].create({
                 'name': picking_name,
