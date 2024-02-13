@@ -640,15 +640,16 @@ class WmsScenarioStep(models.Model):
 
     def package_preparation(self, data):
         """ Update preparation package """
-        # TODO: not used?
         self.ensure_one()
         if data.get('picking'):
             if 'number_of_packages' in list(data.keys()) and data['picking'].number_of_packages != int(data['number_of_packages']):
                 data['picking'].number_of_packages = int(data['number_of_packages'])
             if 'nb_container' in list(data.keys()) and data['picking'].nb_container != int(data['nb_container']):
-                data['picking'].nb_container = int(data['nb_container'])
+                data['picking'].write({'nb_container': int(data['nb_container'])})
+                data['picking'].update_sscc()
             if 'nb_pallet' in list(data.keys()) and data['picking'].nb_pallet != int(data['nb_pallet']):
-                data['picking'].nb_pallet = int(data['nb_pallet'])
+                data['picking'].write({'nb_pallet': int(data['nb_pallet'])})
+                data['picking'].update_sscc()
 
     def picking_validation_print(self, data):
         """ Valid the end of the preparation, and print documents"""
