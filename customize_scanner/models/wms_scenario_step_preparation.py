@@ -375,7 +375,10 @@ class WmsScenarioStep(models.Model):
         if 'tare' in list(data.keys()):
             tare = data.get('tare')
         elif move_line:
-            tare = move_line.product_id.tare
+            if move_line.pack_product_id.tare and move_line.quantity_per_pack:
+                tare = move_line.pack_product_id.tare / move_line.quantity_per_pack
+            else:
+                tare = move_line.product_id.tare
         return tare
 
     def check_move_line_scan(self, data):

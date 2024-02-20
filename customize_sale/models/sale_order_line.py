@@ -22,7 +22,30 @@ class SaleOrderLine(models.Model):
     product_uom_readonly = fields.Boolean("UOM readonly", default=True)
     cadence = fields.Html(string="Cadencier", compute="compute_cadence", readonly=True, compute_sudo=True)
     display_qty_widget = fields.Boolean("display widget", store=True, compute='_compute_display_qty_widget')
+    free_qty_at_date = fields.Float('Stock', compute='_compute_free_qty_at_date')
     logistic_discount = fields.Float('logistical discount')
+
+    @api.depends('product_id', 'product_uom_qty', 'product_uom', 'order_id.commitment_date')
+    def _compute_free_qty_at_date(self):
+        """ Compute the quantity at date and remove qty needed by other order after this date
+        It is not exactly the reality, it is a simple secure way to reserved enough qty
+        more precision need a lot of compute and are slowing
+        """
+        for line in self:
+            if line.product_id.type == 'product':
+                futur_lines = self.search([
+                    ('scheduled_date', '>=', line.scheduled_date),
+                    ('order_id', '!=', line.order_id.id),
+                    ('state', 'in', ['sale', 'done']),
+                    ('product_id', '=', line.product_id.id),
+                    ])
+                futur_outgoing_qty = sum(futur_lines.mapped('product_uom_qty'))
+                free_qty_at_date = line.virtual_available_at_date - futur_outgoing_qty
+                if free_qty_at_date < 0.0:
+                    free_qty_at_date = 0.0
+                line.free_qty_at_date = free_qty_at_date
+            else:
+                line.free_qty_at_date = line.product_uom_qty
 
     @api.depends('state')
     def _compute_product_uom_readonly(self):

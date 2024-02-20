@@ -108,12 +108,19 @@ class SaleOrder(models.Model):
             for line in sale.order_line:
                 if line.product_uom_qty == 0.0:
                     continue
+                # Double same line
                 key = "{}-{}-{}".format(line.product_id.id, line.price_unit, line.discount)
                 if not key in check_line:
                     check_line[key] = line
                 else:
                     raise ValidationError(_(
                         "There are 2 line with the same product and price. Please, group them:\n{}".format(
+                            line.product_id.name)))
+
+                # No stock available
+                if line.free_qty_at_date < line.product_uom_qty:
+                    raise ValidationError(_(
+                        "There is not enough stock. Please, change quantity:\n{}".format(
                             line.product_id.name)))
 
     def create_custom_invoice(self):
