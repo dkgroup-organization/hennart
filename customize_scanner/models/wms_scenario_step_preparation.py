@@ -657,6 +657,7 @@ class WmsScenarioStep(models.Model):
     def picking_validation_print(self, data):
         """ Valid the end of the preparation, and print documents"""
         self.ensure_one()
+
         if not data.get('warning'):
             picking = data.get('picking')
             printer = data.get('printer')
