@@ -27,7 +27,7 @@ msgstr " - Produit: %s, Numéro de série: %s"
 #: code:addons/customize_stock/models/stock_picking.py:0
 #, python-format
 msgid " lines, "
-msgstr " lignes"
+msgstr " lignes, "
 
 #. module: customize_stock
 #: model:ir.model.fields,field_description:customize_stock.field_stock_lot__barcode
