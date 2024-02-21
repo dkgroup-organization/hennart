@@ -44,9 +44,9 @@ class StockMoveLine(models.Model):
                 label_qty = int(line.qty_done)
 
             elif label_type == 'weight_label':
-                if line.product_id.need_label:
-                    label_qty = int(line.number_of_pack or line.qty_done)
-                    weight_label_value = line.weight / (label_qty or 1.0)
+                if line.product_id.to_label:
+                    label_qty = int(line.number_of_pack or line.qty_done or 1.0)
+                    weight_label_value = line.weight / label_qty
 
             line.weight_label_value = weight_label_value
             line.label_qty = label_qty
