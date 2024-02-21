@@ -68,7 +68,8 @@
                 </xpath>
 
                 <xpath expr="//field[@name='order_line']/tree" position="replace">
-                    <tree string="Sales Order Lines" editable="bottom" limit="200" default_order="product_id">
+                    <tree string="Sales Order Lines" editable="bottom" limit="200" default_order="product_id"
+                    decoration-danger="product_uom_qty > free_qty_at_date" >
 
                         <field name="sequence" widget="handle"/>
                         <!-- We do not display the type because we don't want the user to be bothered with that information if he has no section or note. -->
@@ -110,8 +111,8 @@
                         <field name="qty_to_invoice" invisible="1"/>
 
                         <!--<widget name="qty_at_date_widget" width="50px"/>-->
-                        <field name="virtual_available_at_date" string="Stock" readonly="1"/>
 
+                        <field name="free_qty_at_date" string="Stock" readonly="1"/>
                         <field name="cadence" attrs="{'column_invisible': [('parent.state', '!=', 'draft')]}"/>
 
                         <field name="product_uom_readonly" invisible="1"/>
@@ -142,7 +143,7 @@
                         <field name="currency_id" invisible="1"/>
                         <field name="price_tax" invisible="1"/>
                         <field name="company_id" invisible="1"/>
-
+                        <field name="virtual_available_at_date" invisible="1"/>
                         <field name="qty_available_today" invisible="1"/>
                         <field name="free_qty_today" invisible="1"/>
                         <field name="scheduled_date" invisible="1"/>
