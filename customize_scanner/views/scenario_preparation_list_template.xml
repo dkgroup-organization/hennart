@@ -42,7 +42,7 @@
                                     <p t-esc="picking.carrier_id.name" class="font-bold mb-1"/>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <p t-esc="picking.get_theoric_weight()"/>
+                                    <p><span t-esc="picking.get_theoric_weight()"/> : <span t-esc="picking.products_availability"/></p>
                                     <p t-esc="picking.scheduled_date" class="mb-1"/>
 
                                 </div>
