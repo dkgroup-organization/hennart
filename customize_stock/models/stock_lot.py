@@ -3,7 +3,8 @@ from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 import datetime
 
-class Stock_lot(models.Model):
+
+class StockLot(models.Model):
     _inherit = 'stock.lot'
 
     company_id = fields.Many2one('res.company', 'Company',
@@ -22,7 +23,7 @@ class Stock_lot(models.Model):
     barcode = fields.Char(string='Barcode', compute="get_barcode", store=True, index=True)
     barcode_ext = fields.Char(string='Barcode (ESPERA)', compute="get_barcode", store=True, index=True)
     barcode_ext2 = fields.Char(string='Barcode (DIGI)', compute="get_barcode", store=True, index=True)
-    use_expiration_date = fields.Boolean('use_expiration_date', store=True, compute="freeze_value")
+    use_expiration_date = fields.Boolean('use_expiration_date', store=True, default=True, compute="freeze_value")
     blocked = fields.Boolean('Blocked', help="Block the possibility of reserve this lot")
     expiration_date = fields.Datetime(
         string='Expiration Date', compute=False, store=True, readonly=False, default=False,

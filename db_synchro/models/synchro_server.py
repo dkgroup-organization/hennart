@@ -162,7 +162,9 @@ class BaseSynchroServer(models.Model):
 
             update_lot_ids = self.env['stock.lot'].search([('expiration_date', '=', False)])
             for lot in update_lot_ids:
-                lot.expiration_date = lot.use_date or lot.removal_date or lot.alert_date
+                lot.expiration_date = lot.life_date or lot.use_date or lot.removal_date or lot.alert_date
+            update_lot_ids = self.env['stock.lot'].search([('use_expiration_date', '=', False)])
+            update_lot_ids.write({'use_expiration_date': True})
 
     def migrate_partner(self, limit=50):
         """ partner migration, look after active and used partner, don't load unused partner"""
