@@ -251,6 +251,20 @@ class WmsScenarioStep(models.Model):
         location_ids |= self.env['stock.location'].search([('scrap_location', '=', True)])
         return location_ids
 
+    def check_lot(self, data):
+        """
+        Vérifie que data contient a production lot "
+        """
+        if data.get('lot_id'):
+            if data.get('label_product') and not data.get('product_id'):
+                data['product_id'] = data.get('label_product')
+
+        else:
+            data['warning'] = _("Some information are missing to check production lot.")
+
+        return data
+
+
     def check_product_location_qty(self, data):
         """
         Vérifie que data contient location_origin_id, product_id,
@@ -261,10 +275,11 @@ class WmsScenarioStep(models.Model):
        "This product {} is not registred in this location {}"
        "This product {} need a production lot "
         """
+        print('--------check_product_location_qty-------------', data)
         if data.get('label_product') and not data.get('product_id'):
             data['product_id'] = data.get('label_product')
 
-        if data.get('product_id') and (data.get('location_id') or data.get('location_origin_id')):
+        if data.get('product_id') and ((data.get('location_id') or data.get('location_origin_id'))):
             condition = [
                 ('product_id', '=', data['product_id'].id),
                 ('location_id', '=', (data.get('location_id') or data.get('location_origin_id')).id)]

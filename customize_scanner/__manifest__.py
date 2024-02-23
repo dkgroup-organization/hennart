@@ -21,6 +21,7 @@
         "views/scenario_preparation_message_template.xml",
         "views/scenario_move_template.xml",
         "views/scenario_inventory_template.xml",
+        "views/scenario_change_lot_template.xml",
 
         "data/scenario_preparation.xml",
         "data/scenario_preparation_transition.xml",
@@ -28,6 +29,7 @@
         "data/scenario_move_transition.xml",
         "data/scenario_inventory.xml",
         "data/scenario_inventory_transition.xml",
+        "data/scenario_change_lot.xml",
 
     ],
     'demo': [

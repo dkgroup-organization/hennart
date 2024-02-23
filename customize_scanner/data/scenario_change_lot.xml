@@ -1,0 +1,48 @@
+<?xml version="1.0" ?>
+<odoo>
+	<record id="wms_scenario_change_lot" model="wms.scenario">
+		<field name="name">change_lot</field>
+		<field name="sequence" eval="200"/>
+		<field name="scenario_image">construction.jpg</field>
+		<field name="scenario_qweb">customize_scanner.scenario_change_lot</field>
+		<field name="debug_mode" eval="0"/>
+		<field name="active" eval="1"/>
+		<field name="warehouse_ids" eval="[(6,0,[])]"/>
+		<field name="company_id" ref="base.main_company"/>
+		<field name="group_ids" eval="[(6,0,[ref('stock.group_stock_user')])]"/>
+		<field name="user_ids" eval="[(6,0,[])]"/>
+		<field name="scenario_id" eval="2"/>
+	</record>
+	
+	<record id="wms_scenario_step_change_lot10" model="wms.scenario.step">
+		<field name="sequence" eval="10"/>
+		<field name="name">change_lot-10</field>
+		<field name="description">scan lot</field>
+		<field name="action_scanner">scan_multi</field>
+		<field name="action_variable">lot_id</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_change_lot"/>
+		<field name="python_code">data = step.check_lot(data)</field>
+	</record>
+
+	<record id="wms_scenario_step_change_lot20" model="wms.scenario.step">
+		<field name="sequence" eval="20"/>
+		<field name="name">change_lot-20</field>
+		<field name="description">scan location</field>
+		<field name="action_scanner">scan_model</field>
+		<field name="action_model" ref="stock.model_stock_location"/>
+		<field name="action_variable">location_id</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_change_lot"/>
+		<field name="python_code">data = step.check_product_location_qty(data)</field>
+	</record>
+
+	<record id="wms_scenario_step_change_lot30" model="wms.scenario.step">
+		<field name="sequence" eval="30"/>
+		<field name="name">change_lot-30</field>
+		<field name="description">scan quantity</field>
+		<field name="action_scanner">scan_quantity</field>
+		<field name="action_variable">quantity</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_change_lot"/>
+		<field name="python_code">data = step.check_product_location_qty(data)</field>
+	</record>
+
+</odoo>
