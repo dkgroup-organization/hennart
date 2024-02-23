@@ -160,9 +160,10 @@ class BaseSynchroServer(models.Model):
             if len(obj_ids) == 1:
                 obj_ids[0].load_remote_record(limit=-1)
 
-            update_lot_ids = self.env['stock.lot'].search([('expiration_date', '=', False)])
+            update_lot_ids = self.env['stock.lot'].search([('quant_ids', '!=', False)])
             for lot in update_lot_ids:
                 lot.expiration_date = lot.life_date or lot.use_date or lot.removal_date or lot.alert_date
+
             update_lot_ids = self.env['stock.lot'].search([('use_expiration_date', '=', False)])
             update_lot_ids.write({'use_expiration_date': True})
 
