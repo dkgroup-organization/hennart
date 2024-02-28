@@ -250,6 +250,6 @@ class StockMoveLine(models.Model):
             else:
                 line.to_label = False
 
-    def print_label(self, printer=None):
+    def print_label(self, printer=None, label_id=None):
         """ Print label, future function """
         pass
