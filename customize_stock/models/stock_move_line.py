@@ -213,7 +213,7 @@ class StockMoveLine(models.Model):
                     priority = line.priority
                 else:
                     pack_weight = line.product_id.weight
-                    quantity_per_pack = 1.0
+                    quantity_per_pack = line.quantity_per_pack
                     priority = line.priority
 
                 while line.qty_done > quantity_per_pack:
