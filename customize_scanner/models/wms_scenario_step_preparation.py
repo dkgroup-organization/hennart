@@ -663,7 +663,10 @@ class WmsScenarioStep(models.Model):
             printer = data.get('printer')
 
             if picking and printer:
-                picking.print_container_label(printer=printer)
+                try:
+                    picking.print_container_label(printer=printer)
+                except:
+                    data['warning'] = _("Printing error")
 
             if picking:
                 # Check the state of this picking

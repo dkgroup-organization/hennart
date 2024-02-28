@@ -241,11 +241,11 @@ class StockMoveLine(models.Model):
             label_type = line.picking_id.label_type
             if label_type == 'no_label' or line.protected_line():
                 line.to_label = False
-            elif line.product_id.to_label or label_type == 'product_label':
+            elif (line.product_id.to_label or line.pack_product_id.to_label) and label_type in ['product_label', 'weight_label']:
                 line.to_label = True
             elif label_type == 'weight_label':
                 line.to_label = line.to_weight
-            elif label_type in ['lot_label', 'pack_label']:
+            elif label_type in ['lot_label', 'pack_label', 'product_label']:
                 line.to_label = True
             else:
                 line.to_label = False
