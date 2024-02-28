@@ -11,4 +11,6 @@ class StockSSCC(models.Model):
         if printer and label_id:
             for sscc in self:
                 label_id.print_label(printer, sscc)
+                label_id.print_label(printer, sscc)
+
 
