@@ -215,17 +215,6 @@
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 
-	<record id="wms_scenario_step_preparation145" model="wms.scenario.step">
-		<field name="sequence" eval="145"/>
-		<field name="name">preparation-145</field>
-		<field name="description">scan printer</field>
-		<field name="action_scanner">scan_model</field>
-		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
-		<field name="action_variable">printer</field>
-		<field name="action_presentation">&lt;p&gt;Impresion des etiquettes&lt;/p&gt;</field>
-		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
-	</record>
-
 	<record id="wms_scenario_step_preparation150" model="wms.scenario.step">
 		<field name="sequence" eval="150"/>
 		<field name="name">preparation-150</field>
