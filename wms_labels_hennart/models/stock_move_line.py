@@ -33,10 +33,10 @@ class StockMoveLine(models.Model):
 
             elif label_type == 'pack_label':
                 if line.number_of_pack >= 1.0:
-                    weight_label_value = line.weight / line.number_of_pack
+                    weight_label_value = line.weight / (line.number_of_pack or 1.0)
                     label_qty = int(line.number_of_pack)
                 elif line.qty_done >= 1.0:
-                    weight_label_value = line.weight / line.qty_done
+                    weight_label_value = line.weight / (line.qty_done or 1.0)
                     label_qty = int(line.qty_done)
 
             elif label_type == 'product_label':
@@ -45,8 +45,8 @@ class StockMoveLine(models.Model):
 
             elif label_type == 'weight_label':
                 if line.product_id.to_label or line.pack_product_id.to_label:
-                    label_qty = int(line.number_of_pack or line.qty_done or 1.0)
-                    weight_label_value = line.weight / float(label_qty)
+                    label_qty = int(line.number_of_pack or line.qty_done)
+                    weight_label_value = line.weight / float(label_qty or 1)
 
             line.weight_label_value = weight_label_value
             line.label_qty = label_qty
