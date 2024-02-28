@@ -557,16 +557,12 @@ class WmsScenarioStep(models.Model):
     def start_weight_preparation(self, data):
         """ After the choice of printer, do some action:
         - update the preparation_state:
-
         """
         self.ensure_one()
         picking = data.get('picking')
-        if picking:
-            picking.label_preparation()
-            picking.compute_preparation_state()
-
-        if picking.preparation_state in ['weight', 'label']:
-            data.update({'print_label': True})
+        picking.label_preparation()
+        picking.compute_preparation_state()
+        data.update({'print_label': True})
         return data
 
     def print_label_preparation(self, data):
