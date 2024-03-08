@@ -245,7 +245,10 @@ class WmsScenarioStep(models.Model):
                 package_qty = int(move_line.move_id.bom_line_id.product_qty)
                 if quantity and package_qty:
                     package_nb = int(int(quantity) / int(package_qty))
-                    res = f'{package_nb}' + _(" Pack of ") + f'{package_qty}'
+                    if package_nb:
+                        res = f'{package_nb} ' + _(" Pack of ") + f'{package_qty}'
+                    else:
+                        res = _("Unit")
             elif data.get('product_id') and data['product_id'].base_unit_count > 1:
                 res = _(" Pack of ") + f"{int(data['product_id'].base_unit_count)}"
             else:

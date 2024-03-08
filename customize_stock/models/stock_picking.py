@@ -73,6 +73,17 @@ class StockPicking(models.Model):
         res = str(nb_lines) + _(" lines, ") + str(int(weight)) + " Kg"
         return res
 
+    def get_availability_class(self):
+        """ Return input class to qweb template"""
+        res = ''
+        for picking in self:
+            if picking.products_availability_state == 'available':
+                res = "availability-green"
+            else:
+                res = "availability-warning"
+                break
+        return res
+
     @api.depends('scheduled_date')
     def _compute_sequence(self):
         for picking in self:

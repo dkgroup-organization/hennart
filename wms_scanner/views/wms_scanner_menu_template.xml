@@ -24,7 +24,7 @@
                 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
                 <link rel="stylesheet" href="wms_scanner/static/src/css/style_20231019_1.css"/>
-                <link rel="stylesheet" href="wms_scanner/static/src/css/style_custom_20231117.css"/>
+                <link rel="stylesheet" href="wms_scanner/static/src/css/style_custom_20240308.css"/>
                 <link rel="manifest" href="/web_pwa_oca/manifest.webmanifest"/>
                 <title>
                     <t t-if="user" t-esc="user.company_id.name"/>

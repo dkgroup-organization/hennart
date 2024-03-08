@@ -34,7 +34,7 @@
             <t t-else="">
                 <div t-att-name="action_variable" class="relative input-default">
                     <span t-esc="step.get_input_description_left(data, action_variable)"/>
-                    <span t-esc="step.get_input_description_right(data, action_variable)" class="absolute right-4"/>
+                    <span t-esc="step.get_input_description_right(data, action_variable)" class="absolute bg-white right-4"/>
                 </div>
             </t>
         </template>
