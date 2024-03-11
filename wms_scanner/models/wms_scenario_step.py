@@ -49,6 +49,7 @@ class WmsScenarioStep(models.Model):
          ('scan_weight', 'Scan Weight'),
          ('scan_tare', 'Scan Weight tare'),
          ('scan_text', 'Enter Text'),
+         ('scan_date', 'Scan Date'),
          ('scan_model', 'Scan model'),
          ('scan_info', 'Scan search'),
          ('scan_multi', 'Scan multi'),

@@ -4,3 +4,4 @@
 from . import wms_scenario
 from . import wms_scenario_step
 from . import wms_scenario_step_preparation
+from . import wms_scenario_step_production

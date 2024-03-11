@@ -131,8 +131,7 @@ class WmsScenario(models.Model):
             # start new scenario
             if self.step_ids:
                 start_step = self.step_ids.search([
-                    ('action_scanner', '=', 'start'),
-                    ('scenario_id', '=', self.id)], limit=1)
+                    ('scenario_id', '=', self.id)], limit=1, order='sequence')
                 data = {'scenario': self,
                         'step': start_step or self.step_ids[0],
                         'user': self.env.user}
