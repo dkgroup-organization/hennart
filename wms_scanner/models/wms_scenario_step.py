@@ -9,6 +9,7 @@ from odoo import models, api, fields, _
 from odoo.http import request
 from odoo.exceptions import MissingError, UserError, ValidationError
 import markupsafe
+from datetime import timedelta
 import logging
 logger = logging.getLogger('wms_scanner')
 
@@ -19,6 +20,7 @@ ACTION_VARIABLE = {
     'location_dest_id': {'model': 'stock.location', 'type': 'Model'},
     'product_id': {'model': 'product.product', 'type': 'Model'},
     'product_dest_id': {'model': 'product.product', 'type': 'Model'},
+    'maturity_product_id': {'model': 'product.product', 'type': 'Model'},
     'picking_id': {'model': 'stock.picking', 'type': 'Model'},
     'quantity': {'model': '', 'type': 'Float'},
     'tare': {'model': '', 'type': 'Float'},
@@ -30,6 +32,7 @@ ACTION_VARIABLE = {
     'nb_container': {'model': '', 'type': 'Float'},
     'nb_pallet': {'model': '', 'type': 'Float'},
 }
+
 
 class WmsScenarioStep(models.Model):
     _name = 'wms.scenario.step'
@@ -49,6 +52,8 @@ class WmsScenarioStep(models.Model):
          ('scan_weight', 'Scan Weight'),
          ('scan_tare', 'Scan Weight tare'),
          ('scan_text', 'Enter Text'),
+         ('scan_date', 'Scan Date'),
+         ('scan_select', 'Scan Select'),
          ('scan_model', 'Scan model'),
          ('scan_info', 'Scan search'),
          ('scan_multi', 'Scan multi'),
@@ -183,6 +188,21 @@ class WmsScenarioStep(models.Model):
             data['warning'] = _('The barcode is unreadable')
         elif action_scanner == 'scan_text':
             data[action_variable] = "%s" % (scan)
+        elif action_scanner == 'scan_select':
+            if action_model and scan.isnumeric():
+                data[action_variable] = self.env[action_model.model].search([('id', '=', int(scan))])
+            else:
+                data[action_variable] = "%s" % (scan)
+        elif action_scanner == 'scan_date':
+            try:
+                nd_days = int(scan)
+                if nd_days > 0:
+                    data[action_variable] = fields.Datetime.now() + timedelta(days=nd_days)
+                else:
+                    data['warning'] = _('Please, enter a positive value for the number of days')
+            except:
+                data['warning'] = _('Please, enter a numeric value for the number of days')
+
         elif action_scanner in ['scan_quantity', 'scan_tare']:
             try:
                 quantity = float(scan)

@@ -110,6 +110,14 @@ class WmsScenarioStep(models.Model):
             res = 'scan'
         return res
 
+    def get_label(self, data):
+        """ Return label """
+        self.ensure_one()
+        res = ''
+        if self.action_variable == 'maturity_product_id':
+            res = _('Maturity product')
+        return res
+
     def get_input_placeholder(self, data):
         """ Return input-placeholder to qweb template"""
         self.ensure_one()
@@ -136,6 +144,9 @@ class WmsScenarioStep(models.Model):
                 res = f'{int(move_line.reserved_uom_qty)}' + qty_placeholder
             else:
                 res = _('Enter Quantity')
+
+            if data.get('max_quantity'):
+                res += _('  (max: ') + f"{data['max_quantity']} " + _("Unit") + ")"
 
         if self.action_variable == 'printer':
             res = _('Scan Printer')
@@ -220,6 +231,12 @@ class WmsScenarioStep(models.Model):
         if action_variable == 'nb_pallet':
             res = _("Nb of pallet: ")
 
+        if action_variable == 'maturity_product_id':
+            res = _("Maturity product: ")
+
+        if action_variable == 'expiry_date':
+            res = _("Expiry Date: nb of days to add")
+
         return res
 
     def get_input_description_right(self, data, action_variable):
@@ -245,7 +262,11 @@ class WmsScenarioStep(models.Model):
                 package_qty = int(move_line.move_id.bom_line_id.product_qty)
                 if quantity and package_qty:
                     package_nb = int(int(quantity) / int(package_qty))
-                    res = f'{package_nb}' + _(" Pack of ") + f'{package_qty}'
+                    if package_nb:
+                        res = f'{package_nb} ' + _(" Pack of ") + f'{package_qty}'
+                    else:
+                        res = _("Unit")
+
             elif data.get('product_id') and data['product_id'].base_unit_count > 1:
                 res = _(" Pack of ") + f"{int(data['product_id'].base_unit_count)}"
             else:
@@ -273,6 +294,10 @@ class WmsScenarioStep(models.Model):
                 res = f"{data['nb_pallet']}"
             elif data.get('picking'):
                 res = f"{data['picking'].nb_pallet}"
+
+        if action_variable == 'maturity_product_id':
+            if data.get('maturity_product_id'):
+                res = f"{data['maturity_product_id'].default_code}"
 
         return res
 

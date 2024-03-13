@@ -30,6 +30,7 @@
         "data/scenario_inventory.xml",
         "data/scenario_inventory_transition.xml",
         "data/scenario_change_lot.xml",
+        "data/scenario_change_lot_transition.xml",
 
     ],
     'demo': [

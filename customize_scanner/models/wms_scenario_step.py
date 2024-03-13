@@ -264,7 +264,6 @@ class WmsScenarioStep(models.Model):
 
         return data
 
-
     def check_product_location_qty(self, data):
         """
         Vérifie que data contient location_origin_id, product_id,
@@ -275,7 +274,7 @@ class WmsScenarioStep(models.Model):
        "This product {} is not registred in this location {}"
        "This product {} need a production lot "
         """
-        print('--------check_product_location_qty-------------', data)
+
         if data.get('label_product') and not data.get('product_id'):
             data['product_id'] = data.get('label_product')
 
@@ -295,12 +294,14 @@ class WmsScenarioStep(models.Model):
 
             if not quant_ids:
                 data['warning'] = "This product is not registered on this location"
-            elif data.get('quantity'):
-                quantity = sum(quant_ids.mapped('available_quantity'))
-                if data.get('lot_id') and quantity < data['quantity']:
-                    data['warning'] = _("There is not enough quantity in this lot. The maximum is {}").format(quantity)
-                elif quantity < data['quantity']:
-                    data['warning'] = _("There is not enough quantity on the location. The maximum is {}").format(quantity)
+            else:
+                data['max_quantity'] = sum(quant_ids.mapped('available_quantity'))
+                
+                if data.get('quantity'):
+                    if data.get('lot_id') and data['max_quantity'] < data['quantity']:
+                        data['warning'] = _("There is not enough quantity in this lot. The maximum is {}").format(data['max_quantity'])
+                    elif data['max_quantity'] < data['quantity']:
+                        data['warning'] = _("There is not enough quantity on the location. The maximum is {}").format(data['max_quantity'])
         else:
             data['warning'] = _("Some information are missing to check product on location.")
 
