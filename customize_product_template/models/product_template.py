@@ -200,11 +200,12 @@ class ProductTemplate(models.Model):
     base_unit_name = fields.Char(compute='_compute_base_unit_name',
                                  help='Displays the custom unit for the products if defined or the selected unit of measure otherwise.')
 
+    @api.depends('default_code')
     def compute_gestion_affinage(self):
         """ Define if this cheese has a maturing managing """
         for product in self:
             gestion_affinage = False
-            if product.default_code and product.default_code[-1] in ['A', 'B', 'C', 'D', 'E', 'F']:
+            if product.default_code and product.default_code[-1] in ['A', 'B', 'C', 'D', 'E', 'F', 'G']:
                 gestion_affinage = True
             product.gestion_affinage = gestion_affinage
 
@@ -215,11 +216,13 @@ class ProductTemplate(models.Model):
             res[product.id] = []
             if product.gestion_affinage:
                 fuzzy_code = product.default_code[:-1]
-                product_ids = self.search([('default_code', 'like', fuzzy_code),
-                                           ('default_code', '!=', product.default_code)], order='default_code')
+                product_ids = self.env['product.product'].search([('default_code', 'like', fuzzy_code),
+                                        ('default_code', '!=', product.default_code)], order='default_code')
                 for product_check in product_ids:
-                    if product_check.gestion_affinage:
+                    if product_check.gestion_affinage and self._name == 'product.product':
                         res[product.id].append(product_check)
+                    elif product_check.gestion_affinage and self._name == 'product.template':
+                        res[product.id].append(product_check.product_tmpl_id)
         return res
 
     def _compute_service_type(self):

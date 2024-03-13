@@ -29,11 +29,13 @@ class ProductProduct(models.Model):
             res[product.id] = []
             if product.gestion_affinage:
                 fuzzy_code = product.default_code[:-1]
-                product_ids = self.search([('default_code', 'like', fuzzy_code),
-                                           ('default_code', '!=', product.default_code)], order='default_code')
+                product_ids = self.env['product.product'].search([('default_code', 'like', fuzzy_code),
+                                        ('default_code', '!=', product.default_code)], order='default_code')
                 for product_check in product_ids:
-                    if product_check.gestion_affinage:
+                    if product_check.gestion_affinage and self._name == 'product.product':
                         res[product.id].append(product_check)
+                    elif product_check.gestion_affinage and self._name == 'product.template':
+                        res[product.id].append(product_check.product_tmpl_id)
         return res
 
     def name_get(self):

@@ -27,4 +27,3 @@ class WmsScenarioStep(models.Model):
                     product_name = f'[{maturity_product.default_code}] {maturity_product.name}'
                     res.append((f'{maturity_product.id}', product_name))
         return res
-

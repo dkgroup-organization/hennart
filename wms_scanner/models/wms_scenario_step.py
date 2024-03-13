@@ -9,6 +9,7 @@ from odoo import models, api, fields, _
 from odoo.http import request
 from odoo.exceptions import MissingError, UserError, ValidationError
 import markupsafe
+from datetime import timedelta
 import logging
 logger = logging.getLogger('wms_scanner')
 
@@ -185,9 +186,24 @@ class WmsScenarioStep(models.Model):
                                 'Some parameters are not set. (no scan variable)')
         elif not is_alphanumeric(scan):
             data['warning'] = _('The barcode is unreadable')
-        elif action_scanner in ['scan_text', 'scan_select']:
+        elif action_scanner == 'scan_text':
             data[action_variable] = "%s" % (scan)
-        elif action_scanner in ['scan_quantity', 'scan_tare', 'scan_date']:
+        elif action_scanner == 'scan_select':
+            if action_model and scan.isnumeric():
+                data[action_variable] = self.env[action_model.model].search([('id', '=', int(scan))])
+            else:
+                data[action_variable] = "%s" % (scan)
+        elif action_scanner == 'scan_date':
+            try:
+                nd_days = int(scan)
+                if nd_days > 0:
+                    data[action_variable] = fields.Datetime.now() + timedelta(days=nd_days)
+                else:
+                    data['warning'] = _('Please, enter a positive value for the number of days')
+            except:
+                data['warning'] = _('Please, enter a numeric value for the number of days')
+
+        elif action_scanner in ['scan_quantity', 'scan_tare']:
             try:
                 quantity = float(scan)
                 if quantity >= 0.0:

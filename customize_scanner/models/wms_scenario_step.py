@@ -264,7 +264,6 @@ class WmsScenarioStep(models.Model):
 
         return data
 
-
     def check_product_location_qty(self, data):
         """
         Vérifie que data contient location_origin_id, product_id,

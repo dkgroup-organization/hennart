@@ -231,6 +231,12 @@ class WmsScenarioStep(models.Model):
         if action_variable == 'nb_pallet':
             res = _("Nb of pallet: ")
 
+        if action_variable == 'maturity_product_id':
+            res = _("Maturity product: ")
+
+        if action_variable == 'expiry_date':
+            res = _("Expiry Date: nb of days to add")
+
         return res
 
     def get_input_description_right(self, data, action_variable):
@@ -288,6 +294,10 @@ class WmsScenarioStep(models.Model):
                 res = f"{data['nb_pallet']}"
             elif data.get('picking'):
                 res = f"{data['picking'].nb_pallet}"
+
+        if action_variable == 'maturity_product_id':
+            if data.get('maturity_product_id'):
+                res = f"{data['maturity_product_id'].default_code}"
 
         return res
 
