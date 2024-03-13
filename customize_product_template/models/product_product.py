@@ -22,6 +22,20 @@ class ProductProduct(models.Model):
         """ No verification in this project, there is some case when multiple product has the same barcode"""
         pass
 
+    def get_maturity_product(self):
+        """ return all maturing of product """
+        res = {}
+        for product in self:
+            res[product.id] = []
+            if product.gestion_affinage:
+                fuzzy_code = product.default_code[:-1]
+                product_ids = self.search([('default_code', 'like', fuzzy_code),
+                                           ('default_code', '!=', product.default_code)], order='default_code')
+                for product_check in product_ids:
+                    if product_check.gestion_affinage:
+                        res[product.id].append(product_check)
+        return res
+
     def name_get(self):
         # TDE: this could be cleaned a bit I think
 

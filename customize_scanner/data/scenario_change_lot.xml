@@ -57,10 +57,22 @@
 		<field name="sequence" eval="40"/>
 		<field name="name">change_lot-40</field>
 		<field name="description">Change Maturing</field>
+		<field name="action_scanner">scan_select</field>
+		<field name="action_variable">maturity_product_id</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_change_lot"/>
+		<field name="python_code"></field>
+	</record>
+
+	<record id="wms_scenario_step_change_lot50" model="wms.scenario.step">
+		<field name="sequence" eval="50"/>
+		<field name="name">change_lot-50</field>
+		<field name="description">Change Date</field>
 		<field name="action_scanner">scan_date</field>
 		<field name="action_variable">expiry_date</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_change_lot"/>
-		<field name="python_code">data = data</field>
+		<field name="python_code"></field>
 	</record>
+
+
 
 </odoo>

@@ -25,12 +25,32 @@
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
 	</record>
 	<record id="wms_scenario_change_lot_transition_30_40" model="wms.scenario.transition">
-		<field name="name">1-[30-40]</field>
-		<field name="sequence" eval="1"/>
+		<field name="name">2-[30-40]</field>
+		<field name="sequence" eval="2"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-30')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-40')]"/>
-		<field name="condition">data.get('quantity')</field>
+		<field name="condition">data.get('quantity') and data['product_id'].gestion_affinage</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
 	</record>
+	<record id="wms_scenario_change_lot_transition_30_50" model="wms.scenario.transition">
+		<field name="name">1-[30-50]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-30')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-50')]"/>
+		<field name="condition">data.get('quantity') and not data['product_id'].gestion_affinage</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
+	</record>
+	<record id="wms_scenario_change_lot_transition_40_50" model="wms.scenario.transition">
+		<field name="name">1-[40-50]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-40')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-50')]"/>
+		<field name="condition">data.get('maturity_product_id')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
+	</record>
+
+
+
+
 
 </odoo>

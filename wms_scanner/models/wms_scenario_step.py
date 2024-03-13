@@ -19,6 +19,7 @@ ACTION_VARIABLE = {
     'location_dest_id': {'model': 'stock.location', 'type': 'Model'},
     'product_id': {'model': 'product.product', 'type': 'Model'},
     'product_dest_id': {'model': 'product.product', 'type': 'Model'},
+    'maturity_product_id': {'model': 'product.product', 'type': 'Model'},
     'picking_id': {'model': 'stock.picking', 'type': 'Model'},
     'quantity': {'model': '', 'type': 'Float'},
     'tare': {'model': '', 'type': 'Float'},
@@ -30,6 +31,7 @@ ACTION_VARIABLE = {
     'nb_container': {'model': '', 'type': 'Float'},
     'nb_pallet': {'model': '', 'type': 'Float'},
 }
+
 
 class WmsScenarioStep(models.Model):
     _name = 'wms.scenario.step'
@@ -50,6 +52,7 @@ class WmsScenarioStep(models.Model):
          ('scan_tare', 'Scan Weight tare'),
          ('scan_text', 'Enter Text'),
          ('scan_date', 'Scan Date'),
+         ('scan_select', 'Scan Select'),
          ('scan_model', 'Scan model'),
          ('scan_info', 'Scan search'),
          ('scan_multi', 'Scan multi'),
@@ -182,9 +185,9 @@ class WmsScenarioStep(models.Model):
                                 'Some parameters are not set. (no scan variable)')
         elif not is_alphanumeric(scan):
             data['warning'] = _('The barcode is unreadable')
-        elif action_scanner == 'scan_text':
+        elif action_scanner in ['scan_text', 'scan_select']:
             data[action_variable] = "%s" % (scan)
-        elif action_scanner in ['scan_quantity', 'scan_tare']:
+        elif action_scanner in ['scan_quantity', 'scan_tare', 'scan_date']:
             try:
                 quantity = float(scan)
                 if quantity >= 0.0:

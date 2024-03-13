@@ -208,7 +208,7 @@ class ProductTemplate(models.Model):
                 gestion_affinage = True
             product.gestion_affinage = gestion_affinage
 
-    def get_affinage(self):
+    def get_maturity_product(self):
         """ return all maturing of product """
         res = {}
         for product in self:

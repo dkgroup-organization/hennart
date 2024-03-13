@@ -110,6 +110,14 @@ class WmsScenarioStep(models.Model):
             res = 'scan'
         return res
 
+    def get_label(self, data):
+        """ Return label """
+        self.ensure_one()
+        res = ''
+        if self.action_variable == 'maturity_product_id':
+            res = _('Maturity product')
+        return res
+
     def get_input_placeholder(self, data):
         """ Return input-placeholder to qweb template"""
         self.ensure_one()

@@ -8,6 +8,7 @@ class StockQuant(models.Model):
     _inherit = 'stock.quant'
 
     blocked = fields.Boolean('Blocked', compute="compute_blocked", store=True)
+    product_categ_id = fields.Many2one(related='product_tmpl_id.categ_id', store=True)
 
     @api.depends('location_id.blocked', 'lot_id.blocked')
     def compute_blocked(self):

@@ -275,7 +275,7 @@ class WmsScenarioStep(models.Model):
        "This product {} is not registred in this location {}"
        "This product {} need a production lot "
         """
-        print('--------check_product_location_qty-------------', data)
+
         if data.get('label_product') and not data.get('product_id'):
             data['product_id'] = data.get('label_product')
 
@@ -292,12 +292,12 @@ class WmsScenarioStep(models.Model):
                 condition.append(('lot_id', '=', False))
 
             quant_ids = self.env['stock.quant'].search(condition)
-            print('\n-------------check_product_location_qty----------------', data, quant_ids)
+
             if not quant_ids:
                 data['warning'] = "This product is not registered on this location"
             else:
                 data['max_quantity'] = sum(quant_ids.mapped('available_quantity'))
-                print('\n-------------check_product_location_qty--------max_quantity--------', data)
+                
                 if data.get('quantity'):
                     if data.get('lot_id') and data['max_quantity'] < data['quantity']:
                         data['warning'] = _("There is not enough quantity in this lot. The maximum is {}").format(data['max_quantity'])
