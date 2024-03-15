@@ -17,6 +17,11 @@ input-green::placeholder {
    color: #004000;
 }
 
+.landscape\:top-2{
+    top: 5.5rem;
+  }
+
+
 .section_up {
 margin-top: -2rem;
 }

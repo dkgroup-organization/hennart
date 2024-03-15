@@ -65,7 +65,6 @@
                     </div>
                 </div>
             </t>
-
         </template>
 
         <template id="scanner_sub_select_input" name="scanner_sub_select_input">
@@ -93,10 +92,50 @@
                 </div>
             </t>
             <t t-if="data.get(action_variable)">
+                <div class="w-90 flex flex-col gap-6 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:top-1 landscape:pr-5 landscape:m-auto">
                 <div t-att-name="action_variable" class="relative input-default">
                     <span t-esc="step.get_input_description_left(data, action_variable)"/>
                     <span t-esc="step.get_input_description_right(data, action_variable)" class="absolute bg-white right-4"/>
                 </div>
+                </div>
+            </t>
+        </template>
+
+
+        <template id="scanner_sub_input2" name="scanner_sub_input2">
+            <div class="relative" t-if="step.action_presentation" t-esc="step.action_presentation"/>
+            <t t-if="step.action_variable == action_variable">
+                <div class="w-full">
+                    <div id="input_message"
+                         class="mt-4 w-90 flex flex-col gap-6 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:top-2 landscape:pr-5 landscape:m-auto">
+                        <p t-if="data.get('warning')" class="border-b-2 pb-5 mb-5 border-gray-300 input-warning">
+                            <t t-out="data.get('warning')"/>
+                        </p>
+                        <p t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
+                            <t t-out="data.get('message')"/>
+                        </p>
+
+                        <input
+                            t-att-type="step.get_input_type(data)"
+                            id="scan"
+                            name="scan"
+                            min="0"
+                            t-att-step="step.get_input_step(data)"
+                            t-att-class="step.get_input_class(data)"
+                            t-att-placeholder="step.get_input_placeholder(data)"
+                            autoComplete="off"
+                    />
+                    </div>
+                </div>
+            </t>
+            <t t-if="data.get(action_variable)">
+                <div class="w-90 flex flex-col gap-6 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:top-2 landscape:pr-5 landscape:m-auto">
+                <div t-att-name="action_variable" class="relative input-default">
+                    <span t-esc="step.get_input_description_left(data, action_variable)"/>
+                    <span t-esc="step.get_input_description_right(data, action_variable)" class="absolute bg-white right-4"/>
+                </div>
+                </div>
+
             </t>
         </template>
 

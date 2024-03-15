@@ -136,6 +136,15 @@ class WmsScenarioStep(models.Model):
             else:
                 res = _('Scan lot')
 
+        if self.action_variable == 'location_origin_id':
+            res = _('Scan origin location')
+
+        if self.action_variable == 'location_dest_id':
+            res = _('Scan destination location')
+
+        if self.action_variable == 'location_id':
+            res = _('Scan location')
+
         if self.action_variable == 'quantity':
             if move_line:
                 qty_placeholder = self.get_input_description_right(data, 'quantity')
@@ -165,6 +174,9 @@ class WmsScenarioStep(models.Model):
 
         if self.action_variable == 'tare':
             res = _('Enter tare by unit in Kg')
+
+        if self.action_variable == 'expiry_date':
+            res = _('Number of days for expiry date')
 
         if self.action_variable == 'number_of_packages':
             res = _("Nb of package: ")
@@ -232,10 +244,10 @@ class WmsScenarioStep(models.Model):
             res = _("Nb of pallet: ")
 
         if action_variable == 'maturity_product_id':
-            res = _("Maturity product: ")
+            res = data.get('maturity_product_id') and data['maturity_product_id'].name or _("Maturity product: ")
 
         if action_variable == 'expiry_date':
-            res = _("Expiry Date: nb of days to add")
+            res = _("Expiry Date: ")
 
         return res
 
@@ -272,6 +284,13 @@ class WmsScenarioStep(models.Model):
             else:
                 res = _("Unit")
 
+        if action_variable == 'expiry_date':
+            if data.get('expiry_date') and type(data['expiry_date']) == datetime.datetime:
+                expiry_date = f"{data['expiry_date'].strftime('%d/%m/%Y')}"
+                res = expiry_date
+            else:
+                res = _("Nb of days to add")
+
         if action_variable == 'weight':
             res = _("Tare: ")
             tare = data.get('tare') or self.get_tare(data)
@@ -305,7 +324,7 @@ class WmsScenarioStep(models.Model):
         """ Return input class to qweb template"""
         self.ensure_one()
         res = "text"
-        if self.action_scanner == 'scan_quantity':
+        if self.action_scanner in ['scan_quantity', 'scan_date']:
             res = 'number'
         if self.action_scanner == 'scan_weight' and self.action_variable == 'weight':
             res = 'hidden'

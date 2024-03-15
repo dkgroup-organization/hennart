@@ -179,7 +179,7 @@ class WmsScenarioStep(models.Model):
 
         if not (scan and data):
             pass
-        elif not scan:
+        elif scan == '' or not scan:
             data['warning'] = _('The barcode is empty')
         elif not action_variable:
             data['warning'] = _('This scenario is currently under construction.'
@@ -190,7 +190,11 @@ class WmsScenarioStep(models.Model):
             data[action_variable] = "%s" % (scan)
         elif action_scanner == 'scan_select':
             if action_model and scan.isnumeric():
-                data[action_variable] = self.env[action_model.model].search([('id', '=', int(scan))])
+                select_ids = self.env[action_model.model].search([('id', '=', int(scan))])
+                if select_ids:
+                    data[action_variable] = select_ids
+                else:
+                    data['warning'] = _('Please, select a value')
             else:
                 data[action_variable] = "%s" % (scan)
         elif action_scanner == 'scan_date':
@@ -375,6 +379,7 @@ class WmsScenarioStep(models.Model):
                 data.update({'debug': debug})
                 session = self.env['wms.session'].get_session()
                 session.error = str(e)
+                print(e)
                 logger.warning(e)
 
         return data
