@@ -91,6 +91,7 @@ class WmsScenarioStep(models.Model):
         string='Python code before',
         help='Python code to execute before qweb.')
     scenario_notes = fields.Text(related='scenario_id.notes')
+    mode_debug = fields.Boolean('Mode debug', help='No try/except protection when there is code execution.')
 
     def init_data(self, data={}):
         """ reinit the data of this step"""
@@ -363,24 +364,30 @@ class WmsScenarioStep(models.Model):
 
         return markupsafe.Markup(message)
 
-    def execute_code(self, data={}):
-        "Eval the python code"
+    def execute_code(self, data={}, python_code=None):
+        """ Eval the python code """
         self.ensure_one()
-        if self.python_code:
-            try:
-                localdict = {
-                    'step': self,
-                    'env': self.env,
-                    'data': data.copy()}
+        python_code = python_code or self.python_code
+
+        if python_code:
+            localdict = {
+                'step': self,
+                'env': self.env,
+                'data': data.copy()}
+
+            if self.mode_debug:
                 safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
                 data = localdict.get('data')
-            except Exception as e:
-                debug = _("This code generate an error: %s" % (self.python_code or ''))
-                data.update({'debug': debug})
-                session = self.env['wms.session'].get_session()
-                session.error = str(e)
-                print(e)
-                logger.warning(e)
+            else:
+                try:
+                    safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
+                    data = localdict.get('data')
+                except Exception as e:
+                    debug = _("This code generate an error: %s" % (self.python_code or ''))
+                    data.update({'debug': debug})
+                    session = self.env['wms.session'].get_session()
+                    session.error = str(e)
+                    logger.warning(e)
 
         return data
 
@@ -388,20 +395,7 @@ class WmsScenarioStep(models.Model):
         "Eval the python code"
         self.ensure_one()
         if data['step'].python_code_before:
-            try:
-                localdict = {
-                    'step': self,
-                    'env': self.env,
-                    'data': data.copy()}
-                safe_eval(data['step'].python_code_before, localdict, mode="exec", nocopy=True)
-                data = localdict.get('data')
-            except Exception as e:
-                debug = _("This code generate an error: %s" % (self.python_code or ''))
-                data.update({'debug': debug})
-                session = self.env['wms.session'].get_session()
-                session.error = str(e)
-                logger.warning(e)
-
+            data = self.execute_code(data=data, python_code=data['step'].python_code_before)
         return data
 
     def execute_transition(self, data):

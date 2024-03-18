@@ -511,7 +511,6 @@ class WmsScenarioStep(models.Model):
 
         # There is a surprise when another picking force the move a lot.
         # Odoo delete all move_line when the reservation cannot be doing anymore, in this case => bug
-
         # So Update product on preparation before
         new_move_data = {
             'location_id': location_dest_id.id,

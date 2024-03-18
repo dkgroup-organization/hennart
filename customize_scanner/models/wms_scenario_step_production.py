@@ -58,6 +58,7 @@ class WmsScenarioStep(models.Model):
             'product_id': maturity_product.id,
             'product_qty': quantity,
             'origin': 'scanner',
+            'bom_id': False,
             'lot_producing_id': maturity_lot.id,
             'location_src_id': location_origin.id,
             'location_dest_id': location_origin.id,
@@ -75,13 +76,16 @@ class WmsScenarioStep(models.Model):
             'picking_type_id': new_mo.picking_type_id.id,
             'manual_consumption': True,
             }
-        self.env['stock.move'].create(move_vals)
+        new_move = self.env['stock.move'].create(move_vals)
         new_mo.action_confirm()
 
+        # Update move.line with lot and quantity done
+        new_move.quantity_done = quantity
+        new_move.put_quantity_done()
+        new_move.move_line_ids.update({'lot_id': lot.id})
+
+        # confirm production
+        new_mo.qty_producing = quantity
+        new_mo.with_context(skip_expired=True).button_mark_done()
+
         return data
-
-
-        # Tester reservé ? marquer à faire ? valider la prod., valider avec forçage de lot expiré
-
-
-

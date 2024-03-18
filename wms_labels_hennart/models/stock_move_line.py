@@ -25,7 +25,13 @@ class StockMoveLine(models.Model):
         """ Compute the weight value to write on label, depends on number of label """
         # weight_uom = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
         for line in self:
-            label_type = line.picking_id.label_type
+            if line.picking_id:
+                label_type = line.picking_id.label_type
+            else:
+                label_type = 'no_picking'
+                line.print_ok = False
+                line.to_weight = False
+
             weight_label_value = line.weight
             label_qty = 1
             if label_type == 'no_label':
@@ -47,6 +53,10 @@ class StockMoveLine(models.Model):
                 if line.product_id.to_label or line.pack_product_id.to_label:
                     label_qty = int(line.number_of_pack or line.qty_done)
                     weight_label_value = line.weight / float(label_qty or 1)
+
+            elif label_type == 'no_picking':
+                label_qty = 1
+                weight_label_value = 0.0
 
             line.weight_label_value = weight_label_value
             line.label_qty = label_qty
