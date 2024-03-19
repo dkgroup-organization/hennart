@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 import json
 from odoo.http import request
 import datetime
@@ -76,14 +77,16 @@ class WmsSession(models.Model):
                 elif key in DATA_RESERVED_NAME:
                     # Don't save this objects, juste log for debug
                     session_message.update({key: "{}".format(data[key])})
+                elif '.' in key:
+                    raise ValidationError(_("The name of the variable cannot contain dot:") + str(key))
 
                 elif isinstance(data[key], (datetime.date, datetime.datetime)):
                     date_format = "%Y-%m-%d"
                     if isinstance(data[key], datetime.datetime):
                         date_format += " %H:%M:%S"
-                    if data[key]:
-                        session_data.update({key: data[key].strftime(date_format)})
-                    #datetime.strptime(date_string, format)
+                    else:
+                        date_format += " 00:00:00"
+                    session_data['date.' + key] = data[key].strftime(date_format)
 
                 elif hasattr(data[key], '_name') and hasattr(data[key], 'ids'):
                     # Odoo model name
@@ -92,7 +95,7 @@ class WmsSession(models.Model):
                 else:
                     session_data.update({key: data[key]})
 
-            session_data.update({'start_date': fields.Datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
+            session_data.update({'date.start_date': fields.Datetime.now().strftime('%Y-%m-%d %H:%M:%S')})
             session.data = json.dumps(session_data)
             session.message = json.dumps(session_message)
 
@@ -118,13 +121,18 @@ class WmsSession(models.Model):
             if len(data_key) > 6 and data_key[:6] == "model.":
                 # restore this odoo object
                 data[data_key[6:]] = request.env[data_value[0]].browse(data_value[1])
+
+            elif len(data_key) > 5 and data_key[:5] == "date.":
+                # restore this date
+                data[data_key[5:]] = fields.Datetime.from_string(data_value)
             else:
                 data[data_key] = data_value
 
         self.data_previous = str(data)
         return data
 
-
-
-
-
+    def test(self):
+        """ test """
+        vals = {'product_id': 25, 'location_id': 563, 'location_dest_id': 15, 'product_uom_qty': 1.0, 'product_uom': 1,
+         'raw_material_production_id': 9, 'picking_type_id': 9, 'manual_consumption': True}
+        self.env['stock.move'].create(vals)

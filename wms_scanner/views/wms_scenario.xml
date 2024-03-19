@@ -104,6 +104,11 @@
                                                     </group>
                                                 </form>
                                             </field>
+
+                                            <separator string="5/ options"/>
+                                            <group>
+                                                 <field name="mode_debug"/>
+                                            </group>
                                         </page>
 
                                     </notebook>

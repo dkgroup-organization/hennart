@@ -27,3 +27,88 @@ class WmsScenarioStep(models.Model):
                     product_name = f'[{maturity_product.default_code}] {maturity_product.name}'
                     res.append((f'{maturity_product.id}', product_name))
         return res
+
+    def change_lot(self, data):
+        """ Change lot date, or change maturity_product """
+        self.ensure_one()
+        product = data.get('product_id')
+        maturity_product = data.get('maturity_product_id')
+        lot = data.get('lot_id')
+        expiry_date = data.get('expiry_date')
+        location_origin = data.get('location_origin_id')
+        quantity = data.get('quantity')
+
+        if not (product and lot and expiry_date and location_origin and quantity):
+            data['warning'] = _('Not enough information to change lot characteristics')
+            return data
+
+        if product and not maturity_product:
+            maturity_product = product
+
+        # Create the new lot
+        lot_vals = {
+            'name': lot.name,
+            'product_id': maturity_product.id,
+            'expiration_date': expiry_date,
+            }
+        maturity_lot = self.env['stock.lot'].create(lot_vals)
+
+        # Create OF with origin location and product
+        mo_vals = {
+            'product_id': maturity_product.id,
+            'product_qty': quantity,
+            'origin': 'scanner',
+            'bom_id': False,
+            'lot_producing_id': maturity_lot.id,
+            'location_src_id': location_origin.id,
+            'location_dest_id': location_origin.id,
+            }
+        new_mo = self.env['mrp.production'].create(mo_vals)
+
+        # Create stock.move with composant
+        move_vals = {
+            'product_id': product.id,
+            'location_id': location_origin.id,
+            'location_dest_id': new_mo.production_location_id.id,
+            'product_uom_qty': quantity,
+            'product_uom': product.uom_id.id,
+            'raw_material_production_id': new_mo.id,
+            'picking_type_id': new_mo.picking_type_id.id,
+            'manual_consumption': True,
+            }
+        new_move = self.env['stock.move'].create(move_vals)
+        new_mo.action_confirm()
+
+        # Update move.line with lot and quantity done
+        new_move.quantity_done = quantity
+        new_move.put_quantity_done()
+        new_move.move_line_ids.update({'lot_id': lot.id})
+
+        # confirm production
+        new_mo.qty_producing = quantity
+        new_mo.with_context(skip_expired=True).button_mark_done()
+
+        # Return MO to data
+        data['mo_id'] = new_mo
+
+        return data
+
+    def print_production_label(self, data):
+        """ At the end print production lot """
+        self.ensure_one()
+        session = self.env['wms.session'].get_session()
+        mo = data.get('mo_id')
+        if mo and mo.lot_producing_id:
+            job_vals = {
+                'name': f'Lot: {mo.lot_producing_id.ref} ,{mo.lot_producing_id.product_id.name}',
+                'res_model': 'stock.lot',
+                'res_id': mo.lot_producing_id.id,
+                'session_id': session.id,
+            }
+            job_id = self.env['wms.print.job'].create(job_vals)
+
+            if data.get('printer'):
+                job_id.print_label(data)
+
+            data['message'] = _('The lot is changed')
+        return data

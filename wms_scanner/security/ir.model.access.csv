@@ -10,3 +10,4 @@ wms_menu_manager,wms_menu_manager,wms_scanner.model_wms_menu,base.group_system,1
 wms_session_user,scanner session,wms_scanner.model_wms_session,stock.group_stock_user,1,1,1,1
 wms_session_ir_model,ir_model_scanner,base.model_ir_model,base.group_user,1,0,0,0
 wms_session_ir_model_fields,ir_model_fields_scanner,base.model_ir_model_fields,base.group_user,1,0,0,0
+wms_print_job,print job,wms_scanner.model_wms_print_job,stock.group_stock_user,1,1,1,1

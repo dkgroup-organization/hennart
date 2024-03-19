@@ -48,15 +48,28 @@
 		<field name="condition">data.get('maturity_product_id')</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
 	</record>
-	<record id="wms_scenario_change_lot_transition_50_60" model="wms.scenario.transition">
-		<field name="name">1-[50-60]</field>
+	<record id="wms_scenario_change_lot_transition_50_55" model="wms.scenario.transition">
+		<field name="name">1-[50-55]</field>
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-50')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-60')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-55')]"/>
 		<field name="condition">data.get('expiry_date')</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
 	</record>
-
-
-
+	<record id="wms_scenario_change_lot_transition_55_60" model="wms.scenario.transition">
+		<field name="name">1-[55-60]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-55')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-60')]"/>
+		<field name="condition">True</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
+	</record>
+	<record id="wms_scenario_change_lot_transition_60_100" model="wms.scenario.transition">
+		<field name="name">1-[60-100]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-60')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-100')]"/>
+		<field name="condition">True</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
+	</record>
 </odoo>

@@ -91,6 +91,7 @@ class WmsScenarioStep(models.Model):
         string='Python code before',
         help='Python code to execute before qweb.')
     scenario_notes = fields.Text(related='scenario_id.notes')
+    mode_debug = fields.Boolean('Mode debug', help='No try/except protection when there is code execution.')
 
     def init_data(self, data={}):
         """ reinit the data of this step"""
@@ -179,7 +180,7 @@ class WmsScenarioStep(models.Model):
 
         if not (scan and data):
             pass
-        elif not scan:
+        elif scan == '' or not scan:
             data['warning'] = _('The barcode is empty')
         elif not action_variable:
             data['warning'] = _('This scenario is currently under construction.'
@@ -190,7 +191,11 @@ class WmsScenarioStep(models.Model):
             data[action_variable] = "%s" % (scan)
         elif action_scanner == 'scan_select':
             if action_model and scan.isnumeric():
-                data[action_variable] = self.env[action_model.model].search([('id', '=', int(scan))])
+                select_ids = self.env[action_model.model].search([('id', '=', int(scan))])
+                if select_ids:
+                    data[action_variable] = select_ids
+                else:
+                    data['warning'] = _('Please, select a value')
             else:
                 data[action_variable] = "%s" % (scan)
         elif action_scanner == 'scan_date':
@@ -359,23 +364,31 @@ class WmsScenarioStep(models.Model):
 
         return markupsafe.Markup(message)
 
-    def execute_code(self, data={}):
-        "Eval the python code"
+    def execute_code(self, data=None, python_code=None):
+        """ Eval the python code """
         self.ensure_one()
-        if self.python_code:
-            try:
-                localdict = {
-                    'step': self,
-                    'env': self.env,
-                    'data': data.copy()}
+        data = data or {}
+        python_code = python_code or self.python_code
+
+        if python_code:
+            localdict = {
+                'step': self,
+                'env': self.env,
+                'data': data.copy()}
+
+            if self.mode_debug:
                 safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
                 data = localdict.get('data')
-            except Exception as e:
-                debug = _("This code generate an error: %s" % (self.python_code or ''))
-                data.update({'debug': debug})
-                session = self.env['wms.session'].get_session()
-                session.error = str(e)
-                logger.warning(e)
+            else:
+                try:
+                    safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
+                    data = localdict.get('data')
+                except Exception as e:
+                    debug = _("This code generate an error: %s" % (self.python_code or ''))
+                    data.update({'debug': debug})
+                    session = self.env['wms.session'].get_session()
+                    session.error = str(e)
+                    logger.warning(e)
 
         return data
 
@@ -383,20 +396,7 @@ class WmsScenarioStep(models.Model):
         "Eval the python code"
         self.ensure_one()
         if data['step'].python_code_before:
-            try:
-                localdict = {
-                    'step': self,
-                    'env': self.env,
-                    'data': data.copy()}
-                safe_eval(data['step'].python_code_before, localdict, mode="exec", nocopy=True)
-                data = localdict.get('data')
-            except Exception as e:
-                debug = _("This code generate an error: %s" % (self.python_code or ''))
-                data.update({'debug': debug})
-                session = self.env['wms.session'].get_session()
-                session.error = str(e)
-                logger.warning(e)
-
+            data = self.execute_code(data=data, python_code=data['step'].python_code_before)
         return data
 
     def execute_transition(self, data):
