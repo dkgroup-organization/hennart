@@ -364,9 +364,10 @@ class WmsScenarioStep(models.Model):
 
         return markupsafe.Markup(message)
 
-    def execute_code(self, data={}, python_code=None):
+    def execute_code(self, data=None, python_code=None):
         """ Eval the python code """
         self.ensure_one()
+        data = data or {}
         python_code = python_code or self.python_code
 
         if python_code:

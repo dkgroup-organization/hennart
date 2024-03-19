@@ -22,6 +22,7 @@
         "views/scenario_move_template.xml",
         "views/scenario_inventory_template.xml",
         "views/scenario_change_lot_template.xml",
+        "views/scenario_print_template.xml",
 
         "data/scenario_preparation.xml",
         "data/scenario_preparation_transition.xml",

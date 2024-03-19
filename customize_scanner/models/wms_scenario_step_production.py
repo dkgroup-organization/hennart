@@ -88,4 +88,27 @@ class WmsScenarioStep(models.Model):
         new_mo.qty_producing = quantity
         new_mo.with_context(skip_expired=True).button_mark_done()
 
+        # Return MO to data
+        data['mo_id'] = new_mo
+
+        return data
+
+    def print_production_label(self, data):
+        """ At the end print production lot """
+        self.ensure_one()
+        session = self.env['wms.session'].get_session()
+        mo = data.get('mo_id')
+        if mo and mo.lot_producing_id:
+            job_vals = {
+                'name': f'Lot: {mo.lot_producing_id.ref} ,{mo.lot_producing_id.product_id.name}',
+                'res_model': 'stock.lot',
+                'res_id': mo.lot_producing_id.id,
+                'session_id': session.id,
+            }
+            job_id = self.env['wms.print.job'].create(job_vals)
+
+            if data.get('printer'):
+                job_id.print_label(data)
+
+            data['message'] = _('The lot is changed')
         return data

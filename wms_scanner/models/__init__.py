@@ -6,3 +6,4 @@ from . import wms_scenario
 from . import wms_scenario_step
 from . import wms_scenario_transition
 from . import wms_session
+from . import wms_print_job
