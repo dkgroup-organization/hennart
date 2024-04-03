@@ -139,13 +139,7 @@ class ProductProduct(models.Model):
         """
 
         bom_kits = self.env['mrp.bom']._bom_find(self, bom_type='normal')
-        kits = self.filtered(lambda p: bom_kits.get(p))
-        regular_products = self - kits
-        res = (
-            super(ProductProduct, regular_products)._compute_quantities_dict(lot_id, owner_id, package_id, from_date=from_date, to_date=to_date)
-            if regular_products
-            else {}
-        )
+        res = super(ProductProduct, self)._compute_quantities_dict(lot_id, owner_id, package_id, from_date=from_date, to_date=to_date)
         qties = self.env.context.get("mrp_compute_quantities", {})
         qties.update(res)
         # pre-compute bom lines and identify missing kit components to prefetch
@@ -161,9 +155,6 @@ class ProductProduct(models.Model):
         for product in bom_kits:
             bom_sub_lines = bom_sub_lines_per_kit[product]
             ratios_virtual_available = []
-            ratios_qty_available = []
-            ratios_incoming_qty = []
-            ratios_outgoing_qty = []
             ratios_free_qty = []
             for bom_line, bom_line_data in bom_sub_lines:
                 component = bom_line.product_id.with_context(mrp_compute_quantities=qties).with_prefetch(prefetch_component_ids)
@@ -182,32 +173,15 @@ class ProductProduct(models.Model):
                     if component.id in qties
                     else {
                         "virtual_available": float_round(component.virtual_available, precision_rounding=rounding),
-                        "qty_available": float_round(component.qty_available, precision_rounding=rounding),
-                        "incoming_qty": float_round(component.incoming_qty, precision_rounding=rounding),
-                        "outgoing_qty": float_round(component.outgoing_qty, precision_rounding=rounding),
                         "free_qty": float_round(component.free_qty, precision_rounding=rounding),
                     }
                 )
                 ratios_virtual_available.append(component_res["virtual_available"] / qty_per_kit)
-                ratios_qty_available.append(component_res["qty_available"] / qty_per_kit)
-                ratios_incoming_qty.append(component_res["incoming_qty"] / qty_per_kit)
-                ratios_outgoing_qty.append(component_res["outgoing_qty"] / qty_per_kit)
                 ratios_free_qty.append(component_res["free_qty"] / qty_per_kit)
             if bom_sub_lines and ratios_virtual_available:  # Guard against all cnsumable bom: at least one ratio should be present.
-                res[product.id] = {
-                    'virtual_available': min(ratios_virtual_available) * bom_kits[product].product_qty // 1,
-                    'qty_available': min(ratios_qty_available) * bom_kits[product].product_qty // 1,
-                    'incoming_qty': min(ratios_incoming_qty) * bom_kits[product].product_qty // 1,
-                    'outgoing_qty': min(ratios_outgoing_qty) * bom_kits[product].product_qty // 1,
-                    'free_qty': min(ratios_free_qty) * bom_kits[product].product_qty // 1,
-                }
+                res[product.id]['virtual_available'] = min(ratios_virtual_available) * bom_kits[product].product_qty // 1
+                res[product.id]['free_qty'] = min(ratios_free_qty) * bom_kits[product].product_qty // 1
             else:
-                res[product.id] = {
-                    'virtual_available': 0,
-                    'qty_available': 0,
-                    'incoming_qty': 0,
-                    'outgoing_qty': 0,
-                    'free_qty': 0,
-                }
-
+                res[product.id]['virtual_available'] = 0.0
+                res[product.id]['free_qty'] = 0.0
         return res

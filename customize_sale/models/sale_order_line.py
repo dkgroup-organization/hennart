@@ -16,6 +16,7 @@ class SaleOrderLine(models.Model):
 
     product_uos = fields.Many2one('uom.uom', string="Unit", related="product_id.uos_id", readonly=True)
     product_uos_name = fields.Char(string="Unit", related="product_id.uos_id.name", readonly=True)
+    scheduled_date = fields.Datetime(compute='_compute_qty_at_date', store=True)
 
     product_uos_qty = fields.Float('Qty', compute="compute_uos", store=True, compute_sudo=True)
     product_uos_price = fields.Float('Price', compute="compute_uos", store=True, compute_sudo=True)
@@ -36,7 +37,7 @@ class SaleOrderLine(models.Model):
                 futur_lines = self.search([
                     ('scheduled_date', '>=', line.scheduled_date),
                     ('order_id', '!=', line.order_id.id),
-                    ('state', 'in', ['sale', 'done']),
+                    ('state', 'in', ['sale']),
                     ('product_id', '=', line.product_id.id),
                     ])
                 futur_outgoing_qty = sum(futur_lines.mapped('product_uom_qty'))
@@ -142,6 +143,28 @@ class SaleOrderLine(models.Model):
                 incoming_moves |= move
 
         return outgoing_moves, incoming_moves
+
+    def create_mo(self):
+        """ Create MO for needed product to manufacture """
+        # order_id.procurement_group_id, move.group_id
+        for line in self:
+            product = line.product_id
+            if product.bom_ids and product.bom_ids[0].type == 'normal' and product.to_personnalize:
+                # Create MO by sale
+                bom = product.bom_ids[0]
+                lot = self.env['stock.lot'].create_production_lot(product)
+
+                mo_vals = {
+                    'product_id': product.id,
+                    'product_qty': line.product_uom_qty,
+                    'origin': line.order_id.name,
+                    'bom_id': bom.id,
+                    'lot_producing_id': lot.id,
+                    }
+                if line.order_id.procurement_group_id:
+                    mo_vals['procurement_group_id'] = line.order_id.procurement_group_id.id
+                new_mo = self.env['mrp.production'].create(mo_vals)
+                new_mo.action_confirm()
 
     @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom', 'order_id.delivery_status')
     def _compute_qty_delivered(self):

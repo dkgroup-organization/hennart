@@ -2,7 +2,9 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 import datetime
+import time
 
+DEFAULT_EXPIRATION_TIME = 15
 
 class StockLot(models.Model):
     _inherit = 'stock.lot'
@@ -101,6 +103,43 @@ class StockLot(models.Model):
     def onchange_name(self):
         """ change ref"""
         self.put_ref()
+
+    @api.model
+    def create_production_lot(self, product):
+        """ Production lot name like HENNART standard """
+        def search_free_name(product, condition=None):
+            """ return free name """
+            if condition is None:
+                condition = []
+            prodlot_y = time.strftime('%y')[1:]
+            prodlot_j = time.strftime('%j').zfill(3)
+            lot_search = 'XXXXXX'
+
+            for i in range(1, 99):
+                lot_search = prodlot_y + prodlot_j + str(i).zfill(2)
+                condition = condition + [('name', '=', lot_search)]
+                lot_ids = self.search(condition)
+                if i == 99:
+                    if product and not condition:
+                        lot_search = search_free_name(product, condition=[('product_id', '=', product.id)])
+                    else:
+                        lot_search = 'XXXXXX'
+                    break
+                elif not lot_ids:
+                    break
+            return lot_search
+
+        lot_search = search_free_name(product=product)
+        expiration_time = product.expiration_time or DEFAULT_EXPIRATION_TIME
+        expiration_date = fields.Datetime.now() + datetime.timedelta(days=expiration_time)
+
+        vals_lot = {
+            'name': lot_search,
+            'product_id': product.id,
+            'expiration_date': expiration_date,
+        }
+        new_lot = self.env['stock.lot'].create(vals_lot)
+        return new_lot
 
     @api.depends('ref', 'expiration_date', 'product_id')
     def get_barcode(self):

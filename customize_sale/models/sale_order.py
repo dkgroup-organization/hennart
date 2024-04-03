@@ -91,11 +91,32 @@ class SaleOrder(models.Model):
         """ Check the sale order before confirmation"""
         self.check_discount()
         self.check_line()
+
+        # unlink void line
         for line in self.order_line:
             if not line.product_uom_qty:
                 line.unlink()
+
         res = super().action_confirm()
+
+        # Check mrp.mo to order
+        self.create_mo()
+
         return res
+
+    def create_mo(self):
+        """ Check mo to create """
+        for order in self:
+            for line in self.order_line:
+                if line.product_id.to_personnalize:
+                    line.create_mo()
+
+        self.env["stock.warehouse.orderpoint"].create_bom_orderpoint()
+                    
+
+
+
+
 
     def check_discount(self):
         """ Check discount, futur"""
