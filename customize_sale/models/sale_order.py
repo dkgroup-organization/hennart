@@ -105,18 +105,17 @@ class SaleOrder(models.Model):
         return res
 
     def create_mo(self):
-        """ Check mo to create """
+        """ Check personnalize mo to create """
         for order in self:
             for line in self.order_line:
-                if line.product_id.to_personnalize:
+                if line.product_id.bom_ids:
                     line.create_mo()
 
-        self.env["stock.warehouse.orderpoint"].create_bom_orderpoint()
-                    
-
-
-
-
+    def button_test(self):
+        """ TEST """
+        for sale in self:
+            for line in sale.order_line:
+                print(line.product_id.name, line.product_id.production_forcasting)
 
     def check_discount(self):
         """ Check discount, futur"""

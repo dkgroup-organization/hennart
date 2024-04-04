@@ -112,7 +112,7 @@
 
                         <!--<widget name="qty_at_date_widget" width="50px"/>-->
 
-                        <field name="free_qty_at_date" string="Stock" readonly="1"/>
+                        <field name="free_qty_at_date" string="Stock" readonly="1" attrs="{'column_invisible': [('parent.state', '!=', 'draft')]}"/>
                         <field name="cadence" attrs="{'column_invisible': [('parent.state', '!=', 'draft')]}"/>
 
                         <field name="product_uom_readonly" invisible="1"/>

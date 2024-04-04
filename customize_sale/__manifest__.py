@@ -11,7 +11,7 @@
     "maintainer": "DK group",
     "images": [],
     "depends": ["account", "sale", "stock", "sale_stock", "sale_mrp", "crm_phonecall",
-                "delivery", "customize_product_template", "customize_stock", "product"],
+                "delivery", "customize_product_template", "customize_mrp", "customize_stock", "product"],
     "data": [
         "security/ir.model.access.csv",
         "views/sale_order_view.xml",

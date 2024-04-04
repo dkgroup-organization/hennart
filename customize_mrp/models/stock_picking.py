@@ -12,44 +12,43 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     def action_mrp(self):
+        """ Check if all product with BOM need manufacture, recursive analyse """
+        product_todo = {}
+
         for picking in self:
+            if picking.state in ['cancel', 'done']:
+                continue
             for move in picking.move_ids_without_package:
-                product = move.product_id
-                min_production_qty = product.min_production_qty
-                quantity_to_produce = move.product_uom_qty
+                if move.product_id.bom_ids:
+                    if move.product_id.id not in list(product_todo.keys()):
+                        product_todo[move.product_id.id] = 0.0
 
-                if move.product_id.bom_ids != False:
-                    if move.product_uom_qty != move.forecast_availability and move.product_uom_qty > 0:
-                        if move.mrp_id == False:
+        def explode_product(product_todo):
+            """ List all product in BOM """
+            new_product_todo = {}
+            for product_id in list(product_todo.keys()):
+                product = self.env['product.product'].browse(product_id)
+                bom = product.bom_ids and product.bom_ids[0] or self.env['mrp.bom']
 
-                            in_process_productions = self.env['mrp.production'].search([
-                            ('product_id', '=', product.id),
-                            ('state', '=', 'draft'),
-                            ])
-                            
-                            if quantity_to_produce <= min_production_qty:
-                                quantity_to_produce = min_production_qty
+                if bom:
+                    for line in bom.bom_line_ids:
+                        if line.product_id.bom_ids:
+                            if line.product_id.id not in list(new_product_todo.keys()):
+                                new_product_todo[line.product_id.id] = 0.0
 
-                            elif quantity_to_produce % min_production_qty != 0:
-                                quantity_to_produce = (min_production_qty * ((quantity_to_produce // min_production_qty) + 1)) - move.forecast_availability
+            result_product_todo = {}
+            if new_product_todo:
+                result_product_todo = explode_product(new_product_todo)
+            result_product_todo.update(product_todo)
+            return result_product_todo
 
-                        # if move_line.state == 'assigned' and move_line.product_uom_qty > 0:
+        product_todo = explode_product(product_todo)
+        product_ids = self.env['product.product'].browse(list(product_todo.keys()))
+        production_ids = product_ids.action_mrp()
 
-                            if in_process_productions:
-                                quantity = in_process_productions.product_qty + quantity_to_produce
-                                in_process_productions.write({
-                                    'product_qty': quantity,
-                                    'move_from_picking_ids': [(4, move.id)],  
-                                    })
-                                
-                            else:
-                                production_order = self.env['mrp.production'].create({
-                                    'product_id': move.product_id.id,
-                                    'product_qty': quantity_to_produce,
-                                    'move_from_picking_ids': [(4, move.id)],  
+        for production in production_ids:
+            move_ids = self.env['stock.move'].search([('picking_id', 'in', self.ids),
+                                                      ('product_id', '=', production.product_id.id)])
+            move_ids.group_id = production.procurement_group_id
+        return True
 
-                                })
-
-                            # production_order.action_confirm()  # Confirmer le MO
-                            # production_order.button_plan()  # Planifier le MO
-                            # production_order.action_produce()  # Démarrer la production du MO

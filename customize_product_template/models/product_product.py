@@ -15,6 +15,7 @@ class ProductProduct(models.Model):
     base_unit_price = fields.Float("Price", compute="compute_base_product", store=True)
     base_unit_name = fields.Char('Name', compute="compute_base_product", store=True)
     lst_price = fields.Float("Product price", compute="compute_base_product", store=True)
+
     # default_code <= 6
 
     @api.constrains('barcode')
@@ -142,7 +143,7 @@ class ProductProduct(models.Model):
         res = super(ProductProduct, self)._compute_quantities_dict(lot_id, owner_id, package_id, from_date=from_date, to_date=to_date)
         qties = self.env.context.get("mrp_compute_quantities", {})
         qties.update(res)
-        # pre-compute bom lines and identify missing kit components to prefetch
+        # pre-compute bom lines and identify missing BOM components to prefetch
         bom_sub_lines_per_kit = {}
         prefetch_component_ids = set()
         for product in bom_kits:
@@ -151,7 +152,7 @@ class ProductProduct(models.Model):
             for bom_line, __ in bom_sub_lines:
                 if bom_line.product_id.id not in qties:
                     prefetch_component_ids.add(bom_line.product_id.id)
-        # compute kit quantities
+        # compute bom quantities
         for product in bom_kits:
             bom_sub_lines = bom_sub_lines_per_kit[product]
             ratios_virtual_available = []
@@ -179,9 +180,6 @@ class ProductProduct(models.Model):
                 ratios_virtual_available.append(component_res["virtual_available"] / qty_per_kit)
                 ratios_free_qty.append(component_res["free_qty"] / qty_per_kit)
             if bom_sub_lines and ratios_virtual_available:  # Guard against all cnsumable bom: at least one ratio should be present.
-                res[product.id]['virtual_available'] = min(ratios_virtual_available) * bom_kits[product].product_qty // 1
-                res[product.id]['free_qty'] = min(ratios_free_qty) * bom_kits[product].product_qty // 1
-            else:
-                res[product.id]['virtual_available'] = 0.0
-                res[product.id]['free_qty'] = 0.0
+                res[product.id]['virtual_available'] += min(ratios_virtual_available) * bom_kits[product].product_qty // 1
+                res[product.id]['free_qty'] += min(ratios_free_qty) * bom_kits[product].product_qty // 1
         return res

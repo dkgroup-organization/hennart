@@ -33,7 +33,7 @@ class SaleOrderLine(models.Model):
         more precision need a lot of compute and are slowing
         """
         for line in self:
-            if line.product_id.type == 'product':
+            if line.product_id.type == 'product' and line.order_id.state in ['draft', 'send']:
                 futur_lines = self.search([
                     ('scheduled_date', '>=', line.scheduled_date),
                     ('order_id', '!=', line.order_id.id),
@@ -150,19 +150,16 @@ class SaleOrderLine(models.Model):
         for line in self:
             product = line.product_id
             if product.bom_ids and product.bom_ids[0].type == 'normal' and product.to_personnalize:
-                # Create MO by sale
                 bom = product.bom_ids[0]
                 lot = self.env['stock.lot'].create_production_lot(product)
-
                 mo_vals = {
                     'product_id': product.id,
-                    'product_qty': line.product_uom_qty,
                     'origin': line.order_id.name,
+                    'product_qty': line.product_uom_qty,
                     'bom_id': bom.id,
                     'lot_producing_id': lot.id,
+                    'procurement_group_id': line.order_id.procurement_group_id.id,
                     }
-                if line.order_id.procurement_group_id:
-                    mo_vals['procurement_group_id'] = line.order_id.procurement_group_id.id
                 new_mo = self.env['mrp.production'].create(mo_vals)
                 new_mo.action_confirm()
 
