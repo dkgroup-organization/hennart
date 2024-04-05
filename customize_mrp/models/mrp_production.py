@@ -12,22 +12,9 @@ _logger = logging.getLogger(__name__)
 class MRPProduction(models.Model):
     _inherit = 'mrp.production'
 
-    # move_from_picking_ids = fields.Many2many('stock.move')
+    sale_id = fields.Many2one('sale.order', string="Sale order", compute='_compute_sale_order', store=True)
 
-    
-    move_from_picking_ids = fields.One2many(
-        string='Moves from Pickings',
-        comodel_name='stock.move',
-        inverse_name='mrp_id',
-    )
-    
-    
-class StockMove2(models.Model):
-    _inherit = "stock.move"
-
-    mrp_id = fields.Many2one(
-        'mrp.production',
-        string='mrp',
-        )
-
-    
+    @api.depends('procurement_group_id')
+    def _compute_sale_order(self):
+        for production in self:
+            production.sale_id = production.procurement_group_id.sale_id

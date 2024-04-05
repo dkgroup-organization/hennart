@@ -40,6 +40,7 @@ class ProductProduct(models.Model):
                 outgoing_qty = sum(outgoing_moves.mapped('product_uom_qty'))
                 production_forcasting = outgoing_qty - product.qty_available - incoming_qty
 
+                print(outgoing_moves, outgoing_qty, incoming_moves, incoming_qty)
                 if production_forcasting <= 0.0:
                     production_forcasting = 0.0
                 elif product.min_production_qty > 0.0:
@@ -59,6 +60,7 @@ class ProductProduct(models.Model):
         res = self.env['mrp.production']
         for product in self:
             product_qty = product.production_forcasting
+
             if product_qty > 0.0:
                 bom = product.bom_ids[0]
                 lot = self.env['stock.lot'].create_production_lot(product)
