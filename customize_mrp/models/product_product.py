@@ -14,7 +14,7 @@ class ProductProduct(models.Model):
     def compute_production_forcasting(self):
         """ Compute the quantity forcast to produce """
         horizon_past = 5
-        horizon_futur_outgoing = 2
+        horizon_futur_outgoing = 6
         horizon_futur_incoming = 1
 
         for product in self:

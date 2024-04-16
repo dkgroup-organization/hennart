@@ -1,0 +1,58 @@
+<?xml version="1.0" ?>
+<odoo>
+    <record id="wms_scenario_production" model="wms.scenario">
+		<field name="name">production</field>
+		<field name="sequence" eval="60"/>
+		<field name="scenario_image">dashboard.svg</field>
+		<field name="scenario_qweb">customize_scanner.scenario_production</field>
+		<field name="debug_mode" eval="0"/>
+		<field name="active" eval="1"/>
+		<field name="warehouse_ids" eval="[(6,0,[])]"/>
+		<field name="company_id" ref="base.main_company"/>
+		<field name="group_ids" eval="[(6,0,[ref('stock.group_stock_user')])]"/>
+		<field name="user_ids" eval="[(6,0,[])]"/>
+	</record>
+
+	<record id="wms_scenario_step_production1" model="wms.scenario.step">
+		<field name="sequence" eval="1"/>
+		<field name="name">production-1</field>
+		<field name="action_scanner">start</field>
+		<field name="action_variable">scan</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_list_production</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_production"/>
+		<field name="python_code">data = step.get_production_ids(data)</field>
+	</record>
+
+	<record id="wms_scenario_step_production_10" model="wms.scenario.step">
+		<field name="sequence" eval="10"/>
+		<field name="name">production-10</field>
+		<field name="description">List category or partner</field>
+		<field name="action_scanner">no_scan</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_list_production</field>
+		<field name="action_message"/>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+		<field name="python_code">data = step.get_production_ids(data)</field>
+	</record>
+
+	<record id="wms_scenario_step_production_20" model="wms.scenario.step">
+		<field name="sequence" eval="20"/>
+		<field name="name">production-20</field>
+		<field name="description">List production</field>
+		<field name="action_scanner">no_scan</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_list_production</field>
+		<field name="action_message"/>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+		<field name="python_code">data = step.get_production_ids(data)</field>
+	</record>
+
+	<record id="wms_scenario_step_production_30" model="wms.scenario.step">
+		<field name="sequence" eval="30"/>
+		<field name="name">production-30</field>
+		<field name="description">start production</field>
+		<field name="action_scanner">no_scan</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_list_production</field>
+		<field name="action_message"/>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
+</odoo>

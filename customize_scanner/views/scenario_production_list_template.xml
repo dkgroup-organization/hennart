@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <template id="scanner_scenario_list_production" name="scanner_scenario_list_production">
+            <html>
+                <t t-call="wms_scanner.scanner_html_head"/>
+                <body class="font-poppins duration-500 min-h-screen">
+                    <t t-call="wms_scanner.scanner_menu_body_header"/>
+                    <t t-call="customize_scanner.scanner_list_production_body_main"/>
+                    <t t-call="wms_scanner.scanner_script_js"/>
+                </body>
+            </html>
+        </template>
+
+        <template id="scanner_list_production_body_main" name="scanner_list_production_body_main">
+            <main class="relative">
+                <section id="preparation" class="screen_title">
+                    <div class="container mx-auto px-5 pb-5 relative">
+                        <div class="flex items-center gap-2.5 mb-10 landscape:mb-6">
+                            <t t-call="wms_scanner.wms_scanner_image_box"/>
+                            <h1>Production</h1>
+                        </div>
+
+                        <t t-if="data.get('production_ids')" t-call="customize_scanner.scanner_list_production"/>
+                        <t t-elif="data.get('categ_ids')" t-call="customize_scanner.scanner_list_categ"/>
+                        <t t-elif="data.get('partner_ids')" t-call="customize_scanner.scanner_list_partner"/>
+                        <t t-else=""  t-call="customize_scanner.scanner_list_none"/>
+                    </div>
+                </section>
+            </main>
+        </template>
+
+        <template id="scanner_list_none" name="scanner_list_none">
+            <div class="w-full">
+                <a t-att-href="'./scanner?scenario={}&amp;step={}&amp;button=new_production'.format(data['scenario'].id, data['step'].id)">
+                    <button class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">New Production</button>
+                </a>
+            </div>
+        </template>
+
+        <template id="scanner_list_categ" name="scanner_list_categ">
+            <div class="w-full">
+                <ul class="flex flex-col gap-4 pb-2">
+                    <t t-foreach="data.get('categ_ids', [])" t-as="categ">
+                        <li class="pb-2">
+                            <a t-att-href="'./scanner?scenario={}&amp;step={}&amp;button=categ_id&amp;scan={}'.format(data['scenario'].id, data['step'].id, categ.id)"
+                            class="border-2 border-gray-300 rounded-md py-3 px-6">
+
+                                <div class="flex items-center justify-between">
+                                    <p t-esc="categ.name" class="font-bold mb-1"/>
+                                </div>
+
+                            </a>
+                        </li>
+                    </t>
+                </ul>
+                <a t-att-href="'./scanner?scenario={}&amp;step={}&amp;button=update_production'.format(data['scenario'].id, data['step'].id)">
+                    <button class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">Update availability</button>
+                </a>
+            </div>
+        </template>
+
+        <template id="scanner_list_partner" name="scanner_list_partner">
+            <div class="w-full">
+                <ul class="flex flex-col gap-4 pb-2">
+                    <t t-foreach="data.get('partner_ids', [])" t-as="partner">
+                        <li class="pb-2">
+                            <a t-att-href="'./scanner?scenario={}&amp;step={}&amp;button=partner_id&amp;scan={}'.format(data['scenario'].id, data['step'].id, partner.id)"
+                            class="border-2 border-gray-300 rounded-md py-3 px-6">
+
+                                <div class="flex items-center justify-between">
+                                    <p t-esc="partner.name" class="font-bold mb-1"/>
+                                     <p t-esc="partner.city" class="font-bold mb-1"/>
+                                </div>
+
+                            </a>
+                        </li>
+                    </t>
+                </ul>
+                <a t-att-href="'./scanner?scenario={}&amp;step={}&amp;button=update_production'.format(data['scenario'].id, data['step'].id)">
+                    <button class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">Update availability</button>
+                </a>
+            </div>
+        </template>
+
+        <template id="scanner_list_production" name="scanner_list_production">
+            <div class="w-full">
+                <ul class="flex flex-col gap-4 pb-2">
+                    <t t-foreach="data.get('production_ids', [])" t-as="production">
+                        <li class="pb-2">
+                            <a t-att-href="'./scanner?scenario={}&amp;step={}&amp;button=production_id&amp;scan={}'.format(data['scenario'].id, data['step'].id, production.id)"
+                            class="border-2 border-gray-300 rounded-md py-3 px-6">
+
+                                <div class="flex items-center justify-between">
+                                    <p t-esc="production.name" class="font-bold mb-1"/>
+                                    <p t-esc="production.product_id.default_code" class="font-bold mb-1"/>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <p><span t-esc="production.product_qty"/> :<span t-esc="production.product_id.name"/>  </p>
+                                    <p t-esc="production.components_availability" class="mb-1"/>
+
+                                </div>
+                                <div class="flex justify-between">
+                                    <p><span t-if="production.partner_id" t-esc="production.partner_id.name"/>
+                                    </p>
+
+                                </div>
+                            </a>
+                        </li>
+                    </t>
+                </ul>
+                <a t-att-href="'./scanner?scenario={}&amp;step={}&amp;button=update_production'.format(data['scenario'].id, data['step'].id)">
+                    <button class="btn-green mt-2.5 landscape:col-span-2 landscape:mt-3">Update availability</button>
+                </a>
+            </div>
+        </template>
+
+    </data>
+</odoo>

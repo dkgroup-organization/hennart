@@ -42,7 +42,7 @@ class WmsMenu(models.Model):
         string='Scenario',
         help='Scenario for this menu.')
     menu_code = fields.Char(
-        string='Code')
+        string='Option')
     href = fields.Char(
         string='Code',
         compute='_compute_menu_href')
@@ -84,9 +84,12 @@ class WmsMenu(models.Model):
     def _compute_menu_href(self):
         "return the href of this menu"
         for menu in self:
+            href = '?menu=0'
             if menu.menu_type == 'menu':
-                menu.href = '?menu=%s' % (menu.id or 0)
+                href = '?menu=%s' % (menu.id or 0)
             elif menu.menu_type == 'scenario':
-                menu.href = '?scenario=%s' % (menu.scenario_id.id or 0)
-            else:
-                menu.href = '?menu=0'
+                href = '?scenario=%s' % (menu.scenario_id.id or 0)
+
+            if menu.menu_code:
+                href += '&option=' + menu.menu_code
+            menu.href = href

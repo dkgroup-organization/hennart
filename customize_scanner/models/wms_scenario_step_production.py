@@ -14,6 +14,43 @@ import datetime
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
+    def get_production_ids(self, data):
+        """ Get the current production todo """
+        self.ensure_one()
+        option = dict(request.params).get('option', '')
+        production_condition = [('state', 'not in', ['draft', 'cancel', 'done'])]
+        all_production_ids = self.env['mrp.production'].search(production_condition, order='date_planned_start')
+
+        if option == 'production_categ':
+            categ_ids = self.env['product.category']
+            for production in all_production_ids:
+                categ_ids |= production.product_id.categ_id
+            data.update({'categ_ids': categ_ids})
+
+        elif option == 'production_partner':
+            partner_ids = self.env['res.partner']
+            for production in all_production_ids:
+                if production.partner_id:
+                    partner_ids |= production.partner_id
+            data.update({'partner_ids': partner_ids})
+
+        elif all_production_ids:
+            if data.get('partner_id'):
+                if data.get('partner_id'):
+                    if type(data.get('partner_id')) == str:
+                        data['partner_id'] = self.env['res.partner'].search([('id', '=', int(data.get('partner_id')))])
+                production_condition += [('partner_id', '=', data['partner_id'].id)]
+                production_ids = self.env['mrp.production'].search(production_condition)
+            elif data.get('categ_id'):
+                if type(data.get('categ_id')) == str:
+                    data['categ_id'] = self.env['product.category'].search([('id', '=', int(data.get('categ_id')))])
+                production_condition += [('product_id.categ_id', '=', data['categ_id'].id)]
+                production_ids = self.env['mrp.production'].search(production_condition)
+            else:
+                production_ids = all_production_ids
+            data.update({'production_ids': production_ids})
+        return data
+
     def get_list_option(self, data):
         """ Return list of option of select input """
         self.ensure_one()

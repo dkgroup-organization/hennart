@@ -29,6 +29,7 @@ class WmsSession(models.Model):
     data = fields.Char('data')
     data_previous = fields.Char('Previous data')
     data_end = fields.Char('End data')
+    menu_code = fields.Char('Menu code')
     request_method = fields.Char('Request metode')
     request_param = fields.Char('Request parameters')
     message = fields.Char('log last message')

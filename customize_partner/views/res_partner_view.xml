@@ -44,6 +44,7 @@
 
                 <group name="banks" position="before">
                     <group string="Payment Terms">
+                        <field name="property_product_pricelist" options="{'no_open': True, 'no_create': True}"/>
                         <field string="Payment Terms" name="property_payment_term_id"
                                options="{'no_open': True, 'no_create': True}"
                                groups="account.group_account_invoice,account.group_account_readonly"/>
