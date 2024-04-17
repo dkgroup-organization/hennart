@@ -167,15 +167,24 @@ class WmsScenarioStep(models.Model):
             # In this case, it is a printer
             pass
 
+        else:
+            # Some check for production
+            production_ids = self.env['mrp.production'].search([('name', '=', scan)])
+            if len(production_ids) == 1:
+                data['production_id'] = production_ids
+            product_ids = self.env['product.product'].search([('default_code', '=', scan)])
+            if len(product_ids) == 1:
+                data['product_id'] = product_ids
+
         if data.get('warning'):
             data_origin['warning'] = data.get('warning')
         else:
             data_origin.update(data)
 
             if self.action_scanner in ['scan_info']:
-                for odj_name in ['lot_id', 'product_id', 'weight_id']:
+                for odj_name in ['production_id', 'lot_id', 'product_id', 'weight_id']:
                     if data_origin.get(odj_name):
-                        data_origin['scan'] = data_origin[odj_name]
+                        data_origin[action_variable or 'scan'] = data_origin[odj_name]
         return data_origin
 
     @api.model

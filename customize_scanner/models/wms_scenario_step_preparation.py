@@ -145,6 +145,9 @@ class WmsScenarioStep(models.Model):
         if self.action_variable == 'location_id':
             res = _('Scan location')
 
+        if self.action_variable == 'production_id':
+            res = _('Scan production')
+
         if self.action_variable == 'quantity':
             if move_line:
                 qty_placeholder = self.get_input_description_right(data, 'quantity')
@@ -249,6 +252,10 @@ class WmsScenarioStep(models.Model):
         if action_variable == 'expiry_date':
             res = _("Expiry Date: ")
 
+        if action_variable == 'production_id':
+            production = data.get('production_id')
+            res = production and f'{production.name}' or _('Production')
+
         return res
 
     def get_input_description_right(self, data, action_variable):
@@ -260,7 +267,7 @@ class WmsScenarioStep(models.Model):
             product = data.get('product_id') or move_line and move_line.product_id
             res = product and f'{product.default_code}' or ''
         if action_variable in ['location_id', 'location_origin_id', 'location_dest_id']:
-            location = data.get('location_id') or data.get('location_id') or (move_line and move_line.location_id) or False
+            location = data.get('location_id') or data.get('location_origin_id') or (move_line and move_line.location_id) or False
             if location and len(location.name) > 5 and location.name[-2:].isnumeric():
                 res = location.name[-5:]
         if action_variable == 'lot_id':

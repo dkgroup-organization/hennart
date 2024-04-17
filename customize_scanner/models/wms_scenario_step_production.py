@@ -17,11 +17,15 @@ class WmsScenarioStep(models.Model):
     def get_production_ids(self, data):
         """ Get the current production todo """
         self.ensure_one()
+        production_ids = self.env['mrp.production']
         option = dict(request.params).get('option', '')
         production_condition = [('state', 'not in', ['draft', 'cancel', 'done'])]
         all_production_ids = self.env['mrp.production'].search(production_condition, order='date_planned_start')
 
-        if option == 'production_categ':
+        if option == 'production_create':
+            pass
+
+        elif option == 'production_categ':
             categ_ids = self.env['product.category']
             for production in all_production_ids:
                 categ_ids |= production.product_id.categ_id
@@ -34,22 +38,43 @@ class WmsScenarioStep(models.Model):
                     partner_ids |= production.partner_id
             data.update({'partner_ids': partner_ids})
 
-        elif all_production_ids:
+        elif data.get('partner_id'):
             if data.get('partner_id'):
-                if data.get('partner_id'):
-                    if type(data.get('partner_id')) == str:
-                        data['partner_id'] = self.env['res.partner'].search([('id', '=', int(data.get('partner_id')))])
-                production_condition += [('partner_id', '=', data['partner_id'].id)]
-                production_ids = self.env['mrp.production'].search(production_condition)
-            elif data.get('categ_id'):
-                if type(data.get('categ_id')) == str:
-                    data['categ_id'] = self.env['product.category'].search([('id', '=', int(data.get('categ_id')))])
-                production_condition += [('product_id.categ_id', '=', data['categ_id'].id)]
-                production_ids = self.env['mrp.production'].search(production_condition)
-            else:
-                production_ids = all_production_ids
+                if type(data.get('partner_id')) == str:
+                    data['partner_id'] = self.env['res.partner'].search([('id', '=', int(data.get('partner_id')))])
+            production_condition += [('partner_id', '=', data['partner_id'].id)]
+            production_ids = self.env['mrp.production'].search(production_condition)
+
+        elif data.get('categ_id'):
+            if type(data.get('categ_id')) == str:
+                data['categ_id'] = self.env['product.category'].search([('id', '=', int(data.get('categ_id')))])
+            production_condition += [('product_id.categ_id', '=', data['categ_id'].id)]
+            production_ids = self.env['mrp.production'].search(production_condition)
+
+        if type(data.get('production_id')) == str:
+            data = self.check_production_id(data)
+
+        if production_ids:
             data.update({'production_ids': production_ids})
         return data
+
+    def check_production_id(self, data):
+        """ Create new production if there is no current available """
+        self.ensure_one()
+        if data.get('production_id'):
+            # initialise product
+            if type(data.get('production_id')) == str:
+                data['production_id'] = self.env['mrp.production'].browse(int(data.get('production_id')))
+            production = data.get('production_id')
+            data = self.init_data()
+            data['production_id'] = production
+            data['product_id'] = production.product_id
+
+        if data.get('lot_id'):
+            pass
+
+        return data
+
 
     def get_list_option(self, data):
         """ Return list of option of select input """

@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <odoo>
-	<record id="wms_scenario_production_transition_1_30" model="wms.scenario.transition">
-		<field name="name">1-[1-30]</field>
+	<record id="wms_scenario_production_transition_1_40" model="wms.scenario.transition">
+		<field name="name">1-[1-40]</field>
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-1')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-30')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-40')]"/>
 		<field name="condition">data.get('production_id')</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
@@ -17,28 +17,52 @@
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
 	<record id="wms_scenario_production_transition_1_10" model="wms.scenario.transition">
-		<field name="name">3-[1-10]</field>
-		<field name="sequence" eval="3"/>
+		<field name="name">1-[1-10]</field>
+		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-1')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-10')]"/>
-		<field name="condition">True</field>
-		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
-	</record>
-	<record id="wms_scenario_production_transition_10_20" model="wms.scenario.transition">
-		<field name="name">1-[10-20]</field>
-		<field name="sequence" eval="1"/>
-		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-10')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-20')]"/>
 		<field name="condition">data.get('categ_ids') or data.get('partner_ids')</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
-	<record id="wms_scenario_production_transition_20_30" model="wms.scenario.transition">
-		<field name="name">1-[20-30]</field>
+	<record id="wms_scenario_production_transition_1_30" model="wms.scenario.transition">
+		<field name="name">10-[1-30]</field>
+		<field name="sequence" eval="10"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-1')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-30')]"/>
+		<field name="condition">True</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
+	<record id="wms_scenario_production_transition_10_20" model="wms.scenario.transition">
+		<field name="name">2-[10-20]</field>
+		<field name="sequence" eval="2"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-10')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-20')]"/>
+		<field name="condition">data.get('production_ids')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
+	<record id="wms_scenario_production_transition_20_40" model="wms.scenario.transition">
+		<field name="name">1-[20-40]</field>
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-20')]"/>
-		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-30')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-40')]"/>
 		<field name="condition">data.get('production_id')</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
+
+	<record id="wms_scenario_production_transition_30_40" model="wms.scenario.transition">
+		<field name="name">1-[30-40]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-30')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-40')]"/>
+		<field name="condition">data.get('production_id')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
+
+
+
+
 
 </odoo>
