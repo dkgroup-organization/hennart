@@ -18,7 +18,9 @@
             <form string="Scanner Scenario">
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                        <field name="debug_mode" string="Debug mode" widget="boolean_toggle"/>
+
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">Active
                             <field name="active" widget="boolean_button"
                                    options="{&quot;terminology&quot;: &quot;archive&quot;}"/>
                         </button>
@@ -107,7 +109,7 @@
 
                                             <separator string="5/ options"/>
                                             <group>
-                                                 <field name="mode_debug"/>
+                                                 <field name="debug_mode"/>
                                             </group>
                                         </page>
 
@@ -118,7 +120,7 @@
                         </page>
                         <page string="QWEB render">
                             <group>
-                                <field name="debug_mode"/>
+
                                 <field name="scenario_image"/>
                                 <field name="scenario_qweb"/>
                             </group>

@@ -60,9 +60,49 @@
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
 
+	<record id="wms_scenario_production_transition_30_40" model="wms.scenario.transition">
+		<field name="name">1-[30-40]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-30')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-40')]"/>
+		<field name="condition">data.get('production_id')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
 
+	<record id="wms_scenario_production_transition_40_50" model="wms.scenario.transition">
+		<field name="name">1-[40-50]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-40')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-50')]"/>
+		<field name="condition">data.get('lot_id')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
 
+	<record id="wms_scenario_production_transition_50_60" model="wms.scenario.transition">
+		<field name="name">1-[50-60]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-50')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-60')]"/>
+		<field name="condition">data.get('quantity')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
 
+	<record id="wms_scenario_production_transition_60_70" model="wms.scenario.transition">
+		<field name="name">1-[60-70]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-60')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-70')]"/>
+		<field name="condition">data.get('moveline_ids')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
 
+	<record id="wms_scenario_production_transition_60_100" model="wms.scenario.transition">
+		<field name="name">1-[60-100]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-60')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-100')]"/>
+		<field name="condition">not data.get('moveline_ids')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
 
 </odoo>

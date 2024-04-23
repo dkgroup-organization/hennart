@@ -17,6 +17,7 @@ class WmsScenarioStep(models.Model):
     def get_production_ids(self, data):
         """ Get the current production todo """
         self.ensure_one()
+        print('\n---------------', data)
         production_ids = self.env['mrp.production']
         option = dict(request.params).get('option', '')
         production_condition = [('state', 'not in', ['draft', 'cancel', 'done'])]
@@ -59,22 +60,92 @@ class WmsScenarioStep(models.Model):
         return data
 
     def check_production_id(self, data):
-        """ Create new production if there is no current available """
+        """ Check or create new production if there is no current available """
         self.ensure_one()
-        if data.get('production_id'):
-            # initialise product
-            if type(data.get('production_id')) == str:
-                data['production_id'] = self.env['mrp.production'].browse(int(data.get('production_id')))
-            production = data.get('production_id')
-            data = self.init_data()
-            data['production_id'] = production
-            data['product_id'] = production.product_id
+        production = self.env['mrp.production']
 
-        if data.get('lot_id'):
-            pass
+        if data.get('production_id'):
+            # This production is to check
+            if type(data.get('production_id')) == str:
+                # initialise production data. When the production_id is str, it is a menu choice
+                data['production_id'] = self.env['mrp.production'].browse(int(data.get('production_id')))
+                production = data.get('production_id')
+                if production:
+                    data = self.init_data()
+                    data['production_id'] = production
+
+            if type(data.get('production_id')) == type(self.env['mrp.production']):
+                production = data['production_id']
+                data['product_id'] = data['production_id'].product_id
+            else:
+                data['warning'] = _("This production is no longer available")
+                return data
+
+            # Check the lot
+            if data.get('lot_id') and type(data['lot_id']) == type(self.env['stock.lot']):
+                lot = data.get('lot_id')
+                if production and lot:
+                    if lot.product_id != production.product_id:
+                        data['warning'] = _("It is not the good product")
+                        return data
+                    elif production.sale_id and production.lot_producing_id != lot:
+                        # When the production is for a customer, the lot is already created
+                        data['warning'] = _("It is not the good lot number")
+                        return data
+                    else:
+                        data['product_id'] = data['production_id'].product_id
+
+        elif data.get('lot_id') and type(data['lot_id']) == type(self.env['stock.lot']):
+            # No production selected, find one or create one if needed
+            production_ids = self.env['mrp.production'].search([('lot_producing_id', '=', data['lot_id'].id)])
+            if len(production_ids) == 1:
+                data['production_id'] = production_ids
+                data['product_id'] = data['production_id'].product_id
+            else:
+                data['warning'] = _("This lot is not linking with a production")
+
+        elif data.get('label_lot') and data.get('label_date') and data.get('label_product'):
+            # In this case, Create a new lot and a new production
+            if data['label_product'].bom_ids and data['label_product'].bom_ids[0].type == "normal":
+
+                # Create the new lot
+                lot_vals = {
+                    'name': data['label_lot'],
+                    'product_id': data['label_product'].id,
+                    'expiration_date': data['label_date'],
+                }
+                lot = self.env['stock.lot'].create(lot_vals)
+
+                # Create OF with origin location and product
+                mo_vals = {
+                    'product_id': data['label_product'],
+                    'product_qty': 1,
+                    'origin': 'scanner',
+                    'bom_id': data['label_product'].bom_ids[0],
+                    'lot_producing_id': lot.id,
+                }
+                new_mo = self.env['mrp.production'].create(mo_vals)
+                new_mo._compute_move_raw_ids()
+                data = self.init_data()
+                data['production_id'] = production
+                data['product_id'] = production.product_id
+                data['lot_id'] = production.lot_producing_id
+
+            else:
+                data['warning'] = _("This product have no production configuration")
 
         return data
 
+    def put_production_quantity(self, data):
+        """ Register the quantity produced """
+        self.ensure_one()
+        if data.get('production_id') and data.get('quantity'):
+            production = data['production_id']
+            production.user_id = self.env.user
+            production.product_qty = data['quantity']
+            production._onchange_producing()
+            production._compute_move_raw_ids()
+        return data
 
     def get_list_option(self, data):
         """ Return list of option of select input """
@@ -112,7 +183,7 @@ class WmsScenarioStep(models.Model):
             'name': lot.name,
             'product_id': maturity_product.id,
             'expiration_date': expiry_date,
-            }
+        }
         maturity_lot = self.env['stock.lot'].create(lot_vals)
 
         # Create OF with origin location and product
@@ -124,7 +195,7 @@ class WmsScenarioStep(models.Model):
             'lot_producing_id': maturity_lot.id,
             'location_src_id': location_origin.id,
             'location_dest_id': location_origin.id,
-            }
+        }
         new_mo = self.env['mrp.production'].create(mo_vals)
 
         # Create stock.move with composant
@@ -137,7 +208,7 @@ class WmsScenarioStep(models.Model):
             'raw_material_production_id': new_mo.id,
             'picking_type_id': new_mo.picking_type_id.id,
             'manual_consumption': True,
-            }
+        }
         new_move = self.env['stock.move'].create(move_vals)
         new_mo.action_confirm()
 
