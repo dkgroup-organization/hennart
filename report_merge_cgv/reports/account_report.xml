@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report
+            id="account_invoices_with_cgv"
+            model="account.move"
+            string="Factures avec CGV"
+            report_type="qweb-pdf"
+            name="report_merge_cgv.report_invoice_with_cgv"
+            file="report_merge_cgv.report_invoice_with_cgv"
+            print_report_name = "(object.name+'.pdf')"
+    />
+
+</odoo>
