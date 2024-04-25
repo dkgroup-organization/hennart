@@ -48,9 +48,66 @@
 	<record id="wms_scenario_step_production_30" model="wms.scenario.step">
 		<field name="sequence" eval="30"/>
 		<field name="name">production-30</field>
-		<field name="description">start production</field>
+		<field name="description">Choice product</field>
+		<field name="action_scanner">scan_info</field>
+		<field name="action_variable">production_id</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
+		<field name="python_code">data = step.check_production_id(data)</field>
+		<field name="action_message"/>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
+	<record id="wms_scenario_step_production_40" model="wms.scenario.step">
+		<field name="sequence" eval="40"/>
+		<field name="name">production-40</field>
+		<field name="description">Scan lot</field>
+		<field name="action_scanner">scan_multi</field>
+		<field name="action_variable">lot_id</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
+		<field name="python_code">data = step.check_production_id(data)</field>
+		<field name="action_message"/>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
+	<record id="wms_scenario_step_production_50" model="wms.scenario.step">
+		<field name="sequence" eval="50"/>
+		<field name="name">production-50</field>
+		<field name="description">scan quantity</field>
+		<field name="action_scanner">scan_quantity</field>
+		<field name="action_variable">quantity</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
+		<field name="python_code">data = step.put_production_quantity(data)</field>
+		<field name="action_message"/>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
+	<record id="wms_scenario_step_production_60" model="wms.scenario.step">
+		<field name="sequence" eval="60"/>
+		<field name="name">production-60</field>
+		<field name="description">Get components</field>
+		<field name="action_scanner">routing</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
+		<field name="action_message"/>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
+	<record id="wms_scenario_step_production_70" model="wms.scenario.step">
+		<field name="sequence" eval="70"/>
+		<field name="name">production-70</field>
+		<field name="description">Scan components lot</field>
+		<field name="action_scanner">scan_multi</field>
+		<field name="action_variable">lot_id</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
+		<field name="action_message"/>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
+	<record id="wms_scenario_step_production_100" model="wms.scenario.step">
+		<field name="sequence" eval="100"/>
+		<field name="name">production-100</field>
+		<field name="description">End of production</field>
 		<field name="action_scanner">no_scan</field>
-		<field name="step_qweb">customize_scanner.scanner_scenario_list_production</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
 		<field name="action_message"/>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>

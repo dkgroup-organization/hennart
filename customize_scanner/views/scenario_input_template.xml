@@ -242,5 +242,11 @@
             </t>
         </template>
 
+        <template id="scanner_input_production" name="scanner_input_production">
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'production_id'"/>
+            </t>
+        </template>
+
     </data>
 </odoo>

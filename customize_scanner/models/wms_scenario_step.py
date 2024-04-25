@@ -153,6 +153,7 @@ class WmsScenarioStep(models.Model):
             if product and data.get('label_date') and not data.get('lot_id'):
                 # In this case the lot is to create by use lot_name, label_product, label_date
                 data['lot_name'] = scan[5:affinage]
+                data['label_lot'] = scan[5:affinage]
 
         if len(scan) > 4 and scan[:4] == BARCODE_WEIGHT:
             # In this case, it is a weighted device
@@ -163,9 +164,15 @@ class WmsScenarioStep(models.Model):
             else:
                 data['warning'] = "No Weight device finding"
 
-        if len(scan) > 4 and scan[:4] == BARCODE_PRINTER:
+        elif len(scan) > 4 and scan[:4] == BARCODE_PRINTER:
             # In this case, it is a printer
             pass
+
+        else:
+            # Some check for production
+            production_ids = self.env['mrp.production'].search([('name', '=', scan)])
+            if len(production_ids) == 1:
+                data['production_id'] = production_ids
 
         if data.get('warning'):
             data_origin['warning'] = data.get('warning')
@@ -173,7 +180,7 @@ class WmsScenarioStep(models.Model):
             data_origin.update(data)
 
             if self.action_scanner in ['scan_info']:
-                for odj_name in ['lot_id', 'product_id', 'weight_id']:
+                for odj_name in ['production_id', 'lot_id', 'product_id', 'weight_id']:
                     if data_origin.get(odj_name):
                         data_origin['scan'] = data_origin[odj_name]
         return data_origin
