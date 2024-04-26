@@ -111,6 +111,7 @@
 		<field name="action_scanner">no_scan</field>
 		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
 		<field name="action_message"/>
+		<field name="python_code">data = step.confirm_production(data)</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
 

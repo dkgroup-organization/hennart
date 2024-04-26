@@ -117,7 +117,7 @@ class WmsScenarioStep(models.Model):
             # find the lot
             if product and not data.get('warning'):
                 lot_name = scan[5:affinage]
-                # by convention new lot_id (2023) start with '-'
+                # by convention new lot_id (2024) start with '-'
                 if (lot_name[0] == '-') and lot_name[1:].isnumeric():
                     lot_id = int(lot_name[1:])
                     lot_ids = self.env['stock.lot'].search([('id', '=', lot_id)])

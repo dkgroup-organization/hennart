@@ -108,11 +108,8 @@ class SaleOrder(models.Model):
         return res
 
     def create_mo(self):
-        """ Check personnalize mo to create """
-        for order in self:
-            for line in self.order_line:
-                if line.product_id.bom_ids:
-                    line.create_mo()
+        """ Check mo to create """
+        self.order_line.create_mo()
 
     def button_test(self):
         """ TEST """

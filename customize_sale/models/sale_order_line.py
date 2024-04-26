@@ -147,10 +147,15 @@ class SaleOrderLine(models.Model):
     def create_mo(self):
         """ Create MO for needed product to manufacture """
         # order_id.procurement_group_id, move.group_id
+        # TODO group by quantity by product before create MO
         for line in self:
             product = line.product_id
-            if product.bom_ids and product.bom_ids[0].type == 'normal' and product.to_personnalize:
+            if product.bom_ids and product.to_personnalize:
                 bom = product.bom_ids[0]
+                if bom.type != 'normal':
+                    # Force type of this BOM to have OF
+                    bom.type = 'normal'
+
                 lot = self.env['stock.lot'].create_production_lot(product)
                 mo_vals = {
                     'product_id': product.id,
@@ -303,7 +308,6 @@ class SaleOrderLine(models.Model):
         remaining.forecast_expected_date = False
         remaining.free_qty_today = False
         remaining.qty_available_today = False
-
 
     def _convert_to_tax_base_line_dict(self):
         """ Convert the current record to a dictionary in order to use the generic taxes computation method

@@ -19,8 +19,14 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         production_ids = self.env['mrp.production']
         option = dict(request.params).get('option', '')
+        button = dict(request.params).get('button', '')
         production_condition = [('state', 'not in', ['draft', 'cancel', 'done'])]
         all_production_ids = self.env['mrp.production'].search(production_condition, order='date_planned_start')
+
+        if button == "update_production" and data.get('partner_ids'):
+            option = 'production_partner'
+        if button == "update_production" and data.get('categ_ids'):
+            option = 'production_categ'
 
         if option == 'production_create':
             pass
@@ -28,7 +34,8 @@ class WmsScenarioStep(models.Model):
         elif option == 'production_categ':
             categ_ids = self.env['product.category']
             for production in all_production_ids:
-                categ_ids |= production.product_id.categ_id
+                if not production.partner_id:
+                    categ_ids |= production.product_id.categ_id
             data.update({'categ_ids': categ_ids})
 
         elif option == 'production_partner':
@@ -106,7 +113,6 @@ class WmsScenarioStep(models.Model):
         elif data.get('label_lot') and data.get('label_date') and data.get('label_product'):
             # In this case, Create a new lot and a new production
             if data['label_product'].bom_ids and data['label_product'].bom_ids[0].type == "normal":
-
                 # Create the new lot
                 lot_vals = {
                     'name': data['label_lot'],
@@ -117,18 +123,19 @@ class WmsScenarioStep(models.Model):
 
                 # Create OF with origin location and product
                 mo_vals = {
-                    'product_id': data['label_product'],
+                    'product_id': data['label_product'].id,
                     'product_qty': 1,
                     'origin': 'scanner',
-                    'bom_id': data['label_product'].bom_ids[0],
+                    'user_id': self.env.user.id,
+                    'bom_id': data['label_product'].bom_ids[0].id,
                     'lot_producing_id': lot.id,
                 }
                 new_mo = self.env['mrp.production'].create(mo_vals)
-                new_mo._compute_move_raw_ids()
+                new_mo.action_confirm()
                 data = self.init_data()
-                data['production_id'] = production
-                data['production_product_id'] = production.product_id
-                data['lot_id'] = production.lot_producing_id
+                data['production_id'] = new_mo
+                data['production_product_id'] = new_mo.product_id
+                data['production_lot_id'] = new_mo.lot_producing_id
 
             else:
                 data['warning'] = _("This product have no production configuration")
@@ -138,6 +145,7 @@ class WmsScenarioStep(models.Model):
     def put_production_quantity(self, data):
         """ Register the quantity produced """
         self.ensure_one()
+
         if data.get('production_id') and data['production_id'].state in ['cancel', 'done']:
             data['warning'] = _('This production order is already finished')
 
@@ -147,10 +155,12 @@ class WmsScenarioStep(models.Model):
 
             if production.product_qty > 0.0 and production.product_qty != data['production_quantity']:
                 factor = data['production_quantity'] / production.product_qty
+                production._update_raw_moves(factor)
                 production.product_qty = data['production_quantity']
                 production.move_finished_ids.product_uom_qty = data['production_quantity']
-                production._update_raw_moves(factor)
 
+            production.move_raw_ids.move_line_ids.lot_id = False
+            production.move_raw_ids.move_line_ids.qty_done = 0.0
             production.qty_producing = data['production_quantity']
             production._onchange_producing()
             production._compute_move_raw_ids()
@@ -170,11 +180,7 @@ class WmsScenarioStep(models.Model):
         if data.get('production_id') and data['production_id'].state not in ['cancel', 'done']:
             production = data['production_id']
             new_data['production_id'] = production
-            if not production.move_raw_ids.move_line_ids:
-                if production.state != 'confirmed':
-                    production.state = 'draft'
-                    production.qty_producing = 0.0
-                    production.action_confirm()
+            new_data['production_product_id'] = production.product_id
 
             for move_line in production.move_raw_ids.move_line_ids:
                 if move_line.state in ['cancel', 'done']:
@@ -186,11 +192,6 @@ class WmsScenarioStep(models.Model):
                     break
         else:
             data['warning'] = _('This production order is not to do')
-
-        if new_data.get('production_id') and not new_data.get('move_line'):
-            new_data['message'] = _('The production is finish')
-            if new_data['production_id'].state == 'to_close':
-                new_data['production_id'].button_mark_done()
 
         data = new_data
         return data
@@ -218,6 +219,16 @@ class WmsScenarioStep(models.Model):
             data['warning'] = _('This lot is unknown')
         else:
             data['warning'] = _('No component product to check')
+        return data
+
+    def confirm_production(self, data):
+        """ Confirm the production """
+        self.ensure_one()
+        if data.get('production_id') and data['production_id'].state not in ['cancel', 'done']:
+            production = data['production_id']
+            if production.state == 'to_close':
+                production.button_mark_done()
+        print('-----confirm_production--------\n', data)
         return data
 
     def get_list_option(self, data):
