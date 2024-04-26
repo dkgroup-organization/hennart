@@ -75,7 +75,7 @@ class WmsScenarioStep(models.Model):
 
             if type(data.get('production_id')) == type(self.env['mrp.production']):
                 production = data['production_id']
-                data['product_id'] = data['production_id'].product_id
+                data['production_product_id'] = data['production_id'].product_id
             else:
                 data['warning'] = _("This production is no longer available")
                 return data
@@ -92,14 +92,14 @@ class WmsScenarioStep(models.Model):
                         data['warning'] = _("It is not the good lot number")
                         return data
                     else:
-                        data['product_id'] = data['production_id'].product_id
+                        data['production_product_id'] = data['production_id'].product_id
 
         elif data.get('lot_id') and type(data['lot_id']) == type(self.env['stock.lot']):
             # No production selected, find one or create one if needed
             production_ids = self.env['mrp.production'].search([('lot_producing_id', '=', data['lot_id'].id)])
             if len(production_ids) == 1:
                 data['production_id'] = production_ids
-                data['product_id'] = data['production_id'].product_id
+                data['production_product_id'] = data['production_id'].product_id
             else:
                 data['warning'] = _("This lot is not linking with a production")
 
@@ -127,7 +127,7 @@ class WmsScenarioStep(models.Model):
                 new_mo._compute_move_raw_ids()
                 data = self.init_data()
                 data['production_id'] = production
-                data['product_id'] = production.product_id
+                data['production_product_id'] = production.product_id
                 data['lot_id'] = production.lot_producing_id
 
             else:
@@ -141,20 +141,21 @@ class WmsScenarioStep(models.Model):
         if data.get('production_id') and data['production_id'].state in ['cancel', 'done']:
             data['warning'] = _('This production order is already finished')
 
-        elif data.get('production_id') and data.get('quantity', 0.0) > 0.0:
+        elif data.get('production_id') and data.get('production_quantity', 0.0) > 0.0:
             production = data['production_id']
             production.user_id = self.env.user
 
-            if production.product_qty > 0.0 and production.product_qty != data['quantity']:
-                factor = data['quantity'] / production.product_qty
-                production.product_qty = data['quantity']
+            if production.product_qty > 0.0 and production.product_qty != data['production_quantity']:
+                factor = data['production_quantity'] / production.product_qty
+                production.product_qty = data['production_quantity']
+                production.move_finished_ids.product_uom_qty = data['production_quantity']
                 production._update_raw_moves(factor)
 
-            production.qty_producing = data['quantity']
+            production.qty_producing = data['production_quantity']
             production._onchange_producing()
             production._compute_move_raw_ids()
 
-        elif data.get('quantity', 0.0) <= 0.0:
+        elif data.get('production_quantity', 0.0) <= 0.0:
             data['warning'] = _('Put positive quantity on production')
         else:
             data['warning'] = _('This production order is not to do')
@@ -164,21 +165,34 @@ class WmsScenarioStep(models.Model):
     def get_production_move_line(self, data):
         """ Return production move line with tracking lot """
         self.ensure_one()
+        new_data = self.init_data()
 
         if data.get('production_id') and data['production_id'].state not in ['cancel', 'done']:
             production = data['production_id']
-            data = self.init_data()
-            data['production_id'] = production
-            data['move_line'] = self.env['stock.move.line']
+            new_data['production_id'] = production
+            if not production.move_raw_ids.move_line_ids:
+                if production.state != 'confirmed':
+                    production.state = 'draft'
+                    production.qty_producing = 0.0
+                    production.action_confirm()
 
             for move_line in production.move_raw_ids.move_line_ids:
                 if move_line.state in ['cancel', 'done']:
                     continue
                 elif move_line.product_id.tracking != 'none' and not move_line.lot_id:
-                    data['move_line'] = move_line
+                    new_data['move_line'] = move_line
+                    new_data['product_id'] = new_data['move_line'].product_id
+                    new_data['quantity'] = new_data['move_line'].qty_done
                     break
         else:
             data['warning'] = _('This production order is not to do')
+
+        if new_data.get('production_id') and not new_data.get('move_line'):
+            new_data['message'] = _('The production is finish')
+            if new_data['production_id'].state == 'to_close':
+                new_data['production_id'].button_mark_done()
+
+        data = new_data
         return data
 
     def check_production_move_line(self, data):
@@ -190,7 +204,6 @@ class WmsScenarioStep(models.Model):
             else:
                 source_location = data['move_line'].production_id.location_src_id
                 location_origin_ids = self.env['stock.location'].search([('id', 'child_of', source_location.id)])
-                print('------location_origin_ids------\n', location_origin_ids)
                 quant_ids = self.env['stock.quant'].search([
                     ('lot_id', '=', data['lot_id'].id), ('location_id', '=', location_origin_ids.ids)])
 
@@ -199,6 +212,12 @@ class WmsScenarioStep(models.Model):
                                         'zone before')
                 else:
                     data['move_line'].lot_id = data['lot_id']
+                    data['move_line'].qty_done = data['move_line'].reserved_uom_qty
+
+        elif data.get('move_line'):
+            data['warning'] = _('This lot is unknown')
+        else:
+            data['warning'] = _('No component product to check')
         return data
 
     def get_list_option(self, data):

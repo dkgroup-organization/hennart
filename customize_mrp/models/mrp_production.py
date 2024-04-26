@@ -37,3 +37,27 @@ class MRPProduction(models.Model):
         if self.product_id.tracking == 'serial':
             self._set_qty_producing()
 
+    def button_mark_done(self):
+        """ Change the quantity reserved when the produced qty is no same """
+        for production in self:
+            if production.state in ['cancel', 'done']:
+                continue
+            if production.product_qty > 0.0 and production.product_qty != production.qty_producing:
+                factor = production.qty_producing / production.product_qty
+                production.product_qty = production.qty_producing
+                production.move_finished_ids.product_uom_qty = production.qty_producing
+                production._update_raw_moves(factor)
+                production._onchange_producing()
+                production._compute_move_raw_ids()
+
+        return super().button_mark_done()
+
+    @api.onchange('qty_producing')
+    def onchange_qty_producing(self):
+        """ automaticaly update qty_producing """
+        if self.state not in ['cancel', 'done']:
+            if self.product_qty > 0.0 and self.product_qty != self.qty_producing:
+                factor = self.qty_producing / self.product_qty
+                self.product_qty = self.qty_producing
+                self.move_finished_ids.product_uom_qty = self.qty_producing
+                self._update_raw_moves(factor)

@@ -62,7 +62,7 @@
 		<field name="name">production-40</field>
 		<field name="description">Scan lot</field>
 		<field name="action_scanner">scan_multi</field>
-		<field name="action_variable">lot_id</field>
+		<field name="action_variable">production_lot_id</field>
 		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
 		<field name="python_code">data = step.check_production_id(data)</field>
 		<field name="action_message"/>
@@ -74,7 +74,7 @@
 		<field name="name">production-50</field>
 		<field name="description">scan quantity</field>
 		<field name="action_scanner">scan_quantity</field>
-		<field name="action_variable">quantity</field>
+		<field name="action_variable">production_quantity</field>
 		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
 		<field name="python_code">data = step.put_production_quantity(data)</field>
 		<field name="action_message"/>
@@ -88,6 +88,7 @@
 		<field name="action_scanner">routing</field>
 		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
 		<field name="action_message"/>
+		<field name="python_code">data = step.get_production_move_line(data)</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
 
@@ -99,6 +100,7 @@
 		<field name="action_variable">lot_id</field>
 		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
 		<field name="action_message"/>
+		<field name="python_code">data = step.check_production_move_line(data)</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
 

@@ -128,13 +128,12 @@ class StockMove(models.Model):
                 line.move_line_ids.create(move_line_vals)
                 line.move_line_ids._create_and_assign_production_lot()
 
-            elif len(line.move_line_ids) == 1:
+            elif len(line.move_line_ids) == 1 or line.production_id:
                 if not line.move_line_ids.lot_id:
                     line.move_line_ids.update(
                         {'lot_name': line.prodlot_inv,
                          'expiration_date': line.lot_expiration_date})
                     line.move_line_ids._create_and_assign_production_lot()
-
                 else:
                     line.move_line_ids.update(
                         {'lot_name': line.prodlot_inv,
@@ -171,6 +170,16 @@ class StockMove(models.Model):
                 line.move_line_ids.create(move_line_vals)
             elif len(line.move_line_ids) == 1:
                 line.move_line_ids.update(move_line_vals)
+            elif line.production_id:
+                nb_line = 0
+                move_line_update = self.env['stock.move.line']
+                for move_line in line.move_line_ids:
+                    if move_line.state not in ['cancel', 'done']:
+                        nb_line += 1
+                        move_line_update |= move_line
+                if move_line_update:
+                    move_line_vals['weight'] = move_line_vals['weight'] / nb_line
+                    move_line_vals['qty_done'] = move_line_vals['qty_done'] / nb_line
             else:
                 message = _("this line has multiples production lot, uses the detailed view to update")
                 message += '\n {}'.format(line.name)
@@ -199,6 +208,15 @@ class StockMove(models.Model):
                 line.move_line_ids.create(move_line_vals)
             elif len(line.move_line_ids) == 1:
                 line.move_line_ids.update(move_line_vals)
+            elif line.production_id:
+                nb_line = 0
+                move_line_update = self.env['stock.move.line']
+                for move_line in line.move_line_ids:
+                    if move_line.state not in ['cancel', 'done']:
+                        nb_line += 1
+                        move_line_update |= move_line
+                if move_line_update:
+                    move_line_vals['weight'] = move_line_vals['weight'] / nb_line
             else:
                 message = _("this line has multiples production lot, uses the detailed view to update")
                 message += '\n {}'.format(line.name)

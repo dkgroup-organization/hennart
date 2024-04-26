@@ -19,6 +19,12 @@
             </t>
         </template>
 
+        <template id="scanner_scenario_production_component" name="scanner_scenario_production_product">
+            <t t-call="customize_scanner.scanner_scenario_production">
+                <t t-set="step_qweb" t-value="'component'"/>
+            </t>
+        </template>
+
         <template id="scanner_production_body_main" name="scanner_production_body_main">
             <main class="relative">
                 <section id="production" class="screen_title">
@@ -39,10 +45,15 @@
                       autoComplete="off"
                       method="post">
                     <t t-call="customize_scanner.scanner_input_production"/>
-                    <t t-call="customize_scanner.scanner_input_product_id"/>
-                    <t t-call="customize_scanner.scanner_input_lot_id"/>
-                    <t t-call="customize_scanner.scanner_input_quantity"/>
+                    <t t-call="customize_scanner.scanner_input_production_product_id"/>
 
+                    <t t-if="data.get('move_line')">
+                        <t t-call="customize_scanner.scanner_sub_input_move_line"/>
+                    </t>
+                    <t t-else="">
+                        <t t-call="customize_scanner.scanner_input_production_lot_id"/>
+                        <t t-call="customize_scanner.scanner_input_production_quantity"/>
+                    </t>
                     <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
                 </form>
             </t>
@@ -106,8 +117,9 @@
                         </td>
                         <td>
                             <h1>production</h1>
-                            <div t-if="data.get('step')" >
-                                <span t-esc="data['step'].get_title(data)"/> -
+                            <div t-if="data.get('step')">
+                                <span t-esc="data['step'].get_title(data)"/>
+                                -
                             </div>
                         </td>
                     </tr>
