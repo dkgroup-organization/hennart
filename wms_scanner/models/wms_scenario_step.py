@@ -91,7 +91,7 @@ class WmsScenarioStep(models.Model):
         string='Python code before',
         help='Python code to execute before qweb.')
     scenario_notes = fields.Text(related='scenario_id.notes')
-    mode_debug = fields.Boolean('Mode debug', help='No try/except protection when there is code execution.')
+    debug_mode = fields.Boolean('Mode debug', help='No try/except protection when there is code execution.')
 
     def init_data(self, data={}):
         """ reinit the data of this step"""
@@ -376,7 +376,7 @@ class WmsScenarioStep(models.Model):
                 'env': self.env,
                 'data': data.copy()}
 
-            if self.mode_debug:
+            if self.debug_mode or self.scenario_id.debug_mode:
                 safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
                 data = localdict.get('data')
             else:

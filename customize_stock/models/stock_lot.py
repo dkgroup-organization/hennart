@@ -117,8 +117,8 @@ class StockLot(models.Model):
 
             for i in range(1, 99):
                 lot_search = prodlot_y + prodlot_j + str(i).zfill(2)
-                condition = condition + [('name', '=', lot_search)]
-                lot_ids = self.search(condition)
+                condition_name = condition + [('name', '=', lot_search)]
+                lot_ids = self.search(condition_name)
                 if i == 99:
                     if product and not condition:
                         lot_search = search_free_name(product, condition=[('product_id', '=', product.id)])

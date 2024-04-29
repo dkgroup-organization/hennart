@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <template id="scanner_scenario_production" name="scanner_scenario_production">
+            <html>
+                <t t-call="wms_scanner.scanner_html_head"/>
+                <body class="font-poppins duration-500 min-h-screen">
+                    <t t-call="wms_scanner.scanner_menu_body_header"/>
+                    <t t-call="customize_scanner.scanner_production_body_main"/>
+                    <t t-call="wms_scanner.scanner_script_js"/>
+                </body>
+            </html>
+        </template>
+
+        <template id="scanner_scenario_production_product" name="scanner_scenario_production_product">
+            <t t-call="customize_scanner.scanner_scenario_production">
+                <t t-set="step_qweb" t-value="'product_id'"/>
+            </t>
+        </template>
+
+        <template id="scanner_scenario_production_component" name="scanner_scenario_production_product">
+            <t t-call="customize_scanner.scanner_scenario_production">
+                <t t-set="step_qweb" t-value="'component'"/>
+            </t>
+        </template>
+
+        <template id="scanner_production_body_main" name="scanner_production_body_main">
+            <main class="relative">
+                <section id="production" class="screen_title">
+                    <div class="container mx-auto px-5 pb-5 relative">
+                        <t t-call="customize_scanner.scanner_body_title_production"/>
+                        <t t-if="step_qweb == 'product_id'" t-call="customize_scanner.scanner_line_production"/>
+
+                    </div>
+                </section>
+            </main>
+        </template>
+
+        <template id="scanner_line_production" name="scanner_line_production">
+            <t t-if="data.get('step')">
+                <t t-set="step" t-value="data.get('step')"/>
+                <form class="flex flex-col items-center gap-2 landscape:gap-1 landscape:w-[49%]"
+                      t-att-action="'./scanner?scenario={}&amp;step={}'.format(step.scenario_id.id, step.id)"
+                      autoComplete="off"
+                      method="post">
+                    <t t-call="customize_scanner.scanner_input_production"/>
+                    <t t-call="customize_scanner.scanner_input_production_product_id"/>
+
+                    <t t-if="data.get('move_line')">
+                        <t t-call="customize_scanner.scanner_sub_input_move_line"/>
+                    </t>
+                    <t t-else="">
+                        <t t-call="customize_scanner.scanner_input_production_lot_id"/>
+                        <t t-call="customize_scanner.scanner_input_production_quantity"/>
+                    </t>
+                    <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
+                </form>
+            </t>
+        </template>
+
+        <template id="scanner_printer_production" name="scanner_printer_production">
+            <t t-if="data.get('step')">
+                <t t-set="step" t-value="data.get('step')"/>
+                <form class="flex flex-col items-center gap-2 landscape:gap-1 landscape:w-[49%]"
+                      t-att-action="'./scanner?scenario={}&amp;step={}'.format(step.scenario_id.id, step.id)"
+                      autoComplete="off"
+                      method="post">
+                    <t t-if="not data.get('printer')" t-call="customize_scanner.scanner_input_printer"/>
+                    <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
+                </form>
+            </t>
+        </template>
+
+        <template id="scanner_weight_production" name="scanner_weight_production">
+            <t t-if="data.get('step')">
+                <t t-set="step" t-value="data.get('step')"/>
+                <form class="flex flex-col items-center gap-2 landscape:gap-1 landscape:w-[49%]"
+                      t-att-action="'./scanner?scenario={}&amp;step={}'.format(step.scenario_id.id, step.id)"
+                      autoComplete="off"
+                      method="post">
+
+                    <t t-if="not data.get('printer')" t-call="customize_scanner.scanner_input_printer"/>
+                    <t t-if="data.get('printer')">
+                        <t t-call="customize_scanner.scanner_input_product_id"/>
+                        <t t-call="customize_scanner.scanner_input_lot_id"/>
+                        <t t-call="customize_scanner.scanner_input_quantity"/>
+
+                        <t t-if="step.action_scanner != 'scan_weight'">
+                            <t t-call="customize_scanner.scanner_input_weight"/>
+                        </t>
+                        <t t-if="step.action_scanner in ['scan_weight']">
+                            <input type="hidden" name="weight" t-att-value="data.get('weight')"/>
+                            <t t-call="customize_scanner.scanner_input_weighting_device"/>
+                        </t>
+                        <t t-if="step.action_scanner in ['scan_tare']" t-call="customize_scanner.scanner_input_tare"/>
+
+                    </t>
+
+                    <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
+                </form>
+            </t>
+        </template>
+
+        <template id="scanner_end_production" name="scanner_end_production">
+            <t t-if="data.get('step')">
+                <p>Fin de la production</p>
+            </t>
+        </template>
+
+        <template id="scanner_body_title_production" name="scanner_body_title_production">
+            <table>
+                <tbody>
+                    <tr>
+                        <td>
+                            <t t-call="wms_scanner.wms_scanner_image_box"/>
+                        </td>
+                        <td>
+                            <h1>production</h1>
+                            <div t-if="data.get('step')">
+                                <span t-esc="data['step'].get_title(data)"/>
+                                -
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </template>
+
+    </data>
+</odoo>

@@ -38,6 +38,7 @@ class WmsScenarioStep(models.Model):
         The product code is to check if there is a package.
         """
         self.ensure_one()
+        print('-----------scan_multi--------------\n', data, scan)
 
         # Detect the old barcode (reference used by V7) 24 or 25 or 26 length
         # 53201523101X010120000000  -24 DIGI machine frais emballé [11], la date est inversé
@@ -116,7 +117,7 @@ class WmsScenarioStep(models.Model):
             # find the lot
             if product and not data.get('warning'):
                 lot_name = scan[5:affinage]
-                # by convention new lot_id (2023) start with '-'
+                # by convention new lot_id (2024) start with '-'
                 if (lot_name[0] == '-') and lot_name[1:].isnumeric():
                     lot_id = int(lot_name[1:])
                     lot_ids = self.env['stock.lot'].search([('id', '=', lot_id)])
@@ -153,6 +154,7 @@ class WmsScenarioStep(models.Model):
             if product and data.get('label_date') and not data.get('lot_id'):
                 # In this case the lot is to create by use lot_name, label_product, label_date
                 data['lot_name'] = scan[5:affinage]
+                data['label_lot'] = scan[5:affinage]
 
         if len(scan) > 4 and scan[:4] == BARCODE_WEIGHT:
             # In this case, it is a weighted device
@@ -163,9 +165,15 @@ class WmsScenarioStep(models.Model):
             else:
                 data['warning'] = "No Weight device finding"
 
-        if len(scan) > 4 and scan[:4] == BARCODE_PRINTER:
+        elif len(scan) > 4 and scan[:4] == BARCODE_PRINTER:
             # In this case, it is a printer
             pass
+
+        else:
+            # Some check for production
+            production_ids = self.env['mrp.production'].search([('name', '=', scan)])
+            if len(production_ids) == 1:
+                data['production_id'] = production_ids
 
         if data.get('warning'):
             data_origin['warning'] = data.get('warning')
@@ -173,9 +181,10 @@ class WmsScenarioStep(models.Model):
             data_origin.update(data)
 
             if self.action_scanner in ['scan_info']:
-                for odj_name in ['lot_id', 'product_id', 'weight_id']:
+                for odj_name in ['production_id', 'lot_id', 'product_id', 'weight_id']:
                     if data_origin.get(odj_name):
                         data_origin['scan'] = data_origin[odj_name]
+        print('-----------scan_multi-------end-------\n', data_origin)
         return data_origin
 
     @api.model

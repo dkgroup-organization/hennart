@@ -17,14 +17,25 @@ class WmsScenarioStep(models.Model):
     def get_production_ids(self, data):
         """ Get the current production todo """
         self.ensure_one()
+        production_ids = self.env['mrp.production']
         option = dict(request.params).get('option', '')
+        button = dict(request.params).get('button', '')
         production_condition = [('state', 'not in', ['draft', 'cancel', 'done'])]
         all_production_ids = self.env['mrp.production'].search(production_condition, order='date_planned_start')
 
-        if option == 'production_categ':
+        if button == "update_production" and data.get('partner_ids'):
+            option = 'production_partner'
+        if button == "update_production" and data.get('categ_ids'):
+            option = 'production_categ'
+
+        if option == 'production_create':
+            pass
+
+        elif option == 'production_categ':
             categ_ids = self.env['product.category']
             for production in all_production_ids:
-                categ_ids |= production.product_id.categ_id
+                if not production.partner_id:
+                    categ_ids |= production.product_id.categ_id
             data.update({'categ_ids': categ_ids})
 
         elif option == 'production_partner':
@@ -34,21 +45,190 @@ class WmsScenarioStep(models.Model):
                     partner_ids |= production.partner_id
             data.update({'partner_ids': partner_ids})
 
-        elif all_production_ids:
+        elif data.get('partner_id'):
             if data.get('partner_id'):
-                if data.get('partner_id'):
-                    if type(data.get('partner_id')) == str:
-                        data['partner_id'] = self.env['res.partner'].search([('id', '=', int(data.get('partner_id')))])
-                production_condition += [('partner_id', '=', data['partner_id'].id)]
-                production_ids = self.env['mrp.production'].search(production_condition)
-            elif data.get('categ_id'):
-                if type(data.get('categ_id')) == str:
-                    data['categ_id'] = self.env['product.category'].search([('id', '=', int(data.get('categ_id')))])
-                production_condition += [('product_id.categ_id', '=', data['categ_id'].id)]
-                production_ids = self.env['mrp.production'].search(production_condition)
-            else:
-                production_ids = all_production_ids
+                if type(data.get('partner_id')) == str:
+                    data['partner_id'] = self.env['res.partner'].search([('id', '=', int(data.get('partner_id')))])
+            production_condition += [('partner_id', '=', data['partner_id'].id)]
+            production_ids = self.env['mrp.production'].search(production_condition)
+
+        elif data.get('categ_id'):
+            if type(data.get('categ_id')) == str:
+                data['categ_id'] = self.env['product.category'].search([('id', '=', int(data.get('categ_id')))])
+            production_condition += [('product_id.categ_id', '=', data['categ_id'].id)]
+            production_ids = self.env['mrp.production'].search(production_condition)
+
+        if type(data.get('production_id')) == str:
+            data = self.check_production_id(data)
+
+        if production_ids:
             data.update({'production_ids': production_ids})
+        return data
+
+    def check_production_id(self, data):
+        """ Check or create new production if there is no current available """
+        self.ensure_one()
+        production = self.env['mrp.production']
+
+        if data.get('production_id'):
+            # This production is to check
+            if type(data.get('production_id')) == str:
+                # initialise production data. When the production_id is str, it is a menu choice
+                data['production_id'] = self.env['mrp.production'].browse(int(data.get('production_id')))
+                production = data.get('production_id')
+                if production:
+                    data = self.init_data()
+                    data['production_id'] = production
+
+            if type(data.get('production_id')) == type(self.env['mrp.production']):
+                production = data['production_id']
+                data['production_product_id'] = data['production_id'].product_id
+            else:
+                data['warning'] = _("This production is no longer available")
+                return data
+
+            # Check the lot
+            if data.get('lot_id') and type(data['lot_id']) == type(self.env['stock.lot']):
+                lot = data.get('lot_id')
+                if production and lot:
+                    if lot.product_id != production.product_id:
+                        data['warning'] = _("It is not the good product")
+                        return data
+                    elif production.sale_id and production.lot_producing_id != lot:
+                        # When the production is for a customer, the lot is already created
+                        data['warning'] = _("It is not the good lot number")
+                        return data
+                    else:
+                        data['production_product_id'] = data['production_id'].product_id
+
+        elif data.get('lot_id') and type(data['lot_id']) == type(self.env['stock.lot']):
+            # No production selected, find one or create one if needed
+            production_ids = self.env['mrp.production'].search([('lot_producing_id', '=', data['lot_id'].id)])
+            if len(production_ids) == 1:
+                data['production_id'] = production_ids
+                data['production_product_id'] = data['production_id'].product_id
+            else:
+                data['warning'] = _("This lot is not linking with a production")
+
+        elif data.get('label_lot') and data.get('label_date') and data.get('label_product'):
+            # In this case, Create a new lot and a new production
+            if data['label_product'].bom_ids and data['label_product'].bom_ids[0].type == "normal":
+                # Create the new lot
+                lot_vals = {
+                    'name': data['label_lot'],
+                    'product_id': data['label_product'].id,
+                    'expiration_date': data['label_date'],
+                }
+                lot = self.env['stock.lot'].create(lot_vals)
+
+                # Create OF with origin location and product
+                mo_vals = {
+                    'product_id': data['label_product'].id,
+                    'product_qty': 1,
+                    'origin': 'scanner',
+                    'user_id': self.env.user.id,
+                    'bom_id': data['label_product'].bom_ids[0].id,
+                    'lot_producing_id': lot.id,
+                }
+                new_mo = self.env['mrp.production'].create(mo_vals)
+                new_mo.action_confirm()
+                data = self.init_data()
+                data['production_id'] = new_mo
+                data['production_product_id'] = new_mo.product_id
+                data['production_lot_id'] = new_mo.lot_producing_id
+
+            else:
+                data['warning'] = _("This product have no production configuration")
+
+        return data
+
+    def put_production_quantity(self, data):
+        """ Register the quantity produced """
+        self.ensure_one()
+
+        if data.get('production_id') and data['production_id'].state in ['cancel', 'done']:
+            data['warning'] = _('This production order is already finished')
+
+        elif data.get('production_id') and data.get('production_quantity', 0.0) > 0.0:
+            production = data['production_id']
+            production.user_id = self.env.user
+
+            if production.product_qty > 0.0 and production.product_qty != data['production_quantity']:
+                factor = data['production_quantity'] / production.product_qty
+                production._update_raw_moves(factor)
+                production.product_qty = data['production_quantity']
+                production.move_finished_ids.product_uom_qty = data['production_quantity']
+
+            production.move_raw_ids.move_line_ids.lot_id = False
+            production.move_raw_ids.move_line_ids.qty_done = 0.0
+            production.qty_producing = data['production_quantity']
+            production._onchange_producing()
+            production._compute_move_raw_ids()
+
+        elif data.get('production_quantity', 0.0) <= 0.0:
+            data['warning'] = _('Put positive quantity on production')
+        else:
+            data['warning'] = _('This production order is not to do')
+
+        return data
+
+    def get_production_move_line(self, data):
+        """ Return production move line with tracking lot """
+        self.ensure_one()
+        new_data = self.init_data()
+
+        if data.get('production_id') and data['production_id'].state not in ['cancel', 'done']:
+            production = data['production_id']
+            new_data['production_id'] = production
+            new_data['production_product_id'] = production.product_id
+
+            for move_line in production.move_raw_ids.move_line_ids:
+                if move_line.state in ['cancel', 'done']:
+                    continue
+                elif move_line.product_id.tracking != 'none' and not move_line.lot_id:
+                    new_data['move_line'] = move_line
+                    new_data['product_id'] = new_data['move_line'].product_id
+                    new_data['quantity'] = new_data['move_line'].qty_done
+                    break
+        else:
+            data['warning'] = _('This production order is not to do')
+
+        data = new_data
+        return data
+
+    def check_production_move_line(self, data):
+        """ Check if move_line is complete """
+        self.ensure_one()
+        if data.get('move_line') and data.get('lot_id'):
+            if data['move_line'].product_id != data['lot_id'].product_id:
+                data['warning'] = _('This not the good product')
+            else:
+                source_location = data['move_line'].production_id.location_src_id
+                location_origin_ids = self.env['stock.location'].search([('id', 'child_of', source_location.id)])
+                quant_ids = self.env['stock.quant'].search([
+                    ('lot_id', '=', data['lot_id'].id), ('location_id', '=', location_origin_ids.ids)])
+
+                if (not quant_ids) or sum(quant_ids.mapped('quantity')) < data['move_line'].qty_done:
+                    data['warning'] = _('There is not enough quantity on production, move the component on production '
+                                        'zone before')
+                else:
+                    data['move_line'].lot_id = data['lot_id']
+                    data['move_line'].qty_done = data['move_line'].reserved_uom_qty
+
+        elif data.get('move_line'):
+            data['warning'] = _('This lot is unknown')
+        else:
+            data['warning'] = _('No component product to check')
+        return data
+
+    def confirm_production(self, data):
+        """ Confirm the production """
+        self.ensure_one()
+        if data.get('production_id') and data['production_id'].state not in ['cancel', 'done']:
+            production = data['production_id']
+            if production.state == 'to_close':
+                production.button_mark_done()
+        print('-----confirm_production--------\n', data)
         return data
 
     def get_list_option(self, data):
@@ -87,7 +267,7 @@ class WmsScenarioStep(models.Model):
             'name': lot.name,
             'product_id': maturity_product.id,
             'expiration_date': expiry_date,
-            }
+        }
         maturity_lot = self.env['stock.lot'].create(lot_vals)
 
         # Create OF with origin location and product
@@ -99,7 +279,7 @@ class WmsScenarioStep(models.Model):
             'lot_producing_id': maturity_lot.id,
             'location_src_id': location_origin.id,
             'location_dest_id': location_origin.id,
-            }
+        }
         new_mo = self.env['mrp.production'].create(mo_vals)
 
         # Create stock.move with composant
@@ -112,7 +292,7 @@ class WmsScenarioStep(models.Model):
             'raw_material_production_id': new_mo.id,
             'picking_type_id': new_mo.picking_type_id.id,
             'manual_consumption': True,
-            }
+        }
         new_move = self.env['stock.move'].create(move_vals)
         new_mo.action_confirm()
 

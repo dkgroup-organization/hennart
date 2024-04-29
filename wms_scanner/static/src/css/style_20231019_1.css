@@ -353,20 +353,9 @@ textarea {
 2. Set the default placeholder color to the user's configured gray 400 color.
 */
 
-input::-moz-placeholder, textarea::-moz-placeholder {
-  opacity: 1;
-  /* 1 */
-  color: #9ca3af;
-  /* 2 */
-}
 
-input::placeholder,
-textarea::placeholder {
-  opacity: 1;
-  /* 1 */
-  color: #9ca3af;
-  /* 2 */
-}
+
+
 
 /*
 Set the default cursor for buttons.
@@ -698,17 +687,7 @@ input{
   padding: 1rem;
 }
 
-::-moz-placeholder{
-  font-style: italic;
-  --tw-text-opacity: 1;
-  color: rgb(107 114 128 / var(--tw-text-opacity));
-}
 
-::placeholder{
-  font-style: italic;
-  --tw-text-opacity: 1;
-  color: rgb(107 114 128 / var(--tw-text-opacity));
-}
 
 .sr-only{
   position: absolute;

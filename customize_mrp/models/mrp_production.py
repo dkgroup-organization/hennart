@@ -24,8 +24,6 @@ class MRPProduction(models.Model):
             if production.procurement_group_id.sale_id:
                 sale_id = production.procurement_group_id.sale_id
                 partner_id = production.procurement_group_id.sale_id.partner_id
-            if not partner_id:
-                partner_id = self.env.company.partner_id
             production.sale_id = sale_id
             production.partner_id = partner_id
 
@@ -36,4 +34,5 @@ class MRPProduction(models.Model):
             self.lot_producing_id = self.env['stock.lot'].create_production_lot(product=self.product_id)
         if self.product_id.tracking == 'serial':
             self._set_qty_producing()
+
 
