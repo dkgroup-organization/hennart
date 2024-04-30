@@ -82,22 +82,25 @@ class StockMove(models.Model):
                     message += _(f"\nThis lot need a expiration date: {move.name} {move_line.lot_id.name}")
                 if (move_line.weight == 0.0 or move_line.to_weight) and move_line.qty_done > 0.0:
                     message += _(f"\nThis line need a weight: {move.name}")
-
         if message:
             raise ValidationError(message)
 
     def get_default_value(self, vals={}):
         self.ensure_one()
-        vals.update(
-            {
-                'picking_id': self.picking_id.id,
+        move_vals = {
                 'move_id': self.id,
                 'company_id': self.company_id.id,
                 'product_id': self.product_id.id,
                 'location_id': self.location_id.id,
                 'location_dest_id': self.location_dest_id.id,
                 'product_uom_id': self.product_uom.id,
-            })
+            }
+        if self.picking_id:
+            move_vals['picking_id'] = self.picking_id.id
+        if self.production_id:
+            move_vals['production_id'] = self.production_id.id
+
+        vals.update(move_vals)
         return vals
 
     @api.depends('move_line_ids.lot_id')
@@ -201,18 +204,23 @@ class StockMove(models.Model):
     def put_weight(self):
         """ Create move_line_ids to save value"""
         for line in self:
-            move_line_vals = line.get_default_value({'weight': line.weight})
+            if line.production_id or line.raw_material_production_id or line.byproduct_id or line.scrap_ids:
+                weight = line.product_id.weight * (line.quantity_done or line.product_uom_qty or 0.0)
+            else:
+                weight = line.weight
+
+            move_line_vals = line.get_default_value({'weight': weight})
             move_line_vals['to_weight'] = False
 
             if not line.move_line_ids:
                 line.move_line_ids.create(move_line_vals)
             elif len(line.move_line_ids) == 1:
                 line.move_line_ids.update(move_line_vals)
-            elif line.production_id:
+            elif line.production_id or line.raw_material_production_id or line.byproduct_id or line.scrap_ids:
                 nb_line = 0
                 move_line_update = self.env['stock.move.line']
                 for move_line in line.move_line_ids:
-                    if move_line.state not in ['cancel', 'done']:
+                    if move_line.state not in ['cancel']:
                         nb_line += 1
                         move_line_update |= move_line
                 if move_line_update:
@@ -253,6 +261,8 @@ class StockMove(models.Model):
                     move.move_line_ids.write({'qty_done': 0.0, 'weight': 0.0})
         if 'quantity_done' in vals and any(move.state == 'cancel' for move in self):
             del vals['quantity_done']
+
+
         return super().write(vals)
 
     def _do_unreserve(self):

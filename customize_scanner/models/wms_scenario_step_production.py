@@ -103,12 +103,40 @@ class WmsScenarioStep(models.Model):
 
         elif data.get('lot_id') and type(data['lot_id']) == type(self.env['stock.lot']):
             # No production selected, find one or create one if needed
-            production_ids = self.env['mrp.production'].search([('lot_producing_id', '=', data['lot_id'].id)])
+            lot = data['lot_id']
+            production_ids = self.env['mrp.production'].search([
+                ('lot_producing_id', '=', lot.id), ('state', '!=', 'cancel')])
+
             if len(production_ids) == 1:
+                # a production exist with this lot
+                data = self.init_data()
                 data['production_id'] = production_ids
-                data['production_product_id'] = data['production_id'].product_id
+                data['production_product_id'] = production_ids.product_id
+                data['production_lot_id'] = production_ids.lot_producing_id
+
+            elif not production_ids and len(lot.quant_ids) == 0:
+                # no production but a new lot exist
+                if lot.product_id.bom_ids and lot.product_id.bom_ids[0].type == "normal":
+
+                        mo_vals = {
+                            'product_id': lot.product_id.id,
+                            'product_qty': 1,
+                            'origin': 'scanner',
+                            'bom_id': lot.product_id.bom_ids[0].id,
+                            'lot_producing_id': lot.id,
+                        }
+                        new_mo = self.env['mrp.production'].create(mo_vals)
+                        new_mo._compute_move_raw_ids()
+                        new_mo.move_raw_ids.put_quantity_done()
+                        new_mo.action_confirm()
+                        data = self.init_data()
+                        data['production_id'] = new_mo
+                        data['production_product_id'] = new_mo.product_id
+                        data['production_lot_id'] = new_mo.lot_producing_id
+                else:
+                    data['warning'] = _("This product is not configured to create production")
             else:
-                data['warning'] = _("This lot is not linking with a production")
+                data['warning'] = _("This lot is already used, you cannot create a new production with it")
 
         elif data.get('label_lot') and data.get('label_date') and data.get('label_product'):
             # In this case, Create a new lot and a new production
@@ -131,6 +159,8 @@ class WmsScenarioStep(models.Model):
                     'lot_producing_id': lot.id,
                 }
                 new_mo = self.env['mrp.production'].create(mo_vals)
+                new_mo._compute_move_raw_ids()
+                new_mo.move_raw_ids.put_quantity_done()
                 new_mo.action_confirm()
                 data = self.init_data()
                 data['production_id'] = new_mo
