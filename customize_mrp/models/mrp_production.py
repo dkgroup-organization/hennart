@@ -35,4 +35,7 @@ class MRPProduction(models.Model):
         if self.product_id.tracking == 'serial':
             self._set_qty_producing()
 
+    def button_test(self):
+        """ Used to test function"""
+        self._compute_move_raw_ids()
 
