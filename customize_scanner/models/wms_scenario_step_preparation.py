@@ -376,10 +376,12 @@ class WmsScenarioStep(models.Model):
         """ Return input class to qweb template"""
         self.ensure_one()
         res = "text"
-        if self.action_scanner in ['scan_quantity', 'scan_date']:
+        if self.action_scanner in ['scan_quantity']:
             res = 'number'
         if self.action_scanner == 'scan_weight' and self.action_variable == 'weight':
             res = 'hidden'
+        if self.action_scanner in ['scan_date']:
+            res = 'date'
         return res
 
     def get_input_step(self, data):
@@ -461,6 +463,10 @@ class WmsScenarioStep(models.Model):
             location_ids = self.get_default_dest_location()
             for location in location_ids:
                 res.append({'text': location.name, 'href': href_base + f'location_dest_id&scan={location.id}'})
+
+        if data['step'].action_variable == 'production_lot_id':
+            if data.get('production_id') and data['production_id'].lot_producing_id and not data['production_id'].lot_producing_id.quant_ids:
+                res.append({'text': _('Modify date'), 'href': href_base + f"change_date"})
         return res
 
     def get_tare(self, data):

@@ -69,6 +69,18 @@
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
 
+	<record id="wms_scenario_step_production_45" model="wms.scenario.step">
+		<field name="sequence" eval="45"/>
+		<field name="name">production-45</field>
+		<field name="description">Scan expirity date</field>
+		<field name="action_scanner">scan_date</field>
+		<field name="action_variable">expiry_date</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
+		<field name="python_code">data = step.change_production_date(data)</field>
+		<field name="action_message"/>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
 	<record id="wms_scenario_step_production_50" model="wms.scenario.step">
 		<field name="sequence" eval="50"/>
 		<field name="name">production-50</field>
