@@ -96,6 +96,24 @@
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
 
+	<record id="wms_scenario_production_transition_40_45" model="wms.scenario.transition">
+		<field name="name">1-[40-45]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-40')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-45')]"/>
+		<field name="condition">data.get('button', '?') == 'change_date' </field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
+	<record id="wms_scenario_production_transition_45_40" model="wms.scenario.transition">
+		<field name="name">1-[45-40]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-45')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-40')]"/>
+		<field name="condition">True</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
 	<record id="wms_scenario_production_transition_50_60" model="wms.scenario.transition">
 		<field name="name">1-[50-60]</field>
 		<field name="sequence" eval="1"/>

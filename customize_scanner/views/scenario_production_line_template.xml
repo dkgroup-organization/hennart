@@ -52,6 +52,7 @@
                     </t>
                     <t t-else="">
                         <t t-call="customize_scanner.scanner_input_production_lot_id"/>
+                        <t t-call="customize_scanner.scanner_input_expiry_date"/>
                         <t t-call="customize_scanner.scanner_input_production_quantity"/>
                     </t>
                     <button type="submit" class="btn-green landscape:col-span-2">Valid</button>

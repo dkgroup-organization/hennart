@@ -65,6 +65,23 @@ class WmsScenarioStep(models.Model):
             data.update({'production_ids': production_ids})
         return data
 
+    def change_production_date(self, data):
+        """ Change the date of production lot """
+        self.ensure_one()
+        if data.get('production_id'):
+            if data['production_id'].lot_producing_id:
+                production_lot = data['production_id'].lot_producing_id
+                if data.get('expiry_date'):
+                    production_lot.expiration_date = data['expiry_date']
+                    del data['expiry_date']
+                else:
+                    data['warning'] = _("Enter a valid date.")
+            else:
+                data['warning'] = _("Create a lot before change the date.")
+        else:
+            data['warning'] = _("This production is no longer available")
+        return data
+
     def check_production_id(self, data):
         """ Check or create new production if there is no current available """
         self.ensure_one()
