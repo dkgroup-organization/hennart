@@ -89,11 +89,11 @@ class StockPicking(models.Model):
         for picking in self:
             dt = picking.scheduled_date or fields.Datetime.now()
             # (2000 - dt.year) * 10000
-            date_score = dt.month * 100 + dt.day
+            date_score = (dt.year - 2020)*1000000 + dt.month * 10000 + 100 * dt.day + dt.hour
             weight_score = int(sum(move.product_uom_qty * move.product_id.weight for move in picking.move_ids_without_package))
-
-            # Adaptez les coefficients, TODO: add carrier and disponibility priority hour
-            picking.sequence = int(date_score * 10000 + weight_score)
+            if weight_score > 99.0:
+                weight_score = 99.0
+            picking.sequence = int(date_score * 100 + int(weight_score))
 
     def compute_date_delivered(self):
         """ Custom delivery, Always delivery at one time with no backorder """

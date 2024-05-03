@@ -22,6 +22,7 @@ class WmsScenarioStep(models.Model):
         button = dict(request.params).get('button', '')
         production_condition = [('state', 'not in', ['draft', 'cancel', 'done'])]
         all_production_ids = self.env['mrp.production'].search(production_condition, order='date_planned_start')
+        new_data = self.init_data()
 
         if button == "update_production" and data.get('partner_ids'):
             option = 'production_partner'
@@ -36,19 +37,18 @@ class WmsScenarioStep(models.Model):
             for production in all_production_ids:
                 if not production.partner_id:
                     categ_ids |= production.product_id.categ_id
-            data.update({'categ_ids': categ_ids})
+            new_data.update({'categ_ids': categ_ids})
 
         elif option == 'production_partner':
             partner_ids = self.env['res.partner']
             for production in all_production_ids:
                 if production.partner_id:
                     partner_ids |= production.partner_id
-            data.update({'partner_ids': partner_ids})
+            new_data.update({'partner_ids': partner_ids})
 
         elif data.get('partner_id'):
-            if data.get('partner_id'):
-                if type(data.get('partner_id')) == str:
-                    data['partner_id'] = self.env['res.partner'].search([('id', '=', int(data.get('partner_id')))])
+            if type(data.get('partner_id')) == str:
+                data['partner_id'] = self.env['res.partner'].search([('id', '=', int(data.get('partner_id')))])
             production_condition += [('partner_id', '=', data['partner_id'].id)]
             production_ids = self.env['mrp.production'].search(production_condition)
 
@@ -59,11 +59,12 @@ class WmsScenarioStep(models.Model):
             production_ids = self.env['mrp.production'].search(production_condition)
 
         if type(data.get('production_id')) == str:
-            data = self.check_production_id(data)
+            new_data = self.check_production_id(data)
 
         if production_ids:
-            data.update({'production_ids': production_ids})
-        return data
+            new_data.update({'production_ids': production_ids})
+
+        return new_data
 
     def change_production_date(self, data):
         """ Change the date of production lot """
@@ -228,6 +229,11 @@ class WmsScenarioStep(models.Model):
             production = data['production_id']
             new_data['production_id'] = production
             new_data['production_product_id'] = production.product_id
+            new_mo._compute_move_raw_ids()
+
+            for move in production.move_raw_ids:
+                if not move.move_line_ids:
+                    move.put_quantity_done()
 
             for move_line in production.move_raw_ids.move_line_ids:
                 if move_line.state in ['cancel', 'done']:
@@ -355,24 +361,4 @@ class WmsScenarioStep(models.Model):
         # Return MO to data
         data['mo_id'] = new_mo
 
-        return data
-
-    def print_production_label(self, data):
-        """ At the end print production lot """
-        self.ensure_one()
-        session = self.env['wms.session'].get_session()
-        mo = data.get('mo_id')
-        if mo and mo.lot_producing_id:
-            job_vals = {
-                'name': f'Lot: {mo.lot_producing_id.ref} ,{mo.lot_producing_id.product_id.name}',
-                'res_model': 'stock.lot',
-                'res_id': mo.lot_producing_id.id,
-                'session_id': session.id,
-            }
-            job_id = self.env['wms.print.job'].create(job_vals)
-
-            if data.get('printer'):
-                job_id.print_label(data)
-
-            data['message'] = _('The lot is changed')
         return data
