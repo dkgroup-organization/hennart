@@ -229,7 +229,6 @@ class WmsScenarioStep(models.Model):
             production = data['production_id']
             new_data['production_id'] = production
             new_data['production_product_id'] = production.product_id
-            new_mo._compute_move_raw_ids()
 
             for move in production.move_raw_ids:
                 if not move.move_line_ids:
@@ -281,7 +280,6 @@ class WmsScenarioStep(models.Model):
             production = data['production_id']
             if production.state == 'to_close':
                 production.button_mark_done()
-        print('-----confirm_production--------\n', data)
         return data
 
     def get_list_option(self, data):
@@ -361,4 +359,24 @@ class WmsScenarioStep(models.Model):
         # Return MO to data
         data['mo_id'] = new_mo
 
+        return data
+
+    def print_production_label(self, data):
+        """ At the end print production lot """
+        self.ensure_one()
+        session = self.env['wms.session'].get_session()
+        production = data.get('production_id')
+        if production and production.lot_producing_id:
+            job_vals = {
+                'name': f'Lot: {production.lot_producing_id.ref} ,{production.lot_producing_id.product_id.name}',
+                'res_model': 'stock.lot',
+                'res_id': production.lot_producing_id.id,
+                'session_id': session.id,
+            }
+            job_id = self.env['wms.print.job'].create(job_vals)
+
+            if data.get('printer'):
+                job_id.print_label(data)
+                # Del the printer after each print
+                del data['printer']
         return data

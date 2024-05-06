@@ -14,23 +14,26 @@ import datetime
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
-
-    def print_production_label(self, data):
-        """ At the end print production lot """
+    def print_lot(self, data):
+        """ Print the production lot """
         self.ensure_one()
-        session = self.env['wms.session'].get_session()
-        mo = data.get('mo_id')
-        if mo and mo.lot_producing_id:
-            job_vals = {
-                'name': f'Lot: {mo.lot_producing_id.ref} ,{mo.lot_producing_id.product_id.name}',
-                'res_model': 'stock.lot',
-                'res_id': mo.lot_producing_id.id,
-                'session_id': session.id,
-            }
-            job_id = self.env['wms.print.job'].create(job_vals)
+        if data.get('printer'):
+            session = self.env['wms.session'].get_session()
 
-            if data.get('printer'):
-                job_id.print_label(data)
+            if data.get('lot_id'):
+                lot = data.get('lot_id')
+                job_vals = {
+                    'name': f'Lot: {lot.ref} ,{lot.product_id.name}',
+                    'res_model': 'stock.lot',
+                    'res_id': lot.id,
+                    'session_id': session.id,
+                }
+                job = self.env['wms.print.job'].create(job_vals)
 
-            data['message'] = _('The lot is printed')
+            job_ids = self.env['wms.print.job'].search([('state', '=', 'todo')])
+            if job_ids:
+                for job in job_ids:
+                    job.print_label(data)
+            del data['printer']
+
         return data

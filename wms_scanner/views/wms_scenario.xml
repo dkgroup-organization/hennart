@@ -121,8 +121,8 @@
                         </page>
                         <page string="QWEB render">
                             <group>
-
                                 <field name="scenario_image"/>
+                                <field name="scenario_title"/>
                                 <field name="scenario_qweb"/>
                             </group>
                         </page>

@@ -17,11 +17,21 @@ class WmsPrintJob(models.Model):
     name = fields.Char('Description')
     session_id = fields.Many2one('wms.session', 'Session')
     res_model = fields.Char('Model')
-    res_id = fields.Integer('record ID')
+    res_id = fields.Integer('Record ID')
+    label_id = fields.Integer('Label ID')
+    label_qty = fields.Integer('Label qty')
     error = fields.Text('Error')
     state = fields.Selection(string='Status', selection=[
         ('todo', 'To do'),
+        ('error', 'Error'),
         ('cancel', 'Cancelled'),
         ('done', 'Done')],
         copy=False, index=True, readonly=True,
         default='todo')
+
+    def print_job(self, data):
+        """ Print current job """
+        if data.get('printer'):
+            for job in self:
+                pass
+

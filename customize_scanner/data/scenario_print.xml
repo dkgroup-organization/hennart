@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<odoo>
+    <record id="wms_scenario_print" model="wms.scenario">
+		<field name="name">print</field>
+		<field name="sequence" eval="300"/>
+		<field name="scenario_image">print.svg</field>
+		<field name="scenario_image">Print</field>
+		<field name="scenario_qweb">customize_scanner.scenario_print</field>
+		<field name="debug_mode" eval="0"/>
+		<field name="active" eval="1"/>
+		<field name="warehouse_ids" eval="[(6,0,[])]"/>
+		<field name="company_id" ref="base.main_company"/>
+		<field name="group_ids" eval="[(6,0,[ref('stock.group_stock_user')])]"/>
+		<field name="user_ids" eval="[(6,0,[])]"/>
+	</record>
+
+	<record id="wms_scenario_step_print-1" model="wms.scenario.step">
+		<field name="sequence" eval="1"/>
+		<field name="name">print-1</field>
+		<field name="action_scanner">start</field>
+		<field name="action_variable">scan</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_print"/>
+		<field name="python_code"/>
+	</record>
+	
+	<record id="wms_scenario_step_print-10" model="wms.scenario.step">
+		<field name="sequence" eval="10"/>
+		<field name="name">print-10</field>
+		<field name="description">scan lot</field>
+		<field name="action_scanner">scan_multi</field>
+		<field name="action_variable">lot_id</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_print"/>
+		<field name="python_code"/>
+	</record>
+
+	<record id="wms_scenario_step_print-20" model="wms.scenario.step">
+		<field name="sequence" eval="20"/>
+		<field name="name">print-20</field>
+		<field name="action_scanner">scan_model</field>
+		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
+		<field name="action_variable">printer</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_print"/>
+		<field name="python_code">data = step.print_lot(data)</field>
+	</record>
+
+</odoo>

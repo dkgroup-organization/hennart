@@ -46,7 +46,8 @@
                       t-att-action="'./scanner?scenario={}&amp;step={}'.format(step.scenario_id.id, step.id)"
                       autoComplete="off"
                       method="post">
-                    <t t-if="not data.get('printer')" t-call="customize_scanner.scanner_input_printer"/>
+                    <t t-call="customize_scanner.scanner_input_lot_id"/>
+                    <t t-call="customize_scanner.scanner_input_printer"/>
                     <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
                 </form>
             </t>
