@@ -147,26 +147,34 @@ class SaleOrderLine(models.Model):
     def create_mo(self):
         """ Create MO for needed product to manufacture """
         # order_id.procurement_group_id, move.group_id
-        # TODO group by quantity by product before create MO
+        group_prod = {}
         for line in self:
             product = line.product_id
             if product.bom_ids and product.to_personnalize:
+
                 bom = product.bom_ids[0]
                 if bom.type != 'normal':
                     # Force type of this BOM to have OF
                     bom.type = 'normal'
+                if product not in list(group_prod.keys()):
 
-                lot = self.env['stock.lot'].create_production_lot(product)
-                mo_vals = {
-                    'product_id': product.id,
-                    'origin': line.order_id.name,
-                    'product_qty': line.product_uom_qty,
-                    'bom_id': bom.id,
-                    'lot_producing_id': lot.id,
-                    'procurement_group_id': line.order_id.procurement_group_id.id,
-                    }
+                    lot = self.env['stock.lot'].create_production_lot(product)
+                    group_prod[product] = {
+                        'product_id': product.id,
+                        'origin': line.order_id.name,
+                        'product_qty': line.product_uom_qty,
+                        'bom_id': bom.id,
+                        'lot_producing_id': lot.id,
+                        'procurement_group_id': line.order_id.procurement_group_id.id,
+                        'date_planned_start': line.order_id.commitment_date,
+                        }
+                else:
+                    group_prod[product]['product_qty'] += line.product_uom_qty
+
+        for mo_vals in list(group_prod.values()):
                 new_mo = self.env['mrp.production'].create(mo_vals)
                 new_mo.action_confirm()
+                new_mo.move_raw_ids.put_quantity_done()
 
     @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom', 'order_id.delivery_status')
     def _compute_qty_delivered(self):

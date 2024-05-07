@@ -9,6 +9,7 @@
 
                 <div name="button_box" position="before">
                     <field name="sale_id"/>
+                    <field name="partner_id"/>
                 </div>
 
             </field>
@@ -21,7 +22,8 @@
             <field name="arch" type="xml">
 
                 <field name="state" position="before">
-                    <field name="sale_id"/>
+                    <field name="sale_id"/><br/>
+                    <field name="partner_id"/>
                 </field>
 
             </field>

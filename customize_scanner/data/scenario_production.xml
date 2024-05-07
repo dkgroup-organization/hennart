@@ -127,4 +127,17 @@
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
 
+	<record id="wms_scenario_step_production_110" model="wms.scenario.step">
+		<field name="sequence" eval="110"/>
+		<field name="name">production-110</field>
+		<field name="description">Print production</field>
+		<field name="action_scanner">scan_model</field>
+		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
+		<field name="action_variable">printer</field>
+		<field name="step_qweb">customize_scanner.scanner_scenario_production_product</field>
+		<field name="action_message"/>
+		<field name="python_code">data = step.print_production_label(data)</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
 </odoo>

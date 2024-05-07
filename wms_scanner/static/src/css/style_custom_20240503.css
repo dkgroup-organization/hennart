@@ -1,18 +1,4 @@
 
-::placeholder {
-  color: Black;
-  opacity: 1; /* Firefox */
-}
-
-::-ms-input-placeholder { /* Edge 12-18 */
-  color: Black;
-}
-::-moz-placeholder {
-  opacity: 1;
-  /* 1 */
-  color: Black;
-  /* 2 */
-}
 
 .border-green-300{
   border-color: #60FF60;

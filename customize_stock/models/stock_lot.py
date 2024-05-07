@@ -120,10 +120,12 @@ class StockLot(models.Model):
                 condition_name = condition + [('name', '=', lot_search)]
                 lot_ids = self.search(condition_name)
                 if i == 99:
-                    if product and not condition:
+                    # The counter is on max value
+                    if not condition:
+                        # only 99 lots by product per day
                         lot_search = search_free_name(product, condition=[('product_id', '=', product.id)])
                     else:
-                        lot_search = 'XXXXXX'
+                        raise ValidationError('Not possible to attribute a new lot number')
                     break
                 elif not lot_ids:
                     break

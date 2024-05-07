@@ -64,7 +64,7 @@ class WmsScenarioStep(models.Model):
         string="Scanner", default="no_scan", required=True)
     action_model = fields.Many2one('ir.model', string="Model to scan",
                                    help="Define the model used at this step.")
-    action_variable = fields.Char(string='Input name', default='scan',
+    action_variable = fields.Char(string='Variable', default='scan',
                                   help="Define a name for the result of the scan at this step ")
     action_message = fields.Char(string='Input Placeholder', translate=True)
     action_presentation = fields.Html('Screen presentation', translate=True)

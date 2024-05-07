@@ -36,6 +36,9 @@
         "data/scenario_change_lot_transition.xml",
         "data/scenario_production.xml",
         "data/scenario_production_transition.xml",
+        "data/scenario_print.xml",
+        "data/scenario_print_transition.xml",
+
         "data/scenario_menu.xml",
     ],
     'demo': [

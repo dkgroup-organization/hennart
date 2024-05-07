@@ -133,7 +133,7 @@
 	</record>
 
 	<record id="wms_scenario_production_transition_60_100" model="wms.scenario.transition">
-		<field name="name">1-[60-100]</field>
+		<field name="name">2-[60-100]</field>
 		<field name="sequence" eval="2"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-60')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-100')]"/>
@@ -147,6 +147,15 @@
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-70')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-60')]"/>
 		<field name="condition">data.get('lot_id')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+	</record>
+
+	<record id="wms_scenario_production_transition_100_110" model="wms.scenario.transition">
+		<field name="name">1-[100-110]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'production-100')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'production-110')]"/>
+		<field name="condition">True</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
 	</record>
 
