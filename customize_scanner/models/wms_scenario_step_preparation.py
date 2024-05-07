@@ -155,10 +155,10 @@ class WmsScenarioStep(models.Model):
         if self.action_variable == 'production_lot_id':
             production_lot = production and production.lot_producing_id
             if production_lot:
-                res = _('Lot: ') + f"{production_lot.name or ''}"
+                res = f"{production_lot.name or ''}"
                 expiration_date = production_lot.expiration_date or production_lot.use_date
                 if expiration_date:
-                    res += f" {expiration_date.strftime('%d/%m/%Y')}"
+                    res += f"            {expiration_date.strftime('%d/%m/%Y')}"
             else:
                 res = _('Scan production lot')
 
@@ -175,10 +175,10 @@ class WmsScenarioStep(models.Model):
                 res += _('  (max: ') + f"{data['max_quantity']} " + _("Unit") + ")"
 
         if self.action_variable == 'production_quantity':
-            if production and production.qty_producing:
-                res = f'{int(production.qty_producing)}'
+            if production:
+                res = f'{int(production.product_qty)} ' + _('Unit')
             else:
-                res = 'Quantity produced'
+                res = 'Produced quantity'
 
         if self.action_variable == 'printer':
             res = _('Scan Printer')
@@ -256,8 +256,8 @@ class WmsScenarioStep(models.Model):
             quantity = data.get('quantity') or move_line and move_line.reserved_uom_qty or 0.0
             res = f'{int(quantity)}'
         if action_variable == 'production_quantity':
-            if production and production.qty_producing:
-                res = f'{int(production.qty_producing)}  ' + _('Unit')
+            if production:
+                res = f'{int(production.qty_producing or production.product_qty)}  ' + _('Unit')
             else:
                 res = 'Quantity'
         if action_variable == 'printer':
