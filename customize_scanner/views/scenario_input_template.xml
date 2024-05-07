@@ -107,7 +107,6 @@
             </t>
         </template>
 
-
         <template id="scanner_sub_input2" name="scanner_sub_input2">
             <div class="relative" t-if="step.action_presentation" t-esc="step.action_presentation"/>
             <t t-if="step.action_variable == action_variable">

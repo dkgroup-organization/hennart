@@ -29,8 +29,9 @@ class WmsScenarioStep(models.Model):
         if button == "update_production" and data.get('categ_ids'):
             option = 'production_categ'
 
-        if option == 'production_create':
-            pass
+        if button == 'new_production':
+            production_vals = {'user_id': self.env.user.id}
+            new_data['button'] = 'new_production'
 
         elif option == 'production_categ':
             categ_ids = self.env['product.category']

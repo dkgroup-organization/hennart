@@ -23,6 +23,7 @@
         "views/scenario_inventory_template.xml",
         "views/scenario_change_lot_template.xml",
         "views/scenario_print_template.xml",
+        "views/scenario_weight_template.xml",
         "views/scenario_production_list_template.xml",
         "views/scenario_production_line_template.xml",
 
