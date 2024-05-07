@@ -39,6 +39,8 @@
         "data/scenario_production_transition.xml",
         "data/scenario_print.xml",
         "data/scenario_print_transition.xml",
+        "data/scenario_weight.xml",
+        "data/scenario_weight_transition.xml",
 
         "data/scenario_menu.xml",
     ],
