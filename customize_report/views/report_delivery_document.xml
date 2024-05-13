@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="report_delivery_document_inherits" inherit_id="stock.report_delivery_document">
+        <xpath expr="//div[@class='page']" position="before">
+            <div style="float: right; margin-top: 10px;">
+                <img src="/customize_report/static/img/preparation.png" style="width: 100px; height: auto;"/>
+                <span>Preparation en cours (Informations non confirmées, ne pas envoyer au client)</span>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

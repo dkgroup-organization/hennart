@@ -12,7 +12,9 @@
                         <div class="mt0 h5" style="color: black; font-weight: bold !important;">HENNART FRERES</div>
                         <div class="mt0 h5" style="color: black; font-weight: bold !important;">ZI du Château - 8, rue Gutenberg - F 62 220 CARVIN</div>
 
-                        <span t-field="company.invoice_header_text"/>
+                        <div style="font-size: 15px; margin-bottom: 3px;">
+                            <span t-field="company.invoice_header_text"/>
+                        </div>
 
                         <!-- <div name="company_address" class="mb4">
                             <div>SAS au capital de 531123 € - RC ARRAS 92B557 - SIRET: 318 166 352 00027</div>
