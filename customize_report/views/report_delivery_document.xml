@@ -2,11 +2,27 @@
 <odoo>
     <template id="report_delivery_document_inherits" inherit_id="stock.report_delivery_document">
         <xpath expr="//div[@class='page']" position="before">
-            <div style="float: right; margin-top: 10px;">
-                <img src="/customize_report/static/img/preparation.png" style="width: 100px; height: auto;"/>
-                <span>Preparation en cours (Informations non confirmées, ne pas envoyer au client)</span>
-            </div>
+            <t t-if="o.state != 'done'">
+                <div style="float: right; margin-top: 10px;">
+                    <img src="/customize_report/static/img/preparation.png" style="width: 100px; height: auto;"/>
+                    <span>Preparation en cours (Informations non confirmées, ne pas envoyer au client)</span>
+                </div>
+            </t>
         </xpath>
+
+        <xpath expr="//span[@t-field='move.product_uom']" position="replace">
+            <span t-field="move.product_id.uos_id"/>
+        </xpath>
+
+        <xpath expr="//span[@t-field='move.quantity_done']" position="replace">
+            <t t-if="move.product_id.uos_id.name == 'kg'">
+                <span t-field="move.weight"/>
+            </t>
+            <t t-else="">
+                <span t-field="move.quantity_done"/>
+            </t>
+        </xpath>
+
     </template>
 
 </odoo>
