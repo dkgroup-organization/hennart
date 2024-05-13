@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report
+            id="account_invoices_uk"
+            model="account.move"
+            string="Facture UK"
+            report_type="qweb-pdf"
+            name="report_invoice_uk.report_invoice_uk"
+            file="report_invoice_uk.report_invoice_uk"
+            print_report_name = "(object.name+'.pdf')"
+    />
+
+    <report
+            id="account_invoices_bl_valued"
+            model="account.move"
+            string="BL Valorisé"
+            report_type="qweb-pdf"
+            name="report_invoice_uk.report_invoice_bl_valued"
+            file="report_invoice_uk.report_invoice_bl_valued"
+            print_report_name = "(object.name+'.pdf')"
+    />
+
+</odoo>

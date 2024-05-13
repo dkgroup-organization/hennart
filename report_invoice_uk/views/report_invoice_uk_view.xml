@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="report_invoice_document_inherits_uk" inherit_id="account.report_invoice_document">
+
+        <xpath expr="//p[@name='incoterm']" position="after">
+            <t t-if="o.fiscal_position_id and o.fiscal_position_id.id == 19">
+                <p name="invoice_date_due" style="font-weight: bold !important;">
+                    <strong>Date of arrival in UK: </strong><span t-field="o.incoterm_date"/>
+                    <br/>
+                    <strong>Port of entry: </strong>
+                    <t t-if="o.incoterm_port">
+                        <span t-field="o.incoterm_port"/>
+                    </t>
+                    <t t-if="not o.incoterm_port">
+                        Folkestone
+                    </t>
+                </p>
+            </t>
+        </xpath>
+
+        <xpath expr="//td[@name='account_invoice_line_name']" position="inside">
+            <t t-if="o.fiscal_position_id and o.fiscal_position_id.id == 19">
+                <p style="font-size: 8px; margin-bottom: 3px;">
+                    <span t-field="line.product_id.type_milk"/>
+                    <span t-field="line.product_id.heat_treatment_milk"/> milk from 
+                    <t t-if="line.product_id.origin_country_id">
+                        <span t-field="line.product_id.origin_country_id.name"/>
+                    </t>
+                    <t t-if="not line.product_id.origin_country_id">
+                        <span>France</span>
+                    </t>
+                    (<span t-esc="line.product_uos.id != 3 and line.product_id.weight * line.number_of_pack or line.quantity" digits="3"/> kg)
+                </p>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
