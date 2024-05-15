@@ -12,7 +12,7 @@
                         <div class="mt0 h5" style="color: black; font-weight: bold !important;">HENNART FRERES</div>
                         <div class="mt0 h5" style="color: black; font-weight: bold !important;">ZI du Château - 8, rue Gutenberg - F 62 220 CARVIN</div>
 
-                        <div style="font-size: 15px; margin-bottom: 3px;">
+                        <div style="font-size: 10px !important; margin-bottom: 3px;">
                             <span t-field="company.invoice_header_text"/>
                         </div>
 
