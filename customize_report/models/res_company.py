@@ -9,7 +9,7 @@ class ResCompanyInherits(models.Model):
     )
 
     invoice_footer_text = fields.Text(
-        string='Invoice Footer Text',
+        string='Invoice Down Text',
         translate=True,
     )
     

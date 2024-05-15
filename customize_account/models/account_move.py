@@ -1,6 +1,7 @@
 from odoo import fields, models, api, Command
 import logging
 import datetime
+from dateutil.relativedelta import relativedelta
 logger = logging.getLogger('wms_scanner')
 
 
@@ -17,9 +18,16 @@ PAYMENT_STATE_SELECTION = [
 class AccountMove(models.Model):
     _inherit = "account.move"
 
+    def _default_incoterm_date(self):
+        if self._context.get('default_picking_id') and self._context.get('default_picking_id').date_expected:
+            timedate_date_port = fields.Datetime.from_string(self._context.get('default_picking_id').date_expected)
+            timedate_date_port += relativedelta(days=1)
+            return timedate_date_port.date()
+        return False
+
     picking_id = fields.Char(string="Bon de livraison")
     incoterm_port = fields.Char(string="Port of entry")
-    incoterm_date = fields.Date(string="Date of arrival in UK", copy=False)
+    incoterm_date = fields.Date(string="Date of arrival in UK", default=_default_incoterm_date, copy=False)
     payment_method_id = fields.Char(string="Methode de paiement")
 
     total_ht = fields.Float(string='Total HT', copy=False)

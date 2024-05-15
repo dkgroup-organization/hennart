@@ -3,7 +3,7 @@
     <template id="report_delivery_document_inherits" inherit_id="stock.report_delivery_document">
         <xpath expr="//div[@class='page']" position="before">
             <t t-if="o.state != 'done'">
-                <div style="float: right; margin-top: 10px;">
+                <div style="margin-top: 10px;">
                     <img src="/customize_report/static/img/preparation.png" style="width: 100px; height: auto;"/>
                     <span>Preparation en cours (Informations non confirmées, ne pas envoyer au client)</span>
                 </div>

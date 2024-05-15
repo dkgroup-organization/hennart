@@ -2,25 +2,19 @@
 <odoo>
     <data>
 
-
-        <template id="report_invoice_uk">
-            <t t-call="web.html_container">
-                <t t-foreach="docs" t-as="o">
-                    <t t-set="lang" t-value="o.partner_id.lang"/>
-                    <t t-set="print_with_payments" t-value="True"/>
-                    <t 
-                        t-call="account.report_invoice_document" t-lang="lang"/>
-                </t>
-            </t>
-        </template>
-
         <template id="report_invoice_bl_valued">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-set="lang" t-value="o.partner_id.lang"/>
                     <t t-set="print_with_payments" t-value="True"/>
-                    <t 
-                        t-call="account.report_invoice_document" t-lang="lang"/>
+                    <t t-call="account.report_invoice_document" t-lang="lang">
+                        <xpath expr="//div[@class='page']/h2" position="replace">
+                            <h2>
+                                <span>Invoice</span> 
+                                <span t-if="o.name != '/'" t-field="o.name"/>
+                            </h2>
+                        </xpath>
+                    </t>
                 </t>
             </t>
         </template>
