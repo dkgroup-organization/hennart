@@ -35,13 +35,6 @@
             </t>
         </xpath>
 
-        <xpath expr="//td[@name='ean']" position="inside">
-            <t t-if="o.fiscal_position_id and o.fiscal_position_id.id == 19">
-                <br></br>
-                <span t-field="line.product_id.hs_code_id.local_code" />
-            </t>
-        </xpath>
-
     </template>
 
 </odoo>

@@ -83,7 +83,13 @@
                                     <tr t-att-class="'bg-200 fw-bold o_line_section' if line.display_type == 'line_section' else 'fst-italic o_line_note' if line.display_type == 'line_note' else ''">
                                         <t t-if="line.display_type == 'product'" name="account_invoice_line_accountable">
                                             <td name="code" class="small-text"><span t-field="line.product_id.default_code" /></td>
-                                            <td name="ean" class="small-text"><span t-field="line.product_id.barcode" /></td>
+                                            <td name="ean" class="small-text">
+                                                <span t-field="line.product_id.barcode" />
+                                                <t t-if="o.fiscal_position_id and o.fiscal_position_id.id == 19">
+                                                    <br></br>
+                                                    <span t-field="line.product_id.hs_code_id.local_code" />
+                                                </t>
+                                            </td>
                                             <td class="small-text text-end">
                                                 <span t-field="line.uom_qty"/>
                                                 <!-- <span t-field="line.product_uom_id" groups="uom.group_uom"/> -->
