@@ -30,7 +30,7 @@
                     <t t-if="not line.product_id.origin_country_id">
                         <span>France</span>
                     </t>
-                    (<span t-esc="formatLang(line.weight, {'digits': 3})"/> kg)
+                    (<span t-field="line.weight" t-options='{"widget": "float", "precision": 3}'/> kg)
                 </p>
             </t>
         </xpath>
