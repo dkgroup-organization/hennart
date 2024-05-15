@@ -7,7 +7,7 @@
     "license": "AGPL-3",
     "author": "Mehdi HAJJI ",
     "website": "https://dkgroup.fr/",
-    "depends": ["web", "sale", "account", "stock", "product", "customize_product_template"],
+    "depends": ["web", "sale", "account", "stock", "product", "customize_product_template", "customize_report"],
     "data": [
         "views/report_invoice_uk_view.xml",
         "reports/account_report.xml",
