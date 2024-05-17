@@ -176,6 +176,7 @@ class SaleOrderLine(models.Model):
                 new_mo.action_confirm()
                 new_mo.move_raw_ids.put_quantity_done()
 
+
     @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom', 'order_id.delivery_status')
     def _compute_qty_delivered(self):
         super(SaleOrderLine, self)._compute_qty_delivered()
