@@ -24,6 +24,8 @@ class StockPicking(models.Model):
          ('pack_label', 'Label all packs'), ('product_label', 'Label all products')],
         default="lot_label", string="Label strategy")
 
+
+
     def compute_preparation_state(self):
         """ Compute preparation state """
         for picking in self:
