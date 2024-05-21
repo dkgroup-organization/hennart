@@ -106,6 +106,15 @@ class WmsScenarioStep(models.Model):
                 data['warning'] = _("This production is no longer available")
                 return data
 
+            # Create lot
+            if data.get('label_lot') and data.get('label_date') and data.get('label_product') and not data.get('lot_id'):
+                lot_vals = {
+                    'name': data['label_lot'],
+                    'product_id': data['label_product'].id,
+                    'expiration_date': data['label_date'],
+                }
+                data['lot_id'] = self.env['stock.lot'].create(lot_vals)
+
             # Check the lot
             if data.get('lot_id') and type(data['lot_id']) == type(self.env['stock.lot']):
                 lot = data.get('lot_id')
