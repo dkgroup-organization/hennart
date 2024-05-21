@@ -201,18 +201,8 @@ class WmsScenarioStep(models.Model):
         elif data.get('production_id') and data.get('production_quantity', 0.0) > 0.0:
             production = data['production_id']
             production.user_id = self.env.user
-
-            if production.product_qty > 0.0 and production.product_qty != data['production_quantity']:
-                factor = data['production_quantity'] / production.product_qty
-                production._update_raw_moves(factor)
-                production.product_qty = data['production_quantity']
-                production.move_finished_ids.product_uom_qty = data['production_quantity']
-
-            production.move_raw_ids.move_line_ids.lot_id = False
-            production.move_raw_ids.move_line_ids.qty_done = 0.0
-            production.qty_producing = data['production_quantity']
-            production._onchange_producing()
-            production._compute_move_raw_ids()
+            production.change_quantity_needed(data['production_quantity'])
+            production.change_quantity_producing()
 
         elif data.get('production_quantity', 0.0) <= 0.0:
             data['warning'] = _('Put positive quantity on production')

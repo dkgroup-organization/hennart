@@ -6,18 +6,17 @@
 
 from odoo import api, fields, models, _, Command
 from odoo.exceptions import UserError
+from datetime import datetime, timedelta
 
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
-    def action_mrp(self):
-        """ Check if all product with BOM need manufacture, recursive analyse """
-        bom_todo = self.env['mrp.bom']
-
+    def get_production_bom(self):
+        """ Return BOM used in this picking, only normal type BOM, recursive search """
         def get_all_bom(boms):
             """ return all bom in this bom """
-            all_bom = self.env['stock.bom']
+            all_bom = self.env['mrp.bom']
             for bom in boms:
                 for line in bom.bom_line_ids:
                     if line.product_id.bom_ids:
@@ -26,6 +25,8 @@ class StockPicking(models.Model):
             all_bom |= boms
             return all_bom
 
+        bom_todo = self.env['mrp.bom']
+        res = self.env['mrp.bom']
         # list the BOM to do
         for picking in self:
             if picking.state in ['cancel', 'done']:
@@ -34,21 +35,38 @@ class StockPicking(models.Model):
                 if move.product_id.bom_ids:
                     bom_todo |= get_all_bom(move.product_id.bom_ids)
 
+        for bom in bom_todo:
+            if bom.type == 'kit' or bom.product_id.to_personnalize:
+                continue
+            res |= bom
+
+        return res
+
+    def action_mrp(self):
+        """ Check if all product with BOM need manufacture, recursive analyse """
+        bom_todo = self.get_production_bom()
+        # In this case only one warehouse
+        warehouse = self.env['stock.warehouse'].search([], limit=1)
+
         # list or create the order point
         order_point = self.env['stock.warehouse.orderpoint']
         for bom in bom_todo:
-            if bom.type == 'kit':
-                continue
-            product = bom.product_id
-            location = self.search['stock.warehouse']([], limit=1).lot_stock_id
-            order_point = self.env['stock.warehouse.orderpoint'].search(
-                [('product_id', '=', product.id),
-                 ('location_id', '=', location.id)], limit=1)
 
-            if not order_point:
-                order_point_vals = {'product_id': product.id, 'location_id': location.id, 'product_min_qty': 0.0,
-                                    'route_id': self.ref('mrp.route_warehouse0_manufacture'), 'trigger': 'auto',
-                                    'bom_id': bom.id, 'qty_multiple': product.min_production_qty or 1.0,
-                                    'company_id': self.env.company.id or 1, 'visibility_days': 5.0}
-                order_point = order_point.create(order_point_vals)
+            product = bom.product_id
+            product_min_qty = self.env['stock.warehouse.orderpoint'].get_min_qty(warehouse, product)
+
+            # get prevision, horizon is 5 days
+            date = fields.Date.today() + timedelta(days=5)
+            prevision_ids = self.env['report.stock.weekprevision'].search([
+                ('product_id', '=', product.id), ('warehouse_id', '=', warehouse.id), ('date', '<=', date)],
+                order='date desc', limit=1)
+            forecast_qty = prevision_ids.product_qty - product_min_qty
+
+            if forecast_qty < 0.0:
+                # Create OF
+                self.env['mrp.production'].create_forecast_om(warehouse, product, - forecast_qty)
+
+
+
+
 

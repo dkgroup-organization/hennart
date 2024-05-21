@@ -2,26 +2,26 @@
 
 
 from odoo import api, fields, models, tools, _
-from odoo.tools.float_utils import float_round, float_is_zero
-
 
 class StockWarehouseOrderpoint(models.Model):
     """ Defines Minimum stock rules. """
     _inherit = "stock.warehouse.orderpoint"
 
     @api.model
-    def create_bom_orderpoint(self):
-        """ Create all default orderpoint for product to manufacture """
-        route_mo = self.env.ref('mrp.route_warehouse0_manufacture')
-        bom_product_ids = self.env['mrp.bom'].search([('type', '=', 'normal')]).mapped('product_id')
-        orderpoint_product_ids = self.env['stock.warehouse.orderpoint'].search([]).mapped('product_id')
+    def get_min_qty(self, warehouse, product):
+        """ return orderpoint for product to manufacture """
 
-        for product in bom_product_ids - orderpoint_product_ids:
-            # Create order point
-            vals_orderpoint = {
-                'trigger': 'auto',
-            }
+        location = warehouse.lot_stock_id
+        order_point = self.env['stock.warehouse.orderpoint'].search(
+            [('product_id', '=', product.id),
+             ('warehouse_id', '=', warehouse.id)])
 
-        #set_A.difference(set_B)
+        if not order_point:
+            order_point_vals = {'product_id': product.id, 'location_id': location.id, 'product_min_qty': 0.0,
+                                'route_id': self.env.ref('mrp.route_warehouse0_manufacture').id, 'trigger': 'auto',
+                                'qty_multiple': product.min_production_qty or 1.0,
+                                'company_id': self.env.company.id or 1, 'visibility_days': 5.0}
+            order_point = order_point.create(order_point_vals)
 
-
+        min_qty = sum(order_point.mapped('product_min_qty')) or 0.0
+        return min_qty
