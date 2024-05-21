@@ -258,7 +258,7 @@ class WmsScenarioStep(models.Model):
                 source_location = data['move_line'].production_id.location_src_id
                 location_origin_ids = self.env['stock.location'].search([('id', 'child_of', source_location.id)])
                 quant_ids = self.env['stock.quant'].search([
-                    ('lot_id', '=', data['lot_id'].id), ('location_id', '=', location_origin_ids.ids)])
+                    ('lot_id', '=', data['lot_id'].id), ('location_id', 'in', location_origin_ids.ids)])
 
                 if (not quant_ids) or sum(quant_ids.mapped('quantity')) < data['move_line'].qty_done:
                     data['warning'] = _('There is not enough quantity on production, move the component on production '
