@@ -85,7 +85,7 @@
                                             <td name="code" class="small-text"><span t-field="line.product_id.default_code" /></td>
                                             <td name="ean" class="small-text">
                                                 <span t-field="line.product_id.barcode" />
-                                                <t t-if="o.fiscal_position_id and o.fiscal_position_id.id == 19">
+                                                <t t-if="o.fiscal_position_id.country_id and o.fiscal_position_id.country_id.code == 'GB'">
                                                     <br></br>
                                                     <span t-field="line.product_id.hs_code_id.local_code" />
                                                 </t>
@@ -215,15 +215,15 @@
                         <strong>Nb container:</strong>
                         <p class="m-0" t-field="o.picking_ids[0].nb_container"/>
                     </div>
-                    <div class="col-auto col-3 mw-100 mb-2" name="client_code" style="border: 1px solid black !important;"> 
+                    <div class="col-auto col-3 mw-100 mb-2"  style="border: 1px solid black !important;">
                         <strong>Nb pallet:</strong>
                         <p class="m-0" t-field="o.picking_ids[0].nb_pallet"/>
                     </div>
-                    <div class="col-auto col-3 mw-100 mb-2" name="client_code" style="border: 1px solid black !important;"> 
+                    <div class="col-auto col-3 mw-100 mb-2"  style="border: 1px solid black !important;">
                         <strong>Weight:</strong>
                         <p class="m-0" t-field="o.picking_ids[0].weight"/>
                     </div>
-                    <div class="col-auto col-3 mw-100 mb-2" name="client_code" style="border: 1px solid black !important;"> 
+                    <div class="col-auto col-3 mw-100 mb-2"  style="border: 1px solid black !important;">
                         <strong>Gross weight:</strong>
                         <p class="m-0" t-field="o.picking_ids[0].shipping_weight"/>
                     </div>
