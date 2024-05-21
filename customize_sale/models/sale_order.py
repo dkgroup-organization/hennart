@@ -103,7 +103,8 @@ class SaleOrder(models.Model):
         self.create_mo()
 
         # Check stock mo to do
-        self.picking_ids.action_mrp()
+        for picking in self.picking_ids:
+            picking.action_mrp()
 
         return res
 

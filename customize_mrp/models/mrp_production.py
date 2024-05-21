@@ -39,3 +39,66 @@ class MRPProduction(models.Model):
         """ Used to test function"""
         self._compute_move_raw_ids()
 
+    def change_quantity_needed(self, product_qty):
+        """ change the quantity to produce """
+        self.ensure_one()
+        self.do_unreserve()
+
+        if self.product_qty > 0.0 and self.product_qty != product_qty:
+            factor = product_qty / self.product_qty
+            self._update_raw_moves(factor)
+            self.product_qty = product_qty
+            self.move_finished_ids.product_uom_qty = product_qty
+    
+        self.move_raw_ids.move_line_ids.lot_id = False
+        self.move_raw_ids.move_line_ids.qty_done = 0.0
+        self.qty_producing = 0.0
+        self._compute_move_raw_ids()
+
+    def change_quantity_producing(self):
+        """ Update qty producing to quantity to do """
+        self.ensure_one()
+        self.qty_producing = self.product_qty
+        self._onchange_producing()
+        self._compute_move_raw_ids()
+
+    @api.model
+    def create_forecast_om(self, warehouse, product, forecast_qty):
+        """ Create OF to produce forecast quantity to replenish the stock """
+        def get_modulo_qty(product, quantity):
+            if product.min_production_qty:
+                modulo_qty = int(quantity) / int(product.min_production_qty)
+                if modulo_qty * int(product.min_production_qty) < int(quantity):
+                    modulo_qty += 1
+                return float(modulo_qty * int(product.min_production_qty))
+            else:
+                return quantity
+
+        # Check if there is already a OF waiting (not started)
+        mo_ids = self.search([('product_id', '=', product.id),
+                              ('lot_producing_id', '=', False),
+                              ('state', 'in', ['confirmed'])])
+
+        if mo_ids:
+            # Check if the warehouse is ok: (only one warehouse)
+            # Check the quantity
+            production = mo_ids[0]
+            total_qty = get_modulo_qty(product, production.product_qty + forecast_qty)
+            production.change_quantity_needed(total_qty)
+        else:
+            mo_vals = {
+                'product_id': product.id,
+                'product_qty': get_modulo_qty(product, forecast_qty),
+                'origin': 'Stock',
+                'user_id': False,
+                'bom_id': product.bom_ids[0].id,
+            }
+            new_mo = self.env['mrp.production'].create(mo_vals)
+            new_mo._compute_move_raw_ids()
+            new_mo.move_raw_ids.put_quantity_done()
+            new_mo.action_confirm()
+            
+
+
+
+
