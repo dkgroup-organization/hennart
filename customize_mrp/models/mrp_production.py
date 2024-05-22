@@ -55,12 +55,15 @@ class MRPProduction(models.Model):
         self.qty_producing = 0.0
         self._compute_move_raw_ids()
 
-    def change_quantity_producing(self):
+    def change_quantity_producing(self, product_qty=None):
         """ Update qty producing to quantity to do """
         self.ensure_one()
-        self.qty_producing = self.product_qty
+        self.qty_producing = product_qty or self.product_qty
         self._onchange_producing()
         self._compute_move_raw_ids()
+        for move in self.move_raw_ids:
+            move.quantity_done = move.product_uom_qty
+            move.put_quantity_done()
 
     @api.model
     def create_forecast_om(self, warehouse, product, forecast_qty):
