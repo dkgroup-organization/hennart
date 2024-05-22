@@ -126,6 +126,9 @@ class WmsScenarioStep(models.Model):
                         # When the production is for a customer, the lot is already created
                         data['warning'] = _("It is not the good lot number")
                         return data
+                    elif not production.lot_producing_id:
+                        production.lot_producing_id = lot
+                        data['production_product_id'] = data['production_id'].product_id
                     else:
                         data['production_product_id'] = data['production_id'].product_id
 

@@ -252,9 +252,13 @@ class WmsScenarioStep(models.Model):
         if action_variable == 'production_lot_id':
             production_lot = data.get('production_lot_id') or production and production.lot_producing_id
             res = production_lot and f'{production_lot.ref}' or _('Production lot')
+
         if action_variable == 'quantity':
             quantity = data.get('quantity') or move_line and move_line.reserved_uom_qty or 0.0
-            res = f'{int(quantity)}'
+            if quantity % 1 != 0.0:
+                res = f"{quantity:.2f}"
+            else:
+                res = f'{int(quantity)}'
         if action_variable == 'production_quantity':
             if production:
                 res = f'{int(production.qty_producing or production.product_qty)}  ' + _('Unit')
