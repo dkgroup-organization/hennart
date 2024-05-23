@@ -125,14 +125,14 @@ class StockLot(models.Model):
                         # only 99 lots by product per day
                         lot_search = search_free_name(product, condition=[('product_id', '=', product.id)])
                     else:
-                        raise ValidationError('Not possible to attribute a new lot number')
+                        raise ValidationError('Not possible to attribute a new lot number, create one manually')
                     break
                 elif not lot_ids:
                     break
             return lot_search
 
         lot_search = search_free_name(product=product)
-        expiration_time = product.expiration_time or DEFAULT_EXPIRATION_TIME
+        expiration_time = product.expiration_time or product.use_time or DEFAULT_EXPIRATION_TIME
         expiration_date = fields.Datetime.now() + datetime.timedelta(days=expiration_time)
 
         vals_lot = {

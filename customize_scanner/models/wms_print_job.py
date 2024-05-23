@@ -6,6 +6,7 @@ from odoo.exceptions import ValidationError
 import json
 from odoo.http import request
 import datetime
+import json
 import logging
 logger = logging.getLogger('wms_scanner')
 

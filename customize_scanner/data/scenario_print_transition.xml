@@ -18,5 +18,4 @@
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_print"/>
 	</record>
 
-
 </odoo>

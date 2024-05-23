@@ -22,4 +22,5 @@ from . import printing_printer
 from . import stock_move_line
 from . import stock_sscc
 from . import stock_picking
+from . import stock_lot
 
