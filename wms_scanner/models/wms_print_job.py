@@ -21,6 +21,7 @@ class WmsPrintJob(models.Model):
     label_id = fields.Integer('Label ID')
     label_qty = fields.Integer('Label qty')
     error = fields.Text('Error')
+    context = fields.Text('context')
     state = fields.Selection(string='Status', selection=[
         ('todo', 'To do'),
         ('error', 'Error'),
@@ -29,9 +30,21 @@ class WmsPrintJob(models.Model):
         copy=False, index=True, readonly=True,
         default='todo')
 
+    def put_context(self):
+        """ save the context of this created job """
+        for job in self:
+            job.context = json.dumps(self.env.context)
+
+    def get_context(self):
+        """ Get previous context """
+        self.ensure_one()
+        context = json.loads(self.context)
+        return context
+
     def print_job(self, data):
         """ Print current job """
         if data.get('printer'):
             for job in self:
+                # defined the api tu use
                 pass
 

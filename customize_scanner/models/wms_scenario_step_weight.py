@@ -14,7 +14,7 @@ import datetime
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
-    def print_lot(self, data):
+    def print_weighed_lot(self, data):
         """ Print the production lot """
         self.ensure_one()
         if data.get('printer'):
@@ -27,10 +27,11 @@ class WmsScenarioStep(models.Model):
                     'res_model': 'stock.lot',
                     'res_id': lot.id,
                     'session_id': session.id,
+
                 }
                 job = self.env['wms.print.job'].create(job_vals)
 
-            job_ids = self.env['wms.print.job'].search([('state', '=', 'todo')])
+            job_ids = self.env['wms.print.job'].search([('state', '=', 'todo'), ('session_id', '=', session.id)])
             if job_ids:
                 for job in job_ids:
                     job.print_label(data)

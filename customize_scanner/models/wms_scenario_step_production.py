@@ -84,6 +84,15 @@ class WmsScenarioStep(models.Model):
             data['warning'] = _("This production is no longer available")
         return data
 
+    def create_new_lot(self, data):
+        """ Create new lot """
+        self.ensure_one()
+        if data.get('product_id'):
+            data['production_lot_id'] = self.env['stock.lot'].create_production_lot(data['product_id'])
+        else:
+            data['Warning'] = _('This product is unknown')
+        return data
+
     def check_production_id(self, data):
         """ Check or create new production if there is no current available """
         self.ensure_one()
@@ -101,12 +110,14 @@ class WmsScenarioStep(models.Model):
 
             if type(data.get('production_id')) == type(self.env['mrp.production']):
                 production = data['production_id']
-                data['production_product_id'] = data['production_id'].product_id
             else:
                 data['warning'] = _("This production is no longer available")
                 return data
 
-            # Create lot
+            if production:
+                data['production_product_id'] = production.product_id
+
+            # Create lot if needed
             if data.get('label_lot') and data.get('label_date') and data.get('label_product') and not data.get('lot_id'):
                 lot_vals = {
                     'name': data['label_lot'],
@@ -125,6 +136,9 @@ class WmsScenarioStep(models.Model):
                     elif production.sale_id and production.lot_producing_id != lot:
                         # When the production is for a customer, the lot is already created
                         data['warning'] = _("It is not the good lot number")
+                        return data
+                    elif lot.quant_ids:
+                        data['warning'] = _("This lot is already used, you cannot create a new production with it")
                         return data
                     elif not production.lot_producing_id:
                         production.lot_producing_id = lot
@@ -383,3 +397,35 @@ class WmsScenarioStep(models.Model):
                 # Del the printer after each print
                 del data['printer']
         return data
+
+    def print_lot_label(self, data):
+        """ At the end print production lot """
+        self.ensure_one()
+        session = self.env['wms.session'].get_session()
+        lot = data.get('production_lot_id') or data.get('lot_id')
+
+        if lot:
+            job_vals = {
+                'name': f'Lot: {lot.ref} ,{lot.product_id.name}',
+                'res_model': 'stock.lot',
+                'res_id': lot.id,
+                'session_id': session.id,
+            }
+            job_id = self.env['wms.print.job'].create(job_vals)
+
+            if data.get('printer'):
+                job_id.print_label(data)
+                # Del the printer after each print
+                del data['printer']
+        return data
+
+    def print_weighted_lot(self, data):
+        """ print weighed lot """
+        self.ensure_one()
+        session = self.env['wms.session'].get_session()
+        lot = data.get('production_lot_id') or data.get('lot_id')
+        printer = data.get('printer')
+        weighting_device = data.get('weighting_device')
+        return data
+
+

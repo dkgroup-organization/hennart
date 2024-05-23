@@ -45,14 +45,14 @@
 ^FT23,180^A0N,17,21^FH\^FD{date_label}^FS
 ^PQ1,0,1,Y^XZ&quot;&quot;&quot;.format(
 
-weight_label=&quot;&quot;,
-weight=&quot;&quot;,
+weight_label=f"{object.get_label_weight()}",
+weight=f"{object.get_weight()}",
 product_code=object.product_id.default_code,
 product_name=object.product_id.name,
 
 prodlot_label=&quot;Lot:&quot;,
 prodlot_ref=object.ref,
-barcode=object.barcode,
+barcode=f"{object.get_label_barcode()}",
 
 date_label=object.date_label,
 date=f&quot;{object.expiration_date:%d/%m/%Y}&quot;,
