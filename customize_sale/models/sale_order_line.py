@@ -146,7 +146,10 @@ class SaleOrderLine(models.Model):
 
     def create_mo(self):
         """ Create MO for needed product to manufacture """
-        # order_id.procurement_group_id, move.group_id
+        # Normal BOM forecast
+        normal_mo = self.product_id.action_normal_mrp()
+
+        # Make to order, order_id.procurement_group_id, move.group_id
         group_prod = {}
         for line in self:
             product = line.product_id
@@ -175,7 +178,6 @@ class SaleOrderLine(models.Model):
                 new_mo = self.env['mrp.production'].create(mo_vals)
                 new_mo.action_confirm()
                 new_mo.move_raw_ids.put_quantity_done()
-
 
     @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom', 'order_id.delivery_status')
     def _compute_qty_delivered(self):

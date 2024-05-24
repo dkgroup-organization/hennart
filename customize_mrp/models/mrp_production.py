@@ -77,6 +77,7 @@ class MRPProduction(models.Model):
             else:
                 return quantity
 
+        res = self.env['mrp.production']
         # Check if there is already a OF waiting (not started)
         mo_ids = self.search([('product_id', '=', product.id),
                               ('lot_producing_id', '=', False),
@@ -100,6 +101,9 @@ class MRPProduction(models.Model):
             new_mo._compute_move_raw_ids()
             new_mo.move_raw_ids.put_quantity_done()
             new_mo.action_confirm()
+            res |= new_mo
+
+        return res
             
 
 
