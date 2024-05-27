@@ -10,7 +10,7 @@
                     <t t-call="account.report_invoice_document" t-lang="lang">
                         <xpath expr="//div[@class='page']/h2" position="replace">
                             <h2>
-                                <span>Invoice</span> 
+                                <span>Livraison</span> 
                                 <span t-if="o.name != '/'" t-field="o.name"/>
                             </h2>
                         </xpath>
