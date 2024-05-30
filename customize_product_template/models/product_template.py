@@ -269,5 +269,5 @@ class ProductTemplate(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        _logger('------create-----product.template----------------------\n', vals_list)
+        _logger.info('------create-----product.template----------------------\n', vals_list)
         return super().create(vals_list)
