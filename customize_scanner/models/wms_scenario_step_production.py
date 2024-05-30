@@ -268,11 +268,16 @@ class WmsScenarioStep(models.Model):
     def check_production_move_line(self, data):
         """ Check if move_line is complete """
         self.ensure_one()
+        production = data.get('production_id')
+        if not production:
+            data['warning'] = _('This production is not available')
+            return data
+
         if data.get('move_line') and data.get('lot_id'):
             if data['move_line'].product_id != data['lot_id'].product_id:
                 data['warning'] = _('This not the good product')
             else:
-                source_location = data['move_line'].production_id.location_src_id
+                source_location = production.location_src_id
                 location_origin_ids = self.env['stock.location'].search([('id', 'child_of', source_location.id)])
                 quant_ids = self.env['stock.quant'].search([
                     ('lot_id', '=', data['lot_id'].id), ('location_id', 'in', location_origin_ids.ids)])
@@ -282,7 +287,12 @@ class WmsScenarioStep(models.Model):
                                         'zone before')
                 else:
                     data['move_line'].lot_id = data['lot_id']
-                    data['move_line'].qty_done = data['move_line'].reserved_uom_qty
+                    move = data['move_line'].move_id
+                    move.quantity_done = move.product_qty
+                    move.put_quantity_done()
+                    for move_line in move.move_line_ids:
+                        if move_line.state not in ['cancel', 'done']:
+                            move_line.reserved_uom_qty = move_line.qty_done
 
         elif data.get('move_line'):
             data['warning'] = _('This lot is unknown')

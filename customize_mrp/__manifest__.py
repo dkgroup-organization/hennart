@@ -10,7 +10,7 @@
     "website": "https://dkgroup.fr",
     "maintainer": "DK group",
     "images": [],
-    "depends": ["base", "mrp", "stock", "sale_stock",  "product_expiry", "wms_planning"],
+    "depends": ["base", "mrp", "stock", "sale_stock",  "product_expiry", "customize_product_template", "wms_planning"],
     "data": [
          "views/mrp_production_view.xml",
     ],
