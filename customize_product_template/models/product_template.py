@@ -2,7 +2,9 @@
 
 
 from odoo import api, fields, models, tools, _
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class ProductArea(models.Model):
     _name = 'product.area'
@@ -265,3 +267,7 @@ class ProductTemplate(models.Model):
         """ update all route_ids"""
         self.route_ids = False
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        _logger('------create-----product.template----------------------\n', vals_list)
+        return super().create(vals_list)
