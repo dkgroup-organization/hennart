@@ -72,15 +72,3 @@ class ProductProduct(models.Model):
                 res[product_id] = 0.0
 
         return res
-
-    def get_make_to_order(self):
-        """ return product and quantity to do, recursive search to path through kit BOM """
-        res = {}
-        for product in self:
-            res[product.id] = []
-            if product.bom_ids and product.bom_ids[0].type == 'kit':
-                for line in product.bom_ids[0].bom_line_ids:
-                    sub_line = {line.product_id: line.product_qty}
-                    res[product.id].append(sub_line)
-
-

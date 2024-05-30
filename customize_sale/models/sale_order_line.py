@@ -149,6 +149,20 @@ class SaleOrderLine(models.Model):
         # Normal BOM forecast
         normal_mo = self.product_id.action_normal_mrp()
 
+        def data_production(order_line, product, product_uom_qty, bom):
+            """ Save data production to do """
+            lot = self.env['stock.lot'].create_production_lot(product)
+            production_vals = {
+                'product_id': product.id,
+                'origin': line.order_id.name,
+                'product_qty': product_uom_qty,
+                'bom_id': bom.id,
+                'lot_producing_id': lot.id,
+                'procurement_group_id': line.order_id.procurement_group_id.id,
+                'date_planned_start': line.order_id.commitment_date,
+            }
+            return production_vals
+
         # Make to order, order_id.procurement_group_id, move.group_id
         group_prod = {}
         for line in self:
@@ -156,21 +170,24 @@ class SaleOrderLine(models.Model):
             if product.bom_ids and product.to_personnalize:
 
                 bom = product.bom_ids[0]
-                if bom.type != 'normal':
-                    # Force type of this BOM to have OF
-                    bom.type = 'normal'
-                if product not in list(group_prod.keys()):
+                if bom.type == 'kit':
+                    # liste the product in BOM
+                    for bom_line in bom.bom_line_ids:
+                        sub_product = bom_line.product_id
+                        if sub_product.bom_ids and sub_product.to_personnalize:
+                            sub_bom = sub_product.bom_ids[0]
+                            if sub_bom.type == 'normal':
+                                if sub_product not in list(group_prod.keys()):
+                                    group_prod[sub_product] = data_production(
+                                        line, sub_product, line.product_uom_qty * bom_line.product_qty, sub_bom)
+                                else:
+                                    group_prod[product]['product_qty'] += line.product_uom_qty * bom_line.product_qty
+                            else:
+                                raise ValidationError(_("This product is not correctly configured."
+                                                        "Only one kit BOM per line.\n") + line.product_id.name)
 
-                    lot = self.env['stock.lot'].create_production_lot(product)
-                    group_prod[product] = {
-                        'product_id': product.id,
-                        'origin': line.order_id.name,
-                        'product_qty': line.product_uom_qty,
-                        'bom_id': bom.id,
-                        'lot_producing_id': lot.id,
-                        'procurement_group_id': line.order_id.procurement_group_id.id,
-                        'date_planned_start': line.order_id.commitment_date,
-                        }
+                elif product not in list(group_prod.keys()):
+                    group_prod[product] = data_production(line, product, line.product_uom_qty, bom)
                 else:
                     group_prod[product]['product_qty'] += line.product_uom_qty
 
