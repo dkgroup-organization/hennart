@@ -1,0 +1,984 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* customize_product_template
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-31 08:49+0000\n"
+"PO-Revision-Date: 2024-05-31 08:49+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__nv_energy_kc
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__nv_energy_kc
+msgid " Energy (Kcal)"
+msgstr "Energie (Kcal)"
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__nv_energy_kj
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__nv_energy_kj
+msgid " Energy (Kj)"
+msgstr " Energie (Kj)"
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__nv_protein
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__nv_protein
+msgid " Protein (g)"
+msgstr "Protéine (g)"
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_custom_product_config_settings
+msgid ""
+"<span class=\"o_form_label\">Customization</span>\n"
+"                            <span class=\"fa fa-lg fa-building-o\" title=\"Customization of packaging.\" aria-label=\"Customization of packaging.\" role=\"img\"/>"
+msgstr ""
+
+#. module: customize_product_template
+#. odoo-python
+#: code:addons/customize_product_template/models/mrp_bom.py:0
+#, python-format
+msgid "A KIT must have only one line of product."
+msgstr "Un Collisage (KIT) ne peut avoir qu'une seule line de produit."
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__aop
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__aop
+msgid "AOP"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__allergen
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__allergen
+msgid "Allergen"
+msgstr "Allergène"
+
+#. module: customize_product_template
+#: model:ir.model,name:customize_product_template.model_product_allergen
+msgid "Allergenic component "
+msgstr "Composants Allergènes"
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__rennet__animal
+msgid "Animal"
+msgstr "Animal"
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__area
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__area
+msgid "Area"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__bom_line_id
+msgid "BOM line"
+msgstr "Ligne de Nomenclature"
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__base_unit_name
+msgid "Base Unit Name"
+msgstr "Nom de l'unité de base"
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__min_production_qty
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__min_production_qty
+msgid "Batch production quantity"
+msgstr "Quantité minimum de production"
+
+#. module: customize_product_template
+#: model:ir.model,name:customize_product_template.model_mrp_bom
+msgid "Bill of Material"
+msgstr "Nomenclature"
+
+#. module: customize_product_template
+#: model:ir.model,name:customize_product_template.model_mrp_bom_line
+msgid "Bill of Material Line"
+msgstr "Nomenclature"
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__salting__brine
+msgid "Brine"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_category__tracking__lot
+msgid "By Lots"
+msgstr "Par lot"
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_category__tracking__serial
+msgid "By Unique Serial Number"
+msgstr "Par numéro de série
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__nv_carbohydrates
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__nv_carbohydrates
+msgid "Carbohydrates (g)"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__code_DUN14
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__code_DUN14
+msgid "Code DUN14"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__code_ean_poids
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__code_ean_poids
+msgid "Code EAN Poids"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__code_ean_prix
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__code_ean_prix
+msgid "Code EAN Prix"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Codification"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model,name:customize_product_template.model_res_config_settings
+msgid "Config Settings"
+msgstr "Paramètres de config"
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_category__detailed_type__consu
+msgid "Consumable"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__cooked_pressed
+msgid "Cooked pressed dough"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__type_milk__cow
+msgid "Cow"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__craft
+msgid "Craft"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_custom_product_config_settings
+msgid "Create BOM after import package from openerp V7."
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__create_uid
+#: model:ir.model.fields,field_description:customize_product_template.field_product_allergen__create_uid
+#: model:ir.model.fields,field_description:customize_product_template.field_product_area__create_uid
+#: model:ir.model.fields,field_description:customize_product_template.field_product_ingredient__create_uid
+#: model:ir.model.fields,field_description:customize_product_template.field_product_specificity__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__create_date
+#: model:ir.model.fields,field_description:customize_product_template.field_product_allergen__create_date
+#: model:ir.model.fields,field_description:customize_product_template.field_product_area__create_date
+#: model:ir.model.fields,field_description:customize_product_template.field_product_ingredient__create_date
+#: model:ir.model.fields,field_description:customize_product_template.field_product_specificity__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__to_personnalize
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__to_personnalize
+msgid "Customer specifity"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__use_date
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__use_date
+msgid "DDM : Best before Date"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__life_date
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__life_date
+msgid "DLC : Expiration Date"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Dates"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Declaration DEB/DES"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__uos_id
+#: model:ir.model.fields,help:customize_product_template.field_product_template__uos_id
+msgid "Default unit of Sale used for invoicing."
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__invoice_policy__delivery
+msgid "Delivered quantities"
+msgstr "Quantités livrées"
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__department
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__department
+msgid "Department"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__route_ids
+#: model:ir.model.fields,help:customize_product_template.field_product_template__route_ids
+msgid ""
+"Depending on the modules installed, this will allow you to define the route "
+"of the product: whether it will be bought, manufactured, replenished on "
+"order, etc."
+msgstr ""
+"En fonction des modules installés, cela va vous permettre de définir les "
+"routes sur l'article: acheter, fabriquer, réapprovisionner sur commande, "
+"etc."
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Description"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__display_name
+#: model:ir.model.fields,field_description:customize_product_template.field_product_allergen__display_name
+#: model:ir.model.fields,field_description:customize_product_template.field_product_area__display_name
+#: model:ir.model.fields,field_description:customize_product_template.field_product_ingredient__display_name
+#: model:ir.model.fields,field_description:customize_product_template.field_product_specificity__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__base_unit_count
+msgid ""
+"Display base unit price on your eCommerce pages. Set to 0 to hide it for "
+"this product."
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__base_unit_name
+#: model:ir.model.fields,help:customize_product_template.field_product_template__base_unit_name
+msgid ""
+"Displays the custom unit for the products if defined or the selected unit of"
+" measure otherwise."
+msgstr ""
+"Affiche l'unité personnalisée pour les produits si elle est définie ou "
+"l'unité de mesure sélectionnée dans le cas contraire."
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__salting__dry
+msgid "Dry"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__weight_ul
+msgid "Empty Package Weight"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_category__tracking
+msgid "Ensure the traceability of a storable product in your warehouse."
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__nv_fat
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__nv_fat
+msgid "FAT (g)"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__farmer
+msgid "Farmer"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__fat_in_dry_matter
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__fat_in_dry_matter
+msgid "Fat in dry matter (%)"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__fees
+msgid "Fees and Butter"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__rennet__fermentative
+msgid "Fermentative"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__format_etiquette
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__format_etiquette
+msgid "Format d'etiquette"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model,name:customize_product_template.model_product_area
+msgid "Geographical area"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__type_milk__goat
+msgid "Goat"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__weight_gross
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__weight_gross
+msgid "Gross Weight"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__heat_treatment_milk
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__heat_treatment_milk
+msgid "Heat treatment of milk"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__web_historic
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__web_historic
+msgid "Historic"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__id
+#: model:ir.model.fields,field_description:customize_product_template.field_product_allergen__id
+#: model:ir.model.fields,field_description:customize_product_template.field_product_area__id
+#: model:ir.model.fields,field_description:customize_product_template.field_product_ingredient__id
+#: model:ir.model.fields,field_description:customize_product_template.field_product_specificity__id
+msgid "ID"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Information"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model,name:customize_product_template.model_product_ingredient
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__ingredient
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__ingredient
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Ingredient"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__invoice_policy
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__invoice_policy
+msgid "Invoicing Policy"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Label"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7____last_update
+#: model:ir.model.fields,field_description:customize_product_template.field_product_allergen____last_update
+#: model:ir.model.fields,field_description:customize_product_template.field_product_area____last_update
+#: model:ir.model.fields,field_description:customize_product_template.field_product_ingredient____last_update
+#: model:ir.model.fields,field_description:customize_product_template.field_product_specificity____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__write_uid
+#: model:ir.model.fields,field_description:customize_product_template.field_product_allergen__write_uid
+#: model:ir.model.fields,field_description:customize_product_template.field_product_area__write_uid
+#: model:ir.model.fields,field_description:customize_product_template.field_product_ingredient__write_uid
+#: model:ir.model.fields,field_description:customize_product_template.field_product_specificity__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__write_date
+#: model:ir.model.fields,field_description:customize_product_template.field_product_allergen__write_date
+#: model:ir.model.fields,field_description:customize_product_template.field_product_area__write_date
+#: model:ir.model.fields,field_description:customize_product_template.field_product_ingredient__write_date
+#: model:ir.model.fields,field_description:customize_product_template.field_product_specificity__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__service_type__manual
+msgid "Manually set quantities on order"
+msgstr "Mettre manuellement les quantités sur la commande"
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__service_type
+#: model:ir.model.fields,help:customize_product_template.field_product_template__service_type
+msgid ""
+"Manually set quantities on order: Invoice based on the manually entered quantity, without creating an analytic account.\n"
+"Timesheets on contract: Invoice based on the tracked hours on the related timesheet.\n"
+"Create a task and track hours: Create a task on the sales order validation and track the work hours."
+msgstr ""
+"Définition manuelle des quantités sur la commande : facture selon les quantités saisies manuellement, sans création de compte analytique.\n"
+" Feuilles de temps sur les contrats : facture selon les heures passées en fonction de la feuille de temps liée.\n"
+" Créer une tâche et suivre les heures : crée une tâche à validation de la commande et effectue un suivi du temps passé."
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__web_manufacture
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__web_manufacture
+msgid "Manufacture"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__gestion_affinage
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__gestion_affinage
+msgid "Maturing management"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__rennet__microbial
+msgid "Microbial"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_allergen__name
+#: model:ir.model.fields,field_description:customize_product_template.field_product_area__name
+#: model:ir.model.fields,field_description:customize_product_template.field_product_ingredient__name
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__base_unit_name
+#: model:ir.model.fields,field_description:customize_product_template.field_product_specificity__name
+msgid "Name"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__natural_rind
+msgid "Natural rind soft cheese"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Net weight"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_category__tracking__none
+msgid "No Tracking"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__not_solded
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__not_solded
+msgid "No longer sold"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__rows
+msgid "Number of Layers"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_template__base_unit_count
+msgid "Number of unit in the package."
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Nutritionals values"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__approval_number
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__approval_number
+msgid "N° Agrément"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__ogm
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__ogm
+msgid "OGM"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__invoice_policy
+#: model:ir.model.fields,help:customize_product_template.field_product_template__invoice_policy
+msgid ""
+"Ordered Quantity: Invoice quantities ordered by the customer.\n"
+"Delivered Quantity: Invoice quantities delivered to the customer."
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__invoice_policy__order
+msgid "Ordered quantities"
+msgstr "Quantités commandées"
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__heat_treatment_milk__other
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__rennet__other
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__other
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__type_milk__other
+msgid "Other"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Pack"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Pack of"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__ul_qty
+msgid "Package by layer"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__heat_treatment_milk__pasteurized
+msgid "Pasteurized"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__pate_molle
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__pate_molle
+msgid "Pate molle"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__base_unit_price
+msgid "Price"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__base_unit_price
+msgid "Price Per Unit"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__base_package_price
+#: model:ir.model.fields,help:customize_product_template.field_product_template__base_package_price
+msgid "Price of the package."
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_template__base_unit_price
+msgid "Price of unit in the package."
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__base_package_price
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__base_package_price
+msgid "Price total"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__processed
+msgid "Processed product"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model,name:customize_product_template.model_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_category__detailed_type__product
+msgid "Product"
+msgstr "Article"
+
+#. module: customize_product_template
+#: model:ir.actions.act_window,name:customize_product_template.action_product_allergen
+#: model:ir.ui.menu,name:customize_product_template.product_allergen_menu
+msgid "Product Allergen"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.actions.act_window,name:customize_product_template.action_product_area
+#: model:ir.ui.menu,name:customize_product_template.product_area_menu
+msgid "Product Area"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model,name:customize_product_template.model_product_category
+msgid "Product Category"
+msgstr "Catégorie d'article"
+
+#. module: customize_product_template
+#: model:ir.actions.act_window,name:customize_product_template.action_product_ingredient
+#: model:ir.ui.menu,name:customize_product_template.product_ingredient_menu
+msgid "Product Ingredient"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.actions.act_window,name:customize_product_template.action_product_specificity
+#: model:ir.ui.menu,name:customize_product_template.product_specificity_menu
+msgid "Product Specificity"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model,name:customize_product_template.model_product_product
+msgid "Product Variant"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__product_id
+msgid "Product line"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__product_parent_id
+msgid "Product parent"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__lst_price
+msgid "Product price"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Production"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__production_specificity
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__production_specificity
+msgid "Production specifity"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_line__product_qty
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__product_qty
+msgid "Quantity"
+msgstr "Quantité"
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__heat_treatment_milk__raw
+msgid "Raw"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__region
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__region
+msgid "Region"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__rennet
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__rennet
+msgid "Rennet"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__route_ids
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__route_ids
+msgid "Routes"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__nv_salt
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__nv_salt
+msgid "Salt (g)"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__salting
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__salting
+msgid "Salting"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__nv_saturated_fatty_acids
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__nv_saturated_fatty_acids
+msgid "Saturated fatty acids (g)"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_category__detailed_type__service
+msgid "Service"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__type_milk__sheep
+msgid "Sheep"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__fuzzy_rind
+msgid "Soft fuzzy rind"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__washed_rind
+msgid "Soft washed rind"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model,name:customize_product_template.model_product_specificity
+msgid "Spécificity"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__nv_sugars
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__nv_sugars
+msgid "Sugars (g)"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__tare
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__tare
+msgid "Tare"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__tare
+#: model:ir.model.fields,help:customize_product_template.field_product_template__tare
+msgid ""
+"Tare, this value will be subtracted from the weight returned by the device "
+"to obtain the net weight. "
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__web_tasting
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__web_tasting
+msgid "Tasting"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__specificity_milk
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__specificity_milk
+msgid "Technical family"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__weight_gross
+#: model:ir.model.fields,help:customize_product_template.field_product_template__weight_gross
+msgid "The gross weight in Kg."
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__min_production_qty
+#: model:ir.model.fields,help:customize_product_template.field_product_template__min_production_qty
+msgid "The production is manufactured in multiples of this number."
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__lst_price
+msgid ""
+"The sale price is managed from the product template. Click on the 'Configure"
+" Variants' button to set the extra attribute prices."
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__heat_treatment_milk__thermised
+msgid "Thermised"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__to_personnalize
+#: model:ir.model.fields,help:customize_product_template.field_product_template__to_personnalize
+msgid ""
+"This product need a production opération to be personnalized. For exemple, "
+"label with brand.This product cannot be sold to another customer"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__to_label
+#: model:ir.model.fields,help:customize_product_template.field_product_template__to_label
+msgid "This product need a wheighted opération"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__to_label
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__to_label
+msgid "To label"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__service_type
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__service_type
+msgid "Track Service"
+msgstr "Service de suivi"
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_category__tracking
+msgid "Tracking"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__tray
+msgid "Tray"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__farmer_type
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__farmer_type
+msgid "Type Fermier"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__type_milk
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__type_milk
+msgid "Type milk"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__ul
+msgid "Type of Package"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__uncooked_pressed
+msgid "Uncooked pressed dough"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__base_unit_count
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__base_unit_count
+msgid "Unit Count"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom__base_unit_count
+msgid "Unit count"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__uos_id
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__uos_id
+msgid "Unit of Sale"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom__base_product_id
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__base_product_tmpl_id
+#: model:ir.model.fields,field_description:customize_product_template.field_product_template__base_product_tmpl_id
+msgid "Unit product"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_custom_product_config_settings
+msgid "Update packaging"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_custom_product_config_settings
+msgid "Update product"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_category__use_expiration_date
+msgid "Use expiration date"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_mrp_bom_custom
+msgid ""
+"Use type kit when you declare the content of a package.\n"
+"                        <br/>"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__type_milk__vegetable
+msgid "Vegetable"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__product_template__specificity_milk__veined
+msgid "Veined cheese dough"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "WEB"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "Weight"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_product__base_product_id
+msgid "base product"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__mrp_bom_linev7__state__cancel
+msgid "cancel"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,help:customize_product_template.field_product_product__production_specificity
+#: model:ir.model.fields,help:customize_product_template.field_product_template__production_specificity
+msgid "define some spécificity like OGM, IGP, farmer, presence of GMO"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__mrp_bom_linev7__state__draft
+msgid "draft"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__height
+msgid "height"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model,name:customize_product_template.model_mrp_bom_linev7
+msgid "importation bom configuration"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__mrp_bom_linev7__state__phantom
+msgid "kit"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__length
+msgid "length"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields.selection,name:customize_product_template.selection__mrp_bom_linev7__state__normal
+msgid "normal"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__sequence
+msgid "sequence"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__state
+msgid "state"
+msgstr ""
+
+#. module: customize_product_template
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "stock"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_product_category__detailed_type
+#: model:ir.model.fields,field_description:customize_product_template.field_product_category__type
+#: model_terms:ir.ui.view,arch_db:customize_product_template.view_form_product_template_add_fileds
+msgid "type"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__weight
+msgid "weight"
+msgstr ""
+
+#. module: customize_product_template
+#: model:ir.model.fields,field_description:customize_product_template.field_mrp_bom_linev7__width
+msgid "width"
+msgstr ""

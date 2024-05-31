@@ -17,7 +17,7 @@ class ReportStockQuant2(models.Model):
     product_qty = fields.Float(string='Quantity', readonly=True)
     categ_id = fields.Many2one('product.category', string="Category", readonly=True)
     warehouse_id = fields.Many2one('stock.warehouse', readonly=True)
-    lot_id = fields.Many2one('stock.production.lot', readonly=True)
+    lot_id = fields.Many2one('stock.lot', readonly=True)
     company_id = fields.Many2one('res.company', readonly=True)
 
     bg_color = fields.Char('color', compute='compute_color')

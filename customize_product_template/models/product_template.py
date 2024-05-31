@@ -37,32 +37,6 @@ class ProductTemplate(models.Model):
     def _get_default_uos_id(self):
         return self.env.ref('uom.product_uom_unit')
 
-    @api.depends('categ_id.tracking', 'categ_id.type', 'categ_id.detailed_type', 'categ_id.use_expiration_date')
-    def update_categ_value(self):
-        """ Update value based on categ value"""
-        for product in self:
-            if product.categ_id:
-                product.tracking = product.categ_id.tracking
-                product.type = product.categ_id.detailed_type
-                product.detailed_type = product.categ_id.detailed_type
-            else:
-                product.tracking = 'lot'
-                product.type = 'product'
-                product.detailed_type = 'product'
-            product.use_expiration_date = True
-
-        query = """
-        update product_template pt set tracking = pc.tracking from  product_category pc where pt.categ_id = pc.id and pt.tracking != pc.tracking;
-        update product_template pt set type = pc.type from  product_category pc where pt.categ_id = pc.id and pt.type != pc.type;
-        update product_template pt set detailed_type = pc.detailed_type from  product_category pc where pt.categ_id = pc.id and pt.detailed_type != pc.detailed_type;
-        update product_template pt set use_expiration_date = pc.use_expiration_date from  product_category pc where pt.categ_id = pc.id and pt.use_expiration_date != pc.use_expiration_date;
-        """
-
-    tracking = fields.Selection(compute="update_categ_value", store=True, precompute=False)
-    type = fields.Selection(compute="update_categ_value", store=True, precompute=False)
-    detailed_type = fields.Selection(compute="update_categ_value", store=True, precompute=False)
-    use_expiration_date = fields.Boolean(compute="update_categ_value", store=True, precompute=False, default=True)
-
     service_type = fields.Selection(
         [('manual', 'Manually set quantities on order')], string='Track Service',
         compute='_compute_service_type', store=True, readonly=False, precompute=False, default="manual",
@@ -269,5 +243,5 @@ class ProductTemplate(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        _logger.info('------create-----product.template----------------------\n', vals_list)
+        _logger.info(f'------create-----product.template----------------------\n{vals_list}')
         return super().create(vals_list)
