@@ -274,7 +274,6 @@ class BaseSynchroObj(models.Model):
         """ exception for product, create template and variant in the same time"""
         self.ensure_one()
 
-
         if self.model_id.model == 'product.product':
             for remote_value in remote_values:
                 remote_tmpl_id = remote_value.get('product_tmpl_id')
@@ -284,7 +283,6 @@ class BaseSynchroObj(models.Model):
                     continue
                 elif self.auto_create or self.env.context.get('auto_create'):
                     product_tmpl_obj = self.server_id.get_obj('product.template')
-                    _logger.info("load_remote_product ----------------------- " + str(remote_tmpl_id[0]))
                     product_tmpl_local_id = product_tmpl_obj.get_local_id(remote_tmpl_id[0])
                     _logger.info("load_remote_product: product_tmpl_local_id" + str(product_tmpl_local_id))
                     product_tmpl_local = self.env['product.template'].browse(product_tmpl_local_id)
