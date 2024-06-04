@@ -199,7 +199,7 @@ class WmsScenarioStep(models.Model):
             res = _('Enter tare by unit in Kg')
 
         if self.action_variable == 'expiry_date':
-            res = _('Number of days for expiry date')
+            res = _('Expiry date')
 
         if self.action_variable == 'number_of_packages':
             res = _("Nb of package: ")
@@ -320,7 +320,7 @@ class WmsScenarioStep(models.Model):
                 res = lot.expiration_date and f"{lot.expiration_date.strftime('%d/%m/%Y')}" or '??/??/????'
 
         if action_variable == 'production_lot_id':
-            production_lot = data.get('lot_id') or (production and production.lot_producing_id) or False
+            production_lot = data.get('lot_id') or data.get('production_lot_id') or (production and production.lot_producing_id) or False
             if production_lot:
                 res = production_lot.expiration_date and f"{production_lot.expiration_date.strftime('%d/%m/%Y')}" or '??/??/????'
 
@@ -341,11 +341,9 @@ class WmsScenarioStep(models.Model):
                 res = _("Unit")
 
         if action_variable == 'expiry_date':
-            if data.get('expiry_date') and type(data['expiry_date']) == datetime.datetime:
+            if data.get('expiry_date') and type(data['expiry_date']) in [type(datetime.date), type(datetime.datetime)]:
                 expiry_date = f"{data['expiry_date'].strftime('%d/%m/%Y')}"
                 res = expiry_date
-            else:
-                res = _("Nb of days to add")
 
         if action_variable == 'weight':
             res = _("Tare: ")
@@ -471,6 +469,11 @@ class WmsScenarioStep(models.Model):
         if data['step'].action_variable == 'production_lot_id':
             if data.get('production_id') and data['production_id'].lot_producing_id and not data['production_id'].lot_producing_id.quant_ids:
                 res.append({'text': _('Modify date'), 'href': href_base + f"change_date"})
+
+        if data['step'].action_variable == 'printer':
+            if data.get('button_change_date'):
+                res.append(data.get('button_change_date'))
+
         return res
 
     def get_tare(self, data):

@@ -48,7 +48,7 @@
                       method="post">
                     <t t-call="customize_scanner.scanner_input_product_id"/>
                         <t t-call="customize_scanner.scanner_input_production_lot_id"/>
-                        <t t-call="customize_scanner.scanner_input_expiry_date"/>
+                        <t t-call="customize_scanner.scanner_input_simple_expiry_date"/>
                         <t t-if="step.action_variable == 'printer' and not data.get('printer')"
                            t-call="customize_scanner.scanner_input_printer"/>
 

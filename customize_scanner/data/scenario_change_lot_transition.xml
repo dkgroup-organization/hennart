@@ -69,7 +69,7 @@
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-60')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'change_lot-100')]"/>
-		<field name="condition">True</field>
+		<field name="condition">data.get('printer')</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_inventory"/>
 	</record>
 </odoo>

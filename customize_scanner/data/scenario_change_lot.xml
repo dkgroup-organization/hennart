@@ -86,12 +86,12 @@
 	<record id="wms_scenario_step_change_lot60" model="wms.scenario.step">
 		<field name="sequence" eval="60"/>
 		<field name="name">change_lot-60</field>
-		<field name="description">Print lot</field>
+		<field name="description">Scan printer</field>
 		<field name="action_scanner">scan_model</field>
 		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
 		<field name="action_variable">printer</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_change_lot"/>
-		<field name="python_code">data = step.print_production_label(data)</field>
+		<field name="python_code"/>
 	</record>
 
 	<record id="wms_scenario_step_change_lot100" model="wms.scenario.step">
@@ -101,7 +101,8 @@
 		<field name="action_scanner">no_scan</field>
 		<field name="action_variable">printer</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_change_lot"/>
-		<field name="python_code"/>
+		<field name="python_code">data = step.print_production_label(data)</field>
+
 	</record>
 
 </odoo>

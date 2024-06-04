@@ -84,11 +84,29 @@ class WmsScenarioStep(models.Model):
             data['warning'] = _("This production is no longer available")
         return data
 
+    def change_expiry_date(self, data):
+        """ Change lot date if needed """
+        if data.get('expiry_date'):
+            lot = data.get('production_lot_id')
+            if lot:
+                lot.expiration_date = data.get('expiry_date')
+        else:
+            data['Warning'] = _('This date is not valid')
+        return data
+
     def create_new_lot(self, data):
         """ Create new lot """
         self.ensure_one()
+        res = []
+        scenario_id = data['step'].scenario_id.id
+        step_id = data['step'].id
+        href_base = f'./scanner?scenario={scenario_id}&step={step_id}&button='
+        button_change_date = {'text': _('Modify date'), 'href': href_base + f"change_date"}
+
         if data.get('product_id'):
             data['production_lot_id'] = self.env['stock.lot'].create_production_lot(data['product_id'])
+            data['button_change_date'] = button_change_date
+
         else:
             data['Warning'] = _('This product is unknown')
         return data
