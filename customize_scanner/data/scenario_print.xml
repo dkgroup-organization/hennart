@@ -20,7 +20,7 @@
 		<field name="action_scanner">start</field>
 		<field name="action_variable">scan</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_print"/>
-		<field name="python_code"/>
+		<field name="python_code">data = step.check_job(data)</field>
 	</record>
 	
 	<record id="wms_scenario_step_print-10" model="wms.scenario.step">

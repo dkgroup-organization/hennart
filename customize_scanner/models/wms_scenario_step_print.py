@@ -14,23 +14,38 @@ import datetime
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
+    def check_job(self, data):
+        """ return print job to do """
+        session = self.env['wms.session'].get_session()
+        job_ids = self.env['wms.print.job'].search([('state', '=', 'todo'), ('session_id', '=', session.id)])
+        for job in job_ids:
+            if job.res_model == 'stock.lot':
+                lot = self.env['stock.lot'].browse(job.res_id)
+                data['lot_id'] = lot
+                break
+        return data
+
+    def save_job(self, data):
+        """ Save lot to print has a job """
+        session = self.env['wms.session'].get_session()
+        lot = data.get('lot_id') or data.get('production_lot_id')
+        if lot:
+            job_vals = {
+                'name': f'Lot: {lot.ref} ,{lot.product_id.name}',
+                'res_model': 'stock.lot',
+                'res_id': lot.id,
+                'session_id': session.id,
+                'state': 'todo',
+            }
+            job = self.env['wms.print.job'].create(job_vals)
+
     def print_lot(self, data):
         """ Print the production lot """
         self.ensure_one()
         if data.get('printer'):
             session = self.env['wms.session'].get_session()
-
-            if data.get('lot_id'):
-                lot = data.get('lot_id')
-                job_vals = {
-                    'name': f'Lot: {lot.ref} ,{lot.product_id.name}',
-                    'res_model': 'stock.lot',
-                    'res_id': lot.id,
-                    'session_id': session.id,
-                }
-                job = self.env['wms.print.job'].create(job_vals)
-
-            job_ids = self.env['wms.print.job'].search([('state', '=', 'todo')])
+            self.save_job(data)
+            job_ids = self.env['wms.print.job'].search([('state', '=', 'todo'), ('session_id', '=', session.id)])
             if job_ids:
                 for job in job_ids:
                     job.print_label(data)
