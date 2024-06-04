@@ -402,9 +402,11 @@ class WmsScenarioStep(models.Model):
         new_mo.with_context(skip_expired=True).button_mark_done()
 
         # Return MO to data
-        data['mo_id'] = new_mo
+        new_data = self.init_data()
+        new_data['production_id'] = new_mo
+        new_data['production_product_id'] = new_mo.product_id
 
-        return data
+        return new_data
 
     def print_production_label(self, data):
         """ At the end print production lot """

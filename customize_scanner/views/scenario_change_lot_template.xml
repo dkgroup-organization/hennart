@@ -54,7 +54,6 @@
                         <t t-call="customize_scanner.scanner_input_quantity"/>
                         <t t-call="customize_scanner.scanner_input_maturity_product"/>
                         <t t-call="customize_scanner.scanner_input_expiry_date"/>
-                        
                     </t>
                     
                     <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
