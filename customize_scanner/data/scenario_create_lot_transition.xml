@@ -8,12 +8,32 @@
 		<field name="condition">True</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_create_lot"/>
 	</record>
+
+
 	<record id="wms_scenario_create_lot_transition_10_20" model="wms.scenario.transition">
 		<field name="name">1-[10-20]</field>
 		<field name="sequence" eval="1"/>
 		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'create_lot-10')]"/>
 		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'create_lot-20')]"/>
 		<field name="condition">data.get('product_id')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_create_lot"/>
+	</record>
+
+	<record id="wms_scenario_create_lot_transition_20_15" model="wms.scenario.transition">
+		<field name="name">1-[20-15]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'create_lot-20')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'create_lot-15')]"/>
+		<field name="condition">data.get('button', '?') == 'change_date' </field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_create_lot"/>
+	</record>
+
+	<record id="wms_scenario_create_lot_transition_15_20" model="wms.scenario.transition">
+		<field name="name">1-[15-20]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'create_lot-15')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'create_lot-20')]"/>
+		<field name="condition">True</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_create_lot"/>
 	</record>
 

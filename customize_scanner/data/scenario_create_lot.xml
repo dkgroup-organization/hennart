@@ -33,6 +33,16 @@
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_create_lot"/>
 	</record>
 
+	<record id="wms_scenario_step_create_lot15" model="wms.scenario.step">
+		<field name="sequence" eval="15"/>
+		<field name="name">create_lot-15</field>
+		<field name="description">scan Expiry date</field>
+		<field name="action_scanner">scan_date</field>
+		<field name="action_variable">expiry_date</field>
+		<field name="python_code">data = step.change_expiry_date(data)</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_create_lot"/>
+	</record>
+
 	<record id="wms_scenario_step_create_lot20" model="wms.scenario.step">
 		<field name="sequence" eval="20"/>
 		<field name="name">create_lot-20</field>

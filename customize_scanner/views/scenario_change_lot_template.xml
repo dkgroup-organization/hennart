@@ -61,17 +61,7 @@
             </t>
         </template>
 
-        <template id="scanner_input_maturity_product" name="scanner_input_maturity_product">
-            <t t-call="customize_scanner.scanner_sub_select_input">
-                <t t-set="action_variable" t-value="'maturity_product_id'"/>
-            </t>
-        </template>
 
-        <template id="scanner_input_expiry_date" name="scanner_input_expiry_date">
-            <t t-call="customize_scanner.scanner_sub_input2">
-                <t t-set="action_variable" t-value="'expiry_date'"/>
-            </t>
-        </template>
 
     </data>
 </odoo>
