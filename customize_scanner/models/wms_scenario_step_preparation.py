@@ -149,6 +149,9 @@ class WmsScenarioStep(models.Model):
         if self.action_variable == 'location_id':
             res = _('Scan location')
 
+        if self.action_variable == 'product_id':
+            res = _('Scan Product code')
+
         if self.action_variable == 'production_id':
             res = _('Scan production')
 
