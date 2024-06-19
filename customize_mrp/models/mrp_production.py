@@ -15,6 +15,14 @@ class MRPProduction(models.Model):
     sale_id = fields.Many2one('sale.order', string="Sale order", compute='_compute_sale_order', store=True)
     partner_id = fields.Many2one('res.partner', string="Partner", compute='_compute_sale_order', store=True)
 
+    @api.depends('company_id', 'date_planned_start', 'is_planned', 'product_id')
+    def _compute_date_planned_finished(self):
+        for production in self:
+            if production.is_planned:
+                continue
+            date_planned_start = production.date_planned_start or fields.Datetimes.now()
+            production.date_planned_finished = date_planned_start + timedelta(hours=1)
+
     @api.depends('procurement_group_id')
     def _compute_sale_order(self):
         """ sale order """
