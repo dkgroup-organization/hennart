@@ -18,4 +18,6 @@ class ResConfigSettings(models.TransientModel):
     def button_update_product(self):
         """ Update all product"""
         all_ids = self.env['product.template'].search([])
-        all_ids.update_categ_value()
+        all_ids.bom_ids.compute_package()
+        all_ids.compute_package()
+

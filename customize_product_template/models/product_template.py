@@ -64,7 +64,7 @@ class ProductTemplate(models.Model):
 
     area = fields.Many2one(string='Area', comodel_name='product.area')
     ingredient = fields.Many2many('product.ingredient', 'ingredient_rel', string="Ingredient")
-    allergen = fields.Many2many('product.allergen', 'allereg_reel', string="Allergen" )
+    allergen = fields.Many2many('product.allergen', 'allereg_reel', string="Allergen")
     production_specificity = fields.Many2many('product.specificity','specifit_reel', string="Production specifity",
                                               help='define some spécificity like OGM, IGP, farmer, presence of GMO')
     specificity_milk = fields.Selection(
@@ -210,7 +210,8 @@ class ProductTemplate(models.Model):
         for product in self:
             product.invoice_policy = "delivery"
 
-    @api.depends('list_price', 'weight', 'uos_id', 'bom_ids', 'bom_ids.base_unit_count')
+    @api.depends('list_price', 'weight', 'uos_id', 'bom_ids',
+                 'bom_ids.base_unit_count', 'bom_ids.type', 'bom_ids.base_product_id')
     def compute_package(self):
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
 

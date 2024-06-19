@@ -29,12 +29,23 @@ class WmsScenarioStep(models.Model):
                     'session_id': session.id,
 
                 }
+
+                if data.get('weighting_device'):
+                    weight_device = data['weighting_device'].get_weight(data=data)
+                    if data.get('weight', 0.0) > 0.0:
+                        tare = self.get_tare(data)
+
+
                 job = self.env['wms.print.job'].create(job_vals)
 
-            job_ids = self.env['wms.print.job'].search([('state', '=', 'todo'), ('session_id', '=', session.id)])
-            if job_ids:
-                for job in job_ids:
-                    job.print_label(data)
-            del data['printer']
+                # Get weight
+                # print label with context weight
+
+                # job.print_label(data)
+                # del the weighed device
+
+
+
+                del data['printer']
 
         return data

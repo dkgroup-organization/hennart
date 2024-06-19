@@ -43,7 +43,7 @@ class ProductProduct(models.Model):
          {product_id: forecast_quantity, ...}
         """
         horizon_past = 5
-        horizon_futur = 5
+        horizon_futur = 7
         all_warehouse = self.env['stock.warehouse'].search([])
         res = {}
 
