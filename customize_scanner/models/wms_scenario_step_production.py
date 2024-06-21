@@ -106,7 +106,6 @@ class WmsScenarioStep(models.Model):
         if data.get('product_id'):
             data['production_lot_id'] = self.env['stock.lot'].create_production_lot(data['product_id'])
             data['button_change_date'] = button_change_date
-
         else:
             data['Warning'] = _('This product is unknown')
         return data
@@ -115,6 +114,9 @@ class WmsScenarioStep(models.Model):
         """ Check or create new production if there is no current available """
         self.ensure_one()
         production = self.env['mrp.production']
+        if data.get('production_id') and type(data['production_id']) == type(self.env['stock.lot']):
+            data['lot_id'] = data['production_id']
+            del data['production_id']
 
         if data.get('production_id'):
             # This production is to check

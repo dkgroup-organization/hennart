@@ -39,6 +39,7 @@
 		<field name="action_scanner">scan_model</field>
 		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
 		<field name="action_variable">printer</field>
+		<field name="python_code"/>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_weight"/>
 	</record>
 

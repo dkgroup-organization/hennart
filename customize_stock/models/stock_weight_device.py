@@ -15,7 +15,7 @@ class StockWeightDevice(models.Model):
     address = fields.Char('Network address')
     simulation = fields.Boolean('Simulation')
 
-    def get_weight(self, data={}):
+    def get_weight(self, data={}, value_id=True):
         """ Get the weight, ask the device"""
         self.ensure_one()
 
@@ -81,7 +81,12 @@ class StockWeightDevice(models.Model):
                     vals['state'] = 'simulation'
                 if data.get('weight_line'):
                     vals['move_line_id'] = data['weight_line'].id
+                if data.get('lot_id'):
+                    vals['lot_id'] = data['lot_id'].id
 
                 weight_value_obj.create(vals)
+
+            if value_id:
+                return
 
         return res.get('weight') or 0.0
