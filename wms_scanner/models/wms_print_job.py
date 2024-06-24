@@ -30,10 +30,11 @@ class WmsPrintJob(models.Model):
         copy=False, index=True, readonly=True,
         default='todo')
 
-    def put_context(self):
+    def put_context(self, job_context=None):
         """ save the context of this created job """
         for job in self:
-            job.context = json.dumps(self.env.context)
+            job_context = job_context or self.env.context
+            job.context = json.dumps(job_context)
 
     def get_context(self):
         """ Get previous context """
@@ -47,4 +48,3 @@ class WmsPrintJob(models.Model):
             for job in self:
                 # defined the api tu use
                 pass
-

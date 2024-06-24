@@ -27,6 +27,68 @@
 ^LL0531
 ^LS0
 ^FT23,65^A0N,22,36^FH\^FDHENNART FRERES S.A.S^FS
+^FT425,190^A0N,33,33^FH\^FD{date}^FS
+^FT23,245^A0N,29,28^FH\^FD{prodlot_ref}^FS
+^FT90,90^A0N,29,28^FH\^FD{product_code}^FS
+^FT23,90^A0N,21,19^FH\^FDcode: ^FS
+^FT23,135^A0N,30,40^FH\^FD{product_name}^FS
+^BY2,3,81^FT21,345^BCN,,Y,N
+^FD&gt;:{barcode}^FS
+^FO15,100^GB610,60,2^FS
+^FO524,34^GE97,60,2^FS
+^FT536,70^A0N,13,16^FH\^FD62.215.030^FS
+^FT555,52^A0N,13,31^FH\^FDFR^FS
+^FT566,88^A0N,17,14^FH\^FDCE^FS
+^FT23,215^A0N,17,21^FH\^FD{prodlot_label}^FS
+^FT23,180^A0N,17,21^FH\^FD{date_label}^FS
+^PQ1,0,1,Y^XZ&quot;&quot;&quot;.format(
+product_code=object.product_id.default_code,
+product_name=object.product_id.name,
+
+prodlot_label=&quot;Lot:&quot;,
+prodlot_ref=object.ref,
+barcode=f"{object.get_label_barcode()}",
+
+date_label=object.date_label,
+date=f&quot;{object.expiration_date:%d/%m/%Y}&quot;,
+)
+</field>
+		<field name="repeat" eval="0"/>
+		<field name="repeat_count" eval="1"/>
+		<field name="reverse_print" eval="0"/>
+		<field name="in_block" eval="0"/>
+		<field name="block_lines" eval="1"/>
+		<field name="block_justify">L</field>
+	</record>
+
+
+	<record id="printing_label_zpl2_component_weight_value" model="printing.label.zpl2.component">
+		<field name="label_id" model="printing.label.zpl2" search="[('name', '=', 'Poids')]"/>
+		<field name="name">Poids</field>
+		<field name="component_type">text</field>
+		<field name="font">0</field>
+		<field name="color">B</field>
+		<field name="orientation">N</field>
+		<field name="diagonal_orientation">L</field>
+		<field name="data_autofill" eval="0"/>
+		<field name="check_digits" eval="0"/>
+		<field name="interpretation_line" eval="0"/>
+		<field name="interpretation_line_above" eval="0"/>
+		<field name="module_width" eval="2"/>
+		<field name="bar_width_ratio" eval="3.0"/>
+		<field name="truncate" eval="0"/>
+		<field name="model">2</field>
+		<field name="magnification_factor" eval="1"/>
+		<field name="only_product_barcode" eval="0"/>
+		<field name="error_correction">Q</field>
+		<field name="mask_value" eval="7"/>
+		<field name="data">&quot;&quot;&quot;^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
+^XA
+^MMT
+^PW679
+^LL0531
+^LS0
+^FT23,65^A0N,22,36^FH\^FDHENNART FRERES S.A.S^FS
 ^FT425,245^A0N,29,28^FH\^FD{weight}^FS
 ^FT425,215^A0N,17,21^FH\^FD{weight_label}^FS
 ^FT425,190^A0N,33,33^FH\^FD{date}^FS
@@ -47,15 +109,15 @@
 
 weight_label=f"{object.get_label_weight()}",
 weight=f"{object.get_weight()}",
-product_code=object.product_id.default_code,
-product_name=object.product_id.name,
+product_code=object.lot_id.product_id.default_code,
+product_name=object.lot_id.product_id.name,
 
 prodlot_label=&quot;Lot:&quot;,
-prodlot_ref=object.ref,
+prodlot_ref=object.lot_id.ref,
 barcode=f"{object.get_label_barcode()}",
 
-date_label=object.date_label,
-date=f&quot;{object.expiration_date:%d/%m/%Y}&quot;,
+date_label=object.lot_id.date_label,
+date=f&quot;{object.lot_id.expiration_date:%d/%m/%Y}&quot;,
 )
 </field>
 		<field name="repeat" eval="0"/>
@@ -65,6 +127,8 @@ date=f&quot;{object.expiration_date:%d/%m/%Y}&quot;,
 		<field name="block_lines" eval="1"/>
 		<field name="block_justify">L</field>
 	</record>
+
+
 	<record id="printing_label_zpl2_component_imprimante0" model="printing.label.zpl2.component">
 		<field name="label_id" model="printing.label.zpl2" search="[('name', '=', 'Imprimante')]"/>
 		<field name="name">imprimante</field>

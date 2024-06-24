@@ -17,6 +17,25 @@
 		<field name="condition">data.get('lot_id')</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_weight"/>
 	</record>
+
+	<record id="wms_scenario_weight_transition_20_25" model="wms.scenario.transition">
+		<field name="name">1-[20-25]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'weight-20')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'weight-25')]"/>
+		<field name="condition">data.get('button', '?') == 'manual_tare'</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_weight"/>
+	</record>
+
+	<record id="wms_scenario_weight_transition_25_30" model="wms.scenario.transition">
+		<field name="name">1-[25-30]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'weight-25')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'weight-30')]"/>
+		<field name="condition">data.get('tare')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_weight"/>
+	</record>
+
 	<record id="wms_scenario_weight_transition_20_30" model="wms.scenario.transition">
 		<field name="name">1-[20-30]</field>
 		<field name="sequence" eval="1"/>
@@ -25,7 +44,5 @@
 		<field name="condition">data.get('printer')</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_weight"/>
 	</record>
-
-
 
 </odoo>
