@@ -301,8 +301,9 @@ class WmsScenarioStep(models.Model):
             original_data['warning'] = data.get('warning', '')
             data = original_data.copy()
 
-        if data.get('step'):
-            data = self.execute_code_before(data)
+        if data.get('step') and original_data.get('step') and data['step'] != original_data['step']:
+            next_step = data.get('step')
+            data = next_step.execute_code_before(data)
 
         message = self.info_message(data)
         if message:

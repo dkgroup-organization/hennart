@@ -215,6 +215,15 @@
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
 
+	<record id="wms_scenario_step_preparation145" model="wms.scenario.step">
+		<field name="sequence" eval="145"/>
+		<field name="name">preparation-145</field>
+		<field name="description">impression fin</field>
+		<field name="action_scanner">routing</field>
+		<field name="python_code">data = step.picking_validation_print(data)</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
+	</record>
+
 	<record id="wms_scenario_step_preparation150" model="wms.scenario.step">
 		<field name="sequence" eval="150"/>
 		<field name="name">preparation-150</field>
@@ -222,7 +231,7 @@
 		<field name="step_qweb">customize_scanner.scanner_scenario_message</field>
 		<field name="action_scanner">no_scan</field>
 		<field name="action_presentation"/>
-		<field name="python_code_before">data = step.picking_validation_print(data)</field>
+		<field name="python_code_before"/>
 		<field name="python_code"/>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
 	</record>
