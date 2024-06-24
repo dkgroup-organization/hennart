@@ -762,7 +762,7 @@ class WmsScenarioStep(models.Model):
                 data['picking'].update_sscc()
 
     def picking_validation_print(self, data):
-        """ Valid the end of the preparation, and print documents"""
+        """ Valid the end of the preparation, and print documents """
         self.ensure_one()
 
         if not data.get('warning'):
@@ -770,10 +770,7 @@ class WmsScenarioStep(models.Model):
             printer = data.get('printer')
 
             if picking and printer:
-                try:
-                    picking.print_container_label(printer=printer)
-                except:
-                    data['warning'] = _("Printing error")
+                picking.print_container_label(printer=printer)
 
             if picking:
                 # Check the state of this picking
@@ -791,4 +788,5 @@ class WmsScenarioStep(models.Model):
                 # picking validation and print document
                 data.pop('end_preparation', None)
                 picking.button_validate()
+
         return data

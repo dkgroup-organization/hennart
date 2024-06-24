@@ -57,4 +57,3 @@ class WmsScenarioStep(models.Model):
                         new_data['warning'] = _('No weight measured')
         return new_data
 
-

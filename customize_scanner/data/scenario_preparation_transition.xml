@@ -225,13 +225,20 @@
         <field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
     </record>
 
-    <record id="wms_scenario_prepa_transition_140_150" model="wms.scenario.transition">
+    <record id="wms_scenario_prepa_transition_140_145" model="wms.scenario.transition">
         <field name="sequence" eval="2"/>
         <field name="from_id" model="wms.scenario.step" search="[('name', '=', 'preparation-140')]"/>
-        <field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-150')]"/>
-        <field name="condition">'nb_pallet' in data.keys() and data.get('printer')</field>
+        <field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-145')]"/>
+        <field name="condition">'nb_pallet' in data.keys()</field>
         <field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
     </record>
 
+    <record id="wms_scenario_prepa_transition_145_150" model="wms.scenario.transition">
+        <field name="sequence" eval="2"/>
+        <field name="from_id" model="wms.scenario.step" search="[('name', '=', 'preparation-145')]"/>
+        <field name="to_id" model="wms.scenario.step" search="[('name', '=', 'preparation-150')]"/>
+        <field name="condition">True</field>
+        <field name="scenario_id" model="wms.scenario" search="[('name', '=', 'preparation')]"/>
+    </record>
 
 </odoo>
