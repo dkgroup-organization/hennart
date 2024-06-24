@@ -451,13 +451,4 @@ class WmsScenarioStep(models.Model):
                 del data['printer']
         return data
 
-    def print_weighted_lot(self, data):
-        """ print weighed lot """
-        self.ensure_one()
-        session = self.env['wms.session'].get_session()
-        lot = data.get('production_lot_id') or data.get('lot_id')
-        printer = data.get('printer')
-        weighting_device = data.get('weighting_device')
-        return data
-
 

@@ -65,7 +65,7 @@
 	</record>
 
 	<record id="wms_scenario_menu_weight" model="wms.menu">
-		<field name="name">Label</field>
+		<field name="name">Weighting</field>
 		<field name="sequence" eval="7"/>
 		<field name="image_file">pesage.svg</field>
 		<field name="menu_code">production_modify</field>

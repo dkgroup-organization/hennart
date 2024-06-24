@@ -15,12 +15,14 @@ class StockWeightDevice(models.Model):
     address = fields.Char('Network address')
     simulation = fields.Boolean('Simulation')
 
-    def get_weight(self, data={}, value_id=True):
+    def get_weight_id(self, data={}):
         """ Get the weight, ask the device"""
         self.ensure_one()
 
         res = {}
         body = ''
+        weight_value_ids = self.env['stock.weight.value']
+
         if self.simulation:
             if data.get('weight_line'):
                 alea_product = random.uniform(0.90, 1.1)
@@ -65,10 +67,9 @@ class StockWeightDevice(models.Model):
                         res['warning'] = _("Weighted error, the weight value is not correct")
         
         if res.get('number'):
-            weight_value_obj = self.env['stock.weight.value']
-            weight_value_ids = weight_value_obj
+
             if res['number'] != SIMULATION_NUMBER:
-                weight_value_ids = weight_value_obj.search([('name', '=', res['number'])])
+                weight_value_ids = self.env['stock.weight.value'].search([('name', '=', res['number'])])
             if not weight_value_ids:
                 vals = {
                     'name': res.get('number', '?'),
@@ -84,9 +85,14 @@ class StockWeightDevice(models.Model):
                 if data.get('lot_id'):
                     vals['lot_id'] = data['lot_id'].id
 
-                weight_value_obj.create(vals)
+                weight_value_ids = self.env['stock.weight.value'].create(vals)
 
-            if value_id:
-                return
+        return weight_value_ids and weight_value_ids[0] or weight_value_ids
 
-        return res.get('weight') or 0.0
+    def get_weight(self, data={}):
+        """ return weight """
+        weight_value = self.get_weight_id(data=data)
+        if weight_value:
+            return weight_value.weight
+        else:
+            return 0.0

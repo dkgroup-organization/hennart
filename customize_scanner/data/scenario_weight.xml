@@ -30,7 +30,7 @@
 		<field name="action_scanner">scan_multi</field>
 		<field name="action_variable">lot_id</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_weight"/>
-		<field name="python_code"/>
+		<field name="python_code">data = step.weighted_tare(data)</field>
 	</record>
 
 	<record id="wms_scenario_step_weight-20" model="wms.scenario.step">
@@ -43,6 +43,16 @@
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_weight"/>
 	</record>
 
+	<record id="wms_scenario_step_weight-25" model="wms.scenario.step">
+		<field name="sequence" eval="25"/>
+		<field name="name">weight-25</field>
+		<field name="description">scan tare</field>
+		<field name="action_scanner">scan_tare</field>
+		<field name="action_variable">tare</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_weight"/>
+		<field name="python_code"/>
+	</record>
+
 	<record id="wms_scenario_step_weight-30" model="wms.scenario.step">
 		<field name="sequence" eval="30"/>
 		<field name="name">weight-30</field>
@@ -52,5 +62,6 @@
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_weight"/>
 		<field name="python_code">data = step.print_weighted_lot(data)</field>
 	</record>
+
 
 </odoo>

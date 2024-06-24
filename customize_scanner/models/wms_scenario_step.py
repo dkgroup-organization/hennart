@@ -20,7 +20,6 @@ BARCODE_PRODLOT = '(10)'
 class WmsScenarioStep(models.Model):
     _inherit = 'wms.scenario.step'
 
-
     @api.model
     def get_date_scanning(self, scan):
         """ Check and return the date"""
@@ -38,7 +37,6 @@ class WmsScenarioStep(models.Model):
         The product code is to check if there is a package.
         """
         self.ensure_one()
-        print('-----------scan_multi--------------\n', data, scan)
 
         # Detect the old barcode (reference used by V7) 24 or 25 or 26 length
         # 53201523101X010120000000  -24 DIGI machine frais emballé [11], la date est inversé
@@ -184,7 +182,7 @@ class WmsScenarioStep(models.Model):
                 for odj_name in ['production_id', 'lot_id', 'product_id', 'weight_id']:
                     if data_origin.get(odj_name):
                         data_origin['scan'] = data_origin[odj_name]
-        print('-----------scan_multi-------end-------\n', data_origin)
+        logger.info('scan multi, data: ', data_origin)
         return data_origin
 
     @api.model

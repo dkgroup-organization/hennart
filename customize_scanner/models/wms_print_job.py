@@ -30,12 +30,7 @@ class WmsPrintJob(models.Model):
             if label:
                 record_id = self.env[job.res_model].search([('id', '=', job.res_id)])
                 if record_id:
-                    if job.context:
-                        job_context = job.get_context()
-                        if job_context.get('weight'):
-                            label.with_context(weight=job_context.get('weight')).print_label(printer, record_id)
-                    else:
-                        label.print_label(printer, record_id)
+                    label.print_label(printer, record_id)
                     job.state = 'done'
                 else:
                     job.state = 'error'

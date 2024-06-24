@@ -22,7 +22,10 @@ class StockWeightValue(models.Model):
         """ Return value to print on label """
         self.ensure_one()
         if self.weight:
-            res = f"{self.weight:.3f} Kg"
+            weight = self.weight
+            if self.tare:
+                weight -= self.tare
+            res = f"{weight:.3f} Kg"
         else:
             res = ''
         return res
@@ -41,6 +44,9 @@ class StockWeightValue(models.Model):
         self.ensure_one()
         barcode = self.lot_id.barcode
         if self.weight and self.weight < 100.0:
-            weight_label = f"{self.weight:.3f}".zfill(6)
+            weight = self.weight
+            if self.tare:
+                weight -= self.tare
+            weight_label = f"{weight:.3f}".zfill(6)
             barcode = barcode[:-6] + weight_label
         return barcode

@@ -49,6 +49,7 @@
                     <t t-call="customize_scanner.scanner_input_lot_id"/>
                     <t t-call="customize_scanner.scanner_input_printer"/>
                     <t t-call="customize_scanner.scanner_input_weighting_device"/>
+                    <t t-if="step.action_scanner in ['scan_tare']" t-call="customize_scanner.scanner_input_tare"/>
 
                     <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
                 </form>
