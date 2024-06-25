@@ -21,7 +21,6 @@ class StockPicking(models.Model):
                         'name': carrier_order_name or "",
                         'carrier_id': picking.carrier_id.id,
                         'date_expected': picking.scheduled_date,
-                        # 'hour_expected' : float(picking.scheduled_date.time()),
                         'warehouse_id': 1,
                         'nb_picking': 1,
                         'nb_line': len(picking.move_line_ids),

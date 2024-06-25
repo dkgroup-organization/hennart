@@ -1,6 +1,6 @@
 
 
-from odoo import models, fields ,api, _
+from odoo import models, fields ,api, _, SUPERUSER_ID
 import time
 import datetime
 import unicodedata
@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 import pytz
 import pysftp
 import base64
-
+from odoo.exceptions import MissingError, UserError, ValidationError
 
 
 class delivery_carrier_order(models.Model):
@@ -359,7 +359,7 @@ class delivery_carrier_order(models.Model):
                         data['order'] += ',' + picking.name
 
                     #SSCC
-                    for sscc in picking.sscc_lines_ids:
+                    for sscc in picking.sscc_line_ids:
                         if data['sscc']:
                             data['sscc'] += ','
                         data['sscc'] += sscc.name

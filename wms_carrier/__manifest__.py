@@ -11,7 +11,8 @@
     """,
     "data": [
         "security/ir.model.access.csv",
-        "view/carrier_view.xml",
+        "view/delivery_carrier_order_view.xml",
+        "view/delivery_carrier_view.xml",
         "view/stock_picking_view.xml",
         ],
     'demo_xml': [],
