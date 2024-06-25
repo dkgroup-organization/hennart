@@ -26,11 +26,21 @@
       <field name="type">form</field>
       <field name="arch" type="xml">
         <form string="Carrier Order" version="7.0">
-          <header>
+    <header>
             <button name="button_action_done" string="Done" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
+             <button name="button_action_send" string="Send EDI" type="object" class="oe_highlight" groups="stock.group_stock_user" attrs="{'invisible': [('edi_done','=',True)]}"/>
+            <button name="button_send_sftp" string="Send SFTP" type="object" class="oe_highlight" groups="stock.group_stock_user"/>
             <field name="state" widget="statusbar"/>
           </header>
           <sheet>
+          
+          
+          <style>
+              div[name="content"] span,div[name="chronopost_content"] span, div[name="sscc_content"] span {
+              word-wrap: break-word !important;
+              }
+            </style>
+          
             <h1>
               <field name="name" class="oe_inline"/>
             </h1>
@@ -41,7 +51,7 @@
           <field name="edi_done"/>
               </group>
               <group>
-                <field name="date_expected" />
+                <field name="date_expected"/>
               </group>
 
               <group>
@@ -85,21 +95,34 @@
               </page>
 
 
-              <page string="Export">
-               <!--  <group string="Export Information">
+             <page string="Export">
+       <group>
+                <group string="Export Information">
+                    <field name="save_name" invisible="1"/>
                   <field name="save_as" filename="save_name"/>
-                  <field name="content"/>
+                  <field name="content" colspan="3" rowspan="5" widget="text"/>
                 </group>
-                <group string="Export Chronopost">
+                 </group>
+                 <group>
+                    <group string="Export Chronopost">
+                           <field name="chronopost_save_name" invisible="1"/>
+                      
                   <field name="chronopost_save_as" filename="chronopost_save_name"/>
-                  <field name="chronopost_content"/>
+                  <field name="chronopost_content" colspan="3" rowspan="5" widget="text"/>
                 </group>
-                <group string="Export SSCC Nagel">
+                 </group>
+                <group>
+                   <group string="Export SSCC Nagel">
+                       <field name="sscc_save_name" invisible="1"/>
                   <field name="sscc_save_as" filename="sscc_save_name"/>
-                  <field name="sscc_content"/>
-                </group> -->
-              </page>
+                  <field name="sscc_content" colspan="3" rowspan="5" widget="text"/>
+                 
+                </group>
+                </group>
+               
 
+     
+              </page>
 
             </notebook>
           </sheet>
@@ -280,7 +303,39 @@
 </template>
 
 
+ <record id="view_delivery_edi_form" model="ir.ui.view">
+      <field name="name">delivery.carrier.edi</field>
+      <field name="model">delivery.carrier</field>
+      <field name="type">form</field>
+      <field name="inherit_id" ref="delivery.view_delivery_carrier_form"/>
+      <field name="arch" type="xml">
+        <group name="delivery_details" position="after">
+          <group string="Delivery EDI">
+            <group>
+              <field name="edi_partner_id" />
+              <field name="edi_subject"/>
+              <field name="edi_body" widget="html"/>
+              <field name="edi_csv"/>
+              <field name="edi_pdf"/>
+            </group>
+            <group string="Nagel configuration">
+              <field name="edi_sscc_csv"/>
+            </group>
 
+            <group string="Chronopost">
+              <field name="edi_chronopost"/>
+            </group>
+            <group string="SFTP configuration">
+              <field name="sftp_server"/>
+              <field name="sftp_user"/>
+              <field name="sftp_password"/>
+              <field name="sftp_dir"/>
+            </group>
+          </group>
+          <newline/>
+        </group>
+      </field>
+    </record>
 
   </data>
 </openerp>
