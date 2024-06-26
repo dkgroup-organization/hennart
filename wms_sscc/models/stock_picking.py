@@ -40,4 +40,3 @@ class StockPicking(models.Model):
                                                          order="id desc", limit=1)
                     sscc.unlink()
                     todo_sscc += 1
-

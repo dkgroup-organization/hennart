@@ -68,41 +68,43 @@ class delivery_carrier_order(models.Model):
         
         date_now = time.strftime('%Y-%m-%d')
         for carrier_order in self:
-          if carrier_order:
-            if carrier_order.date_expected:
-               testoo = carrier_order.date_expected.strftime('%Y-%m-%d')
-            else: 
-                testoo = False
-            order_date = testoo or date_now
-            # order_date = order_date2.strftime('%Y-%m-%d')
-            nagel_name = 'DZV_HENNART____CALTMS_IMP_AUFTRAEGE_'
-            nagel_counter = str(order_date).replace('-', '')
-            carrier_order.save_name = carrier_order.name.replace(' ', '_') + '_' + str(order_date)+ '.csv'
-            carrier_order.sscc_save_name=nagel_name + nagel_counter + '.DFD'
-            carrier_order.chronopost_save_name=carrier_order.name.replace(' ', '_') + '_' + str(order_date) + '_chronopost.csv'
-            carrier_order.number_of_packages= 0
-            carrier_order.nb_picking= 0
-            carrier_order.nb_line=0
-            carrier_order.nb_container=0
-            carrier_order.nb_pallet= 0
-            carrier_order.nb_pallet_europe= 0
-            carrier_order.nb_pallet_perdu= 0
-            carrier_order.weight= 0
-            date = carrier_order.date_expected or date_now
-            carrier_order.nb_picking = len(carrier_order.picking_ids)
-            if carrier_order.picking_ids: 
-             for picking in carrier_order.picking_ids:
-                carrier_order.nb_line += len(picking.move_line_ids)
-                carrier_order.number_of_packages += picking.number_of_packages
-                carrier_order.nb_container += picking.nb_container
-                carrier_order.nb_pallet += picking.nb_pallet
-                carrier_order.nb_pallet_europe += picking.nb_pallet_europe
-                carrier_order.nb_pallet_perdu += picking.nb_pallet_perdu
-                date_delivered = picking.scheduled_date + datetime.timedelta(days=1)
-                carrier_order.date_delivered = date_delivered.strftime('%Y-%m-%d 12:00:00')
-                for line in picking.move_ids:
-                    carrier_order.weight += line.weight
-                    
+            if carrier_order:
+                if carrier_order.date_expected:
+                   testoo = carrier_order.date_expected.strftime('%Y-%m-%d')
+                else:
+                    testoo = False
+                order_date = testoo or date_now
+                # order_date = order_date2.strftime('%Y-%m-%d')
+                nagel_name = 'DZV_HENNART____CALTMS_IMP_AUFTRAEGE_'
+                nagel_counter = str(order_date).replace('-', '')
+                carrier_order.save_name = carrier_order.name.replace(' ', '_') + '_' + str(order_date)+ '.csv'
+                carrier_order.sscc_save_name=nagel_name + nagel_counter + '.DFD'
+                carrier_order.chronopost_save_name=carrier_order.name.replace(' ', '_') + '_' + str(order_date) + '_chronopost.csv'
+                carrier_order.number_of_packages= 0
+                carrier_order.nb_picking= 0
+                carrier_order.nb_line=0
+                carrier_order.nb_container=0
+                carrier_order.nb_pallet= 0
+                carrier_order.nb_pallet_europe= 0
+                carrier_order.nb_pallet_perdu= 0
+                carrier_order.weight= 0
+                date = carrier_order.date_expected or date_now
+                carrier_order.nb_picking = len(carrier_order.picking_ids)
+                if carrier_order.picking_ids:
+                    weight = 0.0
+                    for picking in carrier_order.picking_ids:
+                        carrier_order.nb_line += len(picking.move_line_ids)
+                        carrier_order.number_of_packages += picking.number_of_packages
+                        carrier_order.nb_container += picking.nb_container
+                        carrier_order.nb_pallet += picking.nb_pallet
+                        carrier_order.nb_pallet_europe += picking.nb_pallet_europe
+                        carrier_order.nb_pallet_perdu += picking.nb_pallet_perdu
+                        date_delivered = picking.scheduled_date + datetime.timedelta(days=1)
+                        carrier_order.date_delivered = date_delivered.strftime('%Y-%m-%d 12:00:00')
+                        for line in picking.move_ids:
+                            weight += line.weight
+                    carrier_order.weight = weight
+
     def _get_content(self):
         for obj_current in self:
             obj_current.save_as = False
@@ -112,6 +114,17 @@ class delivery_carrier_order(models.Model):
             else:
                 obj_current.save_as = base64.encodebytes(mm.encode('utf-8'))
 
+    def update_hours_expected(self):
+        """ Update the hours expected with delivery.carrier hours table """
+        for order in self:
+            if order.state in ['done', 'cancel']:
+                continue
+            date_expected = order.carrier_id.get_delivery_hours(order.date_expected)
+            if order.date_expected != date_expected:
+                order.date_expected = date_expected
+            for picking in order.picking_ids:
+                if picking.scheduled_date != date_expected:
+                    picking.scheduled_date = date_expected
 
     def _csv_content(self):
         fields_to_export = [

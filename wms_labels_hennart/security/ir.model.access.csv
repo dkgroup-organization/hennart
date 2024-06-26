@@ -1,1 +1,4 @@
 id,name,model_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_printing_choice,printing_choice,model_printing_choice,True,True,True,True
+
+

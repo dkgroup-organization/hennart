@@ -1,4 +1,5 @@
 from odoo import models, fields ,api, _
+from odoo.exceptions import ValidationError
 import time
 import datetime
 
@@ -28,11 +29,23 @@ class delivery_carrier(models.Model):
     dow_5 = fields.Float('Saturday')
     dow_6 = fields.Float('Sunday')
 
+    @api.constrains('dow_0', 'dow_1', 'dow_2', 'dow_3', 'dow_4', 'dow_5', 'dow_6')
+    def _check_dow_values(self):
+        for record in self:
+            for weekday in range(7):
+                if not (0 <= getattr(self, f'dow_{weekday}') < 24):
+                    raise ValidationError("This time must be between 0 and 24.")
+
     def get_delivery_hours(self, date):
         """ Return the hour of delivery carrier load by day """
         self.ensure_one()
-        # get the days of week of date
-        # get the hours of this day of week by field dow_0 .... 6
-        # If not hour default is 12:00?
-        # return date with good hour
+        weekday = date.weekday()
+        if hasattr(self, f'dow_{weekday}'):
+            delivery_hour = getattr(self, f'dow_{weekday}')
+        else:
+            delivery_hour = 12.00
+
+        hour = int(delivery_hour)
+        minute = int(float(hour) - delivery_hour) * 60
+        date = date.replace(hour=hour, minute=minute)
         return date

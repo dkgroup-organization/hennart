@@ -13,11 +13,13 @@
     """,
     "depends": ["base_report_to_printer", "printer_zpl2", "customize_stock", "wms_sscc"],
     "data": [
-        #"security/ir.model.access.csv","data/label.xml",
+        "security/ir.model.access.csv",
         #"wizard/label_stock_move_view.xml",
         "data/printing_label_zebra.xml",
         "data/printing_label_component_zebra.xml",
         "views/printing_printer.xml",
+
+        "wizard/printer_choice.xml",
 
     ],
     'installable': True,

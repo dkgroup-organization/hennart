@@ -24,7 +24,10 @@ class StockPicking(models.Model):
          ('pack_label', 'Label all packs'), ('product_label', 'Label all products')],
         default="lot_label", string="Label strategy")
 
-
+    def _check_expired_lots(self):
+        """ Do not block expiry lot """
+        expired_pickings = self.env['stock.picking']
+        return expired_pickings
 
     def compute_preparation_state(self):
         """ Compute preparation state """
@@ -86,6 +89,13 @@ class StockPicking(models.Model):
                 break
         return res
 
+    def update_delivery_hours(self, date):
+        """ Return the hour of delivery carrier load by day
+        """
+        for picking in self:
+            picking.scheduled_date = picking.scheduled_date.replace(hours=12, mminutes=0)
+
+
     @api.depends('scheduled_date')
     def _compute_sequence(self):
         for picking in self:
@@ -109,7 +119,9 @@ class StockPicking(models.Model):
         """ Add some checking before validation """
         self.move_ids_without_package.check_line()
         self.move_ids_without_package.move_line_ids.filtered(lambda x: x.qty_done == 0.0).unlink()
+
         res = super().button_validate()
+
         canceled_move = self.move_ids_without_package.filtered(lambda x: x.state == 'cancel')
         canceled_move.sudo().move_line_ids.unlink()
         return res
