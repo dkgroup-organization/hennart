@@ -120,6 +120,11 @@
                     </page>
                     <page string="stock">
                         <group>
+                            <group name="type" string="type">
+                                <field name="detailed_type"/>
+                                <field name="tracking"/>
+
+                            </group>
                             <group name="Weight" string="Weight">
                                 <field name="volume"/>
                                 <field name="tare"/>

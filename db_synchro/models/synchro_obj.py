@@ -284,6 +284,7 @@ class BaseSynchroObj(models.Model):
                 elif self.auto_create or self.env.context.get('auto_create'):
                     product_tmpl_obj = self.server_id.get_obj('product.template')
                     product_tmpl_local_id = product_tmpl_obj.get_local_id(remote_tmpl_id[0])
+                    _logger.info("load_remote_product: product_tmpl_local_id" + str(product_tmpl_local_id))
                     product_tmpl_local = self.env['product.template'].browse(product_tmpl_local_id)
                     local_product_id = product_tmpl_local.product_variant_id.id
 
@@ -580,6 +581,10 @@ class BaseSynchroObj(models.Model):
         if self.model_name == 'res.partner' and not remote_value.get('name'):
             remote_value['name'] = '?'
 
+        if self.model_name == 'product.template':
+            remote_value['type'] = 'product'
+            remote_value['detailed_type'] = 'product'
+
         remote_value = self.exception_value_write(remote_value)
         return remote_value
 
@@ -646,7 +651,7 @@ class BaseSynchroObj(models.Model):
                 # Create
                 remote_value = self.exception_value_create(remote_value)
                 local_value = self.get_local_value(remote_value)
-                _logger.info("create: %s: %s" % (self.model_id.model, local_value))
+                _logger.info("------ create: %s: %s\n" % (self.model_id.model, local_value))
                 try:
                     new_obj = self.env[self.model_id.model].sudo().with_context(synchro=True).create(local_value)
                     local_id = new_obj.id

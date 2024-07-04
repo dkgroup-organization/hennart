@@ -97,14 +97,14 @@
                                     <p t-esc="production.product_id.default_code" class="font-bold mb-1"/>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <p><span t-esc="production.product_qty"/> :<span t-esc="production.product_id.name"/>  </p>
+                                    <p><span t-esc="str(int(production.product_qty))" class="font-bold"/> : <span t-esc="production.product_id.name"/>  </p>
                                     <p t-esc="production.components_availability" class="mb-1"/>
 
                                 </div>
                                 <div class="flex justify-between">
                                     <p><span t-if="production.partner_id" t-esc="production.partner_id.name"/>
                                     </p>
-
+                                    <p t-if="production.user_id" t-esc="production.user_id.name" class="font-bold mb-1"/>
                                 </div>
                             </a>
                         </li>

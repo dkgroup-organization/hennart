@@ -18,7 +18,7 @@ class MrpBom(models.Model):
             if bom.type == "phantom" and len(bom.bom_line_ids) > 1 :
                 raise ValidationError(_('A KIT must have only one line of product.'))
 
-    @api.depends('bom_line_ids.product_id', 'bom_line_ids.product_qty')
+    @api.depends('type', 'bom_line_ids.product_id', 'bom_line_ids.product_qty')
     def compute_package(self):
         """ Update type value"""
         for bom in self:

@@ -9,13 +9,6 @@
   background-color: #DD2020;
 }
 
-.warning::placeholder {
-  color: #400000;
-}
-
-input-green::placeholder {
-   color: #004000;
-}
 
 .landscape\:top-2{
     top: 5.5rem;

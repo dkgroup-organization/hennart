@@ -2,7 +2,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    'name': 'WMS Scanner custom',
+    'name': 'WMS Scanner custom hennart',
     'summary': 'Custom barcode management',
     'version': '16.0.1.0.1',
     'category': 'Generic Modules/Inventory Control',
@@ -23,7 +23,10 @@
         "views/scenario_inventory_template.xml",
         "views/scenario_change_lot_template.xml",
         "views/scenario_print_template.xml",
+        "views/scenario_weight_template.xml",
         "views/scenario_production_list_template.xml",
+        "views/scenario_production_line_template.xml",
+        "views/scenario_create_lot_template.xml",
 
         "data/scenario_preparation.xml",
         "data/scenario_preparation_transition.xml",
@@ -35,6 +38,14 @@
         "data/scenario_change_lot_transition.xml",
         "data/scenario_production.xml",
         "data/scenario_production_transition.xml",
+        "data/scenario_print.xml",
+        "data/scenario_print_transition.xml",
+        "data/scenario_weight.xml",
+        "data/scenario_weight_transition.xml",
+        "data/scenario_create_lot.xml",
+        "data/scenario_create_lot_transition.xml",
+
+        "data/scenario_menu.xml",
     ],
     'demo': [
     ],

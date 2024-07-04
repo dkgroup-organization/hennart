@@ -102,17 +102,29 @@ class SaleOrder(models.Model):
         # Check mrp.mo to order
         self.create_mo()
 
-        # Check stock mo to do
-        self.picking_ids.action_mrp()
-
         return res
 
     def create_mo(self):
-        """ Check personnalize mo to create """
-        for order in self:
-            for line in self.order_line:
-                if line.product_id.bom_ids:
-                    line.create_mo()
+        """ Check mo to create, copy produced lot on picking """
+        self.order_line.create_mo()
+
+        for sale in self:
+            procurement = sale.procurement_group_id
+            lot_producing = {}
+            production_location = False
+            for mo in procurement.mrp_production_ids:
+                if mo.lot_producing_id:
+                    lot_producing[mo.product_id.id] = {'lot': mo.lot_producing_id,
+                                                       'location': mo.location_dest_id}
+
+            for move in procurement.stock_move_ids:
+                if move.product_id.id in list(lot_producing.keys()):
+                    if not move.move_line_ids:
+                        move.put_quantity_done()
+                    for move_line in move.move_line_ids:
+                        move_line.lot_id = lot_producing[move.product_id.id]['lot']
+                        move_line.location_id = lot_producing[move.product_id.id]['location']
+                        move_line.reserved_uom_qty = move.product_uom_qty
 
     def button_test(self):
         """ TEST """

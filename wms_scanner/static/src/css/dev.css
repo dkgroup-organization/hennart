@@ -77,9 +77,6 @@
     @apply w-full border rounded-md p-4 border-red-600 bg-red-400 bg-opacity-20;
   }
 
-  ::placeholder {
-    @apply text-gray-500 italic;
-  }
 }
 
 @media (orientation: landscape) {

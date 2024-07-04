@@ -30,6 +30,8 @@ class WmsScenario(models.Model):
         default='construction.jpg')
     scenario_qweb = fields.Char(
         string='QWEB Template')
+    scenario_title = fields.Char(
+        string='QWEB Title', translate=True)
     debug_mode = fields.Boolean(
         string='Debug mode')
     active = fields.Boolean(

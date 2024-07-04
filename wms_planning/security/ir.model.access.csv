@@ -1,0 +1,6 @@
+id,name,model_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_report_stock_weekprevision,report_stock_weekprevision,model_report_stock_weekprevision,True,False,False,False
+
+
+
+

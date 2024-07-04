@@ -8,7 +8,6 @@
                 <field name="sequence" widget="handle"/>
                 <field name="parent_id"/>
                 <field name="name"/>
-                <field name="menu_type"/>
                 <field name="image_file"/>
             </tree>
         </field>
@@ -28,11 +27,10 @@
                     <group>
                         <group>
                             <field name="name"/>
-                            <field name="parent_id" domain="[('menu_type', '=', 'menu')]"/>
+                            <field name="parent_id" domain="[('scenario_id', '=', False)]"/>
                             <field name="sequence"/>
                         </group>
                         <group>
-                            <field name="menu_type"/>
                             <field name="scenario_id"/>
                             <field name="menu_code"/>
                             <field name="image_file"/>

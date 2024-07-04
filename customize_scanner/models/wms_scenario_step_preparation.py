@@ -123,16 +123,20 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         res = 'Scan'
         move_line = data.get('move_line') or data.get('weight_line')
+        production = data.get('production_id')
 
         if self.action_message:
             return self.action_message
 
         if self.action_variable == 'lot_id':
             if move_line:
-                expiration_date = move_line.lot_id.expiration_date or move_line.lot_id.use_date
-                res = _('Lot: ') + f"{move_line.lot_id.ref}"
-                if expiration_date:
-                    res += f" {expiration_date.strftime('%d/%m/%Y')}"
+                if move_line.lot_id:
+                    expiration_date = move_line.lot_id.expiration_date or move_line.lot_id.use_date
+                    res = _('Lot: ') + f"{move_line.lot_id.ref}"
+                    if expiration_date:
+                        res += f" {expiration_date.strftime('%d/%m/%Y')}"
+                else:
+                    res = _('Scan lot')
             else:
                 res = _('Scan lot')
 
@@ -145,6 +149,22 @@ class WmsScenarioStep(models.Model):
         if self.action_variable == 'location_id':
             res = _('Scan location')
 
+        if self.action_variable == 'product_id':
+            res = _('Scan Product code')
+
+        if self.action_variable == 'production_id':
+            res = _('Scan production')
+
+        if self.action_variable == 'production_lot_id':
+            production_lot = production and production.lot_producing_id
+            if production_lot:
+                res = f"{production_lot.name or ''}"
+                expiration_date = production_lot.expiration_date or production_lot.use_date
+                if expiration_date:
+                    res += f"            {expiration_date.strftime('%d/%m/%Y')}"
+            else:
+                res = _('Scan production lot')
+
         if self.action_variable == 'quantity':
             if move_line:
                 qty_placeholder = self.get_input_description_right(data, 'quantity')
@@ -156,6 +176,12 @@ class WmsScenarioStep(models.Model):
 
             if data.get('max_quantity'):
                 res += _('  (max: ') + f"{data['max_quantity']} " + _("Unit") + ")"
+
+        if self.action_variable == 'production_quantity':
+            if production:
+                res = f'{int(production.product_qty)} ' + _('Unit')
+            else:
+                res = 'Produced quantity'
 
         if self.action_variable == 'printer':
             res = _('Scan Printer')
@@ -176,7 +202,7 @@ class WmsScenarioStep(models.Model):
             res = _('Enter tare by unit in Kg')
 
         if self.action_variable == 'expiry_date':
-            res = _('Number of days for expiry date')
+            res = _('Expiry date')
 
         if self.action_variable == 'number_of_packages':
             res = _("Nb of package: ")
@@ -206,10 +232,14 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         res = 'Scan'
         move_line = data.get('move_line') or data.get('weight_line')
+        production = data.get('production_id')
 
         if action_variable == 'product_id':
             product = data.get('product_id') or move_line and move_line.product_id
             res = product and f'{product.name}' or _('Product')
+        if action_variable == 'production_product_id':
+            production_product = data.get('production_product_id') or production and production.product_id
+            res = production_product and f'{production_product.name}' or _('Product to produce')
         if action_variable == 'location_id':
             location = data.get('location_id') or move_line and move_line.location_id
             res = location and f'{location.name}' or _('location')
@@ -222,9 +252,21 @@ class WmsScenarioStep(models.Model):
         if action_variable == 'lot_id':
             lot = data.get('lot_id') or move_line and move_line.lot_id
             res = lot and f'{lot.ref}' or _('Lot')
+        if action_variable == 'production_lot_id':
+            production_lot = data.get('production_lot_id') or production and production.lot_producing_id
+            res = production_lot and f'{production_lot.ref}' or _('Production lot')
+
         if action_variable == 'quantity':
             quantity = data.get('quantity') or move_line and move_line.reserved_uom_qty or 0.0
-            res = f'{int(quantity)}'
+            if quantity % 1 != 0.0:
+                res = f"{quantity:.2f}"
+            else:
+                res = f'{int(quantity)}'
+        if action_variable == 'production_quantity':
+            if production:
+                res = f'{int(production.qty_producing or production.product_qty)}  ' + _('Unit')
+            else:
+                res = 'Quantity'
         if action_variable == 'printer':
             printer = data.get('printer')
             res = printer and printer.name or _('scan printer')
@@ -249,6 +291,10 @@ class WmsScenarioStep(models.Model):
         if action_variable == 'expiry_date':
             res = _("Expiry Date: ")
 
+        if action_variable == 'production_id':
+            production = data.get('production_id')
+            res = production and f'{production.name}' or _('Production')
+
         return res
 
     def get_input_description_right(self, data, action_variable):
@@ -256,17 +302,30 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         res = ''
         move_line = data.get('move_line') or data.get('weight_line')
+        production = data.get('production_id')
+
         if action_variable == 'product_id':
             product = data.get('product_id') or move_line and move_line.product_id
-            res = product and f'{product.default_code}' or ''
+            res = product and f': {product.default_code}' or ''
+
+        if action_variable == 'production_product_id':
+            production_product = data.get('production_product_id') or production and production.product_id
+            res = production_product and f': {production_product.default_code}' or ''
+
         if action_variable in ['location_id', 'location_origin_id', 'location_dest_id']:
-            location = data.get('location_id') or data.get('location_id') or (move_line and move_line.location_id) or False
+            location = data.get('location_id') or data.get('location_origin_id') or (move_line and move_line.location_id) or False
             if location and len(location.name) > 5 and location.name[-2:].isnumeric():
                 res = location.name[-5:]
+
         if action_variable == 'lot_id':
             lot = data.get('lot_id') or (move_line and move_line.lot_id) or False
             if lot:
                 res = lot.expiration_date and f"{lot.expiration_date.strftime('%d/%m/%Y')}" or '??/??/????'
+
+        if action_variable == 'production_lot_id':
+            production_lot = data.get('lot_id') or data.get('production_lot_id') or (production and production.lot_producing_id) or False
+            if production_lot:
+                res = production_lot.expiration_date and f"{production_lot.expiration_date.strftime('%d/%m/%Y')}" or '??/??/????'
 
         if action_variable == 'quantity':
             if data.get('move_line') and move_line.move_id.bom_line_id.bom_id.type == 'phantom':
@@ -285,11 +344,9 @@ class WmsScenarioStep(models.Model):
                 res = _("Unit")
 
         if action_variable == 'expiry_date':
-            if data.get('expiry_date') and type(data['expiry_date']) == datetime.datetime:
+            if data.get('expiry_date') and type(data['expiry_date']) in [type(datetime.date), type(datetime.datetime)]:
                 expiry_date = f"{data['expiry_date'].strftime('%d/%m/%Y')}"
                 res = expiry_date
-            else:
-                res = _("Nb of days to add")
 
         if action_variable == 'weight':
             res = _("Tare: ")
@@ -324,10 +381,12 @@ class WmsScenarioStep(models.Model):
         """ Return input class to qweb template"""
         self.ensure_one()
         res = "text"
-        if self.action_scanner in ['scan_quantity', 'scan_date']:
+        if self.action_scanner in ['scan_quantity']:
             res = 'number'
         if self.action_scanner == 'scan_weight' and self.action_variable == 'weight':
             res = 'hidden'
+        if self.action_scanner in ['scan_date']:
+            res = 'date'
         return res
 
     def get_input_step(self, data):
@@ -409,6 +468,15 @@ class WmsScenarioStep(models.Model):
             location_ids = self.get_default_dest_location()
             for location in location_ids:
                 res.append({'text': location.name, 'href': href_base + f'location_dest_id&scan={location.id}'})
+
+        if data['step'].action_variable == 'production_lot_id':
+            if data.get('production_id') and data['production_id'].lot_producing_id and not data['production_id'].lot_producing_id.quant_ids:
+                res.append({'text': _('Modify date'), 'href': href_base + f"change_date"})
+
+        if data['step'].action_variable == 'printer':
+            if data.get('button_change_date'):
+                res.append(data.get('button_change_date'))
+
         return res
 
     def get_tare(self, data):
@@ -694,7 +762,7 @@ class WmsScenarioStep(models.Model):
                 data['picking'].update_sscc()
 
     def picking_validation_print(self, data):
-        """ Valid the end of the preparation, and print documents"""
+        """ Valid the end of the preparation, and print documents """
         self.ensure_one()
 
         if not data.get('warning'):
@@ -702,10 +770,7 @@ class WmsScenarioStep(models.Model):
             printer = data.get('printer')
 
             if picking and printer:
-                try:
-                    picking.print_container_label(printer=printer)
-                except:
-                    data['warning'] = _("Printing error")
+                picking.print_container_label(printer=printer)
 
             if picking:
                 # Check the state of this picking
@@ -723,4 +788,5 @@ class WmsScenarioStep(models.Model):
                 # picking validation and print document
                 data.pop('end_preparation', None)
                 picking.button_validate()
+
         return data

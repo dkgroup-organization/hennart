@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stock_quant2_view_tree" model="ir.ui.view">
+        <field name="name">stock_quant2_view_tree</field>
+        <field name="model">report.stock.quant2</field>
+        <field name="arch" type="xml">
+            <tree>
+                <header>
+                    <button name="open_product_replenish" type="object" string="Replenish" class="btn-success"/>
+                </header>
+                <field name="product_id"/>
+                <field name="product_tmpl_id" invisible="1"/>
+                <field name="categ_id"/>
+                <field name="product_qty"/>
+                <field name="lot_id"/>
+                <field name="warehouse_id"/>
+                <field name="company_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="stock_quant2_view_form" model="ir.ui.view">
+        <field name="name">stock_quant2_view_form</field>
+        <field name="model">report.stock.quant2</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="open_product_replenish" type="object" string="Replenish" class="btn-success"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="product_tmpl_id" invisible="1"/>
+                            <field name="product_id"/>
+                            <field name="product_qty"/>
+
+                        </group>
+                        <group>
+                            <field name="lot_id"/>
+                            <field name="warehouse_id"/>
+                            <field name="company_id"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="open_product_replenish"
+                                string="Replenish"
+                                type="object"
+                                class="btn-primary"/>
+                        <button string="Discard"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="stock_quant2_view_pivot" model="ir.ui.view">
+        <field name="name">stock_quant2_view_pivot</field>
+        <field name="model">report.stock.quant2</field>
+
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="product_id" type="row"/>
+                <field name="categ_id" type="row"/>
+                <field name="product_qty" type="measure"/>
+                <field name="lot_id" type="row"/>
+                <field name="warehouse_id" type="col"/>
+                <field name="company_id" invisible="1"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="stock_quant2_view_search" model="ir.ui.view">
+        <field name="name">report.stock.quant2.search</field>
+        <field name="model">report.stock.quant2</field>
+        <field name="arch" type="xml">
+            <search string="Stock">
+                <field name="product_id" string="Product"
+                       filter_domain="['|', '|', '|',
+                            ('product_id.default_code', 'ilike', self),
+                            ('product_id.partner_code', 'ilike', self),
+                            ('product_id.barcode', 'ilike', self),
+                            ('product_id.product_tmpl_id.name', 'ilike', self)]"/>
+                <field name="partner_id"/>
+                <field name="lot_id"/>
+                <field name="warehouse_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_report_quant2" model="ir.actions.act_window">
+        <field name="name">All product</field>
+        <field name="res_model">report.stock.quant2</field>
+        <field name="view_mode">pivot,tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'pivot_measures': ['product_qty'],
+            'pivot_column_groupby': ['warehouse_id'],
+            'pivot_row_groupby': ['categ_id']}
+        </field>
+    </record>
+
+    <record id="action_report_quant_production" model="ir.actions.act_window">
+        <field name="name">Finished product</field>
+        <field name="res_model">report.stock.quant2</field>
+        <field name="view_mode">pivot,tree,form</field>
+        <field name="domain">[("product_id.production","=",True)]</field>
+        <field name="context">{'pivot_measures': ['product_qty'],
+            'pivot_column_groupby': ['warehouse_id'],
+            'pivot_row_groupby': ['partner_id']}
+        </field>
+    </record>
+
+    <record id="action_report_quant_raw" model="ir.actions.act_window">
+        <field name="name">Fabrics</field>
+        <field name="res_model">report.stock.quant2</field>
+        <field name="view_mode">pivot,tree,form</field>
+        <field name="domain">[("product_id.raw_material","=",True)]</field>
+        <field name="context">{'pivot_measures': ['product_qty'],
+            'pivot_column_groupby': ['warehouse_id'],
+            'pivot_row_groupby': ['product_id']}
+        </field>
+    </record>
+
+    <record id="action_report_quant_item" model="ir.actions.act_window">
+        <field name="name">Accessories</field>
+        <field name="res_model">report.stock.quant2</field>
+        <field name="view_mode">pivot,tree,form</field>
+        <field name="domain">[("product_id.raw_material","=",False),
+            ("product_id.production","=",False), ("product_id.type","!=", "service")]</field>
+        <field name="context">{'pivot_measures': ['product_qty'],
+            'pivot_column_groupby': ['warehouse_id'],
+            'pivot_row_groupby': ['categ_id']}
+        </field>
+    </record>
+
+    <menuitem id="menu_action_report_quant2" name="STOCK" parent="stock.stock_picking_type_menu"
+              sequence="200"/>
+    <menuitem id="menu_action_report_quant_production" action="action_report_quant_production" parent="menu_action_report_quant2"
+              sequence="10"/>
+    <menuitem id="menu_action_report_quant_raw" action="action_report_quant_raw" parent="menu_action_report_quant2"
+              sequence="20"/>
+    <menuitem id="menu_action_report_quant_item" action="action_report_quant_item" parent="menu_action_report_quant2"
+              sequence="30"/>
+</odoo>
+

@@ -31,6 +31,9 @@ ACTION_VARIABLE = {
     'number_of_packages': {'model': '', 'type': 'Float'},
     'nb_container': {'model': '', 'type': 'Float'},
     'nb_pallet': {'model': '', 'type': 'Float'},
+    'expiry_date': {'model': '', 'type': 'Date'}
+
+
 }
 
 
@@ -61,7 +64,7 @@ class WmsScenarioStep(models.Model):
         string="Scanner", default="no_scan", required=True)
     action_model = fields.Many2one('ir.model', string="Model to scan",
                                    help="Define the model used at this step.")
-    action_variable = fields.Char(string='Input name', default='scan',
+    action_variable = fields.Char(string='Variable', default='scan',
                                   help="Define a name for the result of the scan at this step ")
     action_message = fields.Char(string='Input Placeholder', translate=True)
     action_presentation = fields.Html('Screen presentation', translate=True)
@@ -91,7 +94,7 @@ class WmsScenarioStep(models.Model):
         string='Python code before',
         help='Python code to execute before qweb.')
     scenario_notes = fields.Text(related='scenario_id.notes')
-    mode_debug = fields.Boolean('Mode debug', help='No try/except protection when there is code execution.')
+    debug_mode = fields.Boolean('Mode debug', help='No try/except protection when there is code execution.')
 
     def init_data(self, data={}):
         """ reinit the data of this step"""
@@ -200,13 +203,17 @@ class WmsScenarioStep(models.Model):
                 data[action_variable] = "%s" % (scan)
         elif action_scanner == 'scan_date':
             try:
-                nd_days = int(scan)
-                if nd_days > 0:
-                    data[action_variable] = fields.Datetime.now() + timedelta(days=nd_days)
+                print(type(scan), scan)
+                # nd_days = int(scan)
+                # datetime.datetime.strptime(date_str, format_str)
+                data[action_variable] = fields.Date.from_string(scan)
+                if True: #nd_days > 0:
+                    pass
+                    # data[action_variable] = fields.Datetime.now() + timedelta(days=nd_days)
                 else:
                     data['warning'] = _('Please, enter a positive value for the number of days')
             except:
-                data['warning'] = _('Please, enter a numeric value for the number of days')
+                data['warning'] = _('This date format is not valid')
 
         elif action_scanner in ['scan_quantity', 'scan_tare']:
             try:
@@ -294,8 +301,9 @@ class WmsScenarioStep(models.Model):
             original_data['warning'] = data.get('warning', '')
             data = original_data.copy()
 
-        if data.get('step'):
-            data = self.execute_code_before(data)
+        if data.get('step') and original_data.get('step') and data['step'] != original_data['step']:
+            next_step = data.get('step')
+            data = next_step.execute_code_before(data)
 
         message = self.info_message(data)
         if message:
@@ -376,7 +384,7 @@ class WmsScenarioStep(models.Model):
                 'env': self.env,
                 'data': data.copy()}
 
-            if self.mode_debug:
+            if self.debug_mode or self.scenario_id.debug_mode:
                 safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
                 data = localdict.get('data')
             else:
