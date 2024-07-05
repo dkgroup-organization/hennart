@@ -45,7 +45,7 @@
 
                         <!-- QTE -->
                         <td>
-                            <span t-field="move.number_of_pack" t-options='{"widget": "float", "precision": 1}'/>
+                            <span t-field="move.product_packaging_qty" t-options='{"widget": "float", "precision": 1}'/>
 
                         </td>
 
