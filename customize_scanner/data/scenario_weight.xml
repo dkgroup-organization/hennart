@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<odoo>
+    <record id="wms_scenario_weight" model="wms.scenario">
+		<field name="name">weight</field>
+		<field name="sequence" eval="400"/>
+		<field name="scenario_image">pesage.svg</field>
+		<field name="scenario_image">Weight</field>
+		<field name="scenario_qweb">customize_scanner.scenario_weight</field>
+		<field name="debug_mode" eval="0"/>
+		<field name="active" eval="1"/>
+		<field name="warehouse_ids" eval="[(6,0,[])]"/>
+		<field name="company_id" ref="base.main_company"/>
+		<field name="group_ids" eval="[(6,0,[ref('stock.group_stock_user')])]"/>
+		<field name="user_ids" eval="[(6,0,[])]"/>
+	</record>
+
+	<record id="wms_scenario_step_weight-1" model="wms.scenario.step">
+		<field name="sequence" eval="1"/>
+		<field name="name">weight-1</field>
+		<field name="action_scanner">start</field>
+		<field name="action_variable">scan</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_weight"/>
+		<field name="python_code"/>
+	</record>
+	
+	<record id="wms_scenario_step_weight-10" model="wms.scenario.step">
+		<field name="sequence" eval="10"/>
+		<field name="name">weight-10</field>
+		<field name="description">scan lot</field>
+		<field name="action_scanner">scan_multi</field>
+		<field name="action_variable">lot_id</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_weight"/>
+		<field name="python_code">data = step.weighted_tare(data)</field>
+	</record>
+
+	<record id="wms_scenario_step_weight-20" model="wms.scenario.step">
+		<field name="sequence" eval="20"/>
+		<field name="name">weight-20</field>
+		<field name="action_scanner">scan_model</field>
+		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
+		<field name="action_variable">printer</field>
+		<field name="python_code"/>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_weight"/>
+	</record>
+
+	<record id="wms_scenario_step_weight-25" model="wms.scenario.step">
+		<field name="sequence" eval="25"/>
+		<field name="name">weight-25</field>
+		<field name="description">scan tare</field>
+		<field name="action_scanner">scan_tare</field>
+		<field name="action_variable">tare</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_weight"/>
+		<field name="python_code"/>
+	</record>
+
+	<record id="wms_scenario_step_weight-30" model="wms.scenario.step">
+		<field name="sequence" eval="30"/>
+		<field name="name">weight-30</field>
+		<field name="description">scan device</field>
+		<field name="action_scanner">scan_weight</field>
+		<field name="action_variable">weighting_device</field>
+		<field name="scenario_id"  ref="customize_scanner.wms_scenario_weight"/>
+		<field name="python_code">data = step.print_weighted_lot(data)</field>
+	</record>
+
+
+</odoo>

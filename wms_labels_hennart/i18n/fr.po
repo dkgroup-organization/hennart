@@ -1,0 +1,78 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* wms_labels_hennart
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-15 14:21+0000\n"
+"PO-Revision-Date: 2024-05-15 14:21+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: wms_labels_hennart
+#: model:ir.model.fields,field_description:wms_labels_hennart.field_printing_printer__barcode
+msgid "Barcode"
+msgstr "Code barre"
+
+#. module: wms_labels_hennart
+#: model:ir.model.fields,field_description:wms_labels_hennart.field_stock_move_line__label_code
+msgid "Default code"
+msgstr "Code"
+
+#. module: wms_labels_hennart
+#: model:ir.model.fields,field_description:wms_labels_hennart.field_stock_move_line__label_qty
+msgid "Nb of label to print"
+msgstr "Nombre d'étiquette à imprimer"
+
+#. module: wms_labels_hennart
+#. odoo-python
+#: code:addons/wms_labels_hennart/models/stock_move_line.py:0
+#, python-format
+msgid "Net Weight:"
+msgstr "Poids Net:"
+
+#. module: wms_labels_hennart
+#: model:ir.model,name:wms_labels_hennart.model_printing_printer
+msgid "Printer"
+msgstr "Imprimante"
+
+#. module: wms_labels_hennart
+#: model:ir.ui.menu,name:wms_labels_hennart.printing_printer_menu2
+msgid "Printers"
+msgstr "Imprimante"
+
+#. module: wms_labels_hennart
+#: model:ir.ui.menu,name:wms_labels_hennart.printing_stock_menu
+msgid "Printing"
+msgstr "Impression"
+
+#. module: wms_labels_hennart
+#: model:ir.model,name:wms_labels_hennart.model_stock_move_line
+msgid "Product Moves (Stock Move Line)"
+msgstr "Mouvements d'article (Ligne de mouvement de stock)"
+
+#. module: wms_labels_hennart
+#: model:ir.model,name:wms_labels_hennart.model_stock_sscc
+msgid "SSCC Label"
+msgstr "Etiquette SSCC"
+
+#. module: wms_labels_hennart
+#: model:ir.model,name:wms_labels_hennart.model_stock_picking
+msgid "Transfer"
+msgstr "Transfert"
+
+#. module: wms_labels_hennart
+#: model:ir.model.fields,field_description:wms_labels_hennart.field_stock_move_line__weight_label
+msgid "Weight label"
+msgstr "Poids étiqueté"
+
+#. module: wms_labels_hennart
+#: model:ir.model.fields,field_description:wms_labels_hennart.field_stock_move_line__weight_label_value
+msgid "Weight value on label"
+msgstr "Poids étiqueté"

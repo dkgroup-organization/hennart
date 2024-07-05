@@ -7,7 +7,8 @@ class StockMoveLine(models.Model):
     _inherit = "stock.move.line"
 
     label_code = fields.Char('Default code', compute="_compute_product_code")
-    weight_label_value = fields.Float('Weight value on label', compute='compute_weight_label_value')
+    weight_label_value = fields.Char('Weight value on label', compute='compute_weight_label_value')
+    weight_label = fields.Char('Weight label', compute='compute_weight_label_value')
     label_qty = fields.Integer('Nb of label to print', compute='compute_weight_label_value')
 
     @api.depends('pack_product_id', 'product_id')
@@ -23,7 +24,7 @@ class StockMoveLine(models.Model):
     @api.depends('picking_id.label_type', 'qty_done')
     def compute_weight_label_value(self):
         """ Compute the weight value to write on label, depends on number of label """
-        # weight_uom = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+        weight_uom = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
         for line in self:
             if line.picking_id:
                 label_type = line.picking_id.label_type
@@ -58,7 +59,13 @@ class StockMoveLine(models.Model):
                 label_qty = 1
                 weight_label_value = 0.0
 
-            line.weight_label_value = weight_label_value
+            if line.product_id.uos_id == weight_uom:
+                line.weight_label_value = f"{weight_label_value:.3f} Kg"
+                line.weight_label = _("Net Weight:")
+            else:
+                line.weight_label_value = ''
+                line.weight_label = ''
+
             line.label_qty = label_qty
 
     def print_label(self, printer=None, label_id=None):

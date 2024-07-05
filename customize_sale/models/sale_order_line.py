@@ -146,22 +146,55 @@ class SaleOrderLine(models.Model):
 
     def create_mo(self):
         """ Create MO for needed product to manufacture """
-        # order_id.procurement_group_id, move.group_id
+        # Normal BOM forecast
+        normal_mo = self.product_id.action_normal_mrp()
+
+        def data_production(order_line, product, product_uom_qty, bom):
+            """ Save data production to do """
+            lot = self.env['stock.lot'].create_production_lot(product)
+            production_vals = {
+                'product_id': product.id,
+                'origin': line.order_id.name,
+                'product_qty': product_uom_qty,
+                'bom_id': bom.id,
+                'lot_producing_id': lot.id,
+                'procurement_group_id': line.order_id.procurement_group_id.id,
+                'date_planned_start': line.order_id.commitment_date,
+            }
+            return production_vals
+
+        # Make to order, order_id.procurement_group_id, move.group_id
+        group_prod = {}
         for line in self:
             product = line.product_id
-            if product.bom_ids and product.bom_ids[0].type == 'normal' and product.to_personnalize:
+            if product.bom_ids and product.to_personnalize:
+
                 bom = product.bom_ids[0]
-                lot = self.env['stock.lot'].create_production_lot(product)
-                mo_vals = {
-                    'product_id': product.id,
-                    'origin': line.order_id.name,
-                    'product_qty': line.product_uom_qty,
-                    'bom_id': bom.id,
-                    'lot_producing_id': lot.id,
-                    'procurement_group_id': line.order_id.procurement_group_id.id,
-                    }
+                if bom.type == 'kit':
+                    # liste the product in BOM
+                    for bom_line in bom.bom_line_ids:
+                        sub_product = bom_line.product_id
+                        if sub_product.bom_ids and sub_product.to_personnalize:
+                            sub_bom = sub_product.bom_ids[0]
+                            if sub_bom.type == 'normal':
+                                if sub_product not in list(group_prod.keys()):
+                                    group_prod[sub_product] = data_production(
+                                        line, sub_product, line.product_uom_qty * bom_line.product_qty, sub_bom)
+                                else:
+                                    group_prod[product]['product_qty'] += line.product_uom_qty * bom_line.product_qty
+                            else:
+                                raise ValidationError(_("This product is not correctly configured."
+                                                        "Only one kit BOM per line.\n") + line.product_id.name)
+
+                elif product not in list(group_prod.keys()):
+                    group_prod[product] = data_production(line, product, line.product_uom_qty, bom)
+                else:
+                    group_prod[product]['product_qty'] += line.product_uom_qty
+
+        for mo_vals in list(group_prod.values()):
                 new_mo = self.env['mrp.production'].create(mo_vals)
                 new_mo.action_confirm()
+                new_mo.move_raw_ids.put_quantity_done()
 
     @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom', 'order_id.delivery_status')
     def _compute_qty_delivered(self):
@@ -303,7 +336,6 @@ class SaleOrderLine(models.Model):
         remaining.forecast_expected_date = False
         remaining.free_qty_today = False
         remaining.qty_available_today = False
-
 
     def _convert_to_tax_base_line_dict(self):
         """ Convert the current record to a dictionary in order to use the generic taxes computation method

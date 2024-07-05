@@ -2,7 +2,9 @@
 
 
 from odoo import api, fields, models, tools, _
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class ProductArea(models.Model):
     _name = 'product.area'
@@ -35,32 +37,6 @@ class ProductTemplate(models.Model):
     def _get_default_uos_id(self):
         return self.env.ref('uom.product_uom_unit')
 
-    @api.depends('categ_id.tracking', 'categ_id.type', 'categ_id.detailed_type', 'categ_id.use_expiration_date')
-    def update_categ_value(self):
-        """ Update value based on categ value"""
-        for product in self:
-            if product.categ_id:
-                product.tracking = product.categ_id.tracking
-                product.type = product.categ_id.detailed_type
-                product.detailed_type = product.categ_id.detailed_type
-            else:
-                product.tracking = 'lot'
-                product.type = 'product'
-                product.detailed_type = 'product'
-            product.use_expiration_date = True
-
-        query = """
-        update product_template pt set tracking = pc.tracking from  product_category pc where pt.categ_id = pc.id and pt.tracking != pc.tracking;
-        update product_template pt set type = pc.type from  product_category pc where pt.categ_id = pc.id and pt.type != pc.type;
-        update product_template pt set detailed_type = pc.detailed_type from  product_category pc where pt.categ_id = pc.id and pt.detailed_type != pc.detailed_type;
-        update product_template pt set use_expiration_date = pc.use_expiration_date from  product_category pc where pt.categ_id = pc.id and pt.use_expiration_date != pc.use_expiration_date;
-        """
-
-    tracking = fields.Selection(compute="update_categ_value", store=True, precompute=False)
-    type = fields.Selection(compute="update_categ_value", store=True, precompute=False)
-    detailed_type = fields.Selection(compute="update_categ_value", store=True, precompute=False)
-    use_expiration_date = fields.Boolean(compute="update_categ_value", store=True, precompute=False, default=True)
-
     service_type = fields.Selection(
         [('manual', 'Manually set quantities on order')], string='Track Service',
         compute='_compute_service_type', store=True, readonly=False, precompute=False, default="manual",
@@ -88,7 +64,7 @@ class ProductTemplate(models.Model):
 
     area = fields.Many2one(string='Area', comodel_name='product.area')
     ingredient = fields.Many2many('product.ingredient', 'ingredient_rel', string="Ingredient")
-    allergen = fields.Many2many('product.allergen', 'allereg_reel', string="Allergen" )
+    allergen = fields.Many2many('product.allergen', 'allereg_reel', string="Allergen")
     production_specificity = fields.Many2many('product.specificity','specifit_reel', string="Production specifity",
                                               help='define some spécificity like OGM, IGP, farmer, presence of GMO')
     specificity_milk = fields.Selection(
@@ -234,7 +210,8 @@ class ProductTemplate(models.Model):
         for product in self:
             product.invoice_policy = "delivery"
 
-    @api.depends('list_price', 'weight', 'uos_id', 'bom_ids', 'bom_ids.base_unit_count')
+    @api.depends('list_price', 'weight', 'uos_id', 'bom_ids',
+                 'bom_ids.base_unit_count', 'bom_ids.type', 'bom_ids.base_product_id')
     def compute_package(self):
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
 
@@ -265,3 +242,7 @@ class ProductTemplate(models.Model):
         """ update all route_ids"""
         self.route_ids = False
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        _logger.info(f'------create-----product.template----------------------\n{vals_list}')
+        return super().create(vals_list)

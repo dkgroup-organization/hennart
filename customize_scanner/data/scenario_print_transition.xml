@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<odoo>
+	<record id="wms_scenario_print_transition_1_20" model="wms.scenario.transition">
+		<field name="name">1-[1-20]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'print-1')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'print-20')]"/>
+		<field name="condition">data.get('lot_id')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_print"/>
+	</record>
+
+	<record id="wms_scenario_print_transition_1_10" model="wms.scenario.transition">
+		<field name="name">20-[1-10]</field>
+		<field name="sequence" eval="20"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'print-1')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'print-10')]"/>
+		<field name="condition">True</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_print"/>
+	</record>
+
+	<record id="wms_scenario_print_transition_1_40" model="wms.scenario.transition">
+		<field name="name">1-[10-20]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'print-10')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'print-20')]"/>
+		<field name="condition">data.get('lot_id')</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_print"/>
+	</record>
+
+</odoo>

@@ -34,7 +34,8 @@
             <t t-else="">
                 <div t-att-name="action_variable" class="relative input-default">
                     <span t-esc="step.get_input_description_left(data, action_variable)"/>
-                    <span t-esc="step.get_input_description_right(data, action_variable)" class="absolute bg-white right-4"/>
+                    <span t-esc="step.get_input_description_right(data, action_variable)"
+                          class="absolute bg-white right-4"/>
                 </div>
             </t>
         </template>
@@ -53,15 +54,15 @@
                         </p>
 
                         <input
-                            t-att-type="step.get_input_type(data)"
-                            id="scan"
-                            name="scan"
-                            min="0"
-                            t-att-step="step.get_input_step(data)"
-                            t-att-class="step.get_input_class(data)"
-                            t-att-placeholder="step.get_input_placeholder(data)"
-                            autoComplete="off"
-                    />
+                                t-att-type="step.get_input_type(data)"
+                                id="scan"
+                                name="scan"
+                                min="0"
+                                t-att-step="step.get_input_step(data)"
+                                t-att-class="step.get_input_class(data)"
+                                t-att-placeholder="step.get_input_placeholder(data)"
+                                autoComplete="off"
+                        />
                     </div>
                 </div>
             </t>
@@ -80,12 +81,16 @@
                             <t t-out="data.get('message')"/>
                         </p>
 
-                        <label for="scan"><t t-out="step.get_label(data)"/></label>
+                        <label for="scan">
+                            <t t-out="step.get_label(data)"/>
+                        </label>
                         <select id="scan" name="scan"
                                 autoComplete="off"
                                 t-att-class="step.get_input_class(data)">
                             <t t-foreach="step.get_list_option(data)" t-as="list_option">
-                                <option t-att-value="list_option[0]"><t t-esc="list_option[1]"/></option>
+                                <option t-att-value="list_option[0]">
+                                    <t t-esc="list_option[1]"/>
+                                </option>
                             </t>
                         </select>
                     </div>
@@ -93,14 +98,14 @@
             </t>
             <t t-if="data.get(action_variable)">
                 <div class="w-90 flex flex-col gap-6 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:top-1 landscape:pr-5 landscape:m-auto">
-                <div t-att-name="action_variable" class="relative input-default">
-                    <span t-esc="step.get_input_description_left(data, action_variable)"/>
-                    <span t-esc="step.get_input_description_right(data, action_variable)" class="absolute bg-white right-4"/>
-                </div>
+                    <div t-att-name="action_variable" class="relative input-default">
+                        <span t-esc="step.get_input_description_left(data, action_variable)"/>
+                        <span t-esc="step.get_input_description_right(data, action_variable)"
+                              class="absolute bg-white right-4"/>
+                    </div>
                 </div>
             </t>
         </template>
-
 
         <template id="scanner_sub_input2" name="scanner_sub_input2">
             <div class="relative" t-if="step.action_presentation" t-esc="step.action_presentation"/>
@@ -116,6 +121,54 @@
                         </p>
 
                         <input
+                                t-att-type="step.get_input_type(data)"
+                                id="scan"
+                                name="scan"
+                                min="0"
+                                t-att-step="step.get_input_step(data)"
+                                t-att-class="step.get_input_class(data)"
+                                t-att-placeholder="step.get_input_placeholder(data)"
+                                autoComplete="off"
+                        />
+                    </div>
+                </div>
+            </t>
+            <t t-if="data.get(action_variable)">
+                <div class="w-90 flex flex-col gap-6 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:top-2 landscape:pr-5 landscape:m-auto">
+                    <div t-att-name="action_variable" class="relative input-default">
+                        <span t-esc="step.get_input_description_left(data, action_variable)"/>
+                        <span t-esc="step.get_input_description_right(data, action_variable)"
+                              class="absolute bg-white right-4"/>
+                    </div>
+                </div>
+
+            </t>
+        </template>
+
+        <template id="scanner_sub_input_move_line" name="scanner_sub_input_move_line">
+            <div class="relative" t-if="step.action_presentation" t-esc="step.action_presentation"/>
+            <div class="w-full">
+                <div id="input_message"
+                     class="mt-4 w-90 flex flex-col gap-1 mx-auto landscape:gap-1 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:top-0 landscape:pr-5 landscape:m-auto">
+
+                    <div name="product_id" class="relative input-default">
+                        <span t-esc="step.get_input_description_left(data, 'product_id')"/>
+                        <span t-esc="step.get_input_description_right(data, 'product_id')"
+                              class="absolute bg-white right-4"/>
+                    </div>
+
+                    <div name="quantity" class="relative input-default">
+                        <span t-esc="step.get_input_description_left(data, 'quantity')"/>
+                        <span t-esc="step.get_input_description_right(data, 'quantity')"
+                              class="absolute bg-white right-4"/>
+                    </div>
+
+
+                    <p t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
+                        <t t-out="data.get('message')"/>
+                    </p>
+
+                    <input
                             t-att-type="step.get_input_type(data)"
                             id="scan"
                             name="scan"
@@ -125,18 +178,12 @@
                             t-att-placeholder="step.get_input_placeholder(data)"
                             autoComplete="off"
                     />
-                    </div>
+                    <p t-if="data.get('warning')" class="border-b-2 pb-5 mb-5 border-gray-300 input-warning">
+                        <t t-out="data.get('warning')"/>
+                    </p>
                 </div>
-            </t>
-            <t t-if="data.get(action_variable)">
-                <div class="w-90 flex flex-col gap-6 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:top-2 landscape:pr-5 landscape:m-auto">
-                <div t-att-name="action_variable" class="relative input-default">
-                    <span t-esc="step.get_input_description_left(data, action_variable)"/>
-                    <span t-esc="step.get_input_description_right(data, action_variable)" class="absolute bg-white right-4"/>
-                </div>
-                </div>
+            </div>
 
-            </t>
         </template>
 
         <template id="scanner_button_option" name="scanner_button_option">
@@ -153,13 +200,22 @@
         <template id="scanner_weight_detail" name="scanner_weight_detail">
             <div>
                 <table>
-                <t t-foreach="data.get('weight_detail')" t-as="weight_detail">
-                    <tr>
-                        <td><t t-esc="weight_detail.get('qty')"/> U = </td>
-                        <td><t t-esc="weight_detail.get('weight')"/> Kg</td>
-                        <td> (tare: <t t-esc="weight_detail.get('tare')"/> Kg)</td>
-                    </tr>
-                </t>
+                    <t t-foreach="data.get('weight_detail')" t-as="weight_detail">
+                        <tr>
+                            <td>
+                                <t t-esc="weight_detail.get('qty')"/>
+                                U =
+                            </td>
+                            <td>
+                                <t t-esc="weight_detail.get('weight')"/>
+                                Kg
+                            </td>
+                            <td>(tare:
+                                <t t-esc="weight_detail.get('tare')"/>
+                                Kg)
+                            </td>
+                        </tr>
+                    </t>
                 </table>
             </div>
         </template>
@@ -188,15 +244,54 @@
             </t>
         </template>
 
+        <template id="scanner_sub_input_product_id" name="scanner_sub_input_product_id">
+            <t t-call="customize_scanner.scanner_sub_input2">
+                <t t-set="action_variable" t-value="'product_id'"/>
+            </t>
+        </template>
+
+        <template id="scanner_input_component_id" name="scanner_input_component_id">
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'component_id'"/>
+            </t>
+        </template>
+
         <template id="scanner_input_lot_id" name="scanner_input_lot_id">
             <t t-call="customize_scanner.scanner_input">
                 <t t-set="action_variable" t-value="'lot_id'"/>
+            </t>
+        </template>
+        <template id="scanner_sub_input_lot_id" name="scanner_sub_input_lot_id">
+            <t t-call="customize_scanner.scanner_sub_input2">
+                <t t-set="action_variable" t-value="'lot_id'"/>
+            </t>
+        </template>
+
+        <template id="scanner_input_production_lot_id" name="scanner_input_production_lot_id">
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'production_lot_id'"/>
+            </t>
+        </template>
+
+        <template id="scanner_input_production_product_id" name="scanner_input_production_product_id">
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'production_product_id'"/>
             </t>
         </template>
 
         <template id="scanner_input_quantity" name="scanner_input_quantity">
             <t t-call="customize_scanner.scanner_input">
                 <t t-set="action_variable" t-value="'quantity'"/>
+            </t>
+        </template>
+        <template id="scanner_sub_input_quantity" name="scanner_sub_input_quantity">
+            <t t-call="customize_scanner.scanner_sub_input2">
+                <t t-set="action_variable" t-value="'quantity'"/>
+            </t>
+        </template>
+        <template id="scanner_input_production_quantity" name="scanner_input_production_quantity">
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'production_quantity'"/>
             </t>
         </template>
 
@@ -239,6 +334,30 @@
         <template id="scanner_input_nb_pallet" name="scanner_input_nb_pallet">
             <t t-call="customize_scanner.scanner_input">
                 <t t-set="action_variable" t-value="'nb_pallet'"/>
+            </t>
+        </template>
+
+        <template id="scanner_input_production" name="scanner_input_production">
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'production_id'"/>
+            </t>
+        </template>
+
+        <template id="scanner_input_maturity_product" name="scanner_input_maturity_product">
+            <t t-call="customize_scanner.scanner_sub_select_input">
+                <t t-set="action_variable" t-value="'maturity_product_id'"/>
+            </t>
+        </template>
+
+        <template id="scanner_input_expiry_date" name="scanner_input_expiry_date">
+            <t t-call="customize_scanner.scanner_sub_input2">
+                <t t-set="action_variable" t-value="'expiry_date'"/>
+            </t>
+        </template>
+
+        <template id="scanner_input_simple_expiry_date" name="scanner_input_expiry_date">
+            <t t-call="customize_scanner.scanner_sub_input">
+                <t t-set="action_variable" t-value="'expiry_date'"/>
             </t>
         </template>
 

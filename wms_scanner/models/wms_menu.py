@@ -33,10 +33,6 @@ class WmsMenu(models.Model):
     image_file = fields.Char(
         string='Image filename',
         default='infos.svg')
-    menu_type = fields.Selection(
-        [('menu', 'Menu'), ('scenario', 'Scenario')],
-        string="Action",
-        default="menu")
     scenario_id = fields.Many2one(
         comodel_name='wms.scenario',
         string='Scenario',
@@ -85,10 +81,10 @@ class WmsMenu(models.Model):
         "return the href of this menu"
         for menu in self:
             href = '?menu=0'
-            if menu.menu_type == 'menu':
-                href = '?menu=%s' % (menu.id or 0)
-            elif menu.menu_type == 'scenario':
+            if menu.scenario_id:
                 href = '?scenario=%s' % (menu.scenario_id.id or 0)
+            else:
+                href = '?menu=%s' % (menu.id or 0)
 
             if menu.menu_code:
                 href += '&option=' + menu.menu_code

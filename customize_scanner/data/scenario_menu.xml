@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<odoo>
+
+	<record id="wms_scenario_menu_production" model="wms.menu">
+		<field name="name">Production</field>
+		<field name="sequence" eval="2"/>
+		<field name="image_file">cheese.svg</field>
+		<field name="menu_code"/>
+		<field name="scenario_id"/>
+	</record>
+
+	<record id="wms_scenario_menu_production_new_lot" model="wms.menu">
+		<field name="name">Créer un nouveau lot</field>
+		<field name="sequence" eval="20"/>
+		<field name="image_file">cheese.svg</field>
+		<field name="menu_code">production_lot_create</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_create_lot"/>
+		<field name="parent_id" ref="customize_scanner.wms_scenario_menu_production"/>
+	</record>
+
+	<record id="wms_scenario_menu_production_modify" model="wms.menu">
+		<field name="name">Modifier un lot</field>
+		<field name="sequence" eval="30"/>
+		<field name="image_file">cheese.svg</field>
+		<field name="menu_code">production_modify</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_change_lot"/>
+		<field name="parent_id" ref="customize_scanner.wms_scenario_menu_production"/>
+	</record>
+
+	<record id="wms_scenario_menu_production_create" model="wms.menu">
+		<field name="name">Enregistrer un OF</field>
+		<field name="sequence" eval="10"/>
+		<field name="image_file">cheese.svg</field>
+		<field name="menu_code">production_create</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+		<field name="parent_id" ref="customize_scanner.wms_scenario_menu_production"/>
+	</record>
+
+	<record id="wms_scenario_menu_production_categ" model="wms.menu">
+		<field name="name">OF par catégorie</field>
+		<field name="sequence" eval="30"/>
+		<field name="image_file">cheese.svg</field>
+		<field name="menu_code">production_categ</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+		<field name="parent_id" ref="customize_scanner.wms_scenario_menu_production"/>
+	</record>
+
+	<record id="wms_scenario_menu_production_partner" model="wms.menu">
+		<field name="name">OF Par client</field>
+		<field name="sequence" eval="40"/>
+		<field name="image_file">cheese.svg</field>
+		<field name="menu_code">production_partner</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_production"/>
+		<field name="parent_id" ref="customize_scanner.wms_scenario_menu_production"/>
+	</record>
+
+
+	<record id="wms_scenario_menu_print" model="wms.menu">
+		<field name="name">Print</field>
+		<field name="sequence" eval="6"/>
+		<field name="image_file">printer.svg</field>
+		<field name="menu_code">production_modify</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_print"/>
+
+	</record>
+
+	<record id="wms_scenario_menu_weight" model="wms.menu">
+		<field name="name">Weighting</field>
+		<field name="sequence" eval="7"/>
+		<field name="image_file">pesage.svg</field>
+		<field name="menu_code">production_modify</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_weight"/>
+
+	</record>
+
+</odoo>

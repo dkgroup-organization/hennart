@@ -11,7 +11,7 @@
     "maintainer": "DK group",
     "images": [],
     "depends": ["account", "account_usability", "customize_purchase", "customize_sale", "customize_stock",
-                "intrastat_product"],
+                "customize_mrp", "intrastat_product"],
     "data": [
         "security/ir.model.access.csv",
         "views/res_config_view.xml",
