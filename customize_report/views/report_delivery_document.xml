@@ -45,7 +45,7 @@
 
                         <!-- QTE -->
                         <td>
-                            <span t-field="move.product_uom_qty"/>
+                            <span t-esc="format('%.1f' % move.product_uom_qty)"/>
                             <span t-field="move.product_id.uos_id"/>
 
                         </td>
