@@ -117,7 +117,7 @@
                 <strong>Nb containers:</strong>
                 <p t-field="o.nb_container"/>
             </div>
-            <div t-if="o.nb_packages" class="col-auto" name="div_nb_packages">
+            <div t-if="o.package_ids" class="col-auto" name="div_nb_packages">
                 <strong>Nb packages:</strong>
                 <p>
                     <t t-esc="len(o.package_ids)"/>
