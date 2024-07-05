@@ -141,6 +141,10 @@
             </div>
         </xpath>
 
+        <xpath expr="//div[@class='row mt32 mb32']" position="attributes">
+            <attribute name="style" add="border: 1px solid #000;"/>
+        </xpath>
+
     </template>
 
 </odoo>
