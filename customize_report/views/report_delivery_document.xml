@@ -45,8 +45,7 @@
 
                         <!-- QTE -->
                         <td>
-                            <span t-field="move.product_uom_qty" t-options='{"widget": "float", "precision": 1}'/>
-                            <span t-field="move.product_id.uos_id"/>
+                            <span t-field="move.number_of_pack" t-options='{"widget": "float", "precision": 1}'/>
 
                         </td>
 
@@ -60,13 +59,12 @@
 
                         <!-- Colisage -->
                         <td>
-                        
-
+                            <span t-field="move.product_packaging_id.qty" t-options='{"widget": "float", "precision": 0}'/>
                         </td>
 
                         <!-- Unité -->
                         <td>
-                            <span t-field="move.product_uom_qty"/>
+                            <span t-field="move.quantity_done"/>
                             <span t-field="move.product_id.uos_id"/>
 
                         </td>
@@ -104,6 +102,25 @@
                     </tr>
                 </tbody>
             </table>
+        </xpath>
+
+        <xpath expr="//div[@name='div_origin']" position="before">
+            <div t-if="o.partner_id" class="col-auto" name="div_customer_ref">
+                <strong>Customer ref:</strong>
+                <p t-field="o.partner_id.ref"/>
+            </div>
+            <div t-if="o.nb_pallet" class="col-auto" name="div_nb_pallet">
+                <strong>Nb pallets:</strong>
+                <p t-field="o.nb_pallet"/>
+            </div>
+            <div t-if="o.nb_container" class="col-auto" name="div_nb_container">
+                <strong>Nb containers:</strong>
+                <p t-field="o.nb_container"/>
+            </div>
+            <div t-if="o.nb_packages" class="col-auto" name="div_nb_packages">
+                <strong>Nb packages:</strong>
+                <p t-field="o.nb_packages"/>
+            </div>
         </xpath>
 
     </template>
