@@ -15,16 +15,19 @@
                 <thead>
                     <tr>
                         <th name="th_sm_code"><strong>Code</strong></th>
-                        <th name="th_sm_product"><strong>Product</strong></th>
-                        <th name="th_sm_ordered"><strong>Ordered</strong></th>
-                        <th name="th_sm_quantity"><strong>Delivered</strong></th>
+                        <th name="th_sm_qty"><strong>Qté</strong></th>
+                        <th name="th_sm_product"><strong>Produit</strong></th>
+                        <th name="th_sm_colisage"><strong>Colisage</strong></th>
+                        <th name="th_sm_unite"><strong>Unité</strong></th>
+                        <th name="th_sm_production_lot"><strong>Lot de production</strong></th>
                     </tr>
                 </thead>
                 <tbody>
                     <t t-set="lines" t-value="o.move_ids.filtered(lambda x: x.product_uom_qty)"/>
                     <tr t-foreach="lines" t-as="move">
                         <td>
-                            <span t-field="move.default_code"/>
+                            <span t-field="move.product_id.default_code"/>
+<<<<<<< HEAD
                         </td>
                         <td>
                             <span t-field="move.product_id"/>
@@ -35,6 +38,8 @@
                         <td>
                             <span t-field="move.product_uom_qty"/>
                             <span t-field="move.product_id.uos_id"/>
+=======
+>>>>>>> 973b40348e3ca32d1a5bc7ed0d4c274f53277ed1
                         </td>
                         <td>
                             <t t-if="move.product_id.uos_id.name == 'kg'">
@@ -44,6 +49,24 @@
                                 <span t-field="move.quantity_done"/>
                             </t>
                             <span t-field="move.product_id.uos_id"/>
+                        </td>
+                        <td>
+                            <span t-field="move.product_id"/>
+                            <p t-if="move.description_picking != move.product_id.name and move.description_picking != move.product_id.display_name">
+                                <span t-field="move.description_picking"/>
+                            </p>
+                        </td>
+                        <td>
+                            <!-- Colisage -->
+                            <span t-field="move.product_uom_qty"/>
+                        </td>
+                        <td>
+                            <!-- Unité -->
+                            <span t-field="move.product_uom_qty"/>
+                        </td>
+                        <td>
+                            <!-- Lot de production -->
+                            <span t-field="move.lot_description"/>
                         </td>
                     </tr>
                 </tbody>
