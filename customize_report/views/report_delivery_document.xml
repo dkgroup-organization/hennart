@@ -125,6 +125,22 @@
             </div>
         </xpath>
 
+        <xpath expr="//div[@name='div_sched_date']" position="replace">
+            <div t-if="o.state" class="col-auto" name="div_sched_date">
+                <strong>Shipping Date:</strong>
+                <t t-if="o.state == 'done'">
+                    <p>
+                        <t t-esc="o.date_done.strftime('%Y-%m-%d')"/>
+                    </p>
+                </t>
+                <t t-if="o.state != 'done'">
+                    <p>
+                        <t t-esc="o.scheduled_date.strftime('%Y-%m-%d')"/>
+                    </p>
+                </t>
+            </div>
+        </xpath>
+
     </template>
 
 </odoo>
