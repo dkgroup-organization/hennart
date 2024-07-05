@@ -40,32 +40,49 @@
                     <tr t-foreach="lines" t-as="move">
                         <!-- Code -->
                         <td>
-                            <span t-field="move.product_id.default_code"/>
+                            <t t-if="move.bom_line_id.bom_id.type == 'phantom'">
+                                <span t-field="move.bom_line_id.bom_id.product_id.default_code"/>
+                            </t>
+                            <t t-else="">
+                                <span t-field="move.product_id.default_code"/>
+                            </t>
                         </td>
 
                         <!-- QTE -->
                         <td>
-                            <span t-field="move.product_packaging_qty" t-options='{"widget": "float", "precision": 1}'/>
+                            <t t-if="move.bom_line_id.bom_id.type == 'phantom'">
+                                <t t-set="qty_pack" t-value="move.bom_line_id.bom_id.base_unit_count"/>
+                                <t t-set="qty_total" t-value="move.quantity_done / qty_pack"/>
+                                <t t-esc="qty_total" t-options='{"widget": "float", "precision": 1}'/>
+                            </t>
+                            <t t-else="">
+                                <span t-field="move.quantity_done" t-options='{"widget": "float", "precision": 1}'/>
+                            </t>
 
                         </td>
 
                         <!-- Produit -->
                         <td>
                             <span t-field="move.product_id"/>
-                            <p t-if="move.description_picking != move.product_id.name and move.description_picking != move.product_id.display_name">
-                                <span t-field="move.description_picking"/>
-                            </p>
                         </td>
 
                         <!-- Colisage -->
                         <td>
-                            <span t-field="move.product_packaging_id.qty" t-options='{"widget": "float", "precision": 0}'/>
+                            <t t-if="move.bom_line_id">
+                                <span t-field="move.bom_line_id.bom_id.base_unit_count" t-options='{"widget": "float", "precision": 0}'/>
+                            </t>
                         </td>
 
                         <!-- Unité -->
                         <td>
-                            <span t-field="move.quantity_done"/>
-                            <span t-field="move.product_id.uos_id"/>
+                            <t t-if="move.product_id.uos_id.id == 1">
+                                <span t-field="move.quantity_done"/>
+                                <span t-field="move.product_id.uos_id"/>
+                            </t>
+                            <t t-else="">
+                                <span t-field="move.weight"/>
+                                <span t-field="move.product_id.uos_id"/>
+                            </t>
 
                         </td>
 
