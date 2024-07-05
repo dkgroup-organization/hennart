@@ -63,7 +63,12 @@
 
                         <!-- Produit -->
                         <td>
-                            <span t-field="move.product_id"/>
+                            <t t-if="move.bom_line_id.bom_id.type == 'phantom'">
+                                <span t-field="move.bom_line_id.bom_id.product_id"/>
+                            </t>
+                            <t t-else="">
+                                <span t-field="move.product_id"/>
+                            </t>
                         </td>
 
                         <!-- Colisage -->
@@ -90,32 +95,6 @@
                             <!-- Lot de production -->
                             <span t-field="move.lot_description"/>
                         </td>
-
-
-                        <!-- <td>
-                            <t t-if="move.product_id.uos_id.name == 'kg'">
-                                <span t-field="move.weight"/>
-                            </t>
-                            <t t-else="">
-                                <span t-field="move.quantity_done"/>
-                            </t>
-                            <span t-field="move.product_id.uos_id"/>
-                        </td>
-                        <td>
-                            <span t-field="move.product_id"/>
-                            <p t-if="move.description_picking != move.product_id.name and move.description_picking != move.product_id.display_name">
-                                <span t-field="move.description_picking"/>
-                            </p>
-                        </td>
-                        <td>
-                            <span t-field="move.product_uom_qty"/>
-                        </td>
-                        <td>
-                            <span t-field="move.product_uom_qty"/>
-                        </td>
-                        <td>
-                            <span t-field="move.lot_description"/>
-                        </td> -->
                     </tr>
                 </tbody>
             </table>
