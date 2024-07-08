@@ -20,7 +20,7 @@
 
         "views/printing_printer.xml",
 
-        "wizard/printer_choice.xml",
+        "wizard/printing_choice.xml",
 
     ],
     'installable': True,

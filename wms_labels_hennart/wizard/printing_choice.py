@@ -5,7 +5,7 @@ class PrintingChoice(models.TransientModel):
     _description = "choice printer"
 
     name = fields.Char('description')
-    printer_id = fields.Many2one('printing.printer', string="Printer", required=True)
+    printer_id = fields.Many2one('printing.printer', string="Printer")
     picking_id = fields.Many2one('stock.picking', string="Picking")
 
     def print_container_label(self):
