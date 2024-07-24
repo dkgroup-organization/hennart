@@ -296,7 +296,7 @@ class WmsScenarioStep(models.Model):
                 data['warning'] = "This product need a lot number"
             else:
                 condition.append(('lot_id', '=', False))
-            print('----------condition---------------\n', condition)
+            
             quant_ids = self.env['stock.quant'].search(condition)
 
             if not quant_ids:
