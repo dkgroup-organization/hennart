@@ -13,4 +13,3 @@ class PrintingChoice(models.TransientModel):
         self.ensure_one()
         if self.picking_id and self.printer_id:
             self.picking_id.print_container_label(printer=self.printer_id)
-

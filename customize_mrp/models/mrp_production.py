@@ -40,7 +40,7 @@ class MRPProduction(models.Model):
         self.ensure_one()
         if self.product_id:
             self.lot_producing_id = self.env['stock.lot'].create_production_lot(product=self.product_id)
-        if self.product_id.tracking == 'serial':
+        if self.product_id.tracking != 'none':
             self._set_qty_producing()
 
     def button_test(self):

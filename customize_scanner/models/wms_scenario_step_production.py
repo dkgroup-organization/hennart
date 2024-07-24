@@ -351,6 +351,7 @@ class WmsScenarioStep(models.Model):
         lot = data.get('lot_id')
         expiry_date = data.get('expiry_date')
         location_origin = data.get('location_origin_id')
+        location_inventory = self.env['stock.location'].search([('usage', '=', 'production')], limit=1)
         quantity = data.get('quantity')
 
         if not (product and lot and expiry_date and location_origin and quantity):
@@ -384,7 +385,7 @@ class WmsScenarioStep(models.Model):
         move_vals = {
             'product_id': product.id,
             'location_id': location_origin.id,
-            'location_dest_id': new_mo.production_location_id.id,
+            'location_dest_id': location_inventory.id,
             'product_uom_qty': quantity,
             'product_uom': product.uom_id.id,
             'raw_material_production_id': new_mo.id,
