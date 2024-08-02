@@ -185,7 +185,8 @@ class AccountMove(models.Model):
             if move.invoice_date < datetime.date(2017, 1, 1):
                 if move.state != 'draft':
                     move.button_draft()
-                move.unlink()
+                if move.state == 'draft':
+                    move.unlink()
                 continue
 
             if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
