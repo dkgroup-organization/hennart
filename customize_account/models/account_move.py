@@ -4,6 +4,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 logger = logging.getLogger('wms_scanner')
 _logger = logging.getLogger(__name__)
+from odoo.exceptions import UserError, ValidationError
 
 
 
@@ -228,7 +229,7 @@ class AccountMove(models.Model):
                         move.sudo().action_post()
                         if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
                             move.payment_state = 'paid'
-                except odoo.exceptions.UserError as e:
+                except UserError as e:
                     # Log the error in Odoo's log
                     _logger.error("Error posting move ID %s: %s", move.id, e)
                     # Continue to the next move
