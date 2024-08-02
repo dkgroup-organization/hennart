@@ -4,6 +4,8 @@ import datetime
 from dateutil.relativedelta import relativedelta
 logger = logging.getLogger('wms_scanner')
 
+from odoo.exceptions import UserError, ValidationError
+_logger = logging.getLogger(__name__)
 
 PAYMENT_STATE_SELECTION = [
         ('not_paid', 'Not Paid'),
