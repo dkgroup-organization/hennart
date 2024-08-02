@@ -4,6 +4,8 @@ import datetime
 from dateutil.relativedelta import relativedelta
 logger = logging.getLogger('wms_scanner')
 
+from odoo.exceptions import UserError, ValidationError
+_logger = logging.getLogger(__name__)
 
 PAYMENT_STATE_SELECTION = [
         ('not_paid', 'Not Paid'),
@@ -185,16 +187,19 @@ class AccountMove(models.Model):
             if move.invoice_date < datetime.date(2017, 1, 1):
                 if move.state != 'draft':
                     move.button_draft()
-                move.unlink()
-                continue
+                elif move.state == 'draft':
+                    move.unlink()
+                    continue
 
             if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
                 continue
 
             if move.fiscal_position_id.id in [2, 3]:
                 # error imported reload
-                self.env['synchro.obj.line'].search([('obj_id.model_name', '=', 'account.invoice'),
-                                                     ('local_id', '=', move.id)]).update_values()
+                self.env['synchro.obj.line'].search([
+                    ('obj_id.model_name', '=', 'account.invoice'),
+                    ('local_id', '=', move.id)
+                ]).update_values()
                 if move.fiscal_position_id.id in [2, 3]:
                     move.fiscal_position_id = False
                     # Manual correction needed
@@ -219,11 +224,15 @@ class AccountMove(models.Model):
                 mapping_line.update_values()
 
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
-                if (move.fiscal_position_id and move.piece_comptable and
-                        int(move.total_ttc * 100.0) == int(move.amount_total * 100.0)):
-                    move.sudo().action_post()
-                    if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
-                        move.payment_state = 'paid'
+                try:
+                    if move.fiscal_position_id and move.piece_comptable:
+                        move.sudo().action_post()
+                        if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
+                            move.payment_state = 'paid'
+                except UserError as e:
+                    _logger.error("Error posting move ID %s: %s", move.id, e)
+                    continue
+
         return True
 
     def compute_picking_ids(self):
