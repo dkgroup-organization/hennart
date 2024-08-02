@@ -3,10 +3,6 @@ import logging
 import datetime
 from dateutil.relativedelta import relativedelta
 logger = logging.getLogger('wms_scanner')
-_logger = logging.getLogger(__name__)
-from odoo.exceptions import UserError, ValidationError
-
-
 
 
 PAYMENT_STATE_SELECTION = [
@@ -178,7 +174,8 @@ class AccountMove(models.Model):
         self.update(res)
 
     def action_valide_imported(self):
-        """ Valid a imported move, there is some correction to do """
+        """ Valid a imported move, there is some correction todo"""
+
         uom_weight = self.env['product.template'].sudo()._get_weight_uom_id_from_ir_config_parameter()
         remote_server = self.env['synchro.server'].search([])
         sync_obj = remote_server[0].obj_ids.search([('model_name', '=', 'account.invoice.line')])
@@ -186,28 +183,25 @@ class AccountMove(models.Model):
 
         for move in self:
             if move.invoice_date < datetime.date(2017, 1, 1):
-                if move.state == 'draft':
-                    move.unlink()
-                else:
-                    # Skip this entry if not in draft state
-                    continue
+                if move.state != 'draft':
+                    move.button_draft()
+                move.unlink()
+                continue
 
             if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
                 continue
 
             if move.fiscal_position_id.id in [2, 3]:
-                # Error imported reload
-                self.env['synchro.obj.line'].search([
-                    ('obj_id.model_name', '=', 'account.invoice'),
-                    ('local_id', '=', move.id)
-                ]).update_values()
+                # error imported reload
+                self.env['synchro.obj.line'].search([('obj_id.model_name', '=', 'account.invoice'),
+                                                     ('local_id', '=', move.id)]).update_values()
                 if move.fiscal_position_id.id in [2, 3]:
                     move.fiscal_position_id = False
-                    # Manual correction needed, skip to the next entry
+                    # Manual correction needed
                     continue
 
             if not move.invoice_line_ids:
-                "Import the line"
+                " Import the line"
                 piece_comptable = eval(move.piece_comptable)
                 if len(piece_comptable):
                     domain = [('invoice_id.move_id', '=', piece_comptable[0])]
@@ -218,23 +212,18 @@ class AccountMove(models.Model):
             move.invoice_line_ids.get_product_uom_id()
 
             if move.piece_comptable and int(move.total_ttc * 100.0) != int(move.amount_total * 100.0):
-                # Reload the data to have possible correction
+                # reload the data to have possible correction
+                # move.invoice_line_ids:
                 synchro_obj = self.env['synchro.obj'].search([('model_name', '=', 'account.invoice.line')])
                 mapping_line = self.env['synchro.obj.line'].search([('local_id', 'in', move.invoice_line_ids.ids)])
                 mapping_line.update_values()
 
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
-                try:
-                    if move.fiscal_position_id and move.piece_comptable:
-                        move.sudo().action_post()
-                        if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
-                            move.payment_state = 'paid'
-                except UserError as e:
-                    # Log the error in Odoo's log
-                    _logger.error("Error posting move ID %s: %s", move.id, e)
-                    # Continue to the next move
-                    continue
-
+                if (move.fiscal_position_id and move.piece_comptable and
+                        int(move.total_ttc * 100.0) == int(move.amount_total * 100.0)):
+                    move.sudo().action_post()
+                    if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
+                        move.payment_state = 'paid'
         return True
 
     def compute_picking_ids(self):
