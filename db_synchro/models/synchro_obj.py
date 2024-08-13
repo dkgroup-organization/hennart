@@ -8,6 +8,7 @@ from odoo.models import MAGIC_COLUMNS
 from . import odoo_proxy
 from . import synchro_data
 import json
+import threading
 
 OPTIONS_OBJ = synchro_data.OPTIONS_OBJ
 
@@ -765,6 +766,7 @@ class BaseSynchroObj(models.Model):
     def button_update_all(self, limit=50):
         """ Change the update_date to trigger a new update by function get_last_update"""
         self.update_remote_write_date()
+        treading_list = []
         for obj in self:
             list_line = self.env[obj.line_id._name]
             for line in obj.line_id:
@@ -775,6 +777,19 @@ class BaseSynchroObj(models.Model):
                 else:
                     list_line |= line
                     list_line.update_values()
+                    # Treading test
+                    """
+                    treading_list.append(
+                        threading.Thread(
+                            target=self.env[obj.line_id._name].update_values,
+                            name=f"T{len(treading_list)}",
+                            args=(list_line)
+                        ))
+                    treading_list[-1].start()
+                    print(len(treading_list))
+                    """
+
+
                     list_line = self.env[obj.line_id._name]
 
     def unlink_local_void(self):
