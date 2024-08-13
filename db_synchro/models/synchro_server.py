@@ -315,3 +315,17 @@ class BaseSynchroServer(models.Model):
                 except:
                     _logger.warning('\n *** *** *** This partner_id is not updated: ', remote_id)
         return True
+
+
+    def correction_avoir_20240813(self):
+        """ There are refund to unlink, the journal is not the good """
+        condition = [('move_type', '=', 'out_refund')]
+        refund_ids = self.env['account.move'].search(condition)
+        for refund in refund_ids:
+            if refund.partner_id.country_id:
+                if refund.partner_id.country_id not in refund.journal_id.country_ids:
+                    refund.button_cancel()
+                    _logger.warning(f'Refund deleted: {refund.name}')
+                    refund.sudo().unlink()
+            else:
+                _logger.warning(f'\n *** *** *** This partner_id has no country: {refund}')
