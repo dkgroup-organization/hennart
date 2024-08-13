@@ -5,6 +5,7 @@ from odoo import api, fields, models, _
 from . import synchro_data
 from datetime import datetime, timedelta
 
+_logger = logging.getLogger(__name__)
 OPTIONS_OBJ = synchro_data.OPTIONS_OBJ
 
 
@@ -296,3 +297,21 @@ class BaseSynchroServer(models.Model):
 
                     if nb_invoice >= pool_invoice:
                         break
+
+    def check_partner_20240813(self):
+        """ customer check to vérify """
+        remote_ids = [1085, 1114, 1144, 1145, 1146, 1147, 1148, 1367, 1435, 1462, 1472, 1494, 1502, 1507, 1516, 1531, 1587, 1593, 1626, 1629, 1645, 1658, 1667, 1674, 1676, 1678, 1696, 1699, 1713, 1723, 1725, 1729, 1732, 1734, 1744, 1747, 1767, 1774, 1786, 1792, 1800, 1803, 1809, 1812, 1835, 1862, 1865, 1905, 1910, 1927, 1935, 1962, 2018, 2030, 2045, 2051, 2078, 2099, 2151, 2165, 2209, 2254, 2259, 2268, 2278, 2280, 2294, 2311, 2339, 2341, 2344, 2352, 2366, 2371, 2386, 2411, 2413, 2808, 3546, 3841, 397, 4410, 479, 4971, 6232]
+        update_line_ids = self.env['synchro.obj.line']
+
+        for remote_id in remote_ids:
+            line_exemple =  self.env['synchro.obj.line'].browse(22)
+            condition = [('model_id', '=', line_exemple.model_id), ('remote_id', '=', int(remote_id))]
+            line_ids = self.env['synchro.obj.line'].search(condition)
+            if not line_ids:
+                _logger.warning('\n *** *** *** This partner_id is not updated: ', remote_id)
+                line_ids = line_exemple.copy({'remote_id': int(remote_id), 'local_id': 0})
+                try:
+                    line_ids.update_values()
+                except:
+                    _logger.warning('\n *** *** *** This partner_id is not updated: ', remote_id)
+        return True
