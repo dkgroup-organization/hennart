@@ -4,6 +4,8 @@ import datetime
 from dateutil.relativedelta import relativedelta
 logger = logging.getLogger('wms_scanner')
 
+from odoo.exceptions import UserError, ValidationError
+_logger = logging.getLogger(__name__)
 
 PAYMENT_STATE_SELECTION = [
         ('not_paid', 'Not Paid'),
@@ -186,8 +188,9 @@ class AccountMove(models.Model):
             if move.invoice_date < datetime.date(2017, 1, 1):
                 if move.state != 'draft':
                     move.button_draft()
-                move.unlink()
-                continue
+                elif move.state == 'draft':
+                    move.unlink()
+                    continue
 
             if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
                 continue
@@ -204,6 +207,7 @@ class AccountMove(models.Model):
             move.invoice_line_ids.get_product_uom_id()
 
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
+              
                 if (move.fiscal_position_id and move.piece_comptable and
                         int(move.total_ttc * 100.0) == int(move.amount_total * 100.0)):
                     try:
@@ -216,6 +220,7 @@ class AccountMove(models.Model):
 
             else:
                 move.imported_state = 'Amount KO'
+
         return True
 
     def action_reload_imported(self):

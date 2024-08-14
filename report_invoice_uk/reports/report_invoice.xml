@@ -7,13 +7,9 @@
                 <t t-foreach="docs" t-as="o">
                     <t t-set="lang" t-value="o.partner_id.lang"/>
                     <t t-set="print_with_payments" t-value="True"/>
+                    <t t-set="is_delivery" t-value="True"/>
+                    <t t-set="docs" t-value="docs.with_context(delivery=True)"/>
                     <t t-call="account.report_invoice_document" t-lang="lang">
-                        <xpath expr="//div[@class='page']/h2" position="replace">
-                            <h2>
-                                <span>Livraison</span> 
-                                <span t-if="o.name != '/'" t-field="o.name"/>
-                            </h2>
-                        </xpath>
                     </t>
                 </t>
             </t>
