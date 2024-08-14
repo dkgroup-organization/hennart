@@ -34,6 +34,7 @@ class AccountMove(models.Model):
     total_tva = fields.Float(string='Total TVA', copy=False)
     total_ttc = fields.Float(string='Total TTC', copy=False)
     piece_comptable = fields.Char(string='ID piece comptable', copy=False)
+    imported_state = fields.Char('Imported status')
 
     account_id = fields.Many2one(
         'account.account',
@@ -191,15 +192,6 @@ class AccountMove(models.Model):
             if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
                 continue
 
-            if move.fiscal_position_id.id in [2, 3]:
-                # error imported reload
-                self.env['synchro.obj.line'].search([('obj_id.model_name', '=', 'account.invoice'),
-                                                     ('local_id', '=', move.id)]).update_values()
-                if move.fiscal_position_id.id in [2, 3]:
-                    move.fiscal_position_id = False
-                    # Manual correction needed
-                    continue
-
             if not move.invoice_line_ids:
                 " Import the line"
                 piece_comptable = eval(move.piece_comptable)
@@ -211,20 +203,31 @@ class AccountMove(models.Model):
 
             move.invoice_line_ids.get_product_uom_id()
 
-            if move.piece_comptable and int(move.total_ttc * 100.0) != int(move.amount_total * 100.0):
-                # reload the data to have possible correction
-                # move.invoice_line_ids:
-                synchro_obj = self.env['synchro.obj'].search([('model_name', '=', 'account.invoice.line')])
-                mapping_line = self.env['synchro.obj.line'].search([('local_id', 'in', move.invoice_line_ids.ids)])
-                mapping_line.update_values()
-
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
                 if (move.fiscal_position_id and move.piece_comptable and
                         int(move.total_ttc * 100.0) == int(move.amount_total * 100.0)):
-                    move.sudo().action_post()
-                    if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
-                        move.payment_state = 'paid'
+                    try:
+                        move.sudo().action_post()
+                        if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
+                            move.payment_state = 'paid'
+
+                    except Exception as e:
+                        move.imported_state = e
+
+            else:
+                move.imported_state = 'Amount KO'
         return True
+
+    def action_reload_imported(self):
+        """ An error is on this invoice, check some action to correct this situation """
+        synchro_obj_line = self.env['synchro.obj'].search([('model_name', '=', 'account.invoice.line')])
+
+        for move in self:
+
+            mapping_line = self.env['synchro.obj.line'].search(
+                [('local_id', 'in', move.invoice_line_ids.ids), ('obj_id', '=', synchro_obj_line.id)])
+            mapping_line.update_values()
+
 
     def compute_picking_ids(self):
         for invoice in self:
