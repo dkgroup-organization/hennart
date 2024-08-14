@@ -262,15 +262,6 @@ class BaseSynchroServer(models.Model):
         self.env['account.move.line'].invalidate_model()
 
         # Start update
-        started_delay = datetime.now() - timedelta(minutes=10)
-        job_ids = self.env['queue.job'].search([('state', '=', 'started'),
-                                                ('date_started', '<', started_delay)])
-        job_ids.button_done()
-
-        requeue_delay = datetime.now() - timedelta(hours=1)
-        job_ids = self.env['queue.job'].search([('state', '=', 'pending'),
-                                                ('date_created', '<', requeue_delay)])
-        job_ids.button_done()
         job_ids = self.env['queue.job'].search([('state', 'in', ['pending', 'started'])])
 
         nb_invoice = 0
@@ -288,7 +279,7 @@ class BaseSynchroServer(models.Model):
                 for line in synchro_line_ids:
                     invoice = self.env['account.move'].browse(line.local_id)
 
-                    if invoice.piece_comptable and invoice.state == 'draft' and invoice.fiscal_position_id:
+                    if invoice.piece_comptable and invoice.state == 'draft' and invoice.fiscal_position_id and not invoice.imported_state:
                         invoice.with_delay().action_valide_imported()
                         nb_invoice += 1
 

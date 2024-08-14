@@ -33,7 +33,10 @@
                             <field name="piece_comptable"/>
                             <field name="picking_id"/>
                         </group>
+                        <field name="imported_state"/>
                         <button class="oe_highlight" name="action_valide_imported" type="object" string="Valide"
+                                attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <button class="oe_highlight" name="action_reload_imported" type="object" string="Reload"
                                 attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                     </group>
                 </page>
