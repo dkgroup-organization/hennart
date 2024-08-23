@@ -241,53 +241,23 @@ class BaseSynchroServer(models.Model):
     @api.model
     def cron_valid_invoice(self, limit=100):
         """ Scheduled migration for invoices"""
+        channel_ids = self.env['queue.job.channel'].search([])
+        job_channel = []
+        for channel in channel_ids:
+            if 'invoice' in channel.name:
+                job_channel.append(channel.complete_name)
 
-        # Create all account_move_line_lot
-        sql = """
-        insert into account_move_line_lot (account_move_line_id, lot_id, uom_qty, quantity, weight, state) 
-        select aml.id, aml.prodlot_id, aml.uom_qty, aml.quantity, aml.weight, 'manual'
-        from account_move_line aml
-        left join account_move_line_lot amll on aml.id = amll.account_move_line_id
-        where amll.state is null;
-        """
-        self.env.cr.execute(sql)
-        sql = """
-        update stock_lot set expiration_date = COALESCE(use_date, alert_date, removal_date, date) 
-        where expiration_date is null;
-        """
-        self.env.cr.execute(sql)
+        condition = [
+            ('piece_comptable', '!=', False), ('state', '=', 'draft'), ('fiscal_position_id', '!=', False),
+            ('imported_state', '=', False)
+        ]
+        for invoice in self.env['account.move'].search(condition, limit=limit):
 
-        self.env.cr.commit()
-        self.env['stock.lot'].invalidate_recordset(['expiration_date'])
-        self.env['account.move.line'].invalidate_model()
-
-        # Start update
-        job_ids = self.env['queue.job'].search([('state', 'in', ['pending', 'started'])])
-
-        nb_invoice = 0
-        pool_invoice = 5 * limit
-        synchro_line_ids = self.env['synchro.obj.line']
-
-        if len(job_ids) < pool_invoice:
-            while nb_invoice < pool_invoice:
-
-                if not synchro_line_ids:
-                    synchro_line_ids = self.env['synchro.obj.line'].search(
-                        [('obj_id.model_id.model', '=', 'account.move'), ('local_id', '>', 0)],
-                        order='update_date asc', limit=5*limit)
-
-                for line in synchro_line_ids:
-                    invoice = self.env['account.move'].browse(line.local_id)
-
-                    if invoice.piece_comptable and invoice.state == 'draft' and invoice.fiscal_position_id and not invoice.imported_state:
-                        invoice.with_delay().action_valide_imported()
-                        nb_invoice += 1
-
-                    line.update_date = fields.Datetime().now()
-                    synchro_line_ids -= line
-
-                    if nb_invoice >= pool_invoice:
-                        break
+            invoice.with_delay(channel=job_channel[invoice.id % len(job_channel)]).action_valide_imported()
+            invoice.imported_state = 'job'
+            func_string = f'account.move({invoice.id},).action_valide_imported()'
+            job_ids = self.env['queue.job'].search([('func_string', '=', func_string)], order='id desc', limit=1)
+            invoice.job_id = job_ids
 
     def check_partner_20240813(self):
         """ customer check to vérify """
