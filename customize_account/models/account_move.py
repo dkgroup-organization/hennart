@@ -190,7 +190,7 @@ class AccountMove(models.Model):
             if move.invoice_date < datetime.date(2017, 1, 1):
                 if move.state != 'draft':
                     move.button_draft()
-                elif move.state == 'draft':
+                if move.state == 'draft':
                     move.unlink()
                     continue
 

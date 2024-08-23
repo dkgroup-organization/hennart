@@ -117,7 +117,8 @@ class ProductProduct(models.Model):
                 result.append(_name_get(mydict))
         return result
 
-    @api.depends('product_tmpl_id')
+    @api.depends('product_tmpl_id.base_unit_count', 'product_tmpl_id.base_unit_price',
+                 'product_tmpl_id.list_price')
     def compute_base_product(self):
         """ NO variant """
         for product in self:
