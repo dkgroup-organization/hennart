@@ -205,15 +205,8 @@ class AccountMove(models.Model):
                     remote_ids = sync_obj.remote_search(domain)
                     remote_values = sync_obj.remote_read(remote_ids)
                     sync_obj.write_local_value(remote_values)
-
-            # Update the line
-            for move_line in move.invoice_line_ids:
-                self.env['synchro.obj.line'].search(
-                    [('obj_id', '=', sync_obj.id), ('local_id', '=', move_line.id)]).update_values()
-
-                move_line.update_imported_line()
-
-            move.invoice_line_ids.get_product_uom_id()
+            else:
+                move.action_reload_imported()
 
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
               
