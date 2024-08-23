@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_§§object§§_nobody,access_§§object§§_nobody,model_§§object§§,group_§§object§§_nobody,1,0,0,0
+access_§§object§§_user,access_§§object§§_user,model_§§object§§,group_§§object§§_user,1,1,1,0
+access_§§object§§_manager,access_§§object§§_manager,model_§§object§§,group_§§object§§_manager,1,1,1,1

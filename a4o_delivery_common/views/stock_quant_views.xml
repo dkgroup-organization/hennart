@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is part of an Adiczion's Module.
+The COPYRIGHT and LICENSE files at the top level of this repository
+contains the full copyright notices and license terms. -->
+<odoo>
+    <record model="ir.ui.view" id="view_quant_package_form_delivery_common">
+        <field name="name">stock.quant.package.form.delivery_common</field>
+        <field name="model">stock.quant.package</field>
+        <field name="inherit_id" ref="stock.view_quant_package_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@id='stock.package_location_group']" position="after">
+                <group id="stock.package_carrier_details">
+                    <field name="date_status_check" attrs="{'invisible': [('date_status_check', '=', False)]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

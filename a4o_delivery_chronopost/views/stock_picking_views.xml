@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is part of an Adiczion's Module.
+The COPYRIGHT and LICENSE files at the top level of this repository
+contains the full copyright notices and license terms. -->
+<odoo>
+    <record id="view_picking_withcarrier_out_form_chronopost" model="ir.ui.view">
+        <field name="name">delivery.stock.picking_withcarrier.form.view.chronopost</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='carrier_data']/field[@name='carrier_id']" position="replace">
+                <field name="carrier_id"
+                    attrs="{'readonly': [('state', 'in', ('done')), ('carrier_tracking_ref','!=',False), ('delivery_type','!=',False), '|', ('state', 'in', ('cancel'))]}"
+                    options="{'no_create': True, 'no_open': True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
