@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<odoo>
+    <record id="view_printing_choice_form" model="ir.ui.view">
+        <field name="name">printing.choice.form</field>
+        <field name="model">printing.choice</field>
+        <field name="arch" type="xml">
+            <form string="Choice Printer">
+                <sheet>
+                    <field name="name" string="Description" readonly="1"/>
+                    <field name="picking_id" invisible="1"/>
+                    <group>
+                        <field name="printer_id"/>
+                    </group>
+                    <footer>
+                        <button string="Print" type="object" name="print_container_label" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_printing_choice" model="ir.actions.act_window">
+        <field name="name">Printer Choice</field>
+        <field name="res_model">printing.choice</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_printing_choice_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

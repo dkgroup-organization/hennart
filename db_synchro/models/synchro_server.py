@@ -5,6 +5,7 @@ from odoo import api, fields, models, _
 from . import synchro_data
 from datetime import datetime, timedelta
 
+_logger = logging.getLogger(__name__)
 OPTIONS_OBJ = synchro_data.OPTIONS_OBJ
 
 
@@ -240,59 +241,57 @@ class BaseSynchroServer(models.Model):
     @api.model
     def cron_valid_invoice(self, limit=100):
         """ Scheduled migration for invoices"""
+        channel_ids = self.env['queue.job.channel'].search([])
+        job_channel = []
+        for channel in channel_ids:
+            if 'invoice' in channel.name:
+                job_channel.append(channel.complete_name)
 
-        # Create all account_move_line_lot
-        sql = """
-        insert into account_move_line_lot (account_move_line_id, lot_id, uom_qty, quantity, weight, state) 
-        select aml.id, aml.prodlot_id, aml.uom_qty, aml.quantity, aml.weight, 'manual'
-        from account_move_line aml
-        left join account_move_line_lot amll on aml.id = amll.account_move_line_id
-        where amll.state is null;
-        """
-        self.env.cr.execute(sql)
-        sql = """
-        update stock_lot set expiration_date = COALESCE(use_date, alert_date, removal_date, date) 
-        where expiration_date is null;
-        """
-        self.env.cr.execute(sql)
+        condition = [
+            ('piece_comptable', '!=', False), ('state', '=', 'draft'), ('fiscal_position_id', '!=', False),
+            ('imported_state', '=', False)
+        ]
+        for invoice in self.env['account.move'].search(condition, limit=limit):
 
-        self.env.cr.commit()
-        self.env['stock.lot'].invalidate_recordset(['expiration_date'])
-        self.env['account.move.line'].invalidate_model()
+            invoice.with_delay(channel=job_channel[invoice.id % len(job_channel)]).action_valide_imported()
+            invoice.imported_state = 'job'
+            func_string = f'account.move({invoice.id},).action_valide_imported()'
+            job_ids = self.env['queue.job'].search([('func_string', '=', func_string)], order='id desc', limit=1)
+            invoice.job_id = job_ids
 
-        # Start update
-        started_delay = datetime.now() - timedelta(minutes=10)
-        job_ids = self.env['queue.job'].search([('state', '=', 'started'),
-                                                ('date_started', '<', started_delay)])
-        job_ids.button_done()
+    def check_partner_20240813(self):
+        """ customer check to vérify """
+        remote_ids = [1085, 1114, 1144, 1145, 1146, 1147, 1148, 1367, 1435, 1462, 1472, 1494, 1502, 1507, 1516, 1531, 1587, 1593, 1626,
+                      1629, 1645, 1658, 1667, 1674, 1676, 1678, 1696, 1699, 1713, 1723, 1725, 1729, 1732, 1734, 1744, 1747, 1767, 1774,
+                      1786, 1792, 1800, 1803, 1809, 1812, 1835, 1862, 1865, 1905, 1910, 1927, 1935, 1962, 2018, 2030, 2045, 2051, 2078,
+                      2099, 2151, 2165, 2209, 2254, 2259, 2268, 2278, 2280, 2294, 2311, 2339, 2341, 2344, 2352, 2366, 2371, 2386, 2411,
+                      2413, 2808, 3546, 3841, 397, 4410, 479, 4971, 6232, 134, 162, 166, 214, 216, 219, 223, 226, 230, 232, 247, 2490,
+                      267, 2707, 3164, 50]
+        update_line_ids = self.env['synchro.obj.line']
 
-        requeue_delay = datetime.now() - timedelta(hours=1)
-        job_ids = self.env['queue.job'].search([('state', '=', 'pending'),
-                                                ('date_created', '<', requeue_delay)])
-        job_ids.button_done()
-        job_ids = self.env['queue.job'].search([('state', 'in', ['pending', 'started'])])
+        for remote_id in remote_ids:
+            line_exemple =  self.env['synchro.obj.line'].browse(22)
+            condition = [('model_id', '=', line_exemple.model_id), ('remote_id', '=', int(remote_id))]
+            line_ids = self.env['synchro.obj.line'].search(condition)
+            if not line_ids:
+                _logger.warning('\n *** *** *** This partner_id is not updated: ', remote_id)
+                line_ids = line_exemple.copy({'remote_id': int(remote_id), 'local_id': 0})
+                try:
+                    line_ids.update_values()
+                except:
+                    _logger.warning('\n *** *** *** This partner_id is not updated: ', remote_id)
+        return True
 
-        nb_invoice = 0
-        pool_invoice = 5 * limit
-        synchro_line_ids = self.env['synchro.obj.line']
 
-        if len(job_ids) < pool_invoice:
-            while nb_invoice < pool_invoice:
-
-                if not synchro_line_ids:
-                    synchro_line_ids = self.env['synchro.obj.line'].search(
-                        [('obj_id.model_id.model', '=', 'account.move'), ('local_id', '>', 0)],
-                        order='update_date asc', limit=5*limit)
-
-                for line in synchro_line_ids:
-                    invoice = self.env['account.move'].browse(line.local_id)
-
-                    if invoice.piece_comptable and invoice.state == 'draft' and invoice.fiscal_position_id:
-                        invoice.with_delay().action_valide_imported()
-                        nb_invoice += 1
-
-                    line.update_date = fields.Datetime().now()
-                    synchro_line_ids -= line
-
-                    if nb_invoice >= pool_invoice:
-                        break
+    def correction_avoir_20240813(self):
+        """ There are refund to unlink, the journal is not the good """
+        condition = [('move_type', '=', 'out_refund')]
+        refund_ids = self.env['account.move'].search(condition)
+        for refund in refund_ids:
+            if refund.partner_id.country_id:
+                if refund.partner_id.country_id not in refund.journal_id.country_ids:
+                    refund.button_cancel()
+                    _logger.warning(f'Refund deleted: {refund.name}')
+                    refund.sudo().unlink()
+            else:
+                _logger.warning(f'\n *** *** *** This partner_id has no country: {refund}')

@@ -13,7 +13,7 @@
     'installable': True,
     'depends': [
         'wms_scanner', 'customize_product_template', 'customize_partner',
-        'mrp', 'delivery', 'product_expiry', 'stock', 'customize_mrp'
+        'mrp', 'delivery', 'product_expiry', 'stock', 'customize_mrp',
     ],
     'data': [
         "security/ir.model.access.csv",

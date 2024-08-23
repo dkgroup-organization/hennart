@@ -8,6 +8,7 @@ from odoo.models import MAGIC_COLUMNS
 from . import odoo_proxy
 from . import synchro_data
 import json
+import threading
 
 OPTIONS_OBJ = synchro_data.OPTIONS_OBJ
 

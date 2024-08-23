@@ -36,6 +36,7 @@ class AccountMove(models.Model):
     total_tva = fields.Float(string='Total TVA', copy=False)
     total_ttc = fields.Float(string='Total TTC', copy=False)
     piece_comptable = fields.Char(string='ID piece comptable', copy=False)
+    imported_state = fields.Char('Imported status')
 
     account_id = fields.Many2one(
         'account.account',
@@ -56,6 +57,8 @@ class AccountMove(models.Model):
         'account.journal',
         compute='_compute_suitable_journal2_ids',
     )
+
+    job_id = fields.Many2one('queue.job', 'job')
 
     def get_max_subtotal_tax(self):
         """ return subtotal and tax"""
@@ -187,53 +190,51 @@ class AccountMove(models.Model):
             if move.invoice_date < datetime.date(2017, 1, 1):
                 if move.state != 'draft':
                     move.button_draft()
-                elif move.state == 'draft':
+                if move.state == 'draft':
                     move.unlink()
                     continue
 
             if move.state != 'draft' or not move.piece_comptable or not move.fiscal_position_id:
                 continue
 
-            if move.fiscal_position_id.id in [2, 3]:
-                # error imported reload
-                self.env['synchro.obj.line'].search([
-                    ('obj_id.model_name', '=', 'account.invoice'),
-                    ('local_id', '=', move.id)
-                ]).update_values()
-                if move.fiscal_position_id.id in [2, 3]:
-                    move.fiscal_position_id = False
-                    # Manual correction needed
-                    continue
-
             if not move.invoice_line_ids:
-                " Import the line"
+                # Import the line
                 piece_comptable = eval(move.piece_comptable)
                 if len(piece_comptable):
                     domain = [('invoice_id.move_id', '=', piece_comptable[0])]
                     remote_ids = sync_obj.remote_search(domain)
                     remote_values = sync_obj.remote_read(remote_ids)
                     sync_obj.write_local_value(remote_values)
-
-            move.invoice_line_ids.get_product_uom_id()
-
-            if move.piece_comptable and int(move.total_ttc * 100.0) != int(move.amount_total * 100.0):
-                # reload the data to have possible correction
-                # move.invoice_line_ids:
-                synchro_obj = self.env['synchro.obj'].search([('model_name', '=', 'account.invoice.line')])
-                mapping_line = self.env['synchro.obj.line'].search([('local_id', 'in', move.invoice_line_ids.ids)])
-                mapping_line.update_values()
+            else:
+                move.action_reload_imported()
 
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
-                try:
-                    if move.fiscal_position_id and move.piece_comptable:
+              
+                if (move.fiscal_position_id and move.piece_comptable and
+                        int(move.total_ttc * 100.0) == int(move.amount_total * 100.0)):
+                    try:
                         move.sudo().action_post()
                         if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
                             move.payment_state = 'paid'
-                except UserError as e:
-                    _logger.error("Error posting move ID %s: %s", move.id, e)
-                    continue
+
+                    except Exception as e:
+                        move.imported_state = e
+
+            else:
+                move.imported_state = 'Amount KO'
 
         return True
+
+    def action_reload_imported(self):
+        """ An error is on this invoice, check some action to correct this situation """
+        synchro_obj_line = self.env['synchro.obj'].search([('model_name', '=', 'account.invoice.line')])
+
+        for move in self:
+
+            mapping_line = self.env['synchro.obj.line'].search(
+                [('local_id', 'in', move.invoice_line_ids.ids), ('obj_id', '=', synchro_obj_line.id)])
+            mapping_line.update_values()
+
 
     def compute_picking_ids(self):
         for invoice in self:

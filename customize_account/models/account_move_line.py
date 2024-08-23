@@ -515,3 +515,20 @@ class AccountMoveLine(models.Model):
         if self.move_id.state == "posted":
             action['flags'] = {'mode': 'readonly'}
         return action
+
+    def update_imported_line(self):
+        """ Update the lot on line imported from V7 """
+        for line in self:
+            if line.prodlot_id:
+                line.prodlot_id.update_imported_date()
+                line.account_move_line_lot_ids.unlink()
+
+                line_lot_vals = {
+                    'account_move_line_id': line.id,
+                    'lot_id': line.prodlot_id.id,
+                    'uom_qty': line.uom_qty,
+                    'quantity': line.quantity,
+                    'weight': line.weight,
+                    'state': 'manual'
+                }
+                self.env['account.move.line.lot'].create(line_lot_vals)

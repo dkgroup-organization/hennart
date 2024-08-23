@@ -44,12 +44,16 @@
 		  <page string="migration">
 			<group string="Initialisation" name="initialisation">
 				<button name="migrate_base" string="Migrate Base" type="object"/>
+               <button name="check_partner_20240813" string="UPDATE partner 2024-08-13" type="object"/>
+              <button name="correction_avoir_20240813" string="UPDATE refund 2024-08-13" type="object"/>
+
 			</group>
           </page>
 		  
 		  <page string="stock migration">
             <group string="MIGRATE STOCK" name="migrate">
               <button name="migrate_stock" string="Migrate Stock" type="object"/>
+
             </group>
           </page>
 
