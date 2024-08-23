@@ -2,9 +2,6 @@
 <odoo>
 
 
-
-
-
     <record id="account_move_customize_view_form" model="ir.ui.view">
         <field name="name">dk_group.account.view_move_form</field>
         <field name="model">account.move</field>
@@ -13,7 +10,7 @@
 
             <header position="inside">
                 <button class="oe_highlight" name="update_discount_stock" type="object" string="update delivery"
-                                attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        attrs="{'invisible': [('state', '!=', 'draft')]}"/>
             </header>
 
             <xpath expr="//page[@name='other_info']" position="after">
@@ -33,11 +30,18 @@
                             <field name="piece_comptable"/>
                             <field name="picking_id"/>
                         </group>
-                        <field name="imported_state"/>
-                        <button class="oe_highlight" name="action_valide_imported" type="object" string="Valide"
-                                attrs="{'invisible': [('state', '!=', 'draft')]}"/>
-                        <button class="oe_highlight" name="action_reload_imported" type="object" string="Reload"
-                                attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <newline/>
+                        <group>
+                            <field name="imported_state"/>
+                            <field name="job_id"/>
+                        </group>
+                        <group>
+                            <button class="oe_highlight" name="action_valide_imported" type="object" string="Valide"
+                                    attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                            <button class="oe_highlight" name="action_reload_imported" type="object" string="Reload"
+                                    attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        </group>
+
                     </group>
                 </page>
             </xpath>
@@ -115,13 +119,13 @@
                 <field name="incoterm_date"/>
             </group>
 
-                <xpath expr="//field[@name='partner_bank_id']" position="attributes">
-                    <attribute name="invisible">True</attribute>
-                </xpath>
+            <xpath expr="//field[@name='partner_bank_id']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
 
             <xpath expr="//field[@name='partner_bank_id']" position="after">
-                    <field name="invoice_origin"/>
-                </xpath>
+                <field name="invoice_origin"/>
+            </xpath>
 
             <xpath expr="//div[@class='o_td_label']//label[@for='invoice_payment_term_id']" position="replace">
             </xpath>

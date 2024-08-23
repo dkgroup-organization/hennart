@@ -32,6 +32,12 @@ class StockLot(models.Model):
         help='This is the date on which the goods with this Serial Number may become dangerous and must not be consumed.')
     date_label = fields.Char("label date text:", compute="get_date_text")
 
+    def update_imported_date(self):
+        """ Some time the date is not set """
+        for lot in self:
+            if not lot.expiration_date:
+                lot.expiration_date = lot.use_date or lot.alert_date or lot.removal_date or lot.date
+
     def get_date_text(self):
         """ Define the legal text to put on label, best before or expiration dates"""
         for lot in self:

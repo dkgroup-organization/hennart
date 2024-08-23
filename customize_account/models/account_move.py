@@ -58,6 +58,8 @@ class AccountMove(models.Model):
         compute='_compute_suitable_journal2_ids',
     )
 
+    job_id = fields.Many2one('queue.job', 'job')
+
     def get_max_subtotal_tax(self):
         """ return subtotal and tax"""
         discount_product_ids = self.env['product.pricelist.discount'].search(
@@ -196,15 +198,15 @@ class AccountMove(models.Model):
                 continue
 
             if not move.invoice_line_ids:
-                " Import the line"
+                # Import the line
                 piece_comptable = eval(move.piece_comptable)
                 if len(piece_comptable):
                     domain = [('invoice_id.move_id', '=', piece_comptable[0])]
                     remote_ids = sync_obj.remote_search(domain)
                     remote_values = sync_obj.remote_read(remote_ids)
                     sync_obj.write_local_value(remote_values)
-
-            move.invoice_line_ids.get_product_uom_id()
+            else:
+                move.action_reload_imported()
 
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
               
