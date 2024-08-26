@@ -3,7 +3,6 @@
 # contains the full copyright notices and license terms.
 from odoo import api, models, fields
 import logging
-from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -36,7 +35,6 @@ class StockPicking(models.Model):
     @api.depends('delivery_status', 'move_line_ids')
     def _compute_delivery_status(self):
         for picking in self:
-            raise UserError('TEST')
             method = getattr(
                 picking,
                 '%s_get_picking_status' % picking.delivery_type,
