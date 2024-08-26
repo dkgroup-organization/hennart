@@ -29,7 +29,7 @@ Send your shippings through Chronopost and track them online.
         'security/ir.model.access.csv',
         'data/delivery_chronopost_data.xml',
         'views/delivery_chronopost_views.xml',
-        # 'views/stock_picking_views.xml',
+        'views/stock_picking_views.xml',
         'views/res_config_settings_views.xml',
         'wizard/select_printer_views.xml',
         ],
