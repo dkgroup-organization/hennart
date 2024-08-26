@@ -4,4 +4,4 @@
 from . import res_config_settings
 from . import delivery_chronopost
 from . import product_packaging
-# from . import stock_picking
+from . import stock_picking

@@ -10,7 +10,7 @@ contains the full copyright notices and license terms. -->
         <field name="arch" type="xml">
             <xpath expr="//group[@name='carrier_data']/field[@name='carrier_id']" position="replace">
                 <field name="carrier_id"
-                    attrs="{'readonly': [('state', 'in', ('done')), ('carrier_tracking_ref','!=',False), ('delivery_type','!=',False), '|', ('state', 'in', ('cancel'))]}"
+                    attrs="{'readonly': [('state', 'in', ['done', 'cancel']), ('carrier_tracking_ref', '!=', False), ('delivery_type', '!=', False)]}"
                     options="{'no_create': True, 'no_open': True}"/>
             </xpath>
         </field>
