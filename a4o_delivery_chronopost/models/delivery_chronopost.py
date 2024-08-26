@@ -218,9 +218,9 @@ class ProviderChronopost(models.Model):
         res = []
         cpst = ChronopostRequest(self.prod_environment, self.log_xml)
         for picking in pickings:
-            package_count = len(picking.package_ids)
-            if not package_count:
-                raise UserError(_('No packages for this picking!'))
+            # package_count = len(picking.package_ids)
+            # if not package_count:
+            #     raise UserError(_('No packages for this picking!'))
             shipping = cpst.shipping_request(**{
                 'carrier': self.sudo(),
                 'picking': picking,
