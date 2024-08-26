@@ -259,6 +259,14 @@ class BaseSynchroServer(models.Model):
             job_ids = self.env['queue.job'].search([('func_string', '=', func_string)], order='id desc', limit=1)
             invoice.job_id = job_ids
 
+    @api.model
+    def delete_job(self):
+        """ Delete job in error """
+        time_delay = fields.Datetime.now() - timedelta(minutes=10)
+        job_ids = self.env['queue.job'].search([('state', '=', 'started'), ('date_started', '<', time_delay)])
+        result = _("Cancelled by %s")
+        job_ids._change_job_state("cancelled", result="Cancelled by cron watchdog")
+
     def check_partner_20240813(self):
         """ customer check to vérify """
         remote_ids = [1085, 1114, 1144, 1145, 1146, 1147, 1148, 1367, 1435, 1462, 1472, 1494, 1502, 1507, 1516, 1531, 1587, 1593, 1626,
