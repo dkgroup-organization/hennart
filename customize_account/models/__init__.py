@@ -7,6 +7,8 @@ from . import account_move_line
 from . import account_move_line_lot
 from . import sale_order
 from . import purchase_order
+from . import stock_picking
+
 
 
 

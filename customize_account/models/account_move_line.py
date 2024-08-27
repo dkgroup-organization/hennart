@@ -47,6 +47,7 @@ class AccountMoveLine(models.Model):
     # Validated V16
 
     default_code = fields.Char('Code', related='product_id.default_code', store=True)
+    stock_move_ids = fields.Many2many('stock.move', 'stock move')
     account_move_line_lot_ids = fields.One2many('account.move.line.lot', 'account_move_line_id',
                                                 copy=True, string="Detailed lot")
 
@@ -521,14 +522,30 @@ class AccountMoveLine(models.Model):
         for line in self:
             if line.prodlot_id:
                 line.prodlot_id.update_imported_date()
-                line.account_move_line_lot_ids.unlink()
+                if line.account_move_line_lot_ids:
+                    line.account_move_line_lot_ids.lot_id = line.prodlot_id
+                else:
+                    line_lot_vals = {
+                        'account_move_line_id': line.id,
+                        'lot_id': line.prodlot_id.id,
+                        'uom_qty': line.uom_qty,
+                        'quantity': line.quantity,
+                        'weight': line.weight,
+                        'state': 'manual'
+                    }
+                    self.env['account.move.line.lot'].create(line_lot_vals)
 
-                line_lot_vals = {
-                    'account_move_line_id': line.id,
-                    'lot_id': line.prodlot_id.id,
-                    'uom_qty': line.uom_qty,
-                    'quantity': line.quantity,
-                    'weight': line.weight,
-                    'state': 'manual'
-                }
-                self.env['account.move.line.lot'].create(line_lot_vals)
+    def update_lot(self):
+        for line in self:
+            picking_ids = line.move_id.picking_ids
+            # Select the stock_move_line with product
+            pass
+
+
+
+
+
+
+
+
+

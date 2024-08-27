@@ -18,7 +18,7 @@
         "views/account_move_view.xml",
         "views/account_journal_view.xml",
         "views/sale_order_view.xml",
-        #"views/account_move_line_lot_views.xml",
+        "views/stock_picking_views.xml",
         "views/account_move_line_views.xml",
 
     ],
