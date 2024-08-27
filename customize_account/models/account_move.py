@@ -235,19 +235,6 @@ class AccountMove(models.Model):
                 [('local_id', 'in', move.invoice_line_ids.ids), ('obj_id', '=', synchro_obj_line.id)])
             mapping_line.update_values()
 
-
-    def compute_picking_ids(self):
-        for invoice in self:
-            order_ids = invoice.invoice_line_ids.mapped('sale_line_ids.order_id')
-            picking_ids = self.env['stock.picking'].search([
-                ('sale_id', 'in', order_ids.ids),
-                ('state', '=', 'done')
-            ])
-            if picking_ids:
-                invoice.picking_ids = picking_ids
-            else:
-                invoice.picking_ids = False
-
     def _get_last_sequence_domain(self, relaxed=False):
         # Need to have the same calculation for all sale journal
         self.ensure_one()
@@ -305,3 +292,15 @@ class AccountMove(models.Model):
         made_sequence_hole = set(r[0] for r in self.env.cr.fetchall())
         for move in self:
             move.made_sequence_hole = move.id in made_sequence_hole
+
+    def update_picking(self):
+        for invoice in self:
+            # Get the list of picking
+            picking_ids = invoice.picking_ids
+            if not picking_ids:
+                for invoice_line in invoice.invoice_line_ids:
+                    for sale_line in invoice_line.sale_line_ids:
+                        for stock_move in sale_line.move_ids:
+                            picking_ids |= stock_move.picking_id
+                invoice.picking_ids = picking_ids
+
