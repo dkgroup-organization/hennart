@@ -21,8 +21,6 @@ class StockPicking(models.Model):
                 sale = picking.group_id.sale_id
                 invoices = sale.create_custom_invoice()
                 invoices.picking_ids |= picking
-                invoices.update_lot()
-                invoices.action_post()
                 all_invoices |= invoices
 
         return all_invoices
@@ -30,9 +28,31 @@ class StockPicking(models.Model):
     def button_print_invoice(self, report_name="account.report_invoice"):
         """ Create invoice, and print pdf """
         invoices = self.action_create_invoice()
-        action_report = self.env['ir.actions.report'].search([('report_name', '=', report_name)])
-        action_report.print_document(invoices.ids)
+        invoice_ids = []
+        for picking in self:
+            for invoice in invoices:
+                if picking in invoice.picking_ids:
+                    action_report = self.env['ir.actions.report'].search([('report_name', '=', report_name)])
+                    action_report.print_document([invoice.id])
 
+    def preparation_end(self):
+        """ Use partner configuration to finish and print invoice """
+        message = ''
 
+        for picking in self:
+            if picking.preparation_state == 'done':
+                message = _('End of preparation: ') + picking.name
+            else:
+                continue
+
+            partner = picking.partner_id
+            if partner.parent_id:
+                partner = partner.parent_id
+
+            if partner.print_invoice:
+                picking.button_print_invoice()
+                message += 'Invoice is printing'
+
+        return message
 
 

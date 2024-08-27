@@ -272,7 +272,7 @@ class AccountMoveLine(models.Model):
                 continue
 
             if not line.product_id or not line.account_move_line_lot_ids:
-                line.weight = 1.0
+                line.weight = 0.0
             else:
                 weight = 0.0
                 for stock_move_line_lot in line.account_move_line_lot_ids:

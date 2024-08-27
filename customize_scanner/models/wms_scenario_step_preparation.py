@@ -788,7 +788,7 @@ class WmsScenarioStep(models.Model):
                 # picking validation and print document
                 data.pop('end_preparation', None)
                 picking.button_validate()
-
+                data['message'] = picking.preparation_end()
         return data
 
     def delete_data_key(self, data, key):

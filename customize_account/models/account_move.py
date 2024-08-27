@@ -293,7 +293,7 @@ class AccountMove(models.Model):
         for move in self:
             move.made_sequence_hole = move.id in made_sequence_hole
 
-    def update_lot(self):
+    def update_picking(self):
         for invoice in self:
             # Get the list of picking
             picking_ids = invoice.picking_ids
@@ -303,8 +303,4 @@ class AccountMove(models.Model):
                         for stock_move in sale_line.move_ids:
                             picking_ids |= stock_move.picking_id
                 invoice.picking_ids = picking_ids
-
-            # Check lot by picking
-            for invoice_line in invoice.invoice_line_ids:
-                invoice_line.update_lot()
 
