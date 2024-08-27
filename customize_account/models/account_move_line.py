@@ -47,7 +47,7 @@ class AccountMoveLine(models.Model):
     # Validated V16
 
     default_code = fields.Char('Code', related='product_id.default_code', store=True)
-    stock_move_ids = fields.Many2many('stock.move', 'stock move')
+    stock_move_ids = fields.Many2many('stock.move', string='stock move')
     account_move_line_lot_ids = fields.One2many('account.move.line.lot', 'account_move_line_id',
                                                 copy=True, string="Detailed lot")
 
@@ -534,18 +534,3 @@ class AccountMoveLine(models.Model):
                         'state': 'manual'
                     }
                     self.env['account.move.line.lot'].create(line_lot_vals)
-
-    def update_lot(self):
-        for line in self:
-            picking_ids = line.move_id.picking_ids
-            # Select the stock_move_line with product
-            pass
-
-
-
-
-
-
-
-
-

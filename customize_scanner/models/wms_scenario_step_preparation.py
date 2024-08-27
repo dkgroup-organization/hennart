@@ -790,3 +790,9 @@ class WmsScenarioStep(models.Model):
                 picking.button_validate()
 
         return data
+
+    def delete_data_key(self, data, key):
+        """ return data with deleting key """
+        if key in list(data.keys()):
+            del data[key]
+        return data
