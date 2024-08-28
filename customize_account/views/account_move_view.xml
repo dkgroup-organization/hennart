@@ -38,8 +38,10 @@
                         <group>
                             <button class="oe_highlight" name="action_valide_imported" type="object" string="Valide"
                                     attrs="{'invisible': [('state', '!=', 'draft')]}"/>
-                            <button class="oe_highlight" name="action_reload_imported" type="object" string="Reload"
+                            <button class="oe_highlight" name="action_reload_imported" type="object" string="Reload line"
                                     attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                            <button class="oe_highlight" name="action_write_lot_imported" type="object"
+                                    string="update lot"/>
                         </group>
 
                     </group>

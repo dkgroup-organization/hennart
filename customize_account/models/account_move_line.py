@@ -518,7 +518,14 @@ class AccountMoveLine(models.Model):
         return action
 
     def update_imported_line(self):
-        """ Update the lot on line imported from V7 """
+        """ Update the lot on invoice line imported from V7
+         update account_move_line_lot amll
+            set lot_id = aml.prodlot_id
+            from account_move_line aml
+            where amll.account_move_line_id = aml.id
+            and aml.prodlot_id is not null
+            and amll.lot_id is null;
+         """
         for line in self:
             if line.prodlot_id:
                 line.prodlot_id.update_imported_date()
