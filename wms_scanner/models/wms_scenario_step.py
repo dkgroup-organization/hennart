@@ -376,7 +376,7 @@ class WmsScenarioStep(models.Model):
         """ Eval the python code """
         self.ensure_one()
         data = data or {}
-        python_code = python_code or self.python_code
+        python_code = python_code or self.python_code or ''
 
         if python_code:
             localdict = {
@@ -385,14 +385,14 @@ class WmsScenarioStep(models.Model):
                 'data': data.copy()}
 
             if self.debug_mode or self.scenario_id.debug_mode:
-                safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
+                safe_eval(python_code, localdict, mode="exec", nocopy=True)
                 data = localdict.get('data')
             else:
                 try:
-                    safe_eval(self.python_code, localdict, mode="exec", nocopy=True)
+                    safe_eval(python_code, localdict, mode="exec", nocopy=True)
                     data = localdict.get('data')
                 except Exception as e:
-                    debug = _("This code generate an error: %s" % (self.python_code or ''))
+                    debug = _("This code generate an error: %s" % (python_code or ''))
                     data.update({'debug': debug})
                     session = self.env['wms.session'].get_session()
                     session.error = str(e)
