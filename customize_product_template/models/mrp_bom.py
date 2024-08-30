@@ -37,3 +37,4 @@ class MrpBomLine(models.Model):
     product_qty = fields.Float(
         'Quantity', default=1.0,
         digits='BOM line Unit of Measure', required=True)
+    default_code = fields.Char('Code', related='product_id.default_code')
