@@ -69,9 +69,9 @@ class AccountMoveLineLot(models.Model):
             if line.product_uom_id == uom_weight:
                 line.quantity = line.weight
             elif line.product_id.base_unit_count > 0:
-                line.quantity = line.uom_qty * line.product_id.base_unit_count
+                line.quantity = round(line.uom_qty * line.product_id.base_unit_count)
             else:
-                line.quantity = line.uom_qty
+                line.quantity = round(line.uom_qty)
 
     @api.onchange('stock_move_line_id')
     def onchange_stock_move_line_id(self):

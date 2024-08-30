@@ -202,19 +202,19 @@ class AccountMoveLine(models.Model):
                         lambda a: a.stock_move_line_id == stock_move_line).write(vals)
         self.get_quantity()
 
+    @api.onchange('uom_qty')
     def put_uom_qty(self):
         """ Create account_move_line_lot_ids to save value"""
         for line in self:
             line_lot_vals = {'uom_qty': line.uom_qty}
-
-            if not line.weight and line.product_id.weight:
+            if line.product_id.weight:
                 line_lot_vals['weight'] = line.product_id.weight * line.uom_qty
 
             if not line.account_move_line_lot_ids:
                 line_lot_vals['account_move_line_id'] = line.id
                 line_lot_vals['state'] = 'manual'
                 line.account_move_line_lot_ids.create(line_lot_vals)
-            elif len(line.account_move_line_lot_ids) == 1:
+            elif len(line.account_move_line_lot_ids) == 1 and line.account_move_line_lot_ids[0].state == 'manual':
                 line.account_move_line_lot_ids.update(line_lot_vals)
             else:
                 raise ValidationError(_("this line has multiples production lot, uses the detailed view to update"))
@@ -245,7 +245,10 @@ class AccountMoveLine(models.Model):
                 quantity = 0.0
                 for account_move_line_lot in line.account_move_line_lot_ids:
                     quantity += account_move_line_lot.quantity
-                line.quantity = quantity
+                if line.product_uom_id == uom_weight:
+                    line.quantity = quantity
+                else:
+                    line.quantity = round(quantity)
 
     @api.depends('account_move_line_lot_ids.uom_qty')
     def get_uom_qty(self):
