@@ -15,6 +15,7 @@ class AccountMoveLineLot(models.Model):
     _description = "Detailed lot"
 
     account_move_line_id = fields.Many2one('account.move.line', string='Account move line')
+    #account_move_id = fields.Many2one('account.move', related="account_move_line_id.move_id", string='Account move')
     product_id = fields.Many2one('product.product', string="product", related="account_move_line_id.product_id")
     default_code = fields.Char(string="code", related="account_move_line_id.product_id.default_code")
 

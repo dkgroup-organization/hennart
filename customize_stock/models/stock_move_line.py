@@ -171,7 +171,7 @@ class StockMoveLine(models.Model):
             if weighted and line.product_id.uos_id != weight_uom:
                 continue
 
-            pack_key = f'{line.product_id.id}-{line.pack_product_id.id or 0}-{line.lot_id.id or 0}'
+            pack_key = f'{line.move_id.id}-{line.product_id.id}-{line.pack_product_id.id or 0}-{line.lot_id.id or 0}'
             if pack_key not in list(group_line.keys()):
                 group_line[pack_key] = line
             else:

@@ -154,7 +154,7 @@
 		<field name="action_model" ref="customize_stock.model_stock_weight_device"/>
 		<field name="action_variable">weight</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_preparation0"/>
-		<field name="python_code_before">data.pop('weight_detail', None)</field>
+		<field name="python_code_before">data = step.delete_data_key(data, 'weight_detail')</field>
 	</record>
 
 	<record id="wms_scenario_step_preparation91" model="wms.scenario.step">

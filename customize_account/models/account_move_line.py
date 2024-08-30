@@ -47,6 +47,7 @@ class AccountMoveLine(models.Model):
     # Validated V16
 
     default_code = fields.Char('Code', related='product_id.default_code', store=True)
+    stock_move_ids = fields.Many2many('stock.move', string='stock move')
     account_move_line_lot_ids = fields.One2many('account.move.line.lot', 'account_move_line_id',
                                                 copy=True, string="Detailed lot")
 
@@ -271,7 +272,7 @@ class AccountMoveLine(models.Model):
                 continue
 
             if not line.product_id or not line.account_move_line_lot_ids:
-                line.weight = 1.0
+                line.weight = 0.0
             else:
                 weight = 0.0
                 for stock_move_line_lot in line.account_move_line_lot_ids:
@@ -517,18 +518,26 @@ class AccountMoveLine(models.Model):
         return action
 
     def update_imported_line(self):
-        """ Update the lot on line imported from V7 """
+        """ Update the lot on invoice line imported from V7
+         update account_move_line_lot amll
+            set lot_id = aml.prodlot_id
+            from account_move_line aml
+            where amll.account_move_line_id = aml.id
+            and aml.prodlot_id is not null
+            and amll.lot_id is null;
+         """
         for line in self:
             if line.prodlot_id:
                 line.prodlot_id.update_imported_date()
-                line.account_move_line_lot_ids.unlink()
-
-                line_lot_vals = {
-                    'account_move_line_id': line.id,
-                    'lot_id': line.prodlot_id.id,
-                    'uom_qty': line.uom_qty,
-                    'quantity': line.quantity,
-                    'weight': line.weight,
-                    'state': 'manual'
-                }
-                self.env['account.move.line.lot'].create(line_lot_vals)
+                if line.account_move_line_lot_ids:
+                    line.account_move_line_lot_ids.lot_id = line.prodlot_id
+                else:
+                    line_lot_vals = {
+                        'account_move_line_id': line.id,
+                        'lot_id': line.prodlot_id.id,
+                        'uom_qty': line.uom_qty,
+                        'quantity': line.quantity,
+                        'weight': line.weight,
+                        'state': 'manual'
+                    }
+                    self.env['account.move.line.lot'].create(line_lot_vals)

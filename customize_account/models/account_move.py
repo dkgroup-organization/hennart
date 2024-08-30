@@ -58,8 +58,6 @@ class AccountMove(models.Model):
         compute='_compute_suitable_journal2_ids',
     )
 
-    job_id = fields.Many2one('queue.job', 'job')
-
     def get_max_subtotal_tax(self):
         """ return subtotal and tax"""
         discount_product_ids = self.env['product.pricelist.discount'].search(
@@ -184,7 +182,7 @@ class AccountMove(models.Model):
         uom_weight = self.env['product.template'].sudo()._get_weight_uom_id_from_ir_config_parameter()
         remote_server = self.env['synchro.server'].search([])
         sync_obj = remote_server[0].obj_ids.search([('model_name', '=', 'account.invoice.line')])
-        self.env['synchro.obj'].search([('model_name', '=', 'account.invoice')]).unlink_local_void()
+        #self.env['synchro.obj'].search([('model_name', '=', 'account.invoice')]).unlink_local_void()
 
         for move in self:
             if move.invoice_date < datetime.date(2017, 1, 1):
@@ -208,6 +206,8 @@ class AccountMove(models.Model):
             else:
                 move.action_reload_imported()
 
+            move.invoice_line_ids.update_imported_line()
+
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
               
                 if (move.fiscal_position_id and move.piece_comptable and
@@ -225,28 +225,20 @@ class AccountMove(models.Model):
 
         return True
 
+    def action_write_lot_imported(self):
+        """ write the imported lot on the invoice """
+        for move in self:
+            move.invoice_line_ids.update_imported_line()
+
     def action_reload_imported(self):
         """ An error is on this invoice, check some action to correct this situation """
         synchro_obj_line = self.env['synchro.obj'].search([('model_name', '=', 'account.invoice.line')])
 
         for move in self:
-
             mapping_line = self.env['synchro.obj.line'].search(
                 [('local_id', 'in', move.invoice_line_ids.ids), ('obj_id', '=', synchro_obj_line.id)])
             mapping_line.update_values()
-
-
-    def compute_picking_ids(self):
-        for invoice in self:
-            order_ids = invoice.invoice_line_ids.mapped('sale_line_ids.order_id')
-            picking_ids = self.env['stock.picking'].search([
-                ('sale_id', 'in', order_ids.ids),
-                ('state', '=', 'done')
-            ])
-            if picking_ids:
-                invoice.picking_ids = picking_ids
-            else:
-                invoice.picking_ids = False
+            move.invoice_line_ids.update_imported_line()
 
     def _get_last_sequence_domain(self, relaxed=False):
         # Need to have the same calculation for all sale journal
@@ -305,3 +297,15 @@ class AccountMove(models.Model):
         made_sequence_hole = set(r[0] for r in self.env.cr.fetchall())
         for move in self:
             move.made_sequence_hole = move.id in made_sequence_hole
+
+    def update_picking(self):
+        for invoice in self:
+            # Get the list of picking
+            picking_ids = invoice.picking_ids
+            if not picking_ids:
+                for invoice_line in invoice.invoice_line_ids:
+                    for sale_line in invoice_line.sale_line_ids:
+                        for stock_move in sale_line.move_ids:
+                            picking_ids |= stock_move.picking_id
+                invoice.picking_ids = picking_ids
+

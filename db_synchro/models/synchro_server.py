@@ -231,12 +231,12 @@ class BaseSynchroServer(models.Model):
                 obj.get_last_update()
 
     @api.model
-    def cron_migrate_invoices(self):
+    def cron_migrate_invoices(self, limit=10):
         """ Scheduled migration for invoices"""
         for server in self.search([]):
             obj_ids = server.obj_ids.search([('model_name', '=', 'account.invoice')])
             for obj in obj_ids:
-                obj.load_remote_record()
+                obj.load_remote_record(limit=limit)
 
     @api.model
     def cron_valid_invoice(self, limit=100):
@@ -255,9 +255,14 @@ class BaseSynchroServer(models.Model):
 
             invoice.with_delay(channel=job_channel[invoice.id % len(job_channel)]).action_valide_imported()
             invoice.imported_state = 'job'
-            func_string = f'account.move({invoice.id},).action_valide_imported()'
-            job_ids = self.env['queue.job'].search([('func_string', '=', func_string)], order='id desc', limit=1)
-            invoice.job_id = job_ids
+            #func_string = f'account.move({invoice.id},).action_valide_imported()'
+
+    @api.model
+    def delete_job(self):
+        """ Delete job in error """
+        time_delay = fields.Datetime.now() - timedelta(minutes=10)
+        job_ids = self.env['queue.job'].search([('state', '=', 'started'), ('date_started', '<', time_delay)])
+        job_ids._change_job_state("cancelled", result="Cancelled by cron watchdog")
 
     def check_partner_20240813(self):
         """ customer check to vérify """
