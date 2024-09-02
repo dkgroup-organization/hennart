@@ -83,6 +83,7 @@ class SaleOrderLine(models.Model):
             date_from = datetime.now() - timedelta(weeks=13)
             condition = [
                 ('product_id', '=', line.product_id.id),
+                ('uom_qty', '>', 0),
                 ('move_id.partner_id', 'child_of', line.order_id.partner_id.id),
                 ('move_id.invoice_date', '<', date_start),
                 ('move_id.invoice_date', '>=', date_from),
