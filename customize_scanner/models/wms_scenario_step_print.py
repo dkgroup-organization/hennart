@@ -53,7 +53,7 @@ class WmsScenarioStep(models.Model):
 
     def print_lot(self, data):
         """ Print the production lot """
-        print('----------print_lot------------------')
+
         self.ensure_one()
         if data.get('printer'):
             session = self.env['wms.session'].get_session()
