@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="report_invoice_bl_valued">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-set="lang" t-value="o.partner_id.lang"/>
+                    <t t-set="print_with_payments" t-value="True"/>
+                    <t t-set="is_delivery" t-value="True"/>
+                    <t t-set="docs" t-value="docs.with_context(delivery=True)"/>
+                    <t t-call="account.report_invoice_document" t-lang="lang">
+                    </t>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>
