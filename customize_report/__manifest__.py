@@ -17,5 +17,7 @@
         "views/res_company_view.xml",
         "views/report_purchasequotation_document_inherit.xml",
         "views/report_delivery_document.xml",
+        "views/report_invoice_bl_valued.xml",
+        "reports/account_invoices_bl_valued.xml",
     ],
 }
