@@ -1,0 +1,35 @@
+Version 15.1.7 - 2023-03-21
+  * Complete the unit tests (availability)
+  * Some fixes (see commits for details)
+Version 15.1.6 - 2023-03-15
+  * Complete the unit tests
+  * Some fixes (see commits for details)
+Version 15.1.5 - 2023-03-15
+  * Move address masking boolean
+  * Some fixes (see commits for details)
+Version 15.1.4 - 2023-03-08
+  * Complete unit tests
+  * Some fixes (see commits for details)
+Version 15.1.3 - 2023-02-28
+  * Adds unit tests
+  * Adds the use of more services
+  * Small fixes (see commit for details)
+Version 15.1.2 - 2022-05-07
+  * Small corrections
+Version 15.1.1 - 2022-05-07
+  * Small corrections
+Version 15.1.0 - 2022-03-11
+  * Portage for use with the selection of relay points on the Front
+Version 15.0.0 - 2022-02-28
+  * Fixed when the 'base_report_to_printer' module is not installed
+  * Port to v15.0
+Version 14.0.4 - 2022-02-28
+  * Fixed bug about the lack of base_report_to_printer
+Version 14.0.3 - 2021-10-03
+  * Correcting display of email and phone on label
+Version 14.0.2 - 2021-10-03
+  * Small corrections
+Version 14.0.1 - 2021-10-03
+  * Complete the information on the label in multiple package
+Version 14.0.0 - 2021-09-11
+  * Initial release

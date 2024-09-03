@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+# This file is part of an Adiczion's Module.
+# The COPYRIGHT and LICENSE files at the top level of this repository
+# contains the full copyright notices and license terms.
+-->
+<odoo>
+    <data>
+        <record id="chronopost_service_01" model="delivery.carrier.chronopost_service">
+            <field name="name">Normal</field>
+            <field name="code">0</field>
+            <field name="category">STD</field>
+        </record>
+        <record id="chronopost_service_02" model="delivery.carrier.chronopost_service">
+            <field name="name">Monday delivery for Friday departure</field>
+            <field name="code">1</field>
+            <field name="category">STD</field>
+        </record>
+        <record id="chronopost_service_03" model="delivery.carrier.chronopost_service">
+            <field name="name">Saturday delivery for Friday departure</field>
+            <field name="code">6</field>
+            <field name="category">STD</field>
+        </record>
+        <record id="chronopost_service_04" model="delivery.carrier.chronopost_service">
+            <field name="name">Normal</field>
+            <field name="code">0</field>
+            <field name="category">EXPRESS</field>
+        </record>
+        <record id="chronopost_service_05" model="delivery.carrier.chronopost_service">
+            <field name="name">Mandatory to '6' for '2SHOP' products</field>
+            <field name="code">6</field>
+            <field name="category">2SHOP</field>
+        </record>
+        <record id="chronopost_service_06" model="delivery.carrier.chronopost_service">
+            <field name="name">Calculated Service</field>
+            <field name="code">computed</field>
+            <field name="category">REP</field>
+        </record>
+        <record id="chronopost_service_07" model="delivery.carrier.chronopost_service">
+            <field name="name">Calculated Service</field>
+            <field name="code">computed</field>
+            <field name="category">CLASSIC</field>
+        </record>
+        <record id="chronopost_service_08" model="delivery.carrier.chronopost_service">
+            <field name="name">Weekday delivery</field>
+            <field name="code">345</field>
+            <field name="category">SHOP2SHOP_EUROPE</field>
+        </record>
+        <record id="chronopost_service_09" model="delivery.carrier.chronopost_service">
+            <field name="name">Saturday delivery</field>
+            <field name="code">346</field>
+            <field name="category">SHOP2SHOP_EUROPE</field>
+        </record>
+    </data>
+    <data noupdate="1">
+        <record id="chronopost_custom_parcel" model="stock.package.type">
+            <field name="name">Chronopost Custom Parcel</field>
+            <field name="max_weight">30.0</field>
+            <field name="package_carrier_type">chronopost</field>
+        </record>
+        <record id="product_product_delivery_chronopost" model="product.product">
+            <field name="name">Chronopost Delivery</field>
+            <field name="default_code">chrono01</field>
+            <field name="type">service</field>
+            <field name="categ_id" ref="delivery.product_category_deliveries"/>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="False"/>
+            <field name="list_price">0.0</field>
+        </record>
+        <record id="delivery_carrier_chronopost_chrono13" model="delivery.carrier">
+            <field name="name">Chronopost: Chrono 13H</field>
+            <field name="product_id" ref="a4o_delivery_chronopost.product_product_delivery_chronopost"/>
+            <field name="product_code">01</field>
+            <field name="delivery_type">chronopost</field>
+            <field name="cpst_service_type">other</field>
+            <field name="cpst_service" ref="chronopost_service_01"/>
+            <!-- Test login proposed by the Chronopost API -->
+            <field name="cpst_test_account_number">19869502</field>
+            <field name="cpst_test_passwd">255562</field>
+            <field name="cpst_shipping_url">https://ws.chronopost.fr/shipping-cxf/ShippingServiceWS?wsdl</field>
+            <field name="cpst_tracking_url">https://ws.chronopost.fr/tracking-cxf/TrackingServiceWS?wsdl</field>
+            <field name="cpst_relaypoint_url">https://ws.chronopost.fr/recherchebt-ws-cxf/PointRelaisServiceWS?wsdl</field>
+        </record>
+        <record id="delivery_carrier_chronopost_chronorelays13" model="delivery.carrier">
+            <field name="name">Chronopost: Chrono Relais 13H</field>
+            <field name="product_id" ref="a4o_delivery_chronopost.product_product_delivery_chronopost"/>
+            <field name="product_code">86</field>
+            <field name="delivery_type">chronopost</field>
+            <field name="cpst_service_type">relaypoint</field>
+            <field name="cpst_service" ref="chronopost_service_03"/>
+            <!-- Test login proposed by the Chronopost API -->
+            <field name="cpst_test_account_number">19869502</field>
+            <field name="cpst_test_passwd">255562</field>
+            <field name="cpst_shipping_url">https://ws.chronopost.fr/shipping-cxf/ShippingServiceWS?wsdl</field>
+            <field name="cpst_tracking_url">https://ws.chronopost.fr/tracking-cxf/TrackingServiceWS?wsdl</field>
+            <field name="cpst_relaypoint_url">https://ws.chronopost.fr/recherchebt-ws-cxf/PointRelaisServiceWS?wsdl</field>
+        </record>
+    </data>
+</odoo>

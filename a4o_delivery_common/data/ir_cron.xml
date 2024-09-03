@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- This file is part of an Adiczion's Module.
+The COPYRIGHT and LICENSE files at the top level of this repository
+contains the full copyright notices and license terms. -->
+<odoo noupdate="1">
+    <record forcecreate="True" id="ir_cron_picking_get_sending_package_status" model="ir.cron">
+        <field name="name">Picking: Get Sending Package Status</field>
+        <field eval="False" name="active" />
+        <field name="user_id" ref="base.user_root" />
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field eval="False" name="doall" />
+        <field name="model_id" ref="model_delivery_carrier" />
+        <field name="code">model.cron_get_sending_package_status()</field>
+        <field
+            name="nextcall"
+            eval="(DateTime.now().replace(hour=1,minute=0).strftime('%Y-%m-%d %H:%M:%S'))"
+        />
+    </record>
+</odoo>

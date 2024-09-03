@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_delivery_carrier_chronopost_service,delivery.carrier.chronopost_service,model_delivery_carrier_chronopost_service,sales_team.group_sale_salesman,1,0,0,0
+access_delivery_carrier_chronopost_service_manager,delivery.carrier.chronopost_service,model_delivery_carrier_chronopost_service,sales_team.group_sale_manager,1,1,1,1
+access_cpstselect_printer_user,access_cpstselect_printer_user,model_cpstselect_printer,base.group_user,1,0,0,0
+access_cpstselect_printer_manager,access_cpstselect_printer_manager,model_cpstselect_printer,base.group_erp_manager,1,1,1,1

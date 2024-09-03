@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is part of an Adiczion's Module.
+The COPYRIGHT and LICENSE files at the top level of this repository
+contains the full copyright notices and license terms. -->
+<odoo>
+    <record id="view_delivery_carrier_form_delivery_common" model="ir.ui.view">
+        <field name="name">delivery.carrier.form.delivery_common</field>
+        <field name="model">delivery.carrier</field>
+        <field name="inherit_id" ref="delivery.view_delivery_carrier_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="before">
+                <group name="sender_availability">
+                    <group string="Sender" name="sender" attrs="{'invisible': [('delivery_type', 'not in', ['colissimo', 'chronopost', 'mydelivengo'])]}">
+                        <field name="sender_id"/>
+                    </group>
+                    <group string="Availability" name="Availability" col="4" attrs="{'invisible': [('delivery_type', 'not in', ['colissimo', 'chronopost', 'mydelivengo'])]}">
+                        <field name="availability_day" colspan="4"/>
+                        <newline/>
+                        <field name="from_day" attrs="{'invisible': [('availability_day', '=', 'always')]}"/>
+                        <field name="from_time" widget="float_time" attrs="{'invisible': [('availability_day', '=', 'always')]}"/>
+                        <field name="to_day" attrs="{'invisible': [('availability_day', '=', 'always')]}"/>
+                        <field name="to_time" widget="float_time" attrs="{'invisible': [('availability_day', '=', 'always')]}"/>
+                    </group>
+                </group>
+                <group name="customs">
+                    <group string="Customs" name="customs" attrs="{'invisible': [('delivery_type', 'not in', ['colissimo', 'mydelivengo'])]}">
+                        <field name="country_origin_id"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

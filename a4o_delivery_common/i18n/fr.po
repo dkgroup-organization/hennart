@@ -1,0 +1,247 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* a4o_delivery_common
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-03-14 10:40+0000\n"
+"PO-Revision-Date: 2023-03-14 11:42+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: fr\n"
+"X-Generator: Poedit 2.4.2\n"
+
+#. module: a4o_delivery_common
+#: code:addons/a4o_delivery_common/data_tools.py:0
+#, python-format
+msgid "A 'source' or 'eval' attribute is required!"
+msgstr "Un attribut 'source' ou 'eval' est requis !"
+
+#. module: a4o_delivery_common
+#: code:addons/a4o_delivery_common/data_tools.py:0
+#, python-format
+msgid "A value for '{}' is required!"
+msgstr "Une valeur pour '{}' est requise !"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,help:a4o_delivery_common.field_delivery_carrier__availability_day
+msgid "Allows you to define the period of availability of the delivery method."
+msgstr "Permet de définir la période de disponibilité du mode de livraison."
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__availability_day__always
+msgid "Always"
+msgstr "Toujours"
+
+#. module: a4o_delivery_common
+#: code:addons/a4o_delivery_common/data_tools.py:0
+#, python-format
+msgid "An attribut 'name' is required!"
+msgstr "Un attribut 'nom' est requis !"
+
+#. module: a4o_delivery_common
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_common.view_delivery_carrier_form_delivery_common
+msgid "Availability"
+msgstr "Disponibilité"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,help:a4o_delivery_common.field_delivery_carrier__country_origin_id
+msgid ""
+"Country of origin of the default product (if not indicated on the product) used in CN22/CN23.\n"
+"Beware! it is preferable to use Odoo's intrastat modules or a module from a partner to add this information to each product."
+msgstr ""
+"Pays d'origine du produit par défaut (si non indiqué sur le produit) utilisé dans CN22/CN23.\n"
+"Faire attention! il est préférable d'utiliser les modules intrastat d'Odoo ou un module d'un partenaire pour ajouter cette information sur chaque produit."
+
+#. module: a4o_delivery_common
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_common.view_delivery_carrier_form_delivery_common
+msgid "Customs"
+msgstr "Douane"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,help:a4o_delivery_common.field_stock_quant_package__date_status_check
+msgid "Date the status was checked and updated."
+msgstr "Date à laquelle le statut a été vérifié et mis à jour."
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,field_description:a4o_delivery_common.field_delivery_carrier__availability_day
+msgid "Days of availability"
+msgstr "Jours de disponibilité"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,field_description:a4o_delivery_common.field_delivery_carrier__country_origin_id
+msgid "Default Country of Origin"
+msgstr "Pays d'origine par défaut"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,field_description:a4o_delivery_common.field_stock_picking__delivery_status
+msgid "Delivery Status"
+msgstr "Statut de livraison"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,field_description:a4o_delivery_common.field_stock_picking__delivery_status_details
+msgid "Delivery Status Details"
+msgstr "Détails du statut de livraison"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__stock_picking__delivery_status__deposited
+msgid "Deposited"
+msgstr "Déposé"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__stock_picking__delivery_status__done
+msgid "Done"
+msgstr "Terminé"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__from_day__5
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__to_day__5
+msgid "Friday"
+msgstr "Vendredi"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,field_description:a4o_delivery_common.field_delivery_carrier__from_day
+msgid "From Day"
+msgstr "Du jour"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,field_description:a4o_delivery_common.field_delivery_carrier__from_time
+msgid "From Time"
+msgstr "De l'heure"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,help:a4o_delivery_common.field_stock_picking__delivery_status
+msgid "If 'In Progress', continue to check the status of the shipment with the carrier."
+msgstr "Si 'En cours', continuez à vérifier l'état de l'envoi avec letransporteur."
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__stock_picking__delivery_status__in_progress
+msgid "In Progres"
+msgstr "En cours"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__stock_picking__delivery_status__indetermined
+msgid "Indeterminate, see details to find out"
+msgstr "Indéterminé, voir les détails en savoir plus"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__availability_day__interval
+msgid "Interval"
+msgstr "Interval"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__from_day__1
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__to_day__1
+msgid "Monday"
+msgstr "Lundi"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__stock_picking__delivery_status__not_relevant
+msgid "Not Relevant"
+msgstr "Non pertinent"
+
+#. module: a4o_delivery_common
+#: model:ir.model,name:a4o_delivery_common.model_stock_quant_package
+msgid "Packages"
+msgstr "Colis"
+
+#. module: a4o_delivery_common
+#: model:ir.actions.server,name:a4o_delivery_common.ir_cron_picking_get_sending_package_status_ir_actions_server
+#: model:ir.cron,cron_name:a4o_delivery_common.ir_cron_picking_get_sending_package_status
+#: model:ir.cron,name:a4o_delivery_common.ir_cron_picking_get_sending_package_status
+msgid "Picking: Get Sending Package Status"
+msgstr "Colisage : obtenir l'état des colis"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__stock_picking__delivery_status__preparation
+msgid "Preparation"
+msgstr "Préparation"
+
+#. module: a4o_delivery_common
+#: model:ir.model,name:a4o_delivery_common.model_product_product
+msgid "Product"
+msgstr "Article"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__from_day__6
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__to_day__6
+msgid "Saturday"
+msgstr "Samedi"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,help:a4o_delivery_common.field_delivery_carrier__sender_id
+msgid "Select the partner that will be used as sender when requesting a label from the carrier."
+msgstr "Sélectionnez le partenaire qui sera utilisé comme expéditeur lors de la demande d'étiquette au transporteur."
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,field_description:a4o_delivery_common.field_delivery_carrier__sender_id
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_common.view_delivery_carrier_form_delivery_common
+msgid "Sender"
+msgstr "Expéditeur"
+
+#. module: a4o_delivery_common
+#: model:ir.model,name:a4o_delivery_common.model_delivery_carrier
+msgid "Shipping Methods"
+msgstr "Méthodes d'expédition"
+
+#. module: a4o_delivery_common
+#: code:addons/a4o_delivery_common/data_tools.py:0
+#, python-format
+msgid "Some attributes doesn't exist: {}!"
+msgstr "Certains attributs n'existent pas : {} !"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,field_description:a4o_delivery_common.field_stock_quant_package__date_status_check
+msgid "Status check date"
+msgstr "Date de vérification de l'état"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__from_day__7
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__to_day__7
+msgid "Sunday"
+msgstr "Dimanche"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__from_day__4
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__to_day__4
+msgid "Thursday"
+msgstr "Jeudi"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,field_description:a4o_delivery_common.field_delivery_carrier__to_day
+msgid "To Day"
+msgstr "Au jour"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields,field_description:a4o_delivery_common.field_delivery_carrier__to_time
+msgid "To Time"
+msgstr "À l'heure"
+
+#. module: a4o_delivery_common
+#: model:ir.model,name:a4o_delivery_common.model_stock_picking
+msgid "Transfer"
+msgstr "Transfert"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__from_day__2
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__to_day__2
+msgid "Tuesday"
+msgstr "Mardi"
+
+#. module: a4o_delivery_common
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__from_day__3
+#: model:ir.model.fields.selection,name:a4o_delivery_common.selection__delivery_carrier__to_day__3
+msgid "Wednesday"
+msgstr "Mercredi"
+
+#. module: a4o_delivery_common
+#: code:addons/a4o_delivery_common/data_tools.py:0
+#, python-format
+msgid "unable to have 'default' and 'late_default' attributes together!"
+msgstr "impossible d'avoir les attributs 'default' et 'late_default' ensemble !"
