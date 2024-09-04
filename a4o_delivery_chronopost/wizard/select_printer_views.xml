@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is part of an Adiczion's Module.
+The COPYRIGHT and LICENSE files at the top level of this repository
+contains the full copyright notices and license terms.-->
+<odoo>
+    <record id="cpst_select_printer_view_form" model="ir.ui.view">
+        <field name="name">cpstselect.printer.form</field>
+        <field name="model">cpstselect.printer</field>
+        <field name="arch" type="xml">
+            <form string="Printer">
+                <header></header>
+                <group>
+                    <div class="text-muted">
+                        Retrieving the list of printers.
+                    </div>
+                </group>
+                <group>
+                    <group colspan="4">
+                        <field name="printer_id" required="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="cpst_set_printer"
+                            type="object" 
+                            string="Choose printer"  
+                            class="btn-primary" />
+                    <button string="Cancel" 
+                            special="cancel" 
+                            class="btn-secondary" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

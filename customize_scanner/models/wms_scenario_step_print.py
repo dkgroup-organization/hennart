@@ -27,28 +27,43 @@ class WmsScenarioStep(models.Model):
 
     def save_job(self, data):
         """ Save lot to print has a job """
-        session = self.env['wms.session'].get_session()
         lot = data.get('lot_id') or data.get('production_lot_id')
+        if data.get('production_id') and data['production_id'].lot_producing_id:
+            lot = data['production_id'].lot_producing_id
+
         if lot:
-            job_vals = {
-                'name': f'Lot: {lot.ref} ,{lot.product_id.name}',
-                'res_model': 'stock.lot',
-                'res_id': lot.id,
-                'session_id': session.id,
-                'state': 'todo',
-            }
-            job = self.env['wms.print.job'].create(job_vals)
+            session = self.env['wms.session'].get_session()
+            job_ids = self.env['wms.print.job'].search([
+                ('res_model', '=', 'stock.lot'), ('res_id', '=', lot.id),
+                ('session_id', '=', session.id), ('state', '=', 'todo')])
+            if job_ids:
+                job_ids[0].label_qty += 1
+            else:
+                job_vals = {
+                    'name': f'Lot: {lot.ref} ,{lot.product_id.name}',
+                    'res_model': 'stock.lot',
+                    'res_id': lot.id,
+                    'label_qty': 1,
+                    'session_id': session.id,
+                }
+                job_ids = self.env['wms.print.job'].create(job_vals)
+
+            data['job'] = job_ids
+        return data
 
     def print_lot(self, data):
         """ Print the production lot """
+
         self.ensure_one()
         if data.get('printer'):
             session = self.env['wms.session'].get_session()
-            self.save_job(data)
             job_ids = self.env['wms.print.job'].search([('state', '=', 'todo'), ('session_id', '=', session.id)])
-            if job_ids:
-                for job in job_ids:
-                    job.print_label(data)
+
+            for job in job_ids:
+                job.print_label(data)
+
             del data['printer']
+            if data.get('job'):
+                del data['job']
 
         return data

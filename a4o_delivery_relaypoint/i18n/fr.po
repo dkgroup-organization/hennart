@@ -1,0 +1,292 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* a4o_delivery_relaypoint
+#
+# Christophe <xt0ph@adiczion.net>, 2022.
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-02-28 17:54+0000\n"
+"PO-Revision-Date: 2022-02-28 18:55+0100\n"
+"Last-Translator: Christophe <xt0ph@adiczion.net>\n"
+"Language-Team: French <kde-i18n-doc@kde.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+"Language: fr_FR\n"
+"X-Generator: Lokalize 20.12.0\n"
+
+#. module: a4o_delivery_relaypoint
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_relaypoint.select_relaypoint_view_form
+msgid "Address"
+msgstr "Adresse"
+
+#. module: a4o_delivery_relaypoint
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_relaypoint.select_relaypoint_view_form
+msgid "Cancel"
+msgstr "Annuler"
+
+#. module: a4o_delivery_relaypoint
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_relaypoint.select_relaypoint_view_form
+msgid "Choose ..."
+msgstr "Choisissez ..."
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__city
+msgid "City"
+msgstr "Ville"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__code_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_res_partner__code_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_res_users__code_relaypoint
+msgid "Code Relaypoint"
+msgstr "Code du point relais"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model,name:a4o_delivery_relaypoint.model_res_partner
+msgid "Contact"
+msgstr ""
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__country_id
+msgid "Country"
+msgstr "Pays"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint__create_uid
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint__create_date
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model,name:a4o_delivery_relaypoint.model_choose_delivery_package
+msgid "Delivery Package Selection Wizard"
+msgstr "Assistant de sélection d'emballage"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model,name:a4o_delivery_relaypoint.model_delivery_carrier_relaypoint
+msgid "Delivery Relay Point"
+msgstr "Point relais de livraison"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model,name:a4o_delivery_relaypoint.model_delivery_carrier_relaypoint_line
+msgid "Delivery Relay Point Line"
+msgstr "Ligne de point de relais de livraison"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_stock_picking__relaypoint_delivery
+msgid "Delivery to a relay point ?"
+msgstr "Livraison en point relais?"
+
+#. module: a4o_delivery_relaypoint
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_relaypoint.select_relaypoint_view_form
+msgid "Details of relay point"
+msgstr "Détails du point relais"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint__display_name
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: a4o_delivery_relaypoint
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_relaypoint.select_relaypoint_view_form
+msgid "Get the relay points ..."
+msgstr "Obtenez les points relais ..."
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__hours
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_relaypoint.select_relaypoint_view_form
+msgid "Hours"
+msgstr "Heures"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint__id
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__id
+msgid "ID"
+msgstr ""
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint____last_update
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line____last_update
+msgid "Last Modified on"
+msgstr "Dernière modification le"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint__write_uid
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__write_uid
+msgid "Last Updated by"
+msgstr "Dernière mise à jour par"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint__write_date
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__write_date
+msgid "Last Updated on"
+msgstr "Dernière mise à jour le"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint__lines
+msgid "Lines"
+msgstr "Lignes"
+
+#. module: a4o_delivery_relaypoint
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_relaypoint.select_relaypoint_view_form
+msgid "List of relay points"
+msgstr "Liste des points relais"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,help:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint__lines
+msgid "List of relay points found around the reference address."
+msgstr "Liste des points relais trouvés autour de l'adresse de référence."
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_stock_quant_package__mandatory_weight
+msgid "Mandatory Shipping Weight"
+msgstr "Poids d'expédition obligatoire"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_choose_delivery_package__mandatory_weight
+msgid "Mandatory weight"
+msgstr "Poids obligatoire"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__name
+msgid "Name"
+msgstr "Nom"
+
+#. module: a4o_delivery_relaypoint
+#: code:addons/a4o_delivery_relaypoint/models/delivery_carrier.py:0
+#, python-format
+msgid ""
+"No direct printer defined! Please check the configuration of your delivery "
+"method."
+msgstr ""
+"Aucune imprimante définie! Veuillez vérifier la configuration de votre "
+"méthode de livraison"
+
+#. module: a4o_delivery_relaypoint
+#: code:addons/a4o_delivery_relaypoint/wizard/select_relaypoint.py:0
+#, python-format
+msgid "No picking to define the address!"
+msgstr "Pas de picking auquel définir l'adresse !"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,help:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__hours
+msgid "Office hours."
+msgstr "Heures d'ouverture."
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_stock_picking__original_partner_id
+msgid "Original Partner"
+msgstr "Partenaire d'origine"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model,name:a4o_delivery_relaypoint.model_stock_quant_package
+msgid "Packages"
+msgstr "Colis"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__point_type
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_res_partner__point_type
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_res_users__point_type
+msgid "Point Type"
+msgstr "Type de point"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier__hide_partner
+msgid "Hide Relaypoint Address"
+msgstr "Cacher l'adresse Point Relais"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,help:a4o_delivery_chronopost.field_delivery_carrier__hide_partner
+msgid "Hide the relaypoint address on the partner when created"
+msgstr "Cacher l'adresse dans le partenaire à la création d'un point relais"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint__address
+msgid "Reference address"
+msgstr "Adresse de référence"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__relay_id
+msgid "Relay Point"
+msgstr "Point relais"
+
+#. module: a4o_delivery_relaypoint
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_relaypoint.select_relaypoint_view_form
+msgid "Retrieving the list of relay points around the selected address."
+msgstr ""
+"Récupération de la liste des points relais autour de l'adresse sélectionnée."
+
+#. module: a4o_delivery_relaypoint
+#: code:addons/a4o_delivery_relaypoint/models/stock_picking.py:0
+#: code:addons/a4o_delivery_relaypoint/wizard/select_relaypoint.py:0
+#, python-format
+msgid "Select the address"
+msgstr "Sélectionnez l'adresse"
+
+#. module: a4o_delivery_relaypoint
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_relaypoint.view_picking_withcarrier_out_form_relaypoint
+msgid "Selection of a relay point"
+msgstr "Sélection d'un point relais"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model,name:a4o_delivery_relaypoint.model_delivery_carrier
+msgid "Shipping Methods"
+msgstr "Méthodes d'expédition"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__street
+msgid "Street"
+msgstr "Rue"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__street2
+msgid "Street2"
+msgstr "Rue 2"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model,name:a4o_delivery_relaypoint.model_stock_picking
+msgid "Transfer"
+msgstr "Transfert"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,help:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint__address
+msgid "We will look for the relay points around this address."
+msgstr "Nous chercherons les points relais autour de cette adresse."
+
+#. module: a4o_delivery_relaypoint
+#: code:addons/a4o_delivery_relaypoint/models/stock_picking.py:0
+#, python-format
+msgid ""
+"You cannot choose a relay point delivery without choosing a relay point! Go "
+"to the 'additional info' page to select the relay point!"
+msgstr ""
+"Vous ne pouvez pas choisir une livraison en point relais sans choisir un "
+"point relais ! Allerà la page « infos complémentaires » pour sélectionner le"
+" point relais !"
+
+#. module: a4o_delivery_relaypoint
+#: model:ir.model.fields,field_description:a4o_delivery_relaypoint.field_delivery_carrier_relaypoint_line__zip
+msgid "Zip"
+msgstr "Code postal"
+
+#. module: a4o_delivery_relaypoint
+#: model_terms:ir.ui.view,arch_db:a4o_delivery_relaypoint.view_picking_withcarrier_out_form_relaypoint
+msgid "open the wizard for selecting a relay point address."
+msgstr "Ouvre l'assistant de sélection d'une adresse de point de relais."
+
+#. module: a4o_delivery_relaypoint
+#: code:addons/a4o_delivery_relaypoint/wizard/select_relaypoint.py:0
+#, python-format
+msgid "{v[0]}: {v[1]}"
+msgstr "{v[0]} : {v[1]}"

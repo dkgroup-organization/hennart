@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
 
 import logging
+
 from odoo import models, api, fields, _
 from odoo.exceptions import MissingError, UserError, ValidationError
 from odoo.http import request
@@ -327,6 +328,7 @@ class WmsScenarioStep(models.Model):
             production = data['production_id']
             if production.state == 'to_close':
                 production.button_mark_done()
+                data['message'] = _('Production is OK')
         return data
 
     def get_list_option(self, data):
@@ -413,43 +415,13 @@ class WmsScenarioStep(models.Model):
 
     def print_production_label(self, data):
         """ At the end print production lot """
-        self.ensure_one()
-        session = self.env['wms.session'].get_session()
-        production = data.get('production_id')
-        if production and production.lot_producing_id:
-            job_vals = {
-                'name': f'Lot: {production.lot_producing_id.ref} ,{production.lot_producing_id.product_id.name}',
-                'res_model': 'stock.lot',
-                'res_id': production.lot_producing_id.id,
-                'session_id': session.id,
-            }
-            job_id = self.env['wms.print.job'].create(job_vals)
-
-            if data.get('printer'):
-                job_id.print_label(data)
-                # Del the printer after each print
-                del data['printer']
+        data = self.save_job(data)
+        data = self.print_lot(data)
         return data
 
-    def print_lot_label(self, data):
-        """ At the end print production lot """
+    def print_later(self, data):
+        """ Create pool printing with lot in data """
         self.ensure_one()
-        session = self.env['wms.session'].get_session()
-        lot = data.get('production_lot_id') or data.get('lot_id')
-
-        if lot:
-            job_vals = {
-                'name': f'Lot: {lot.ref} ,{lot.product_id.name}',
-                'res_model': 'stock.lot',
-                'res_id': lot.id,
-                'session_id': session.id,
-            }
-            job_id = self.env['wms.print.job'].create(job_vals)
-
-            if data.get('printer'):
-                job_id.print_label(data)
-                # Del the printer after each print
-                del data['printer']
+        data = self.save_job(data)
         return data
-
 

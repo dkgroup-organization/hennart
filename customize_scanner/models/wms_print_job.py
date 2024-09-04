@@ -14,6 +14,8 @@ logger = logging.getLogger('wms_scanner')
 class WmsPrintJob(models.Model):
     _inherit = "wms.print.job"
 
+
+
     def print_label(self, data=None):
         """ print the job """
         printer = data.get('printer')

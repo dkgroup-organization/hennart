@@ -477,6 +477,12 @@ class WmsScenarioStep(models.Model):
             if data.get('button_change_date'):
                 res.append(data.get('button_change_date'))
 
+
+        if data.get('button_print_later') and (data.get('lot_id') or data.get('production_lot_id')
+                        or (data.get('production_id') and data['production_id'].lot_producing_id)):
+            lot = data.get('lot_id') or data.get('production_lot_id')
+            res.append({'text': _('Print later'), 'href': href_base + f"print_later"})
+
         return res
 
     def get_tare(self, data):
