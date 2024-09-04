@@ -81,4 +81,3 @@ class WmsScenarioStep(models.Model):
         data = self.save_job(data)
         return data
 
-    
