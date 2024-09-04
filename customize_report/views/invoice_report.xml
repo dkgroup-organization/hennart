@@ -8,38 +8,39 @@
                 <div id="informations" class="row mt-1 mb-1">
                     <div class="col-auto col-3 mw-100 mb-1" t-if="o.invoice_date" name="invoice_date"
                          style="border: 1px solid black !important;">
-                        <strong style="margin-left: 10px !important;">Date:</strong>
-                        <p style="margin-left: 10px !important;" t-field="o.invoice_date"/>
+                        <h5>Date:
+                            <p t-field="o.invoice_date"/>
+                        </h5>
+
                     </div>
                     <div class="col-auto col-3 mw-100 mb-1"
                          t-if="not (env.context.get('delivery', False) or is_delivery)" name="invoice_name"
-
                          style="border: 1px solid black !important;">
-
-                        <h5 t-if="o.move_type == 'out_invoice' and o.state == 'posted'">Invoice</h5>
-                        <h5 t-if="o.move_type == 'out_invoice' and o.state == 'draft'">Draft Invoice</h5>
-                        <h5 t-if="o.move_type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</h5>
-                        <h5 t-if="o.move_type == 'out_refund'">Refund</h5>
-                        <h5 t-if="o.move_type == 'in_refund'">Supplier Refund</h5>
-                        <h5 t-if="o.move_type == 'in_invoice'">Supplier Invoice</h5>
-                        <p style="margin-left: 10px !important;" t-if="o.name != '/'" t-field="o.name"/>
-
+                        <h5>
+                            <t t-if="o.move_type == 'out_invoice' and o.state == 'posted'">Invoice</t>
+                            <t t-if="o.move_type == 'out_invoice' and o.state == 'draft'">Draft Invoice</t>
+                            <t t-if="o.move_type == 'out_invoice' and o.state == 'cancel'">Cancelled Invoice</t>
+                            <t t-if="o.move_type == 'out_refund'">Refund</t>
+                            <t t-if="o.move_type == 'in_refund'">Supplier Refund</t>
+                            <t t-if="o.move_type == 'in_invoice'">Supplier Invoice</t>
+                            <p t-if="o.name != '/'" t-field="o.name"/>
+                        </h5>
                     </div>
                     <div class="col-auto col-3 mw-100 mb-1" t-if="o.picking_ids" name="partner_id"
                          style="border: 1px solid black !important;">
-                        <h5 style="margin-left: 10px !important;">Delivery:</h5>
-                        <p style="margin-left: 10px !important;" t-field="o.picking_ids[0].name"/>
+                        <h5>Delivery:
+                        <p t-field="o.picking_ids[0].name"/></h5>
                     </div>
 
                     <div class="col-auto col-3 mw-100 mb-1" t-if="o.partner_id.ref" name="customer_ref"
                          style="border: 1px solid black !important;">
-                        <h5 style="margin-left: 10px !important;">Customer:</h5>
-                        <p style="margin-left: 10px !important;" t-field="o.partner_id.ref"/>
+                        <h5>Customer:
+                        <p t-field="o.partner_id.ref"/></h5>
                     </div>
                     <div class="col-auto col-3 mw-100 mb-1" t-if="o.partner_id.ref" name="client_code"
                          style="border: 1px solid black !important;">
-                        <h5 style="margin-left: 10px !important;">Reference:</h5>
-                        <p style="margin-left: 10px !important;" t-field="o.invoice_origin"/>
+                        <h5>Reference:
+                        <p t-field="o.invoice_origin"/></h5>
                     </div>
                 </div>
 
@@ -148,7 +149,7 @@
                                         <t t-foreach="line.account_move_line_lot_ids" t-as="move">
                                             <p class="p_name" t-if="move.lot_id">
 
-                                                <span t-field="move.lot_id.name"/>
+                                                Lot: <span t-field="move.lot_id.name"/>
                                                 |
                                                 <span t-field="move.lot_id.expiration_date"
                                                       t-options='{"format": "dd-MM-yyyy"}'/>
@@ -190,7 +191,8 @@
                                               t-options='{"widget": "float", "precision": 2}'/>
                                     </td>
                                     <td t-attf-class="small-text text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                                        <span class="text-nowrap" t-field="line.discount"/>
+                                        <span class="text-nowrap" t-field="line.discount"
+                                              t-options='{"widget": "float", "precision": 1}'/>
                                     </td>
                                     <!-- a changer le nom du champ pour le prix net et mettre un champ calculé -->
                                     <td class="small-text text-end" name="prix_net">
@@ -297,9 +299,39 @@
         <xpath expr="//p[@name='note']" position="replace"/>
 
         <xpath expr="//p[@name='incoterm']" position="replace">
-            
+
             <p class="small-text2" style="line-height: 8px;" t-field="o.company_id.invoice_footer_text"/>
-            <p class="small-text2" style="line-height: 8px;" name="note" t-if="not is_html_empty(o.fiscal_position_id.note)" t-field="o.fiscal_position_id.note"/>
+            <p class="small-text2" style="line-height: 8px;" name="note"
+               t-if="not is_html_empty(o.fiscal_position_id.note)" t-field="o.fiscal_position_id.note"/>
+
+
+
+            <div class="row mt-1 mb-1" style="text-align: center !important;" t-if="o.picking_ids">
+                <div class="col-auto col-3 mw-100 mb-2" name="due_date" style="border: 1px solid black !important;">
+                    <strong>Carrier:</strong>
+                    <p class="m-0" t-field="o.picking_ids[0].carrier_id"/>
+                </div>
+                <div class="col-auto col-3 mw-100 mb-2" name="partner_id" style="border: 1px solid black !important;">
+                    <strong>Nb pack:</strong>
+                    <p class="m-0" t-field="o.picking_ids[0].number_of_packages"/>
+                </div>
+                <div class="col-auto col-3 mw-100 mb-2" name="customer_ref" style="border: 1px solid black !important;">
+                    <strong>Nb container:</strong>
+                    <p class="m-0" t-field="o.picking_ids[0].nb_container"/>
+                </div>
+                <div class="col-auto col-3 mw-100 mb-2" style="border: 1px solid black !important;">
+                    <strong>Nb pallet:</strong>
+                    <p class="m-0" t-field="o.picking_ids[0].nb_pallet"/>
+                </div>
+                <div class="col-auto col-3 mw-100 mb-2" style="border: 1px solid black !important;">
+                    <strong>Weight:</strong>
+                    <p class="m-0" t-field="o.picking_ids[0].weight"/>
+                </div>
+                <div class="col-auto col-3 mw-100 mb-2" style="border: 1px solid black !important;">
+                    <strong>Gross weight:</strong>
+                    <p class="m-0" t-field="o.picking_ids[0].shipping_weight"/>
+                </div>
+            </div>
 
             <t t-if="o.fiscal_position_id.country_id and o.fiscal_position_id.country_id.code == 'GB'">
                 <div class="row mt-1 mb-1" style="text-align: center !important;">
@@ -332,32 +364,6 @@
                 </div>
             </t>
 
-            <div class="row mt-1 mb-1" style="text-align: center !important;" t-if="o.picking_ids">
-                <div class="col-auto col-3 mw-100 mb-2" name="due_date" style="border: 1px solid black !important;">
-                    <strong>Carrier:</strong>
-                    <p class="m-0" t-field="o.picking_ids[0].carrier_id"/>
-                </div>
-                <div class="col-auto col-3 mw-100 mb-2" name="partner_id" style="border: 1px solid black !important;">
-                    <strong>Nb pack:</strong>
-                    <p class="m-0" t-field="o.picking_ids[0].number_of_packages"/>
-                </div>
-                <div class="col-auto col-3 mw-100 mb-2" name="customer_ref" style="border: 1px solid black !important;">
-                    <strong>Nb container:</strong>
-                    <p class="m-0" t-field="o.picking_ids[0].nb_container"/>
-                </div>
-                <div class="col-auto col-3 mw-100 mb-2" style="border: 1px solid black !important;">
-                    <strong>Nb pallet:</strong>
-                    <p class="m-0" t-field="o.picking_ids[0].nb_pallet"/>
-                </div>
-                <div class="col-auto col-3 mw-100 mb-2" style="border: 1px solid black !important;">
-                    <strong>Weight:</strong>
-                    <p class="m-0" t-field="o.picking_ids[0].weight"/>
-                </div>
-                <div class="col-auto col-3 mw-100 mb-2" style="border: 1px solid black !important;">
-                    <strong>Gross weight:</strong>
-                    <p class="m-0" t-field="o.picking_ids[0].shipping_weight"/>
-                </div>
-            </div>
         </xpath>
 
 
