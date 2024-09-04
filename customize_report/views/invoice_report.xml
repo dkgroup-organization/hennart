@@ -297,11 +297,9 @@
         <xpath expr="//p[@name='note']" position="replace"/>
 
         <xpath expr="//p[@name='incoterm']" position="replace">
-
-            <p class="small-text2" t-if="not is_html_empty(o.fiscal_position_id.note)" name="note">
-                <span t-field="o.fiscal_position_id.note"/>
-            </p>
+            
             <p class="small-text2" style="line-height: 8px;" t-field="o.company_id.invoice_footer_text"/>
+            <p class="small-text2" style="line-height: 8px;" name="note" t-if="not is_html_empty(o.fiscal_position_id.note)" t-field="o.fiscal_position_id.note"/>
 
             <t t-if="o.fiscal_position_id.country_id and o.fiscal_position_id.country_id.code == 'GB'">
                 <div class="row mt-1 mb-1" style="text-align: center !important;">
