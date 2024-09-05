@@ -16,7 +16,7 @@ class WmsPrintJob(models.Model):
 
 
 
-    def print_label(self, data=None):
+    def print_label(self, data=None, label_id=None):
         """ print the job """
         printer = data.get('printer')
         if not printer:
@@ -24,7 +24,9 @@ class WmsPrintJob(models.Model):
 
         for job in self:
             # Get label
-            if job.label_id:
+            if label_id:
+                label = self.env['printing.label.zpl2'].browse(label_id)
+            elif job.label_id:
                 label = self.env['printing.label.zpl2'].browse(job.label_id)
             else:
                 label = self.env['printing.label.zpl2'].search([('model_id.model', '=', job.res_model)])

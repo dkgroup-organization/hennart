@@ -80,4 +80,3 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         data = self.save_job(data)
         return data
-
