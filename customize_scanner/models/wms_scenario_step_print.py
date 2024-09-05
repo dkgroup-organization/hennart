@@ -62,8 +62,21 @@ class WmsScenarioStep(models.Model):
             for job in job_ids:
                 job.print_label(data)
 
-            del data['printer']
             if data.get('job'):
                 del data['job']
 
+        return data
+
+    def print_current_lot(self, data):
+        """ At the end print production lot """
+        data = self.save_job(data)
+        data = self.print_lot(data)
+        if data.get('printer'):
+            del data['printer']
+        return data
+
+    def print_later(self, data):
+        """ Create pool printing with lot in data """
+        self.ensure_one()
+        data = self.save_job(data)
         return data

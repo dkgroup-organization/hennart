@@ -12,8 +12,8 @@ class StockPicking(models.Model):
             if printer:
                 picking.sscc_line_ids.print_label(printer=printer)
 
-    def print_label(self, printer=None):
+    def print_label(self, printer=None, label_id=None):
         """ Print label if information ready """
         for picking in self:
             if printer:
-                picking.move_line_ids.print_label(printer=printer)
+                picking.move_line_ids.print_label(printer=printer, label_id=label_id)

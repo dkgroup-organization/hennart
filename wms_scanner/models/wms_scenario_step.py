@@ -203,15 +203,7 @@ class WmsScenarioStep(models.Model):
                 data[action_variable] = "%s" % (scan)
         elif action_scanner == 'scan_date':
             try:
-                print(type(scan), scan)
-                # nd_days = int(scan)
-                # datetime.datetime.strptime(date_str, format_str)
                 data[action_variable] = fields.Date.from_string(scan)
-                if True: #nd_days > 0:
-                    pass
-                    # data[action_variable] = fields.Datetime.now() + timedelta(days=nd_days)
-                else:
-                    data['warning'] = _('Please, enter a positive value for the number of days')
             except:
                 data['warning'] = _('This date format is not valid')
 

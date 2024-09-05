@@ -16,7 +16,6 @@ class ResConfigSettings(models.TransientModel):
         
         for account in account_ids:
             if len(account.code) == 6 and account.code[:2] != 99:
-                print(account.code)
                 reconcile = account.reconcile
                 code = account.code + '00000'
                 account.write({'reconcile': reconcile, 'code': code})

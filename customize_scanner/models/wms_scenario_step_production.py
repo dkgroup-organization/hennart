@@ -417,11 +417,7 @@ class WmsScenarioStep(models.Model):
         """ At the end print production lot """
         data = self.save_job(data)
         data = self.print_lot(data)
-        return data
-
-    def print_later(self, data):
-        """ Create pool printing with lot in data """
-        self.ensure_one()
-        data = self.save_job(data)
+        if data.get('printer'):
+            del data['printer']
         return data
 

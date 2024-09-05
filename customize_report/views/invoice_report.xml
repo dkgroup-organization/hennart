@@ -8,9 +8,7 @@
                 <div id="informations" class="row mt-1 mb-1">
                     <div class="col-auto text-center col-3 mw-100 mb-1" t-if="o.invoice_date" name="invoice_date"
                          style="border: 1px solid black !important;">
-                        <h5>Date:
-                            <p t-field="o.invoice_date"/>
-                        </h5>
+                        <h5>Date:<p t-field="o.invoice_date"/></h5>
 
                     </div>
                     <div class="col-auto text-center col-3 mw-100 mb-1"
@@ -28,19 +26,15 @@
                     </div>
                     <div class="col-auto text-center col-3 mw-100 mb-1" t-if="o.picking_ids" name="partner_id"
                          style="border: 1px solid black !important;">
-                        <h5>Delivery:
-                        <p t-field="o.picking_ids[0].name"/></h5>
+                        <h5>Delivery:<p t-field="o.picking_ids[0].name"/></h5>
                     </div>
-
                     <div class="col-auto text-center col-3 mw-100 mb-1" t-if="o.partner_id.ref" name="customer_ref"
                          style="border: 1px solid black !important;">
-                        <h5>Customer:
-                        <p t-field="o.partner_id.ref"/></h5>
+                        <h5>Customer:<p t-field="o.partner_id.ref"/></h5>
                     </div>
                     <div class="col-auto text-center col-3 mw-100 mb-1" t-if="o.partner_id.ref" name="client_code"
                          style="border: 1px solid black !important;">
-                        <h5>Reference:
-                        <p t-field="o.invoice_origin"/></h5>
+                        <h5>Reference:<p t-field="o.invoice_origin"/></h5>
                     </div>
                 </div>
 
