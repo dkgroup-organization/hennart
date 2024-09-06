@@ -1,4 +1,4 @@
-from odoo import models, api
+from odoo import models, api, Command
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -11,15 +11,19 @@ class SaleOrder(models.Model):
                 ('date_end', '>=', self.date_delivered)
             ])
 
+            new_lines = []
             for promo in promotions:
                 line = self.order_line.filtered(lambda l: l.product_id == promo.product_id)
 
                 if line:
                     line.discount = promo.discount
                 else:
-                    self.order_line.new({
+                    new_lines.append(Command.create({
                         'product_id': promo.product_id.id,
                         'product_uom_qty': 0,
                         'discount': promo.discount,
                         'price_unit': promo.product_id.list_price,
-                    })
+                    }))
+
+            if new_lines:
+                self.update({'order_line': new_lines})
