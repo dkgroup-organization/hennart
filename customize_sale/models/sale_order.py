@@ -123,7 +123,7 @@ class SaleOrder(models.Model):
                         move.put_quantity_done()
                     for move_line in move.move_line_ids:
                         move_line.lot_id = lot_producing[move.product_id.id]['lot']
-                        #move_line.location_id = lot_producing[move.product_id.id]['location']
+                        move_line.location_id = lot_producing[move.product_id.id]['location']
                         move_line.reserved_uom_qty = move.product_uom_qty
 
     def button_test(self):
