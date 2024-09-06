@@ -372,7 +372,7 @@ date=f&quot;{object.lot_id.expiration_date:%d/%m/%Y}&quot;,
 			city=object.picking_id.partner_id.city or '',
 			country=object.picking_id.partner_id.country_id.name or '',
 			nb_sscc=object.nb_sscc,
-			carrier_name=object.picking_id.carrier_id.name
+			carrier_name=object.picking_id.carrier_id.name,
 			nb_total_sscc=object.nb_total_sscc,
 			date=object.picking_id.date_delivered and object.picking_id.date_delivered.strftime('%d/%m/%Y') or '',
 			)
