@@ -33,7 +33,7 @@
                         <newline/>
                         <group>
                             <field name="imported_state"/>
-                            
+
                         </group>
                         <group>
                             <button class="oe_highlight" name="action_valide_imported" type="object" string="Valide"

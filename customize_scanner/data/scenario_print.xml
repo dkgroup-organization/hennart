@@ -40,7 +40,7 @@
 		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
 		<field name="action_variable">printer</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_print"/>
-		<field name="python_code">data = step.print_lot(data)</field>
+		<field name="python_code">data = step.print_current_lot(data)</field>
 	</record>
 
 </odoo>
