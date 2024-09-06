@@ -2,7 +2,7 @@ from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
 class SalePromotion(models.Model):
-    _name = "sale.promotion"
+    _name = 'sale.promotion'
     _description = "Sale Promotion"
 
     name = fields.Char('Comment', required=True)
