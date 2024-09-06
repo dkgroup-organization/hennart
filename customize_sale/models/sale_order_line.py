@@ -80,31 +80,26 @@ class SaleOrderLine(models.Model):
         for line in self:
             date_start = line.order_id.date_delivered or datetime.now()
             date_start = date_start - timedelta(days=date_start.weekday())  # monday
-            date_from = datetime.now() - timedelta(weeks=13)
             condition = [
                 ('product_id', '=', line.product_id.id),
                 ('move_id.partner_id', 'child_of', line.order_id.partner_id.id),
-                ('move_id.invoice_date', '<', date_start),
-                ('move_id.invoice_date', '>=', date_from),
                 ('move_id.state', '!=', 'cancel'),
                 ('move_id.move_type', '=', 'out_invoice'),
-            ]
-            invoice_lines = self.env['account.move.line'].search(condition)
-            product = line.product_id
-
+                ]
             qty_by_week = {}
             # Loop through the past 13 weeks
-            if product:
-                #pack = product.base_unit_count if product.base_unit_count > 1.0 else 1.0
+            if line.product_id:
                 for week in range(0, 12):
                     date_to = date_start - timedelta(weeks=week - 1)
                     date_from = date_start - timedelta(weeks=week)
                     # Get the quantity sold for the product for the current week
-                    qty = sum(invoice_lines.filtered(lambda l: l.product_id.id == product.id and date_from.date() <= l.move_id.invoice_date <= date_to.date()).mapped(
-                        'uom_qty'))
-                    # If the quantity is not zero, add it to the quantity by week dictionary
-                    if qty > 0.0:
-                        qty_by_week['{}'.format(week)] = qty #/ pack
+                    invoice_lines = self.env['account.move.line'].search(condition + [
+                        ('move_id.invoice_date', '<', date_to),
+                        ('move_id.invoice_date', '>=', date_from)
+                        ])
+                    qty = sum(invoice_lines.mapped('uom_qty'))
+                    if qty >= 1.0:
+                        qty_by_week['{}'.format(week)] = qty
 
             # If there is data for the product, create a table to display the quantity sold by week
             cadence_table = '<table style="border-collapse: collapse; width: 100%; table-layout: fixed;"><tr>'
@@ -112,7 +107,7 @@ class SaleOrderLine(models.Model):
             style_text = " font-weight: bold; text-align: center;"
             for week in range(1, 14):
                 qty = qty_by_week.get('{}'.format(week), '')
-                if qty != '':
+                if qty and qty != '':
                     qty_str = str(int(qty))
                     cadence_table += '<td style="{}">{}</td>'.format(style_td + style_text, qty_str)
                 else:
