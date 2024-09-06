@@ -36,7 +36,6 @@ class SaleOrderLine(models.Model):
             if line.product_id.type == 'product' and line.order_id.state in ['draft', 'send']:
                 futur_lines = self.search([
                     ('scheduled_date', '>=', line.scheduled_date),
-                    ('uom_qty', '>', 0),
                     ('order_id', '!=', line.order_id.id),
                     ('state', 'in', ['sale']),
                     ('product_id', '=', line.product_id.id),
