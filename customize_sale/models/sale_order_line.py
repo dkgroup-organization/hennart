@@ -95,7 +95,7 @@ class SaleOrderLine(models.Model):
             qty_by_week = {}
             # Loop through the past 13 weeks
             if product:
-                pack = product.base_unit_count if product.base_unit_count> 0.0 else 1
+                #pack = product.base_unit_count if product.base_unit_count > 1.0 else 1.0
                 for week in range(0, 12):
                     date_to = date_start - timedelta(weeks=week - 1)
                     date_from = date_start - timedelta(weeks=week)
@@ -103,8 +103,8 @@ class SaleOrderLine(models.Model):
                     qty = sum(invoice_lines.filtered(lambda l: l.product_id.id == product.id and date_from.date() <= l.move_id.invoice_date <= date_to.date()).mapped(
                         'uom_qty'))
                     # If the quantity is not zero, add it to the quantity by week dictionary
-                    if qty != 0:
-                        qty_by_week['{}'.format(week)] = qty / pack
+                    if qty > 0.0:
+                        qty_by_week['{}'.format(week)] = qty #/ pack
 
             # If there is data for the product, create a table to display the quantity sold by week
             cadence_table = '<table style="border-collapse: collapse; width: 100%; table-layout: fixed;"><tr>'
@@ -146,8 +146,6 @@ class SaleOrderLine(models.Model):
 
     def create_mo(self):
         """ Create MO for needed product to manufacture """
-        # Normal BOM forecast
-        normal_mo = self.product_id.action_normal_mrp()
 
         def data_production(order, product, product_uom_qty):
             """ Save data production to do """
@@ -159,7 +157,7 @@ class SaleOrderLine(models.Model):
                 'bom_id': product.bom_ids[0].id,
                 'lot_producing_id': lot.id,
                 'procurement_group_id': order.procurement_group_id.id,
-                'date_planned_start': order.commitment_date,
+                'date_planned_start': order.commitment_date or fields.Datetime.now()
             }
             return production_vals
 
@@ -169,7 +167,7 @@ class SaleOrderLine(models.Model):
             product = line.product_id
             bom = product.bom_ids and product.bom_ids[0] or product.bom_ids
 
-            if bom and bom.type == 'kit':
+            if bom and bom.type == 'phantom':
                 # liste the product in BOM
                 for bom_line in bom.bom_line_ids:
                     sub_product = bom_line.product_id
@@ -193,9 +191,12 @@ class SaleOrderLine(models.Model):
                 pass
 
         for mo_vals in list(group_prod.values()):
-                new_mo = self.env['mrp.production'].create(mo_vals)
-                new_mo.action_confirm()
-                new_mo.move_raw_ids.put_quantity_done()
+            new_mo = self.env['mrp.production'].create(mo_vals)
+            new_mo.action_confirm()
+            new_mo.move_raw_ids.put_quantity_done()
+
+        # Normal BOM forecast
+        normal_mo = self.product_id.action_normal_mrp()
 
     @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom', 'order_id.delivery_status')
     def _compute_qty_delivered(self):
