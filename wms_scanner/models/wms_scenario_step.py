@@ -390,7 +390,7 @@ class WmsScenarioStep(models.Model):
                     session.error = str(e)
                     logger.warning(e)
 
-        return data
+        return data or {}
 
     def execute_code_before(self, data={}):
         "Eval the python code"
