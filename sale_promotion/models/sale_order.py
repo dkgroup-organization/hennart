@@ -17,8 +17,7 @@ class SaleOrder(models.Model):
                 if line:
                     line.discount = promo.discount
                 else:
-                    self.order_line.create({
-                        'order_id': self.id,
+                    self.order_line.new({
                         'product_id': promo.product_id.id,
                         'product_uom_qty': 0,
                         'discount': promo.discount,
