@@ -415,9 +415,9 @@ class WmsScenarioStep(models.Model):
 
     def print_production_label(self, data):
         """ At the end print production lot """
-        data = self.save_job(data)
-        data = self.print_lot(data)
         if data.get('printer'):
+            data = self.save_job(data)
+            data = self.print_lot(data)
             del data['printer']
         return data
 
