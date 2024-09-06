@@ -16,6 +16,7 @@ class WmsScenarioStep(models.Model):
 
     def check_job(self, data):
         """ return print job to do """
+        data = self.init_data(data)
         session = self.env['wms.session'].get_session()
         job_ids = self.env['wms.print.job'].search([('state', '=', 'todo'), ('session_id', '=', session.id)])
         for job in job_ids:
@@ -23,6 +24,8 @@ class WmsScenarioStep(models.Model):
                 lot = self.env['stock.lot'].browse(job.res_id)
                 data['lot_id'] = lot
                 break
+        data['button_print_later'] = True
+        data['job'] = job_ids
         return data
 
     def save_job(self, data):
@@ -70,10 +73,17 @@ class WmsScenarioStep(models.Model):
 
     def print_current_lot(self, data):
         """ At the end print production lot """
-        data = self.save_job(data)
-        data = self.print_lot(data)
-        if data.get('printer'):
-            del data['printer']
+
+        if data.get('button', '') == 'print_later':
+            if not data.get('job'):
+                data = self.save_job(data)
+            data = self.init_data(data)
+            data.update({'button_print_later': True})
+        else:
+            data = self.save_job(data)
+            data = self.print_lot(data)
+            if data.get('printer'):
+                del data['printer']
         return data
 
     def print_later(self, data):

@@ -464,6 +464,7 @@ class WmsScenarioStep(models.Model):
             location_ids = self.get_default_origin_location()
             for location in location_ids:
                 res.append({'text': location.name, 'href': href_base + f'location_origin_id&scan={location.id}'})
+
         if data['step'].action_variable == 'location_dest_id':
             location_ids = self.get_default_dest_location()
             for location in location_ids:
@@ -478,7 +479,7 @@ class WmsScenarioStep(models.Model):
                 res.append(data.get('button_change_date'))
 
 
-        if data.get('button_print_later') and (data.get('lot_id') or data.get('production_lot_id')
+        if not res and data.get('button_print_later') and (data.get('lot_id') or data.get('production_lot_id')
                         or (data.get('production_id') and data['production_id'].lot_producing_id)):
             lot = data.get('lot_id') or data.get('production_lot_id')
             res.append({'text': _('Print later'), 'href': href_base + f"print_later"})
