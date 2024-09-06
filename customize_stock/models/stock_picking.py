@@ -107,14 +107,6 @@ class StockPicking(models.Model):
                 weight_score = 99.0
             picking.sequence = int(date_score * 100 + int(weight_score))
 
-    def compute_date_delivered(self):
-        """ Custom delivery, Always delivery at one time with no backorder """
-        for picking in self:
-            if picking.state in ['done', 'cancel']:
-                continue
-            if not picking.date_delivered:
-                picking.date_delivered = fields.Datetime.now()
-
     def button_validate(self):
         """ Add some checking before validation """
         self.move_ids_without_package.check_line()

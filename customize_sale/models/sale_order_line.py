@@ -36,7 +36,6 @@ class SaleOrderLine(models.Model):
             if line.product_id.type == 'product' and line.order_id.state in ['draft', 'send']:
                 futur_lines = self.search([
                     ('scheduled_date', '>=', line.scheduled_date),
-                    ('uom_qty', '>', 0),
                     ('order_id', '!=', line.order_id.id),
                     ('state', 'in', ['sale']),
                     ('product_id', '=', line.product_id.id),
@@ -174,7 +173,7 @@ class SaleOrderLine(models.Model):
                 # liste the product in BOM
                 for bom_line in bom.bom_line_ids:
                     sub_product = bom_line.product_id
-                    if sub_product.bom_ids and sub_product.to_personnalize:
+                    if sub_product.bom_ids and (sub_product.to_personnalize or product.to_personnalize):
                         sub_bom = sub_product.bom_ids[0]
                         if sub_bom.type == 'normal':
                             if sub_product not in list(group_prod.keys()):
