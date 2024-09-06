@@ -281,6 +281,8 @@ class WmsScenarioStep(models.Model):
        "This product {} is not registred in this location {}"
        "This product {} need a production lot "
         """
+        if data.get('button', '') == 'print_later':
+            data = self.save_job(data)
 
         if data.get('label_product') and not data.get('product_id'):
             data['product_id'] = data.get('label_product')
