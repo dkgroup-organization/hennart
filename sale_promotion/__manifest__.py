@@ -4,7 +4,7 @@
     'summary': 'Module de gestion des promotions sur les ventes',
     'category': 'Sales',
     'author': 'Mehdi Hajji',
-    'depends': ['sale', 'customize_sale'],
+    'depends': ['sale'],
     'data': [
         'views/sale_promotion_views.xml',
         'security/ir.model.access.csv',
