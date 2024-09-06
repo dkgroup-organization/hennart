@@ -49,6 +49,7 @@ class WmsScenarioStep(models.Model):
                 job_ids = self.env['wms.print.job'].create(job_vals)
 
             data['job'] = job_ids
+            data['message'] = _('Print label later: ') + str(int(job_ids[0].label_qty))
         return data
 
     def print_lot(self, data):
