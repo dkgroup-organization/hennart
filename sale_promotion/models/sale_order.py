@@ -13,7 +13,7 @@ class SaleOrder(models.Model):
 
             new_lines = []
             for promo in promotions:
-                if promo.qty_executed <= 0:
+                if promo.qty_executed >= promo.quantity:
                     continue
                 line = self.order_line.filtered(lambda l: l.product_id == promo.product_id)
 
