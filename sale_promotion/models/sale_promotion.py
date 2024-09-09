@@ -27,8 +27,8 @@ class SalePromotion(models.Model):
             lines = sale_order_line_obj.search([
                 ('state', 'not in', ['cancel']),
                 ('product_id', '=', promotion.product_id.id),
-                ('order_id.date_order', '>=', promotion.date_start),
-                ('order_id.date_order', '<=', promotion.date_end)
+                ('order_id.commitment_date', '>=', promotion.date_start),
+                ('order_id.commitment_date', '<=', promotion.date_end)
             ])
             promotion.qty_executed = sum(line.product_uom_qty for line in lines)
 

@@ -3,16 +3,18 @@ from odoo import models, api, Command
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    @api.onchange('date_delivered')
-    def _onchange_date_delivered(self):
-        if self.date_delivered:
+    @api.onchange('commitment_date')
+    def _onchange_commitment_date(self):
+        if self.commitment_date:
             promotions = self.env['sale.promotion'].search([
-                ('date_start', '<=', self.date_delivered),
-                ('date_end', '>=', self.date_delivered)
+                ('date_start', '<=', self.commitment_date),
+                ('date_end', '>=', self.commitment_date)
             ])
 
             new_lines = []
             for promo in promotions:
+                if promo.qty_executed <= 0:
+                    continue
                 line = self.order_line.filtered(lambda l: l.product_id == promo.product_id)
 
                 if line:
