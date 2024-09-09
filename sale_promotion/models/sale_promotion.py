@@ -17,11 +17,10 @@ class SalePromotion(models.Model):
         ('terrain', 'Terrain'),
         ('various', 'Various')
     ], string='Type', default='promotion')
-    qty_executed = fields.Integer('Qty Ok', compute='_update_info', store=True)
+    qty_executed = fields.Integer('Qty Ok', compute='_update_info')
     product_id = fields.Many2one('product.product', 'Product', required=True, domain=[('sale_ok', '=', True)])
     discount = fields.Float('Rem %')
 
-    @api.depends('product_id', 'date_start', 'date_end')
     def _update_info(self):
         for promotion in self:
             sale_order_line_obj = self.env['sale.order.line']
