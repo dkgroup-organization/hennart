@@ -139,60 +139,6 @@ class SaleOrderLine(models.Model):
 
         return outgoing_moves, incoming_moves
 
-    def create_mo(self):
-        """ Create MO for needed product to manufacture """
-
-        def data_production(order, product, product_uom_qty):
-            """ Save data production to do """
-            lot = self.env['stock.lot'].create_production_lot(product)
-            production_vals = {
-                'product_id': product.id,
-                'origin': order.name,
-                'product_qty': product_uom_qty,
-                'bom_id': product.bom_ids[0].id,
-                'lot_producing_id': lot.id,
-                'procurement_group_id': order.procurement_group_id.id,
-                'date_planned_start': order.commitment_date or fields.Datetime.now()
-            }
-            return production_vals
-
-        # Make to order, order_id.procurement_group_id, move.group_id
-        group_prod = {}
-        for line in self:
-            product = line.product_id
-            bom = product.bom_ids and product.bom_ids[0] or product.bom_ids
-
-            if bom and bom.type == 'phantom':
-                # liste the product in BOM
-                for bom_line in bom.bom_line_ids:
-                    sub_product = bom_line.product_id
-                    if sub_product.bom_ids and (sub_product.to_personnalize or product.to_personnalize):
-                        sub_bom = sub_product.bom_ids[0]
-                        if sub_bom.type == 'normal':
-                            if sub_product not in list(group_prod.keys()):
-                                group_prod[sub_product] = data_production(
-                                    line.order_id, sub_product, line.product_uom_qty * bom_line.product_qty)
-                            else:
-                                group_prod[sub_product]['product_qty'] += line.product_uom_qty * bom_line.product_qty
-                        else:
-                            raise ValidationError(_("This product is not correctly configured."
-                                                    "Only one kit BOM per line.\n") + line.product_id.name)
-
-            elif bom and product.to_personnalize and product not in list(group_prod.keys()):
-                group_prod[product] = data_production(line.order_id, product, line.product_uom_qty)
-            elif bom and product.to_personnalize and product in list(group_prod.keys()):
-                group_prod[product]['product_qty'] += line.product_uom_qty
-            else:
-                pass
-
-        for mo_vals in list(group_prod.values()):
-            new_mo = self.env['mrp.production'].create(mo_vals)
-            new_mo.action_confirm()
-            new_mo.move_raw_ids.put_quantity_done()
-
-        # Normal BOM forecast
-        normal_mo = self.product_id.action_normal_mrp()
-
     @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom', 'order_id.delivery_status')
     def _compute_qty_delivered(self):
         super(SaleOrderLine, self)._compute_qty_delivered()
