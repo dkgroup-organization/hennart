@@ -20,7 +20,8 @@
             <field name="arch" type="xml">
 
                 <field name="state" position="before">
-                    <field name="sale_id"/> : <field name="partner_id"/>
+                    <field name="sale_id"/>
+                    <field name="partner_id"/>
                 </field>
 
             </field>
