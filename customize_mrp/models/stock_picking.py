@@ -65,6 +65,5 @@ class StockPicking(models.Model):
                             move_line.location_id = production_exist[move.product_id][0].location_dest_id
                             move_line.reserved_uom_qty = move.product_uom_qty
                 else:
-                    if not production_exist.get(move.product_id):
-                        stock_mo = move.product_id.action_normal_mrp()
-                        production_exist[move.product_id] = stock_mo
+                    stock_mo = move.product_id.action_normal_mrp()
+                    production_exist[move.product_id] = stock_mo
