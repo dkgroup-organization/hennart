@@ -69,7 +69,7 @@
 
                 <xpath expr="//field[@name='order_line']/tree" position="replace">
                     <tree string="Sales Order Lines" editable="bottom" limit="200" default_order="product_id"
-                    decoration-danger="product_uom_qty > free_qty_at_date" >
+                    decoration-danger="product_uom_qty > free_qty_at_date" decoration-success="discount > 0.0 and product_uom_qty == 0.0">
 
                         <field name="sequence" widget="handle"/>
                         <!-- We do not display the type because we don't want the user to be bothered with that information if he has no section or note. -->
@@ -91,6 +91,7 @@
                                groups="analytic.group_analytic_accounting"
                                options="{'product_field': 'product_id', 'business_domain': 'sale_order'}"/>
                         <field name="product_uom_qty"
+                               widget="float" digits="[5,0]"
                                decoration-info="(not display_type and invoice_status == 'to invoice')"
                                decoration-bf="(not display_type and invoice_status == 'to invoice')"
                                context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom, 'company_id': parent.company_id}"/>
@@ -98,12 +99,14 @@
                         <field name="discount" string="Disc.%" optional="show"/>
                         <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}" optional="hide"/>
                         <field name="qty_delivered"
+                               widget="float" digits="[5,0]"
                                decoration-info="(not display_type and invoice_status == 'to invoice')"
                                decoration-bf="(not display_type and invoice_status == 'to invoice')" string="Delivered"
                                attrs="{'column_invisible': [('parent.state', 'not in', ['sale', 'done'])], 'readonly': [('qty_delivered_method', '!=', 'manual')]                                     }"
                                optional="show"/>
                         <field name="qty_delivered_method" invisible="1"/>
                         <field name="qty_invoiced"
+                               widget="float" digits="[5,0]"
                                decoration-info="(not display_type and invoice_status == 'to invoice')"
                                decoration-bf="(not display_type and invoice_status == 'to invoice')" string="Invoiced"
                                attrs="{'column_invisible': [('parent.state', 'not in', ['sale', 'done'])]}"
@@ -112,7 +115,9 @@
 
                         <!--<widget name="qty_at_date_widget" width="50px"/>-->
 
-                        <field name="free_qty_at_date" string="Stock" readonly="1" attrs="{'column_invisible': [('parent.state', '!=', 'draft')]}"/>
+                        <field name="free_qty_at_date" string="Stock" readonly="1"
+                               widget="float" digits="[5,0]"
+                               attrs="{'column_invisible': [('parent.state', '!=', 'draft')]}"/>
                         <field name="cadence" attrs="{'column_invisible': [('parent.state', '!=', 'draft')]}"/>
 
                         <field name="product_uom_readonly" invisible="1"/>

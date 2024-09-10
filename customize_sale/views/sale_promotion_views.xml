@@ -1,0 +1,52 @@
+<odoo>
+
+    <record id="view_sale_promotion_tree" model="ir.ui.view">
+        <field name="name">sale.promotion.tree</field>
+        <field name="model">sale.promotion</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="product_id"/>
+                <field name="quantity"/>
+                <field name="promotion"/>
+                <field name="discount"/>
+                <field name="qty_executed"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="view_sale_promotion_form" model="ir.ui.view">
+        <field name="name">sale.promotion.form</field>
+        <field name="model">sale.promotion</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                        <field name="product_id"/>
+                        <field name="quantity"/>
+                        <field name="promotion"/>
+                        <field name="discount"/>
+                        <field name="qty_executed"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="action_sale_promotion_list" model="ir.actions.act_window">
+        <field name="name">Promotions</field>
+        <field name="res_model">sale.promotion</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_sale_promotion_tree"/>
+    </record>
+
+
+    <menuitem id="menu_sale_promotion_list" name="Promotions" parent="sale.menu_sale_config" action="action_sale_promotion_list" sequence="11"/>
+</odoo>

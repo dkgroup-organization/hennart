@@ -16,6 +16,8 @@
         "security/ir.model.access.csv",
         "views/sale_order_view.xml",
         "views/product_pricelist_view.xml",
+        "views/sale_promotion_views.xml",
+
         "wizard/import_pricelist_view.xml",
 
     ],
