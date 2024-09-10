@@ -52,7 +52,7 @@ class SaleOrder(models.Model):
     def onchange_partner_id_cadence(self, date_order=None):
         # Clear the history lines when the partner is changed
         # If the partner is not null, get the order lines for the past 13 weeks
-        nb_week = 13
+        nb_week = 12
 
         self.ensure_one()
         line_vals = []
@@ -67,8 +67,9 @@ class SaleOrder(models.Model):
                 ('move_id.invoice_date', '<=', date_start),
                 ('move_id.invoice_date', '>=', date_from),
                 ('move_id.move_type', '=', 'out_invoice'),
-                ('product_id.type', 'in', ['product', 'consu']),
-                ('move_id.state', '!=', 'cancel')
+                ('product_id.type', '=', 'product'),
+                ('uom_qty', '>=', 1.0),
+                ('move_id.state', '=', 'posted')
             ])
             # Get the product ids of the order lines
             product_ids = (order_lines.mapped('product_id') - self.order_line.mapped('product_id')).sorted(key='name')
@@ -106,7 +107,6 @@ class SaleOrder(models.Model):
 
     def create_mo(self):
         """ Check mo to create, copy produced lot on picking """
-        #self.order_line.create_mo()
         for sale in self:
             for picking in sale.picking_ids:
                 picking.action_mrp()
@@ -146,3 +146,30 @@ class SaleOrder(models.Model):
     def create_custom_invoice(self):
         """ futur function"""
         pass
+
+    @api.onchange('commitment_date')
+    def _onchange_commitment_date(self):
+        if self.commitment_date:
+            promotions = self.env['sale.promotion'].search([
+                ('date_start', '<=', self.commitment_date),
+                ('date_end', '>=', self.commitment_date)
+            ])
+
+            new_lines = []
+            for promo in promotions:
+                if promo.qty_executed >= promo.quantity:
+                    continue
+                line = self.order_line.filtered(lambda l: l.product_id == promo.product_id)
+
+                if line:
+                    line.discount = promo.discount
+                else:
+                    new_lines.append(Command.create({
+                        'product_id': promo.product_id.id,
+                        'product_uom_qty': 0,
+                        'discount': promo.discount,
+                        'price_unit': promo.product_id.list_price,
+                    }))
+
+            if new_lines:
+                self.update({'order_line': new_lines})

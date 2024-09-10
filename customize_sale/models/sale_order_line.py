@@ -36,6 +36,7 @@ class SaleOrderLine(models.Model):
             if line.product_id.type == 'product' and line.order_id.state in ['draft', 'send']:
                 futur_lines = self.search([
                     ('scheduled_date', '>=', line.scheduled_date),
+                    ('product_uom_qty', '>', 0),
                     ('order_id', '!=', line.order_id.id),
                     ('state', 'in', ['sale']),
                     ('product_id', '=', line.product_id.id),
@@ -73,25 +74,27 @@ class SaleOrderLine(models.Model):
         for line in self:
             line.qty_to_deliver = line.product_uom_qty - line.qty_delivered
 
-    @api.depends('product_id', 'order_id.partner_id', 'order_id.date_delivered')
+    @api.depends('product_id', 'order_id.partner_id', 'order_id.commitment_date')
     def compute_cadence(self):
         """ get the sale frequency of the product"""
+        nb_week = 13
 
         for line in self:
-            date_start = line.order_id.date_delivered or datetime.now()
+            date_start = line.order_id.commitment_date or datetime.today()
             date_start = date_start - timedelta(days=date_start.weekday())  # monday
             condition = [
                 ('product_id', '=', line.product_id.id),
                 ('move_id.partner_id', 'child_of', line.order_id.partner_id.id),
-                ('move_id.state', '!=', 'cancel'),
+                ('move_id.state', '=', 'posted'),
+                ('uom_qty', '>=', 1.0),
                 ('move_id.move_type', '=', 'out_invoice'),
                 ]
             qty_by_week = {}
             # Loop through the past 13 weeks
             if line.product_id:
-                for week in range(0, 12):
-                    date_to = date_start - timedelta(weeks=week - 1)
-                    date_from = date_start - timedelta(weeks=week)
+                for week in range(0, nb_week):
+                    date_to = date_start - timedelta(weeks=week)
+                    date_from = date_start - timedelta(weeks=week + 1)
                     # Get the quantity sold for the product for the current week
                     invoice_lines = self.env['account.move.line'].search(condition + [
                         ('move_id.invoice_date', '<', date_to),

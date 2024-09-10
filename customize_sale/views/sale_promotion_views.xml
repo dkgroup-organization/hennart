@@ -4,7 +4,7 @@
         <field name="name">sale.promotion.tree</field>
         <field name="model">sale.promotion</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree editable="bottom">
                 <field name="name"/>
                 <field name="date_start"/>
                 <field name="date_end"/>
@@ -43,7 +43,7 @@
     <record id="action_sale_promotion_list" model="ir.actions.act_window">
         <field name="name">Promotions</field>
         <field name="res_model">sale.promotion</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree</field>
         <field name="view_id" ref="view_sale_promotion_tree"/>
     </record>
 
