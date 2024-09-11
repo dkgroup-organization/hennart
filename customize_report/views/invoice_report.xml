@@ -361,7 +361,7 @@
         </xpath>
 
 
-            <xpath expr="//p[@name='incoterm']" position="after">
+            <!-- <xpath expr="//p[@name='incoterm']" position="after">
             <t t-if="o.fiscal_position_id and o.fiscal_position_id.id == 19">
                 <p name="invoice_date_due" style="font-weight: bold !important;">
                     <strong>Date of arrival in UK: </strong><span t-field="o.incoterm_date"/>
@@ -375,7 +375,7 @@
                     </t>
                 </p>
             </t>
-        </xpath>
+        </xpath> -->
 
         <xpath expr="//td[@name='account_invoice_line_name']" position="inside">
             <t t-if="o.fiscal_position_id and o.fiscal_position_id.id == 19">
