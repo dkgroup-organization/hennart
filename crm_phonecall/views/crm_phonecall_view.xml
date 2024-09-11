@@ -195,7 +195,8 @@
         <field name="arch" type="xml">
             <tree editable="top">
                 <field name="date" />
-                <field name="name" />
+                <!-- <field name="name" /> -->
+                <field name="channel" />
                 <field name="partner_id" />
                 <field invisible="1" name="partner_phone" />
                 <field invisible="1" name="partner_mobile" />
@@ -204,31 +205,32 @@
                     name="user_id"
                 />
                 <field invisible="1" name="tag_ids" widget="many2many_tags" />
-                <field name="direction" />
-                <field name="state" />
+                <!-- <field name="direction" /> -->
+                <!-- <field name="state" /> -->
                 <field invisible="1" name="create_date" />
                 <field invisible="1" name="opportunity_id" />
-                <field groups="base.group_no_one" name="campaign_id" />
-                <field groups="base.group_no_one" name="source_id" />
-                <field groups="base.group_no_one" name="medium_id" />
-                <button
+                <!-- <field groups="base.group_no_one" name="campaign_id" /> -->
+                <!-- <field groups="base.group_no_one" name="source_id" /> -->
+                <!-- <field groups="base.group_no_one" name="medium_id" /> -->
+                <field name="partner_mobile" />
+                <!-- <button
                     icon="fa-phone"
                     name="%(phonecall_to_phonecall_act)d"
                     string="Schedule Other Call"
                     type="action"
-                />
-                <button
-                    icon="fa-calendar"
-                    name="action_make_meeting"
-                    string="Meeting"
-                    type="object"
-                />
+                /> -->
                 <button
 
                     icon="fa-hand-pointer-o"
                     name="action_sale_create"
                     states="open,pending"
                     string="Create quotation"
+                    type="object"
+                />
+                <button
+                    icon="fa-calendar"
+                    name="action_make_meeting"
+                    string="Meeting"
                     type="object"
                 />
             </tree>
