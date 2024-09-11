@@ -233,6 +233,14 @@
                     string="Meeting"
                     type="object"
                 />
+                <button
+
+                    icon="fa-hand-pointer-o"
+                    name="action_sale_create"
+                    states="open,pending"
+                    string="Create quotation"
+                    type="object"
+                />
             </tree>
         </field>
     </record>
