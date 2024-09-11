@@ -35,6 +35,8 @@ class StockPicking(models.Model):
                     action_report = self.env['ir.actions.report'].search([('report_name', '=', report_name)])
                     action_report.print_document([invoice.id])
 
+
+
     def preparation_end(self):
         """ Use partner configuration to finish and print invoice """
         message = ''
@@ -46,7 +48,7 @@ class StockPicking(models.Model):
                 continue
 
             partner = picking.partner_id
-            if partner.parent_id:
+            if partner.parent_id and not partner.is_company:
                 partner = partner.parent_id
 
             if partner.print_invoice:

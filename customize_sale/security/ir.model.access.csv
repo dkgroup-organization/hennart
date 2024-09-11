@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_import_pricelist,access_import_pricelist,model_import_pricelist,,1,1,1,1
+access_sale_promotion,sale.promotion,model_sale_promotion,,1,1,1,1

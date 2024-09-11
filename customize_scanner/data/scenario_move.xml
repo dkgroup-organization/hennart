@@ -20,7 +20,7 @@
 		<field name="action_variable">location_origin_id</field>
 		<field name="action_message">Scan the origin location</field>
 		<field name="scenario_id" ref="customize_scanner.wms_scenario_move"/>
-		<field name="python_code_before"/>
+		<field name="python_code">data.update({'button_print_later': True})</field>
 	</record>
 	<record id="wms_scenario_step_move_20" model="wms.scenario.step">
 		<field name="sequence" eval="20"/>

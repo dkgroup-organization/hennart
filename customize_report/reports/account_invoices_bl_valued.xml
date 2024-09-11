@@ -6,8 +6,8 @@
             model="account.move"
             string="BL Valorisé"
             report_type="qweb-pdf"
-            name="report_invoice_uk.report_invoice_bl_valued"
-            file="report_invoice_uk.report_invoice_bl_valued"
+            name="customize_report.report_invoice_bl_valued"
+            file="customize_report.report_invoice_bl_valued"
             print_report_name = "(object.name+'.pdf')"
     />
 

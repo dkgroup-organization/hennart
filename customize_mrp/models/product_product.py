@@ -9,11 +9,14 @@ class ProductProduct(models.Model):
 
     make_to_order = fields.Boolean('Make to order', compute="compute_make_to_order")
 
-    @api.depends('to_personnalize')
+    @api.depends('to_personnalize', 'bom_ids.type')
     def compute_make_to_order(self):
         """ define the make to order specification """
         for product in self:
-            product.make_to_order = product.to_personnalize
+            if product.to_personnalize and product.bom_ids and product.bom_ids[0].type == 'normal':
+                product.make_to_order = True
+            else:
+                product.make_to_order = False
 
     def action_normal_mrp(self):
         """ compute the forescast quantity and create manufacture order """

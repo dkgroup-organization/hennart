@@ -19,4 +19,4 @@ class StockPicking(models.Model):
             if picking.sale_id:
                 picking.date_delivered = picking.sale_id.date_delivered
             else:
-                super(StockPicking, picking).compute_date_delivered()
+                picking.date_delivered = fields.Datetime.now()

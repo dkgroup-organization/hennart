@@ -36,6 +36,7 @@ class SaleOrderLine(models.Model):
             if line.product_id.type == 'product' and line.order_id.state in ['draft', 'send']:
                 futur_lines = self.search([
                     ('scheduled_date', '>=', line.scheduled_date),
+                    ('product_uom_qty', '>', 0),
                     ('order_id', '!=', line.order_id.id),
                     ('state', 'in', ['sale']),
                     ('product_id', '=', line.product_id.id),
@@ -73,39 +74,36 @@ class SaleOrderLine(models.Model):
         for line in self:
             line.qty_to_deliver = line.product_uom_qty - line.qty_delivered
 
-    @api.depends('product_id', 'order_id.partner_id', 'order_id.date_delivered')
+    @api.depends('product_id', 'order_id.partner_id', 'order_id.commitment_date')
     def compute_cadence(self):
         """ get the sale frequency of the product"""
+        nb_week = 13
 
         for line in self:
-            date_start = line.order_id.date_delivered or datetime.now()
+            date_start = line.order_id.commitment_date or datetime.today()
             date_start = date_start - timedelta(days=date_start.weekday())  # monday
-            date_from = datetime.now() - timedelta(weeks=13)
             condition = [
                 ('product_id', '=', line.product_id.id),
                 ('uom_qty', '>', 0),
                 ('move_id.partner_id', 'child_of', line.order_id.partner_id.id),
-                ('move_id.invoice_date', '<', date_start),
-                ('move_id.invoice_date', '>=', date_from),
-                ('move_id.state', '!=', 'cancel'),
+                ('move_id.state', '=', 'posted'),
+                ('uom_qty', '>=', 1.0),
                 ('move_id.move_type', '=', 'out_invoice'),
-            ]
-            invoice_lines = self.env['account.move.line'].search(condition)
-            product = line.product_id
-
+                ]
             qty_by_week = {}
             # Loop through the past 13 weeks
-            if product:
-                pack = product.base_unit_count if product.base_unit_count> 0.0 else 1
-                for week in range(0, 12):
-                    date_to = date_start - timedelta(weeks=week - 1)
-                    date_from = date_start - timedelta(weeks=week)
+            if line.product_id:
+                for week in range(0, nb_week):
+                    date_to = date_start - timedelta(weeks=week)
+                    date_from = date_start - timedelta(weeks=week + 1)
                     # Get the quantity sold for the product for the current week
-                    qty = sum(invoice_lines.filtered(lambda l: l.product_id.id == product.id and date_from.date() <= l.move_id.invoice_date <= date_to.date()).mapped(
-                        'uom_qty'))
-                    # If the quantity is not zero, add it to the quantity by week dictionary
-                    if qty != 0:
-                        qty_by_week['{}'.format(week)] = qty / pack
+                    invoice_lines = self.env['account.move.line'].search(condition + [
+                        ('move_id.invoice_date', '<', date_to),
+                        ('move_id.invoice_date', '>=', date_from)
+                        ])
+                    qty = sum(invoice_lines.mapped('uom_qty'))
+                    if qty >= 1.0:
+                        qty_by_week['{}'.format(week)] = qty
 
             # If there is data for the product, create a table to display the quantity sold by week
             cadence_table = '<table style="border-collapse: collapse; width: 100%; table-layout: fixed;"><tr>'
@@ -113,7 +111,7 @@ class SaleOrderLine(models.Model):
             style_text = " font-weight: bold; text-align: center;"
             for week in range(1, 14):
                 qty = qty_by_week.get('{}'.format(week), '')
-                if qty != '':
+                if qty and qty != '':
                     qty_str = str(int(qty))
                     cadence_table += '<td style="{}">{}</td>'.format(style_td + style_text, qty_str)
                 else:
@@ -144,59 +142,6 @@ class SaleOrderLine(models.Model):
                 incoming_moves |= move
 
         return outgoing_moves, incoming_moves
-
-    def create_mo(self):
-        """ Create MO for needed product to manufacture """
-        # Normal BOM forecast
-        normal_mo = self.product_id.action_normal_mrp()
-
-        def data_production(order, product, product_uom_qty):
-            """ Save data production to do """
-            lot = self.env['stock.lot'].create_production_lot(product)
-            production_vals = {
-                'product_id': product.id,
-                'origin': order.name,
-                'product_qty': product_uom_qty,
-                'bom_id': product.bom_ids[0].id,
-                'lot_producing_id': lot.id,
-                'procurement_group_id': order.procurement_group_id.id,
-                'date_planned_start': order.commitment_date,
-            }
-            return production_vals
-
-        # Make to order, order_id.procurement_group_id, move.group_id
-        group_prod = {}
-        for line in self:
-            product = line.product_id
-            bom = product.bom_ids and product.bom_ids[0] or product.bom_ids
-
-            if bom and bom.type == 'kit':
-                # liste the product in BOM
-                for bom_line in bom.bom_line_ids:
-                    sub_product = bom_line.product_id
-                    if sub_product.bom_ids and sub_product.to_personnalize:
-                        sub_bom = sub_product.bom_ids[0]
-                        if sub_bom.type == 'normal':
-                            if sub_product not in list(group_prod.keys()):
-                                group_prod[sub_product] = data_production(
-                                    line.order_id, sub_product, line.product_uom_qty * bom_line.product_qty)
-                            else:
-                                group_prod[sub_product]['product_qty'] += line.product_uom_qty * bom_line.product_qty
-                        else:
-                            raise ValidationError(_("This product is not correctly configured."
-                                                    "Only one kit BOM per line.\n") + line.product_id.name)
-
-            elif bom and product.to_personnalize and product not in list(group_prod.keys()):
-                group_prod[product] = data_production(line.order_id, product, line.product_uom_qty)
-            elif bom and product.to_personnalize and product in list(group_prod.keys()):
-                group_prod[product]['product_qty'] += line.product_uom_qty
-            else:
-                pass
-
-        for mo_vals in list(group_prod.values()):
-                new_mo = self.env['mrp.production'].create(mo_vals)
-                new_mo.action_confirm()
-                new_mo.move_raw_ids.put_quantity_done()
 
     @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom', 'order_id.delivery_status')
     def _compute_qty_delivered(self):

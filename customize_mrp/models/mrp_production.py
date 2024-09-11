@@ -97,6 +97,7 @@ class MRPProduction(models.Model):
             production = mo_ids[0]
             total_qty = get_modulo_qty(product, production.product_qty + forecast_qty)
             production.change_quantity_needed(total_qty)
+            res |= production
         else:
             mo_vals = {
                 'product_id': product.id,

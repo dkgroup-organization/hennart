@@ -358,7 +358,7 @@ date=f&quot;{object.lot_id.expiration_date:%d/%m/%Y}&quot;,
 ^FT150,285^A0N,30,30^FH\^FD{city}^FS
 
 ^FO15,300^GB640,70,2^FS
-^FT23,345^A0N,40,40^FH\^FD{partner_name}^FS
+^FT23,345^A0N,40,40^FH\^FD{carrier_name}^FS
 ^FT350,345^A0N,40,40^FH\^FD{carrier_zone}^FS
 ^FT500,350^A0N,60,60^FH\^FD{nb_sscc} / {nb_total_sscc}^FS
 
@@ -372,6 +372,7 @@ date=f&quot;{object.lot_id.expiration_date:%d/%m/%Y}&quot;,
 			city=object.picking_id.partner_id.city or '',
 			country=object.picking_id.partner_id.country_id.name or '',
 			nb_sscc=object.nb_sscc,
+			carrier_name=object.picking_id.carrier_id.name or '',
 			nb_total_sscc=object.nb_total_sscc,
 			date=object.picking_id.date_delivered and object.picking_id.date_delivered.strftime('%d/%m/%Y') or '',
 			)
