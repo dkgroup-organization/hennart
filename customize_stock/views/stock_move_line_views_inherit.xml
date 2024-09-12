@@ -27,11 +27,11 @@
                     <attribute name="invisible">True</attribute>
                 </xpath>
                 <field name="package_id" position="attributes">
-                    <attribute name="invisible">True</attribute>
+                    <attribute name="invisible">False</attribute>
                     <attribute name="attrs">{}</attribute>
                 </field>
                 <field name="result_package_id" position="attributes">
-                    <attribute name="invisible">True</attribute>
+                    <attribute name="invisible">False</attribute>
                     <attribute name="attrs">{}</attribute>
                 </field>
 
