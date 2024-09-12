@@ -24,6 +24,12 @@ class StockPicking(models.Model):
          ('pack_label', 'Label all packs'), ('product_label', 'Label all products')],
         default="lot_label", string="Label strategy")
 
+    def print_chronopost(self):
+        """ """
+        for picking in self:
+            res = picking.carrier_id.chronopost_send_shipping(self)
+            print('---------print_chronopost------------', res)
+
     def _check_expired_lots(self):
         """ Do not block expiry lot """
         expired_pickings = self.env['stock.picking']
