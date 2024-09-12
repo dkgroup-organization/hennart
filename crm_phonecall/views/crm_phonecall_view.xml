@@ -271,7 +271,7 @@
                 <field name="date" />
                 <field name="state" />
                 <filter
-                    domain="[('date', '=', context_today())]"
+                    domain="[('date', '>=', context_today()), ('date', '<', (context_today() + timedelta(days=1)))]"
                     name="today_calls"
                     string="Today's Calls"
                 />
