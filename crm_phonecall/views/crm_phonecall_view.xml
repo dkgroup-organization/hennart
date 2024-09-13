@@ -271,7 +271,7 @@
                 <field name="date" />
                 <field name="state" />
                 <filter
-                    domain="[('date', '>=', context_today()), ('date', '<', (context_today() + timedelta(days=1)))]"
+                    domain="[('date','<',time.strftime('%%Y-%%m-%%d 23:59:59')),('date','>=',(datetime.date.today()-datetime.timedelta(hours=24)).strftime('%%Y-%%m-%%d 00:00:00'))]"
                     name="today_calls"
                     string="Today's Calls"
                 />
