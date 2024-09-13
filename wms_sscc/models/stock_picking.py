@@ -1,7 +1,10 @@
 
-from odoo import models
-from odoo import fields ,api
+import logging
 
+from odoo import models, fields, api
+
+
+_logger = logging.getLogger(__name__)
 
 class StockPicking(models.Model):
     _inherit = "stock.picking"
@@ -22,6 +25,7 @@ class StockPicking(models.Model):
     @api.depends('nb_container', 'nb_pallet')
     def update_sscc(self):
         for picking in self:
+
             if picking.picking_type_code != 'outgoing':
                 continue
             nb_total_container = int(picking.nb_container + picking.nb_pallet)
@@ -40,3 +44,13 @@ class StockPicking(models.Model):
                                                          order="id desc", limit=1)
                     sscc.unlink()
                     todo_sscc += 1
+
+            # Rechercher le type de package ayant le nom "Chronopost Custom Parcel"
+            default_package_type = self.env['stock.package.type'].search([('name', '=', 'Chronopost Custom Parcel')], limit=1)
+            for sscc in picking.sscc_line_ids:
+                if not sscc.result_package_id:
+                    sscc.result_package_id = self.env['stock.quant.package'].create({
+                        'name': sscc.name,
+                        'package_type_id': default_package_type.id,
+                        'shipping_weight': picking.shipping_weight / float(len(picking.sscc_line_ids)),
+                    })
