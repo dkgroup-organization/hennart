@@ -376,7 +376,7 @@ SHIPPINGMULTIPARCELV6 = [
     {
         'struct': 'refValueV2',
         'required': True,
-        'loop': "data['picking'].move_line_ids.mapped('result_package_id')",
+        'loop': "data['picking'].sscc_line_ids.mapped('result_package_id')",
         'content': [
             {'dst': 'customerSkybillNumber', 'default': '',},
             {'dst': 'PCardTransactionNumber', 'default': '',},
@@ -408,11 +408,11 @@ SHIPPINGMULTIPARCELV6 = [
     {
         'struct': 'skybillWithDimensionsValueV7',
         'required': True,
-        'loop': "data['picking'].move_line_ids.mapped('result_package_id')",
+        'loop': "data['picking'].sscc_line_ids.mapped('result_package_id')",
         'content': [
             {
                 'dst': 'bulkNumber',
-                'src': "len(data['picking'].move_line_ids.mapped("
+                'src': "len(data['picking'].sscc_line_ids.mapped("
                     "'result_package_id'))",
                 'default': '1',
                 },
@@ -556,7 +556,7 @@ SHIPPINGMULTIPARCELV6 = [
                 },
             {
                 'dst': 'numberOfParcel',
-                'src': ("len(data['picking'].move_line_ids.mapped("
+                'src': ("len(data['picking'].sscc_line_ids.mapped("
                         "'result_package_id'))"),
                 'required': True,
                 },
@@ -567,7 +567,7 @@ SHIPPINGMULTIPARCELV6 = [
                 },
             {
                 'dst': 'multiparcel',
-                'src': ("'Y' if len(data['picking'].move_line_ids.mapped("
+                'src': ("'Y' if len(data['picking'].sscc_line_ids.mapped("
                         "'result_package_id')) > 1 else 'N'"),
                 'required': True,
                 },
@@ -844,7 +844,7 @@ class ChronopostRequest():
 
         if not all([
                 po.result_package_id is not False
-                for po in data['picking'].move_line_ids]):
+                for po in data['picking'].sscc_line_ids]):
             raise UserError(_("Some products have not been put in packages!"))
 
         # Init. some infos ...

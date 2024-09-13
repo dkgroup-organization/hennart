@@ -28,14 +28,11 @@ class StockPicking(models.Model):
     def button_print_invoice(self, report_name="account.report_invoice"):
         """ Create invoice, and print pdf """
         invoices = self.action_create_invoice()
-        invoice_ids = []
         for picking in self:
             for invoice in invoices:
                 if picking in invoice.picking_ids:
                     action_report = self.env['ir.actions.report'].search([('report_name', '=', report_name)])
                     action_report.print_document([invoice.id])
-
-
 
     def preparation_end(self):
         """ Use partner configuration to finish and print invoice """
