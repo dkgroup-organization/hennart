@@ -30,12 +30,13 @@ class StockPicking(models.Model):
             attachment_ids = self.env['ir.attachment'].search([
                 ('res_model', '=', 'stock.picking'), ('res_id', '=', picking.id), ('name', 'ilike', '%Chronopost%')])
             if not attachment_ids:
-                res = picking.carrier_id.chronopost_send_shipping(self)
-                carrier_tracking_ref = ''
-                for item in res:
-                    if item:
-                        carrier_tracking_ref += ','
-                    carrier_tracking_ref += item.get('tracking_number')
+                if picking.sscc_line_ids:
+                    res = picking.carrier_id.chronopost_send_shipping(self)
+                    carrier_tracking_ref = ''
+                    for item in res:
+                        if item:
+                            carrier_tracking_ref += ','
+                        carrier_tracking_ref += item.get('tracking_number')
             else:
                 # Print label
                 pass
