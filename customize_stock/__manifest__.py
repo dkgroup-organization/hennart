@@ -12,7 +12,7 @@
     'application': True,
     'installable': True,
     'depends': [
-        'wms_scanner', 'customize_product_template', 'customize_partner',
+        'wms_scanner', 'customize_product_template', 'customize_partner', 'base_report_to_printer',
         'mrp', 'delivery', 'product_expiry', 'stock', 'customize_mrp', 'a4o_delivery_chronopost'
     ],
     'data': [
