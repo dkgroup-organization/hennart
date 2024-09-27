@@ -197,7 +197,7 @@ class ResPartner(models.Model):
     print_invoice = fields.Boolean('Print Invoice', default=True, help="Print Invoice at the end of preparation")
     paper_invoice = fields.Boolean('Paper invoice by mail', default=False, help="Send paper invoice by physical mail")
     email_invoice = fields.Boolean('Automatic email pdf invoice', default=False)
-    email_picking = fields.Boolean('Automatic email pdf picking', default=False)
+    #email_picking = fields.Boolean('Automatic email pdf picking', default=False)
 
     invoice_auto = fields.Boolean('Automatic validation', default=True,
             help="The invoice is automatically validated at the end of preparation")
