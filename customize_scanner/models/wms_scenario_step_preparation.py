@@ -779,8 +779,6 @@ class WmsScenarioStep(models.Model):
             if not picking.date_delivered or picking.state != 'done':
                 picking.date_delivered = False
 
-
-
             if picking and printer:
                 picking.print_container_label(printer=printer)
 

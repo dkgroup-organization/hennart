@@ -41,6 +41,12 @@ class StockPicking(models.Model):
                 # Print label
                 pass
 
+    def button_print_picking(self, report_name="stock.report_delivery_document"):
+        """ Create invoice, and print pdf """
+        for picking in self:
+            action_report = self.env['ir.actions.report'].search([('report_name', '=', report_name)])
+            action_report.print_document([picking.id])
+
     def _check_expired_lots(self):
         """ Do not block expiry lot """
         expired_pickings = self.env['stock.picking']
@@ -111,7 +117,6 @@ class StockPicking(models.Model):
         """
         for picking in self:
             picking.scheduled_date = picking.scheduled_date.replace(hours=12, mminutes=0)
-
 
     @api.depends('scheduled_date')
     def _compute_sequence(self):
