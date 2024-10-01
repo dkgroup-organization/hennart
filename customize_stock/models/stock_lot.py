@@ -32,6 +32,9 @@ class StockLot(models.Model):
         help='This is the date on which the goods with this Serial Number may become dangerous and must not be consumed.')
     date_label = fields.Char("label date text:", compute="get_date_text")
 
+    kg_price = fields.Float('Price Kg')
+    unit_price = fields.Float('Price Unit')
+
     def update_imported_date(self):
         """ Some time the date is not set """
         for lot in self:

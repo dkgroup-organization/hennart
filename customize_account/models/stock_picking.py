@@ -102,20 +102,20 @@ class StockPicking(models.Model):
                         invoice_attachment = invoice.attachment_ids
                     attachment_ids |= invoice_attachment
 
-            if partner.email_picking:
-                # Générer les PDF pour chaque bon de livraison
-                delivery_pdf, doc_format = self.env['ir.actions.report']._render_qweb_pdf(
-                    'stock.action_report_delivery', res_ids=picking.ids)
-                delivery_attachment = self.env['ir.attachment'].create({
-                    'name': '%s.pdf' % picking.name,
-                    'type': 'binary',
-                    'datas': base64.b64encode(delivery_pdf).decode('utf-8'),
-                    'res_model': 'stock.picking',
-                    'res_id': picking.id,
-                    'mimetype': 'application/pdf',
-                })
-
-                attachment_ids |= delivery_attachment
+            # if partner.email_picking:
+            #     # Générer les PDF pour chaque bon de livraison
+            #     delivery_pdf, doc_format = self.env['ir.actions.report']._render_qweb_pdf(
+            #         'stock.action_report_delivery', res_ids=picking.ids)
+            #     delivery_attachment = self.env['ir.attachment'].create({
+            #         'name': '%s.pdf' % picking.name,
+            #         'type': 'binary',
+            #         'datas': base64.b64encode(delivery_pdf).decode('utf-8'),
+            #         'res_model': 'stock.picking',
+            #         'res_id': picking.id,
+            #         'mimetype': 'application/pdf',
+            #     })
+            #
+            #     attachment_ids |= delivery_attachment
 
             if partner.email_invoice:
                 # Envoyer l'email
