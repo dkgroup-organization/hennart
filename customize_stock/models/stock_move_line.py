@@ -28,6 +28,7 @@ class StockMoveLine(models.Model):
     pack_product_id = fields.Many2one('product.product', string="Pack reference",
                                       compute='compute_number_of_pack', store=True)
     priority = fields.Integer("Priority", store=True, default=0)
+    production_from_id = fields.Many2one('mrp.production', related="move_id.production_id", store=True, string="Production origin")
 
     @api.depends('qty_done', 'move_id')
     def compute_number_of_pack(self):

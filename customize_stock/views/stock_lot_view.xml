@@ -13,7 +13,16 @@
                     <field name="barcode_ext2"/>
                     <field name="blocked"/>
                 </xpath>
-              
+
+                <notebook position="inside">
+                    <page string="tracking">
+                        <group>
+                            <field name="upstream_picking"/>
+                            <field name="downstream_picking"/>
+                        </group>
+                    </page>
+                </notebook>
+
            </field>
         </record>
 

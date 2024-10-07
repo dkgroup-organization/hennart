@@ -70,6 +70,7 @@
                                 </div>
                                 <field name="base_package_price"/>
                             </group>
+
                             <group>
                                 <field name="type_milk"/>
                                 <field name="heat_treatment_milk"/>
@@ -152,6 +153,7 @@
                                 <field name="to_label"/>
                                 <field name="min_production_qty"/>
                             </group>
+
                         </group>
 
                     </page>
@@ -165,10 +167,15 @@
                     <field name="supplier_taxes_id" widget="many2many_tags"
                            context="{'default_type_tax_use':'purchase', 'search_default_purchase': 1, 'search_default_service': type == 'service', 'search_default_goods': type == 'consu'}"/>
                 </field>
+
                 <group name="accounting" position="after">
                     <group string="Declaration DEB/DES">
                         <field name="hs_code_id"/>
                         <field name="origin_country_id" options="{'no_create': True}"/>
+                    </group>
+                    <group name="Stock valuation">
+                        <field name="standard_price"/>
+                 
                     </group>
                 </group>
 
