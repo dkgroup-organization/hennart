@@ -200,7 +200,10 @@ class AccountMoveLine(models.Model):
                 else:
                     invoice_line.account_move_line_lot_ids.filtered(
                         lambda a: a.stock_move_line_id == stock_move_line).write(vals)
-        self.get_quantity()
+
+            invoice_line.get_weight()
+            invoice_line.get_uom_qty()
+            invoice_line.get_quantity()
 
     @api.onchange('uom_qty')
     def put_uom_qty(self):

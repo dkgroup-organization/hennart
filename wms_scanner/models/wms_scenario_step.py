@@ -332,9 +332,9 @@ class WmsScenarioStep(models.Model):
 
                         for quant in stock_quants:
                             message += '<p class="mb-5"><b>Lieu:</b> %s <br/>' % quant.location_id.name
-                            if quant.lot_id:
+                            if quant.lot_id and quant.lot_id.expiration_date:
                                 message += "<b>Lot:</b> %s - %s<br/>" % (
-                                    quant.lot_id.ref, quant.removal_date.strftime("%d/%m/%Y"))
+                                    quant.lot_id.ref, quant.lot_id.expiration_date.strftime("%d/%m/%Y"))
                             message += "<b>%s:</b> %s<br/>" % (_('Quantity'), quant.quantity)
                             message += " </p>"
 
@@ -439,3 +439,7 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         res = "message to user"
         return res
+
+    def get_button_option(self, data):
+        """ futur function """
+        return []
