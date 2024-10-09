@@ -46,14 +46,6 @@
                                     />
                                 </t>
                             </t>
-                            <div t-if="data.get('step') and data.get('lot_id')">
-                                <t t-foreach="data['step'].get_button_option(data)" t-as="button_option">
-                                    <a class="input-select mb-1"
-                                       t-att-href="button_option.get('href', '')">
-                                        <t t-esc="button_option.get('text', '')"/>
-                                    </a>
-                                </t>
-                            </div>
 
                             <div t-if="data.get('message')" id="result"
                                  class="w-full border-dashed border-2 border-gray-300 py-5 px-6 rounded-md max-h-[400px] overflow-scroll landscape:absolute landscape:w-60 landscape:right-10 landscape:pr-5 landscape:max-h-64">
