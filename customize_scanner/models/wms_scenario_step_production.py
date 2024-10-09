@@ -326,6 +326,10 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         if data.get('production_id') and data['production_id'].state not in ['cancel', 'done']:
             production = data['production_id']
+
+            if production.consumption != 'flexible':
+                production.sudo().consumption = 'flexible'
+
             if production.state == 'to_close':
                 production.button_mark_done()
                 data['message'] = _('Production is OK')

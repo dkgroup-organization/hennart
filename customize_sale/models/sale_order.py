@@ -48,6 +48,22 @@ class SaleOrder(models.Model):
             res['commitment_date'] = self.timezone_2_utc(date_entrepot, load_time)
         return res
 
+    def onchange_partner_id_address(self):
+        """ update commitment_date """
+        self.ensure_one()
+
+        if self.partner_id:
+            res = {'partner_shipping_id': self.partner_id.id, 'partner_invoice_id': self.partner_id.id}
+        else:
+            res = {'partner_shipping_id': False, 'partner_invoice_id': False}
+
+        for contact in self.partner_id.child_ids:
+            if contact.type == 'delivery':
+                res['partner_shipping_id'] = contact.id
+            if contact.type == 'invoice':
+                res['partner_invoice_id'] = contact.id
+        return res
+
     @api.onchange('partner_id')
     def onchange_partner_id_cadence(self, date_order=None):
         # Clear the history lines when the partner is changed
@@ -57,8 +73,12 @@ class SaleOrder(models.Model):
         self.ensure_one()
         line_vals = []
         res = self.onchange_partner_id_dates()
+        res.update(self.onchange_partner_id_address())
         commitment_date = res.get('commitment_date') or datetime.today()
-        if self.partner_shipping_id.parent_id:
+
+        if self.partner_shipping_id.is_company:
+            partner_shipping_id = self.partner_shipping_id
+        elif self.partner_shipping_id.parent_id:
             partner_shipping_id = self.partner_shipping_id.parent_id
         else:
             partner_shipping_id = self.partner_shipping_id

@@ -125,5 +125,3 @@ class StockPicking(models.Model):
                     email_values = {'attachment_ids': [(6, 0, attachment_ids.ids)]}
                     res = template.send_mail(invoices[0].id, email_values=email_values)
 
-
-
