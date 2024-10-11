@@ -202,15 +202,16 @@
                 <table>
                     <t t-foreach="data.get('weight_detail')" t-as="weight_detail">
                         <tr>
-                            <td>
-                                <t t-esc="weight_detail.get('qty')"/>
-                                U =
+                            <td style="font-size: medium;">
+                                <t t-if="weight_detail.get('qty', 0.0) > 0.0">
+                                    U =<t t-esc="weight_detail.get('qty')"/>
+                                    </t>
                             </td>
-                            <td>
+                            <td style="font-size: medium;">
                                 <t t-esc="weight_detail.get('weight')"/>
                                 Kg
                             </td>
-                            <td>(tare:
+                            <td style="font-size: small;">(tare:
                                 <t t-esc="weight_detail.get('tare')"/>
                                 Kg)
                             </td>

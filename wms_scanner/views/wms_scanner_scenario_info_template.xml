@@ -23,7 +23,7 @@
                             <h1>Information</h1>
                         </div>
 
-                        <form class="flex flex-col items-center gap-10 landscape:gap-6 landscape:w-35"
+                        <form class="flex flex-col items-center gap-2 landscape:gap-2 landscape:w-35"
                               method="post">
 
                             <t t-if="data.get('step') and data['step'].action_scanner == 'scan_info'">

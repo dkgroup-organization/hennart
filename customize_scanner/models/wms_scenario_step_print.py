@@ -91,3 +91,13 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         data = self.save_job(data)
         return data
+
+    def info_print(self, data):
+        """ Check print before message """
+        print('-----------------data-------------------------', data)
+        if data.get('button', '') == 'print_later':
+            self.save_job(data)
+            data = self.init_data(data)
+            print('-----------------data--init-----------------------', data)
+
+        return data

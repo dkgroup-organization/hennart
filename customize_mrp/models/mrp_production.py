@@ -23,6 +23,11 @@ class MRPProduction(models.Model):
             date_planned_start = production.date_planned_start or fields.Datetimes.now()
             production.date_planned_finished = date_planned_start + timedelta(hours=1)
 
+    def _get_consumption_issues(self):
+        """ No consumption issue, the operator can change the value  """
+        issues = []
+        return issues
+
     @api.depends('procurement_group_id')
     def _compute_sale_order(self):
         """ sale order """

@@ -48,6 +48,22 @@ class SaleOrder(models.Model):
             res['commitment_date'] = self.timezone_2_utc(date_entrepot, load_time)
         return res
 
+    def onchange_partner_id_address(self):
+        """ update commitment_date """
+        self.ensure_one()
+
+        if self.partner_id:
+            res = {'partner_shipping_id': self.partner_id.id, 'partner_invoice_id': self.partner_id.id}
+        else:
+            res = {'partner_shipping_id': False, 'partner_invoice_id': False}
+
+        for contact in self.partner_id.child_ids:
+            if contact.type == 'delivery':
+                res['partner_shipping_id'] = contact.id
+            if contact.type == 'invoice':
+                res['partner_invoice_id'] = contact.id
+        return res
+
     @api.onchange('partner_id')
     def onchange_partner_id_cadence(self, date_order=None):
         # Clear the history lines when the partner is changed
@@ -57,18 +73,28 @@ class SaleOrder(models.Model):
         self.ensure_one()
         line_vals = []
         res = self.onchange_partner_id_dates()
+        res.update(self.onchange_partner_id_address())
         commitment_date = res.get('commitment_date') or datetime.today()
+
+        if self.partner_shipping_id.is_company:
+            partner_shipping_id = self.partner_shipping_id
+        elif self.partner_shipping_id.parent_id:
+            partner_shipping_id = self.partner_shipping_id.parent_id
+        else:
+            partner_shipping_id = self.partner_shipping_id
 
         if self.state == 'draft' and self.partner_id:
             date_start = commitment_date - timedelta(days=commitment_date.weekday())  # monday
             date_from = date_start - timedelta(weeks=nb_week)
             order_lines = self.env['account.move.line'].search([
-                ('move_id.partner_id', 'child_of', self.partner_id.id),
-                ('move_id.invoice_date', '<=', date_start),
-                ('move_id.invoice_date', '>=', date_from),
-                ('move_id.move_type', '=', 'out_invoice'),
-                ('product_id.type', '=', 'product'),
-                ('uom_qty', '>=', 1.0),
+                '&',
+                '|', ('move_id.partner_id', 'child_of', self.partner_id.id),
+                ('move_id.partner_shipping_id', 'child_of', partner_shipping_id.ids),
+                '&', ('move_id.invoice_date', '<=', date_start),
+                '&', ('move_id.invoice_date', '>=', date_from),
+                '&', ('move_id.move_type', '=', 'out_invoice'),
+                '&', ('product_id.type', '=', 'product'),
+                '&', ('uom_qty', '>=', 1.0),
                 ('move_id.state', '=', 'posted')
             ])
             # Get the product ids of the order lines
@@ -173,3 +199,18 @@ class SaleOrder(models.Model):
 
             if new_lines:
                 self.update({'order_line': new_lines})
+
+    def _prepare_invoice(self):
+        """
+        Change the partner beceause there is some holding to invoice
+        """
+        res = super()._prepare_invoice()
+        if self.partner_id.parent_id:
+            parent =  self.partner_id.parent_id
+            if parent.third_account_customer and not self.partner_id.third_account_customer:
+                res['partner_id'] = parent.id
+            if parent.third_account_customer != self.partner_id.third_account_customer:
+                pass
+            if parent.third_account_customer == self.partner_id.third_account_customer:
+                res['partner_id'] = parent.id
+        return res

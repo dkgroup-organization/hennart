@@ -33,10 +33,9 @@ class StockPicking(models.Model):
     delivery_status_details = fields.Char(string='Delivery Status Details',
         readonly=True)
 
-    @api.depends('delivery_status', 'move_line_ids')
+    @api.depends('delivery_status', 'sscc_line_ids')
     def _compute_delivery_status(self):
         for picking in self:
-            raise UserError('TEST')
             method = getattr(
                 picking,
                 '%s_get_picking_status' % picking.delivery_type,

@@ -82,13 +82,18 @@ class SaleOrderLine(models.Model):
         for line in self:
             date_start = line.order_id.commitment_date or datetime.today()
             date_start = date_start - timedelta(days=date_start.weekday())  # monday
+            if line.order_id.partner_shipping_id.parent_id:
+                partner_shipping_id = line.order_id.partner_shipping_id.parent_id
+            else:
+                partner_shipping_id = line.order_id.partner_shipping_id
+
             condition = [
-                ('product_id', '=', line.product_id.id),
-                ('uom_qty', '>', 0),
-                ('move_id.partner_id', 'child_of', line.order_id.partner_id.id),
-                ('move_id.state', '=', 'posted'),
-                ('uom_qty', '>=', 1.0),
-                ('move_id.move_type', '=', 'out_invoice'),
+                '&', '|', ('move_id.partner_id', 'child_of', line.order_id.partner_id.id),
+                ('move_id.partner_shipping_id', 'child_of', partner_shipping_id.id),
+                '&', ('product_id', '=', line.product_id.id),
+                '&', ('move_id.state', '=', 'posted'),
+                '&', ('uom_qty', '>=', 1.0),
+                '&', ('move_id.move_type', '=', 'out_invoice'),
                 ]
             qty_by_week = {}
             # Loop through the past 13 weeks
@@ -98,7 +103,7 @@ class SaleOrderLine(models.Model):
                     date_from = date_start - timedelta(weeks=week + 1)
                     # Get the quantity sold for the product for the current week
                     invoice_lines = self.env['account.move.line'].search(condition + [
-                        ('move_id.invoice_date', '<', date_to),
+                        '&', ('move_id.invoice_date', '<', date_to),
                         ('move_id.invoice_date', '>=', date_from)
                         ])
                     qty = sum(invoice_lines.mapped('uom_qty'))

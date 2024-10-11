@@ -1,6 +1,7 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+from collections import defaultdict
 import datetime
 import time
 
@@ -31,6 +32,91 @@ class StockLot(models.Model):
         string='Expiration Date', compute=False, store=True, readonly=False, default=False,
         help='This is the date on which the goods with this Serial Number may become dangerous and must not be consumed.')
     date_label = fields.Char("label date text:", compute="get_date_text")
+
+    kg_price = fields.Float('Price Kg')
+    unit_price = fields.Float('Price Unit')
+
+    downstream_picking = fields.Many2many('stock.picking', string='Customer picking', compute='get_downstream_picking')
+    upstream_picking = fields.Many2many('stock.picking', string='Supplier picking', compute='get_upstream_picking')
+
+    def get_downstream_lot(self):
+        """ Get all linked in production """
+        res = self.env['stock.lot']
+        mrp_in_move_line = self.env['stock.move.line'].search([('lot_id', 'in', self.ids), ('production_id', '!=', False)])
+        mrp_out_move_line = self.env['stock.move.line'].search([('production_from_id', 'in', mrp_in_move_line.production_id.ids)])
+        for line in mrp_out_move_line:
+            if line.lot_id:
+                res |= line.lot_id.get_downstream_lot()
+        res |= self
+        return res
+
+    @api.depends('name')
+    def _compute_sale_order_ids(self):
+        """ count the sale in downstream """
+        for lot in self:
+            sale_order_ids = self.env['sale.order']
+            for picking in lot.get_downstream_picking():
+                sale_order_ids |= picking.group_id.sale_id
+            lot.sale_order_ids = sale_order_ids
+            lot.sale_order_count = len(lot.sale_order_ids)
+
+    def get_downstream_picking(self):
+        """ Get tracking of this lot """
+        res = self.env['stock.picking']
+
+        for lot in self:
+            lot_ids = lot.get_downstream_lot()
+            outgoing_move_line = self.env['stock.move.line'].search([('lot_id', '=', lot_ids.ids),
+                                                                     ('picking_type_code', '=', 'outgoing')])
+            downstream_picking = self.env['stock.picking']
+            for line in outgoing_move_line:
+                downstream_picking |= line.picking_id
+            lot.downstream_picking = downstream_picking
+            res |= downstream_picking
+        return res
+
+    def _compute_delivery_ids(self):
+        """ count customer with this lot """
+        for lot in self:
+            lot.delivery_count = len(lot.downstream_picking)
+
+    def action_lot_open_transfers(self):
+        self.ensure_one()
+
+        action = {
+            'res_model': 'stock.picking',
+            'type': 'ir.actions.act_window',
+            'name': _("Delivery orders of %s", self.display_name),
+            'domain': [('id', 'in', self.downstream_picking.ids)],
+            'view_mode': 'tree,form'
+        }
+        return action
+
+    def get_upstream_lot(self):
+        """ Get all linked in production """
+        res = self.env['stock.lot']
+        mrp_out_move_line = self.env['stock.move.line'].search([('lot_id', 'in', self.ids), ('production_from_id', '!=', False)])
+        mrp_in_move_line = self.env['stock.move.line'].search([('production_id', 'in', mrp_out_move_line.production_from_id.ids)])
+        for line in mrp_in_move_line:
+            if line.lot_id:
+                res |= line.lot_id.get_upstream_lot()
+        res |= self
+        return res
+
+    def get_upstream_picking(self):
+        """ Get tracking of this lot """
+        res = self.env['stock.picking']
+
+        for lot in self:
+            lot_ids = lot.get_upstream_lot()
+            incoming_move_line = self.env['stock.move.line'].search([('lot_id', '=', lot_ids.ids),
+                                                                     ('picking_type_code', '=', 'incoming')])
+            upstream_picking = self.env['stock.picking']
+            for line in incoming_move_line:
+                upstream_picking |= line.picking_id
+            lot.upstream_picking = upstream_picking
+            res |= upstream_picking
+        return res
 
     def update_imported_date(self):
         """ Some time the date is not set """

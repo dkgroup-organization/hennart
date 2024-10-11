@@ -32,9 +32,9 @@
                         <field name="package_level_ids_details"
                                context="{'default_location_id': location_id, 'default_location_dest_id': location_dest_id, 'default_company_id': company_id}"
                                attrs="{'readonly': [('state', '=', 'done')], 'invisible': ['|', ('picking_type_entire_packs', '=', False), ('show_operations', '=', False)]}"/>
-                        <!--<button class="oe_highlight" name="action_put_in_pack" type="object" string="Put in Pack"
+                        <button class="oe_highlight" name="action_put_in_pack" type="object" string="Put in Pack"
                                 attrs="{'invisible': [('state', 'in', ('draft', 'done', 'cancel'))]}"
-                                groups="stock.group_tracking_lot" data-hotkey="shift+g"/>-->
+                                groups="stock.group_tracking_lot" data-hotkey="shift+g"/>
 
                         <button name="label_nothing" type="object" string="Label nothing"
                                 class="btn btn-secondary"/>
@@ -131,6 +131,9 @@
                 <xpath expr="//button[@name='action_assign']" position="after">
                     <button name="action_mrp" attrs="{'invisible': [('state', 'in', ('done', 'cancel', 'draft'))]}"
                             string="Produire" groups="base.group_user" type="object" class="oe_highlight"/>
+                    <button name="print_chronopost"
+                            attrs="{'invisible': [('state', 'in', ('cancel', 'draft')), ('delivery_type', '!=', 'chronopost')]}"
+                            string="Print Chronopost" type="object"/>
                 </xpath>
 
             </field>

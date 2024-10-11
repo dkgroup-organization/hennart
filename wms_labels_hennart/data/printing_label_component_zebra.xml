@@ -364,8 +364,8 @@ date=f&quot;{object.lot_id.expiration_date:%d/%m/%Y}&quot;,
 
 ^PQ1,0,1,Y^XZ""".format(
 			name=object.name,
-			partner_name=object.picking_id.partner_id.name or '',
-			carrier_zone=object.picking_id.partner_id.carrier_zone or '',
+			partner_name=object.picking_id.partner_id.parent_id and object.picking_id.partner_id.parent_id.name or object.picking_id.partner_id.name or '',
+			carrier_zone=object.picking_id.partner_id.carrier_zone or object.picking_id.partner_id.parent_id.carrier_zone or '',
 			street=object.picking_id.partner_id.street or '',
 			street2=object.picking_id.partner_id.street2 or '',
 			zip=object.picking_id.partner_id.zip or '',

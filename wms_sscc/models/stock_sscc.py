@@ -31,6 +31,7 @@ class StockSSCC(models.Model):
     prefixe = fields.Char('PREFIXE', default='0')
     cnuf = fields.Char('CNUF', default='7002221')
     serial = fields.Char('SERIAL', default='/')
+    result_package_id = fields.Many2one('stock.quant.package', string='Package')
 
     def compute_nb_sscc(self):
         """ get numerotation of sscc """
