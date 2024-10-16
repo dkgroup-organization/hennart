@@ -152,6 +152,7 @@ class ProductTemplate(models.Model):
     # LABEL
     aop = fields.Boolean(string='AOP')
     ogm = fields.Boolean(string='OGM')
+    igp = fields.Boolean(string='IGP')
     farmer_type = fields.Boolean(string='Type Fermier')
 
     approval_number = fields.Char(string='N° Agrément')

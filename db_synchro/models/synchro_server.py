@@ -1,6 +1,8 @@
 # See LICENSE file for full copyright and licensing details.
 
 import logging
+
+from gevent.pool import pass_value
 from odoo import api, fields, models, _
 from . import synchro_data
 from datetime import datetime, timedelta
@@ -258,6 +260,24 @@ class BaseSynchroServer(models.Model):
             #func_string = f'account.move({invoice.id},).action_valide_imported()'
 
     @api.model
+    def cron_valid_invoice2(self, limit=10):
+        """ second stage valide invoice """
+        condition = [
+            ('piece_comptable', '!=', False), ('state', '=', 'draft'), ('fiscal_position_id', '!=', False),
+            ('imported_state', '=', 'Amount KO')
+        ]
+        invoices = self.env['account.move'].search(condition, limit=10)
+        print('---------invoices---------------------', invoices)
+        for invoice in invoices:
+            if invoice.name == 'EXJ/2018/2716':
+                continue
+            invoice.action_valide_imported()
+            invoice.imported_state = 'Amount KO (2)'
+
+            _logger.info(f'\nInvoice imported: {invoice.name}: {invoice.state} ')
+
+
+    @api.model
     def delete_job(self):
         """ Delete job in error """
         time_delay = fields.Datetime.now() - timedelta(minutes=10)
@@ -293,10 +313,4 @@ class BaseSynchroServer(models.Model):
         condition = [('move_type', '=', 'out_refund')]
         refund_ids = self.env['account.move'].search(condition)
         for refund in refund_ids:
-            if refund.partner_id.country_id:
-                if refund.partner_id.country_id not in refund.journal_id.country_ids:
-                    refund.button_cancel()
-                    _logger.warning(f'Refund deleted: {refund.name}')
-                    refund.sudo().unlink()
-            else:
-                _logger.warning(f'\n *** *** *** This partner_id has no country: {refund}')
+            pass
