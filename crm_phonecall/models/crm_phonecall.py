@@ -91,6 +91,11 @@ class CrmPhonecall(models.Model):
 
     appointment_id = fields.Many2one('partner.crm.appointment', 'Appointment')
 
+    def button_cancel(self):
+        """ cancel phoning """
+        for rec in self:
+            rec.state = 'cancel'
+
     @api.onchange("partner_id")
     def _onchange_partner_id(self):
         """Contact number details should be change based on partner."""

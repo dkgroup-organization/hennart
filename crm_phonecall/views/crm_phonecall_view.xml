@@ -195,27 +195,38 @@
         <field name="arch" type="xml">
             <tree editable="top">
                 <field name="date" />
-                <field name="name" />
+                <!-- <field name="name" /> -->
+                <field name="channel" />
                 <field name="partner_id" />
-                <field invisible="1" name="partner_phone" />
+
                 <field invisible="1" name="partner_mobile" />
                 <field
                     context="{'default_groups_ref': ['base.group_user', 'base.group_partner_manager', 'sales_team.group_sale_salesman']}"
                     name="user_id"
                 />
+                <field name="partner_phone" />
                 <field invisible="1" name="tag_ids" widget="many2many_tags" />
-                <field name="direction" />
-                <field name="state" />
+                <!-- <field name="direction" /> -->
+                <field name="state" invisible="1"/>
                 <field invisible="1" name="create_date" />
                 <field invisible="1" name="opportunity_id" />
-                <field groups="base.group_no_one" name="campaign_id" />
-                <field groups="base.group_no_one" name="source_id" />
-                <field groups="base.group_no_one" name="medium_id" />
-                <button
+                <!-- <field groups="base.group_no_one" name="campaign_id" /> -->
+                <!-- <field groups="base.group_no_one" name="source_id" /> -->
+                <!-- <field groups="base.group_no_one" name="medium_id" /> -->
+
+                <!-- <button
                     icon="fa-phone"
                     name="%(phonecall_to_phonecall_act)d"
                     string="Schedule Other Call"
                     type="action"
+                /> -->
+
+                <button
+                    icon="fa-hand-pointer-o"
+                    name="action_sale_create"
+                    states="open,pending"
+                    string="Create quotation"
+                    type="object"
                 />
                 <button
                     icon="fa-calendar"
@@ -224,11 +235,9 @@
                     type="object"
                 />
                 <button
-
-                    icon="fa-hand-pointer-o"
-                    name="action_sale_create"
-                    states="open,pending"
-                    string="Create quotation"
+                    icon="fa-remove"
+                    name="button_cancel"
+                    string="Cancel"
                     type="object"
                 />
             </tree>
@@ -238,7 +247,7 @@
         <field name="name">CRM - Logged Phone Calls - Tree No Editable</field>
         <field name="model">crm.phonecall</field>
         <field name="inherit_id" ref="crm_phonecall.crm_case_inbound_phone_tree_view" />
-        
+
         <field name="arch" type="xml">
             <tree position="attributes">
                 <attribute name="editable" />
@@ -269,6 +278,12 @@
                 <field name="name" string="Phonecalls" />
                 <field name="date" />
                 <field name="state" />
+                <filter
+                    domain="[('date', '&lt;', time.strftime('%%Y-%%m-%%d 23:59:59')),
+                            ('date', '&gt;=', time.strftime('%%Y-%%m-%%d 00:00:00'))]"
+                    name="today_calls"
+                    string="Today's Calls"
+                />
                 <filter
                     domain="[('user_id', '=', uid)]"
                     name="my_phonecalls"

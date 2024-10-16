@@ -115,6 +115,7 @@
                             <group string="Label">
                                 <field name="aop"/>
                                 <field name="ogm"/>
+                                <field name="igp"/>
                                 <field name="farmer_type"/>
                             </group>
                         </group>

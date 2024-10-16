@@ -8,8 +8,7 @@
     'category': 'Adiczion',
     'license': 'AGPL-3',
     'depends': [
-        'stock',
-        'delivery',
+        'stock', 'delivery', 'wms_sscc'
     ],
     'demo': [],
     'website': 'http://adiczion.com',
