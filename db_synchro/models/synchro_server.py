@@ -267,7 +267,6 @@ class BaseSynchroServer(models.Model):
             ('imported_state', '=', 'Amount KO')
         ]
         invoices = self.env['account.move'].search(condition, limit=10)
-        print('---------invoices---------------------', invoices)
         for invoice in invoices:
             if invoice.name == 'EXJ/2018/2716':
                 continue
