@@ -41,7 +41,7 @@ class StockPicking(models.Model):
                 # Print label
                 pass
 
-    def button_print_picking(self, report_name="stock.report_delivery_document"):
+    def button_print_picking(self, report_name="stock.report_deliveryslip"):
         """ Create invoice, and print pdf """
         for picking in self:
             action_report = self.env['ir.actions.report'].search([('report_name', '=', report_name)])
