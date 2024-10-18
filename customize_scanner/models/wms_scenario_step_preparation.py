@@ -801,6 +801,7 @@ class WmsScenarioStep(models.Model):
                 data.pop('end_preparation', None)
                 picking.button_validate()
                 data['message'] = picking.preparation_end()
+                picking.action_send_invoice_and_delivery()
         return data
 
     def delete_data_key(self, data, key):
