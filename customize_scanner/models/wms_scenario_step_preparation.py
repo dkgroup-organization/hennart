@@ -742,6 +742,7 @@ class WmsScenarioStep(models.Model):
 
             move_line.weight = data.get('weight', 0.0) - qty_tare * data.get('tare', 0.0)
             move_line.to_weight = False
+            move_line.to_label = True
 
             if move_line.to_label and data.get('printer'):
                 move_line.print_label(printer=data.get('printer'))
