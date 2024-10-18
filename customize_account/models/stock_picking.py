@@ -56,7 +56,7 @@ class StockPicking(models.Model):
             if partner.parent_id and not partner.is_company:
                 partner = partner.parent_id
 
-            if partner.button_print_picking:
+            if partner.print_picking:
                 picking.button_print_picking()
                 message += 'Picking is printing'
 
