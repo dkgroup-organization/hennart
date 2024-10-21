@@ -2,7 +2,6 @@
 
 import logging
 
-from gevent.pool import pass_value
 from odoo import api, fields, models, _
 from . import synchro_data
 from datetime import datetime, timedelta
@@ -274,6 +273,32 @@ class BaseSynchroServer(models.Model):
             invoice.imported_state = 'Amount KO (2)'
 
             _logger.info(f'\nInvoice imported: {invoice.name}: {invoice.state} ')
+
+    @api.model
+    def cron_valid_invoice3(self, limit=10):
+        """ refund """
+        condition = [('state', '=', 'draft'), ('move_type', '=', 'out_refund'), ('piece_comptable', '!=', False)]
+        refunds = self.env['account.move'].search(condition)
+        uom_weight = self.env['product.template'].sudo()._get_weight_uom_id_from_ir_config_parameter()
+
+        for refund in refunds:
+            if len(refund.invoice_line_ids) == 1:
+                if refund.amount_total < 0.0:
+                    continue
+                total_ht = refund.total_ht
+                line = refund.invoice_line_ids
+                if line.product_uom_id == uom_weight and line.price_unit:
+                    line.weight = total_ht / line.price_unit
+                    line.quantity = line.weight
+                    if refund.total_ttc == refund.amount_total:
+                        refund.action_post()
+                    print('\n--------cron_valid_invoice3------', refund.name, refund.state)
+                elif line.price_unit:
+                    line.uom_qty = total_ht / line.price_unit / line.product_id.base_unit_count
+                    line.quantity = total_ht / line.price_unit
+                    if refund.total_ttc == refund.amount_total:
+                        refund.action_post()
+                    print('\n--------cron_valid_invoice3------', refund.name, refund.state)
 
 
     @api.model

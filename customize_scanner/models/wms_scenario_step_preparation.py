@@ -801,7 +801,9 @@ class WmsScenarioStep(models.Model):
                 data.pop('end_preparation', None)
                 picking.button_validate()
                 data['message'] = picking.preparation_end()
+                # TODO pas d'impression mais ok depuis l'interface? picking
                 #picking.action_send_invoice_and_delivery()
+                # BUG sur action_send_invoice_and_delivery
         return data
 
     def delete_data_key(self, data, key):

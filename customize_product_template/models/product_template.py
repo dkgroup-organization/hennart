@@ -177,6 +177,53 @@ class ProductTemplate(models.Model):
     base_unit_name = fields.Char(compute='_compute_base_unit_name',
                                  help='Displays the custom unit for the products if defined or the selected unit of measure otherwise.')
 
+    average_cost_price = fields.Float(
+        string="Average Purchase Price",
+        help="Average purchase price of available lots in stock",
+        compute="compute_average_cost_price",
+        store=True
+    )
+
+    refinement_cost = fields.Float(
+        string="Refinement Cost (€)",
+        help="Refinement cost in € for the products"
+    )
+
+    cutting_cost = fields.Float(
+        string="Cutting Cost (€)",
+        help="Cost of transforming the product in €"
+    )
+
+    transformation_cost = fields.Float(
+        string="Transformation Cost (€)",
+        help="Cost of cutting and packaging the product in €"
+    )
+
+    total_cost_price = fields.Float(
+        string="Total Cost Price",
+        help="Average Purchase Price + Refinement, Cutting and Transformation Costs"
+    )
+
+    cost_price_workshop = fields.Float(
+        string="Workshop Cost Price",
+        help="Total Cost Price x 1.12",
+        compute="compute_workshop_cost_price",
+        store=True
+    )
+
+    def compute_average_cost_price(self):
+        for product in self:
+            # Logic to compute average cost price based on stock lots available
+            pass
+
+    @api.depends('total_cost_price')
+    def compute_workshop_cost_price(self):
+        """ Compute cost price """
+        workshop_coefficient = self.env['ir.config_parameter'].sudo().get_param('customize_product.workshop_coefficient',
+                                                                                default=1.12)
+        for product in self:
+            product.cost_price_workshop = product.total_cost_price * workshop_coefficient
+
     @api.depends('default_code')
     def compute_gestion_affinage(self):
         """ Define if this cheese has a maturing managing """
