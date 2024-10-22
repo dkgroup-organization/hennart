@@ -10,6 +10,13 @@ from odoo import api, fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
+    workshop_coefficient = fields.Float(
+        string="Workshop Coefficient",
+        default=1.12,
+        config_parameter='product.template.workshop_coefficient',
+        help="Coefficient used to calculate the workshop cost price"
+    )
+
     def button_update_packaging(self):
         """ Update all line"""
         all_line_ids = self.env['mrp.bom.linev7'].search([])
