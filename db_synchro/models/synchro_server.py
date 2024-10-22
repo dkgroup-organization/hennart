@@ -292,14 +292,12 @@ class BaseSynchroServer(models.Model):
                     line.quantity = line.weight
                     if refund.total_ttc == refund.amount_total:
                         refund.action_post()
-                    print('\n--------cron_valid_invoice3------', refund.name, refund.state)
+
                 elif line.price_unit:
                     line.uom_qty = total_ht / line.price_unit / line.product_id.base_unit_count
                     line.quantity = total_ht / line.price_unit
                     if refund.total_ttc == refund.amount_total:
                         refund.action_post()
-                    print('\n--------cron_valid_invoice3------', refund.name, refund.state)
-
 
     @api.model
     def delete_job(self):
