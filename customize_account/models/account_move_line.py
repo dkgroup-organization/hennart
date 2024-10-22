@@ -22,6 +22,7 @@ class AccountMoveLine(models.Model):
     price_net = fields.Float(string='Prix net', compute='_compute_price_net')
     product_uos = fields.Many2one('uom.uom', string="Udv")
     histo_cost_price = fields.Float()
+    histo_subtotal = fields.Float()
 
     # import_V7
     number_of_pack = fields.Float(string='Nb pack')

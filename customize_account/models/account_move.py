@@ -208,6 +208,19 @@ class AccountMove(models.Model):
 
             move.invoice_line_ids.update_imported_line()
 
+            for line in move.invoice_line_ids:
+                if not line.price_unit:
+                    continue
+
+                if line.histo_subtotal != line.price_subtotal:
+                    if line.product_uom_id == uom_weight:
+                        line.weight = line.histo_subtotal / line.price_unit
+                        line.quantity = line.weight
+
+                    else:
+                        line.uom_qty = line.histo_subtotal / line.price_unit / line.product_id.base_unit_count
+                        line.quantity = line.histo_subtotal / line.price_unit
+
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
               
                 if (move.fiscal_position_id and move.piece_comptable and
