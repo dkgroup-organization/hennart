@@ -224,13 +224,12 @@ class AccountMove(models.Model):
                         line.uom_qty = line.histo_subtotal / price_unit / line.product_id.base_unit_count
                         line.quantity = line.histo_subtotal / price_unit
 
-            if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
+            if move.piece_comptable and round(move.total_ttc, 2) == round(move.amount_total, 2):
               
-                if (move.fiscal_position_id and move.piece_comptable and
-                        int(move.total_ttc * 100.0) == int(move.amount_total * 100.0)):
+                if move.fiscal_position_id and move.piece_comptable:
                     try:
                         move.sudo().action_post()
-                        if int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
+                        if round(move.total_ttc, 2) == round(move.amount_total, 2):
                             move.payment_state = 'paid'
 
                     except Exception as e:
