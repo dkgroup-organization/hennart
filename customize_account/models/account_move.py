@@ -212,14 +212,17 @@ class AccountMove(models.Model):
                 if not line.price_unit:
                     continue
 
-                if line.histo_subtotal != line.price_subtotal:
+                price_unit = line.price_unit * (1.0 - (line.discount / 100.0))
+                if price_unit == 0.0:
+                    pass
+                elif line.histo_subtotal != line.price_subtotal:
                     if line.product_uom_id == uom_weight:
-                        line.weight = line.histo_subtotal / line.price_unit
+                        line.weight = line.histo_subtotal / price_unit
                         line.quantity = line.weight
 
                     else:
-                        line.uom_qty = line.histo_subtotal / line.price_unit / line.product_id.base_unit_count
-                        line.quantity = line.histo_subtotal / line.price_unit
+                        line.uom_qty = line.histo_subtotal / price_unit / line.product_id.base_unit_count
+                        line.quantity = line.histo_subtotal / price_unit
 
             if move.piece_comptable and int(move.total_ttc * 100.0) == int(move.amount_total * 100.0):
               

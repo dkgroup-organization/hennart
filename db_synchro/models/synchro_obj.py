@@ -643,10 +643,10 @@ class BaseSynchroObj(models.Model):
                 remote_value = self.exception_value_write(remote_value)
                 local_value = self.get_local_value(remote_value)
                 browse_obj = self.env[self.model_id.model].browse(local_id)
-                try:
-                    browse_obj.sudo().with_context(synchro=True).write(local_value)
-                except Exception as e:
-                    error = "%s" % e
+                #try:
+                browse_obj.sudo().with_context(synchro=True).write(local_value)
+                #except Exception as e:
+                #    error = "%s" % e
 
             elif self.auto_create or self.env.context.get('auto_create'):
                 # Create
@@ -660,6 +660,7 @@ class BaseSynchroObj(models.Model):
                 except Exception as e:
                     local_id = 0
                     error = "%s" % e
+
 
             condition = [('remote_id', '=', remote_id), ('obj_id', '=', self.id)]
             local_ids = self.env['synchro.obj.line'].search(condition)
