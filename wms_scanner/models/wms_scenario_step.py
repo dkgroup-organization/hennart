@@ -381,6 +381,7 @@ class WmsScenarioStep(models.Model):
             localdict = {
                 'step': self,
                 'env': self.env,
+                'context': self.env.context.copy(),
                 'data': data.copy()}
 
             if self.debug_mode or self.scenario_id.debug_mode:
