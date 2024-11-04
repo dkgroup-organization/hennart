@@ -324,3 +324,17 @@ class AccountMove(models.Model):
                             picking_ids |= stock_move.picking_id
                 invoice.picking_ids = picking_ids
 
+    @api.model
+    def get_duplicate_invoices(self):
+        # Requête pour regrouper par le champ 'name' et filtrer les doublons
+        self.env.cr.execute("""
+            SELECT name 
+            FROM account_move 
+            WHERE state = 'draft'
+            GROUP BY name 
+            HAVING COUNT(id) > 1
+        """)
+
+        # Récupérer tous les 'name' en double
+        duplicate_names = [row[0] for row in self.env.cr.fetchall()]
+        return duplicate_names

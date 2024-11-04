@@ -235,8 +235,15 @@ class BaseSynchroServer(models.Model):
     def cron_migrate_invoices(self, limit=10):
         """ Scheduled migration for invoices"""
         for server in self.search([]):
-            obj_ids = server.obj_ids.search([('model_name', '=', 'account.invoice')])
-            for obj in obj_ids:
+            account_move_obj = server.obj_ids.search([('model_name', '=', 'account.invoice')])
+            duplicate_invoices = self.env['account.move'].get_duplicate_invoices()
+            domain = [['state', 'not in', ['cancel', 'draft']],
+                      ['date_invoice', '>', '2017-01-01'],
+                      ['name', 'not in', duplicate_invoices]
+                      ]
+            account_move_obj.domain = f'{domain}'
+
+            for obj in account_move_obj:
                 obj.load_remote_record(limit=limit)
 
     @api.model
