@@ -183,8 +183,12 @@ class AccountMove(models.Model):
         remote_server = self.env['synchro.server'].search([])
         sync_obj = remote_server[0].obj_ids.search([('model_name', '=', 'account.invoice.line')])
         #self.env['synchro.obj'].search([('model_name', '=', 'account.invoice')]).unlink_local_void()
+        invoice_name = self.env['account.move'].get_duplicate_invoices()
 
         for move in self:
+            if move.name in invoice_name:
+                move.imported_state = 'doublon'
+                continue
             if move.invoice_date < datetime.date(2017, 1, 1):
                 if move.state != 'draft':
                     move.button_draft()
