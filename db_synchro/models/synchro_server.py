@@ -239,7 +239,7 @@ class BaseSynchroServer(models.Model):
             duplicate_invoices = self.env['account.move'].get_duplicate_invoices()
             domain = [['state', 'not in', ['cancel', 'draft']],
                       ['date_invoice', '>', '2017-01-01'],
-                      ['name', 'not in', duplicate_invoices]
+                      ['number', 'not in', duplicate_invoices]
                       ]
             account_move_obj.domain = f'{domain}'
 

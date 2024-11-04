@@ -176,6 +176,13 @@ class AccountMove(models.Model):
             res['journal_id'] = False
         self.update(res)
 
+    def _must_check_constrains_date_sequence(self):
+        # OVERRIDES sequence.mixin
+        if self.env.context.get('force_sequence'):
+            return False
+        else:
+            return not self.quick_edit_mode
+
     def action_valide_imported(self):
         """ Valid a imported move, there is some correction todo"""
 
@@ -232,7 +239,7 @@ class AccountMove(models.Model):
               
                 if move.fiscal_position_id and move.piece_comptable:
                     try:
-                        move.sudo().action_post()
+                        move.sudo().with_context(force_sequence=True).action_post()
                         if round(move.total_ttc, 2) == round(move.amount_total, 2):
                             move.payment_state = 'paid'
 
@@ -342,3 +349,4 @@ class AccountMove(models.Model):
         # Récupérer tous les 'name' en double
         duplicate_names = [row[0] for row in self.env.cr.fetchall()]
         return duplicate_names
+
