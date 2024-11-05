@@ -256,8 +256,11 @@ class BaseSynchroServer(models.Model):
         ]
         for invoice in self.env['account.move'].search(condition, limit=limit):
             _logger.info(f'Valid Invoice imported: {invoice.name}')
-            invoice.action_valide_imported()
-            invoice.imported_state = 'job'
+            try:
+                invoice.action_valide_imported()
+                invoice.imported_state = 'job'
+            except:
+                invoice.imported_state = 'error'
 
     @api.model
     def cron_valid_invoice2(self, limit=10):
