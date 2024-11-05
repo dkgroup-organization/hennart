@@ -236,7 +236,6 @@ class AccountMove(models.Model):
                         line.quantity = line.histo_subtotal / price_unit
 
             if move.piece_comptable and round(move.total_ttc, 2) == round(move.amount_total, 2):
-              
                 if move.fiscal_position_id and move.piece_comptable:
                     try:
                         move.sudo().with_context(force_sequence=True).action_post()

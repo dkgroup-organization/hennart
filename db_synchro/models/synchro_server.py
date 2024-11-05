@@ -247,23 +247,17 @@ class BaseSynchroServer(models.Model):
                 obj.load_remote_record(limit=limit)
 
     @api.model
-    def cron_valid_invoice(self, limit=100):
+    def cron_valid_invoice(self, limit=5):
         """ Scheduled migration for invoices"""
-        channel_ids = self.env['queue.job.channel'].search([])
-        job_channel = []
-        for channel in channel_ids:
-            if 'invoice' in channel.name:
-                job_channel.append(channel.complete_name)
 
         condition = [
             ('piece_comptable', '!=', False), ('state', '=', 'draft'), ('fiscal_position_id', '!=', False),
             ('imported_state', '=', False)
         ]
         for invoice in self.env['account.move'].search(condition, limit=limit):
-
-            invoice.with_delay(channel=job_channel[invoice.id % len(job_channel)]).action_valide_imported()
+            _logger.info(f'Valid Invoice imported: {invoice.name}')
+            invoice.action_valide_imported()
             invoice.imported_state = 'job'
-            #func_string = f'account.move({invoice.id},).action_valide_imported()'
 
     @api.model
     def cron_valid_invoice2(self, limit=10):
