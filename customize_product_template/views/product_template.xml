@@ -37,7 +37,7 @@
                     </group>
                 </div>
                 <field name="public_categ_ids" position="after">
-                   <field name="product_tag_ids" widget="many2many_tags"/>
+                    <field name="product_tag_ids" widget="many2many_tags"/>
                 </field>
 
                 <div name="options" position="inside">
@@ -56,13 +56,14 @@
                         <group>
                             <group>
                                 <field name="list_price"/>
-                                 <field name="uos_id"/>
+                                <field name="uos_id"/>
                                 <field name="weight"/>
                                 <label for="base_unit_count" string="Pack"
                                        attrs="{'invisible': [('base_unit_count','=', 1)]}"/>
                                 <div attrs="{'invisible': [('base_unit_count','=', 1)]}">
                                     Pack of
-                                    <field name="base_unit_count" class="oe_inline" readonly="1"/> : (
+                                    <field name="base_unit_count" class="oe_inline" readonly="1"/>
+                                    : (
                                     <field name="base_product_tmpl_id" class="oe_inline" readonly="1"/>)
                                     (
                                     <field name="base_unit_price" class="oe_inline" readonly="1"/>
@@ -125,7 +126,6 @@
                             <group name="type" string="type">
                                 <field name="detailed_type"/>
                                 <field name="tracking"/>
-
                             </group>
                             <group name="Weight" string="Weight">
                                 <field name="volume"/>
@@ -147,17 +147,31 @@
                             <group name="label" string="Label">
                                 <field name="format_etiquette"/>
                             </group>
-
                             <group name="production" string="Production">
                                 <field name="gestion_affinage"/>
                                 <field name="to_personnalize"/>
                                 <field name="to_label"/>
                                 <field name="min_production_qty"/>
                             </group>
-
                         </group>
-
                     </page>
+                    <page string="Cost" name="cost"
+                          groups="account.group_account_invoice">
+                        <group>
+                            <group string="Price">
+                                <field name="average_cost_price"/>
+                                <field name="total_cost_price"/>
+                                <field name="standard_price"/>
+                            </group>
+                            <group string="cost">
+                                <field name="transformation_cost"/>
+                                <field name="cutting_cost"/>
+                                <field name="refinement_cost"/>
+                            </group>
+                        </group>
+                        <button name="compute_cost_price" string="update price" type="object"/>
+                    </page>
+
                 </page>
 
                 <field name="property_account_income_id" position="after">
@@ -173,10 +187,6 @@
                     <group string="Declaration DEB/DES">
                         <field name="hs_code_id"/>
                         <field name="origin_country_id" options="{'no_create': True}"/>
-                    </group>
-                    <group name="Stock valuation">
-                        <field name="standard_price"/>
-                 
                     </group>
                 </group>
 
