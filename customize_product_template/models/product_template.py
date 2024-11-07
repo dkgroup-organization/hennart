@@ -2,6 +2,7 @@
 
 
 from odoo import api, fields, models, tools, _
+from datetime import datetime, timedelta
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -178,7 +179,7 @@ class ProductTemplate(models.Model):
                                  help='Displays the custom unit for the products if defined or the selected unit of measure otherwise.')
 
     average_cost_price = fields.Float(
-        string="Average Purchase Price",
+        string="Average Purchase Price (6 month)",
         help="Average purchase price of available lots in stock",
         compute="compute_average_cost_price",
         store=True
@@ -204,25 +205,41 @@ class ProductTemplate(models.Model):
         help="Average Purchase Price + Refinement, Cutting and Transformation Costs"
     )
 
-    cost_price_workshop = fields.Float(
-        string="Workshop Cost Price",
-        help="Total Cost Price x 1.12",
-        compute="compute_workshop_cost_price",
-        store=True
-    )
+    standard_price = fields.Float(
+        'Workshop Cost Price', compute='_compute_standard_price',
+        inverse='_set_standard_price', search='_search_standard_price',
+        digits='Product Price', groups="base.group_user",
+        help="""Used to value the product and margins on sale orders. Based on total cost price.""")
 
     def compute_average_cost_price(self):
         for product in self:
-            # Logic to compute average cost price based on stock lots available
-            pass
+            # Définir la date de début des 6 derniers mois
+            date_six_months_ago = fields.Date.to_date(fields.Date.context_today(self)) - timedelta(days=180)
 
-    @api.depends('total_cost_price')
-    def compute_workshop_cost_price(self):
-        """ Compute cost price """
-        workshop_coefficient = self.env['ir.config_parameter'].sudo().get_param('customize_product.workshop_coefficient',
-                                                                                default=1.12)
-        for product in self:
-            product.cost_price_workshop = product.total_cost_price * workshop_coefficient
+            # Récupérer les lignes de facture d'achat pour ce produit des 6 derniers mois
+            invoice_lines = self.env['account.move.line'].search([
+                ('product_id', '=', product.id),
+                ('move_id.move_type', '=', 'in_invoice'),  # Filtre les factures d'achat
+                ('move_id.state', '=', 'posted'),  # Seulement les factures validées
+                ('move_id.invoice_date', '>=', date_six_months_ago)
+            ])
+
+            # Calcul du prix moyen pondéré
+            total_cost = 0.0
+            total_quantity = 0.0
+            total_weight = 0.0
+            uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+
+            for line in invoice_lines:
+                total_cost += line.price_subtotal
+                total_quantity += line.quantity
+
+            product.average_cost_price = total_cost / total_quantity if total_quantity > 0 else 0.0
+
+    def compute_cost_price(self):
+        """ Compute all price """
+        self.compute_average_cost_price()
+
 
     @api.depends('default_code')
     def compute_gestion_affinage(self):
