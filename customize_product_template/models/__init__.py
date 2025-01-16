@@ -6,3 +6,4 @@ from . import product_product
 from . import product_category
 from . import product_product_bom_v7
 from . import res_config
+from . import product_component_hierarchy

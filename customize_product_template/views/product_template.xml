@@ -158,17 +158,24 @@
                     <page string="Cost" name="cost"
                           groups="account.group_account_invoice">
                         <group>
-                            <group string="Price">
-                                <field name="average_cost_price"/>
-                                <field name="total_cost_price"/>
-                                <field name="standard_price"/>
-                            </group>
                             <group string="cost">
                                 <field name="transformation_cost"/>
                                 <field name="cutting_cost"/>
                                 <field name="refinement_cost"/>
+                                <field name="total_cost_price"/>
+                            </group>
+                            <group string="Price">
+                                <field name="average_cost_price"/>
+                                <field name="current_cost_price"/>
+                                <field name="workshop_cost_price"/>
                             </group>
                         </group>
+                        <field name="component_price" readonly="1">
+                            <tree>
+                                <field name="composant_tmpl_id"/>
+                                <field name="quantity"/>
+                            </tree>
+                        </field>
                         <button name="compute_cost_price" string="update price" type="object"/>
                     </page>
 

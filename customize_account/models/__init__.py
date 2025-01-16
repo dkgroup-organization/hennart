@@ -9,6 +9,7 @@ from . import sale_order
 from . import purchase_order
 from . import stock_picking
 from . import account_fiscal_position
+from . import stock_quant
 
 
 

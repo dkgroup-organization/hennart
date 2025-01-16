@@ -8,7 +8,7 @@
       <form string="Export">
         <sheet>
           <group>
-            <field name="journal_type"/>
+            <field name="journal_id"/>
             <field name="date_from"/>
             <field name="date_to"/>
             <field name="company_id" readonly="1"/>

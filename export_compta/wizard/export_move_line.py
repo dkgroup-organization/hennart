@@ -50,12 +50,7 @@ class AccountExportMoveLine(models.TransientModel):
     _name = 'account.export.moveline'
     _description = 'Export move line.'
 
-    journal_type = fields.Selection([
-        ('sale', 'Sales'),
-        ('purchase', 'Purchase'),
-        ('bank', 'Bank'),
-        ('cash', 'Cash'),
-        ('general', 'Divers')], string="Journal type", required=True)
+    journal_id = fields.Many2one("account.journal", string="Journal", required=True)
 
     date_from = fields.Date('Start Date', required=True)
     date_to = fields.Date('End Date', required=True)
@@ -74,15 +69,15 @@ class AccountExportMoveLine(models.TransientModel):
         res['company_id'] = self.env.company.id
         return res
 
-    @api.onchange('journal_type')
+    @api.onchange('journal_id')
     def onchange_journal(self):
         "check last date change"
-        if self.journal_type:
+        if self.journal_id:
 
             condition = [
-                ('journal_id.type', '=', self.journal_type),
+                ('journal_id', '=', self.journal_id.id),
                 ('export_id', '=', False),
-                ('date', '>=', '2022-01-01'),
+                ('date', '>=', '2024-01-01'),
                 ('company_id', '=', self.company_id.id),
                 ('state', 'not in', ['cancel', 'draft'])
             ]
@@ -102,13 +97,14 @@ class AccountExportMoveLine(models.TransientModel):
 
     def button_export_line(self):
         "export the account move line"
+        attachment = self.env['ir.attachment']
 
         for wizard in self:
 
             condition = [
                 ('date', '>=', wizard.date_from),
                 ('date', '<=', wizard.date_to),
-                ('journal_id.type', '=', wizard.journal_type),
+                ('journal_id', '=', wizard.journal_id.id),
                 ('company_id', '=', wizard.company_id.id),
                 ('export_id', '=', False),
                 ('state', 'not in', ['cancel', 'draft'])
@@ -143,6 +139,9 @@ class AccountExportMoveLine(models.TransientModel):
                     data_line["date_maturity"] = line.date_maturity
                     data_line['libelle'] = move.partner_id.name or ''
                     data_line['currency'] = line.currency_id.name
+
+                    if move.move_type in ['out_refund', 'in_refund'] and line.journal_id.export_code_refund:
+                        data_line['journal'] = line.journal_id.export_code_refund
 
                     # Unicode,currency_rate
                     for key in ['libelle']:
@@ -189,7 +188,7 @@ class AccountExportMoveLine(models.TransientModel):
 
             file_name = 'export_%s_%s_%s.csv' % (
                             fields.Date.today(),
-                            wizard.journal_type,
+                            wizard.journal_id.code,
                             attachment.id)
             attachment.name = file_name
             wizard.attachment_id = attachment
@@ -198,7 +197,7 @@ class AccountExportMoveLine(models.TransientModel):
             history_vals = {'date': fields.Date.today()}
             history_vals['name'] = "du %s au %s: %s pieces %s" % (
                             wizard.date_from, wizard.date_to,
-                            len(move_ids), wizard.journal_type)
+                            len(move_ids), wizard.journal_id.code)
             history_vals['attachment_id'] = attachment.id
             history_vals['company_id'] = wizard.company_id.id
 
@@ -208,3 +207,11 @@ class AccountExportMoveLine(models.TransientModel):
             attachment.res_id = history.id
             move_ids.write({'export_id': history.id})
             wizard.message = history_vals['name']
+
+        if attachment:
+            # Retourner une réponse pour le téléchargement du fichier
+            return {
+                'type': 'ir.actions.act_url',
+                'url': '/web/content/%s?download=true' % attachment.id,
+                'target': 'self',
+                }

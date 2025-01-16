@@ -325,7 +325,6 @@ class BaseSynchroServer(models.Model):
             partner_obj.domain = [('id', '>', 5)]
         return True
 
-
     def correction_avoir_20240813(self):
         """ There are refund to unlink, the journal is not the good """
         condition = [('move_type', '=', 'out_refund')]
