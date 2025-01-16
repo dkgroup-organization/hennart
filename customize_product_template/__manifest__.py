@@ -19,6 +19,7 @@
         "views/product_category.xml",
         "views/res_config_view.xml",
         "views/mrp_bom_view.xml",
+        "views/product_component_hierarchy_views.xml",
 
         "security/ir.model.access.csv",
         "security/ir.rule.xml",

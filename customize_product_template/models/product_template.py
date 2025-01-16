@@ -179,10 +179,16 @@ class ProductTemplate(models.Model):
                                  help='Displays the custom unit for the products if defined or the selected unit of measure otherwise.')
 
     average_cost_price = fields.Float(
-        string="Average Purchase Price (6 month)",
-        help="Average purchase price of available lots in stock",
+        string="Average Purchase (6 month)",
+        help="Average purchase price based on last 6 months vendor's invoices",
         compute="compute_average_cost_price",
         store=True
+    )
+
+    current_cost_price = fields.Float(
+        string="Current Purchase",
+        help="Average purchase price of stock.",
+        compute="compute_current_cost_price",
     )
 
     refinement_cost = fields.Float(
@@ -205,41 +211,131 @@ class ProductTemplate(models.Model):
         help="Average Purchase Price + Refinement, Cutting and Transformation Costs"
     )
 
-    standard_price = fields.Float(
+    workshop_cost_price = fields.Float(
         'Workshop Cost Price', compute='_compute_standard_price',
-        inverse='_set_standard_price', search='_search_standard_price',
         digits='Product Price', groups="base.group_user",
         help="""Used to value the product and margins on sale orders. Based on total cost price.""")
 
+    standard_price = fields.Float(
+        'Workshop Cost Price', compute='_compute_standard_price',
+        inverse='_set_standard_price', search=False,
+        digits='Product Price', groups="base.group_user",
+        help="""Used to value the product cost by unit based on total cost price.""")
+
+    component_price = fields.One2many('product.component.hierarchy', 'product_tmpl_id', string='Component')
+
+
+    def get_coef_workshop_cost(self):
+        """ return coef to apply between workshop_cost_price and total_cost_price """
+        return 1.12
+
+    @api.depends('total_cost_price', 'weight', 'uos_id')
+    def _compute_standard_price(self):
+        """ Compute the standard price """
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+
+        for product in self:
+            coef_workshop_cost = product.get_coef_workshop_cost()
+            product.workshop_cost_price = product.total_cost_price * coef_workshop_cost
+
+            if product.uos_id == uom_weight and product.weight:
+                standard_price = product.workshop_cost_price * product.weight
+            elif product.uos_id == uom_weight and not product.weight:
+                standard_price = 0.0
+            else:
+                standard_price = product.workshop_cost_price
+
+            product.standard_price = standard_price
+
     def compute_average_cost_price(self):
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
         for product in self:
             # Définir la date de début des 6 derniers mois
             date_six_months_ago = fields.Date.to_date(fields.Date.context_today(self)) - timedelta(days=180)
 
+            if product.base_unit_count > 1:
+                base_product_ids = product.base_product_tmpl_id.product_variant_ids.ids
+            else:
+                base_product_ids = product.product_variant_ids.ids
+
             # Récupérer les lignes de facture d'achat pour ce produit des 6 derniers mois
             invoice_lines = self.env['account.move.line'].search([
-                ('product_id', '=', product.id),
+                ('product_id', 'in', base_product_ids),
                 ('move_id.move_type', '=', 'in_invoice'),  # Filtre les factures d'achat
                 ('move_id.state', '=', 'posted'),  # Seulement les factures validées
                 ('move_id.invoice_date', '>=', date_six_months_ago)
             ])
-
             # Calcul du prix moyen pondéré
-            total_cost = 0.0
+            total_cost_quantity = 0.0
+            total_cost_weight = 0.0
             total_quantity = 0.0
             total_weight = 0.0
-            uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
 
             for line in invoice_lines:
-                total_cost += line.price_subtotal
-                total_quantity += line.quantity
+                if line.product_uom_id == uom_weight:
+                    total_weight += line.quantity
+                    total_cost_weight += line.price_subtotal
+                else:
+                    total_quantity += line.quantity
+                    total_cost_quantity += line.price_subtotal
 
-            product.average_cost_price = total_cost / total_quantity if total_quantity > 0 else 0.0
+            if total_weight:
+                product.average_cost_price = total_cost_weight / total_weight
+            elif total_quantity:
+                product.average_cost_price = total_cost_quantity / total_quantity
+            else:
+                product.average_cost_price = 0.0
+
+    def compute_current_cost_price(self):
+        """ compute current stock value """
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+        for product in self:
+            # Product in stock
+            if product.base_unit_count > 1:
+                base_product_ids = product.base_product_tmpl_id.product_variant_ids.ids
+            else:
+                base_product_ids = product.product_variant_ids.ids
+
+            # Récupérer les lignes de stock avec leur valeur
+            quant_ids = self.env['stock.quant'].search([
+                ('product_id', 'in', base_product_ids),
+                ('location_id.usage', '=', 'internal'),
+                ('lot_id', '!=', False)
+                ])
+
+            # Récupérer les lignes de facture d'achat pour ce produit des 6 derniers mois
+            invoice_line_lot = self.env['account.move.line.lot'].search([
+                ('product_id', 'in', base_product_ids),
+                ('account_move_line_id.move_id.move_type', '=', 'in_invoice'),  # Filtre les factures d'achat
+                ('account_move_line_id.move_id.state', '=', 'posted'),  # Seulement les factures validées
+                ('lot_id', 'in', quant_ids.lot_id.ids)
+                ])
+
+            # Calcul du prix moyen pondéré
+            total_cost_quantity = 0.0
+            total_cost_weight = 0.0
+            total_quantity = 0.0
+            total_weight = 0.0
+
+            for line in invoice_line_lot.stock_move_line_id:
+                if line.product_uom_id == uom_weight:
+                    total_weight += line.quantity
+                    total_cost_weight += line.price_subtotal
+                else:
+                    total_quantity += line.quantity
+                    total_cost_quantity += line.price_subtotal
+
+            if total_weight:
+                product.current_cost_price = total_cost_weight / total_weight
+            elif total_quantity:
+                product.current_cost_price = total_cost_quantity / total_quantity
+            else:
+                product.current_cost_price = 0.0
 
     def compute_cost_price(self):
         """ Compute all price """
         self.compute_average_cost_price()
-
+        self._compute_standard_price()
 
     @api.depends('default_code')
     def compute_gestion_affinage(self):
@@ -311,3 +407,19 @@ class ProductTemplate(models.Model):
     def create(self, vals_list):
         _logger.info(f'------create-----product.template----------------------\n{vals_list}')
         return super().create(vals_list)
+
+    def update_standard_price(self):
+        """ update """
+        for product in self.product_variant_ids:
+            valuation_vals = {
+                'product_id': product.id,
+                'company_id': 1,
+                'description': 'Manual update: ' + product.name,
+                'quantity': product.qty_available,
+                'unit_cost': product.standard_price,
+                'value': product.qty_available * product.standard_price,
+                'remaining_qty': product.qty_available,
+            }
+            print('---------------valuation_vals----------------', valuation_vals, product.standard_price)
+            valuation = self.env['stock.valuation.layer'].create(valuation_vals)
+            # action_revaluation

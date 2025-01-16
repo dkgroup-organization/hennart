@@ -9,3 +9,4 @@ class AccountJournal(models.Model):
     _inherit = 'account.journal'
 
     export_code = fields.Char("SAGE code")
+    export_code_refund = fields.Char("SAGE code Refund")

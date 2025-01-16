@@ -16,7 +16,24 @@ class ProductProduct(models.Model):
     base_unit_name = fields.Char('Name', compute="compute_base_product", store=True)
     lst_price = fields.Float("Product price", compute="compute_base_product", store=True)
 
-    # default_code <= 6
+    def compute_cost_price(self):
+        """ Compute all price """
+
+        self.product_tmpl_id.compute_average_cost_price()
+        self.product_tmpl_id._compute_standard_price()
+
+
+    def compute_current_cost_price(self):
+        """ compute current stock value """
+        for product in self:
+            # Récupérer les lignes de stock avec leur valeur
+            quant_ids = self.env['stock.quant'].search([
+                ('product_id', '=', product.id),
+                ('quant.location_id.usage', '=', 'internal'),
+                ('value', '>', 0.0),
+            ])
+            # Calcul du prix moyen pondéré
+            product.current_cost_price = sum(quant_ids.mapped('value'))
 
     @api.constrains('barcode')
     def _check_barcode_uniqueness(self):
