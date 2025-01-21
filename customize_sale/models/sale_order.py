@@ -13,7 +13,23 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     date_delivered = fields.Datetime("delivered date", help="Customer delivered date")
-    commitment_date = fields.Datetime("Warehouse date", help="The date when the delivery is available on warehouse")
+    commitment_date = fields.Datetime("Warehouse date",
+                                      help="The date when the delivery is available on warehouse")
+
+    date_order = fields.Datetime(
+        string="Order Date",
+        required=False, readonly=False, copy=False, states={},
+        help="Creation date of draft/sent orders,\nConfirmation date of confirmed orders.",
+        default=fields.Datetime.now)
+
+    @api.depends('commitment_date')
+    def compute_date_order(self):
+        """ copy commitment_date to have the good priceliste return """
+        for sale in self:
+            if sale.commitment_date:
+                sale.date_order = sale.commitment_date
+            else:
+                sale.date_order = fields.Datetime.now
 
     @api.model
     def timezone_2_utc(self, date, time, timezone="Europe/Paris"):
@@ -176,6 +192,9 @@ class SaleOrder(models.Model):
     @api.onchange('commitment_date')
     def _onchange_commitment_date(self):
         if self.commitment_date:
+            self.date_order = self.commitment_date
+            self._recompute_prices()
+
             promotions = self.env['sale.promotion'].search([
                 ('date_start', '<=', self.commitment_date),
                 ('date_end', '>=', self.commitment_date)
