@@ -67,7 +67,13 @@ class AccountMove(models.Model):
         index=True,
         help="Delivery address for current invoice.",
     )
+    user2_id = fields.Many2one('res.users', string='Manager', compute='compute_user2', store=True)
 
+    def compute_user2(self):
+        """ Compute the sale manager """
+        for move in self:
+            partner = move.partner_shipping_id or move.partner_id
+            move.user2_id = partner.user2_id or partner.parent_id.user2_id or False
 
     def get_max_subtotal_tax(self):
         """ return subtotal and tax"""

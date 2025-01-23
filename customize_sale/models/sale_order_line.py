@@ -283,7 +283,7 @@ class SaleOrderLine(models.Model):
                     product_qty = line.product_uom._compute_quantity(product_qty, line.product_id.uom_id)
                 qty_processed_per_product[line.product_id.id] += product_qty
             treated |= lines
-            
+
         remaining = (self - treated)
         remaining.virtual_available_at_date = False
         remaining.scheduled_date = False

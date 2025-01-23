@@ -21,6 +21,7 @@
         "views/sale_order_view.xml",
         "views/stock_picking_views.xml",
         "views/account_move_line_views.xml",
+        "views/account_invoice_report_views.xml",
     ],
 
     "installable": True,

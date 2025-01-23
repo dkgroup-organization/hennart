@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="account_invoice_report_pivot_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.report.pivot.inherit</field>
+            <field name="model">account.invoice.report</field>
+            <field name="inherit_id" ref="account.account_invoice_report_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='price_subtotal']" position="before">
+                    <field name="cost_price" optional="show" sum="Total"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
+
+
+
+
+
