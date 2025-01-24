@@ -53,10 +53,27 @@ class AccountMove(models.Model):
         default='not_paid',
         tracking=True,
     )
+
     suitable_journal_ids = fields.Many2many(
         'account.journal',
         compute='_compute_suitable_journal2_ids',
     )
+
+    partner_shipping_id = fields.Many2one(
+        comodel_name='res.partner',
+        string='Delivery Address',
+        compute='_compute_partner_shipping_id', store=True, readonly=False, precompute=True,
+        domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]",
+        index=True,
+        help="Delivery address for current invoice.",
+    )
+    user2_id = fields.Many2one('res.users', string='Manager', compute='compute_user2', store=True)
+
+    def compute_user2(self):
+        """ Compute the sale manager """
+        for move in self:
+            partner = move.partner_shipping_id or move.partner_id
+            move.user2_id = partner.user2_id or partner.parent_id.user2_id or False
 
     def get_max_subtotal_tax(self):
         """ return subtotal and tax"""

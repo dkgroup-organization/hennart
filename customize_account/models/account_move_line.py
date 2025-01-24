@@ -51,6 +51,12 @@ class AccountMoveLine(models.Model):
     stock_move_ids = fields.Many2many('stock.move', string='stock move')
     account_move_line_lot_ids = fields.One2many('account.move.line.lot', 'account_move_line_id',
                                                 copy=True, string="Detailed lot")
+    partner_shipping_id = fields.Many2one('res.partner', string='Shipping', related='move_id.partner_shipping_id',
+                                          store=True, index=True)
+    country_id = fields.Many2one('res.country', string='Country', related='move_id.partner_shipping_id.country_id',
+                                 store=True, index=True)
+    user2_id = fields.Many2one('res.users', string='Manager', related='move_id.user2_id',
+                               store=True, index=True)
 
     lot = fields.Char("lot") # DELETE if not used
 

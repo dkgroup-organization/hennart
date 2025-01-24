@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from odoo.fields import Command
 from collections import defaultdict
 from odoo.exceptions import UserError, ValidationError
+import time
 
 
 class SaleOrderLine(models.Model):
@@ -91,8 +92,8 @@ class SaleOrderLine(models.Model):
                 '&', '|', ('move_id.partner_id', 'child_of', line.order_id.partner_id.id),
                 ('move_id.partner_shipping_id', 'child_of', partner_shipping_id.id),
                 '&', ('product_id', '=', line.product_id.id),
-                '&', ('move_id.state', '=', 'posted'),
-                '&', ('uom_qty', '>=', 1.0),
+                # '&', ('move_id.state', '=', 'posted'),
+                # '&', ('uom_qty', '>=', 1.0),
                 '&', ('move_id.move_type', '=', 'out_invoice'),
                 ]
             qty_by_week = {}
@@ -282,6 +283,7 @@ class SaleOrderLine(models.Model):
                     product_qty = line.product_uom._compute_quantity(product_qty, line.product_id.uom_id)
                 qty_processed_per_product[line.product_id.id] += product_qty
             treated |= lines
+
         remaining = (self - treated)
         remaining.virtual_available_at_date = False
         remaining.scheduled_date = False

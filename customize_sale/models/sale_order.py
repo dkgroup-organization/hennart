@@ -3,7 +3,7 @@
 # For copyright and license notices, see __openerp__.py file in module root
 # directory
 ##############################################################################
-
+import time
 from datetime import date, timedelta, datetime
 from odoo import api, fields, models, Command, _
 from odoo.exceptions import UserError, ValidationError
@@ -85,6 +85,7 @@ class SaleOrder(models.Model):
         # Clear the history lines when the partner is changed
         # If the partner is not null, get the order lines for the past 13 weeks
         nb_week = 12
+        date_track = time.time()
 
         self.ensure_one()
         line_vals = []
@@ -109,9 +110,10 @@ class SaleOrder(models.Model):
                 '&', ('move_id.invoice_date', '<=', date_start),
                 '&', ('move_id.invoice_date', '>=', date_from),
                 '&', ('move_id.move_type', '=', 'out_invoice'),
-                '&', ('product_id.type', '=', 'product'),
-                '&', ('uom_qty', '>=', 1.0),
-                ('move_id.state', '=', 'posted')
+                #'&',
+                ('product_id.type', '=', 'product'),
+                #'&', ('uom_qty', '>=', 1.0),
+                #('move_id.state', '=', 'posted')
             ])
             # Get the product ids of the order lines
             product_ids = (order_lines.mapped('product_id') - self.order_line.mapped('product_id')).sorted(key='name')
@@ -127,7 +129,6 @@ class SaleOrder(models.Model):
                     }))
         if line_vals:
             res.update({'order_line': line_vals})
-
         self.update(res)
 
     def action_confirm(self):
