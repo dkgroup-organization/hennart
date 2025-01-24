@@ -6,8 +6,9 @@ class AccountInvoiceReport(models.Model):
     cost_price = fields.Float(string="Cost Price", readonly=True)
     margin = fields.Float(string='Marge', readonly=True)
     weight = fields.Float(string="Weight", readonly=True)
-    user2_id = fields.Many2one('res.users', string="Vente Manager", readonly=True)
+    user2_id = fields.Many2one('res.users', string="Vendeur Manager", readonly=True)
     partner_shipping_id = fields.Many2one('res.partner', string="Partner Livraison", readonly=True)
+    team_id = fields.Many2one(comodel_name='crm.team', string="Sales Team")
 
     @api.model
     def _select(self):
@@ -28,6 +29,7 @@ class AccountInvoiceReport(models.Model):
                 line.partner_id AS commercial_partner_id,
                 account.account_type AS user_type,
                 move.state,
+                move.team_id as team_id,
                 move.move_type,
                 move.partner_id,
                 move.invoice_user_id,
