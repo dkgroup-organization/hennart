@@ -9,6 +9,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='price_subtotal']" position="before">
                     <field name="cost_price" optional="show" sum="Total"/>
+                    <field name="margin" optional="show" sum="Total"/>
+                    <field name="weight" optional="show" sum="Total"/>
+                    <field name="margin" optional="show" sum="Total"/>
                 </xpath>
             </field>
         </record>
