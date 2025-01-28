@@ -178,13 +178,19 @@ class ProductTemplate(models.Model):
     base_unit_name = fields.Char(compute='_compute_base_unit_name',
                                  help='Displays the custom unit for the products if defined or the selected unit of measure otherwise.')
 
+    cost_price_date = fields.Datetime('last cost price compute', default=fields.Datetime.now())
     average_cost_price = fields.Float(
         string="Average Purchase (6 month)",
         help="Average purchase price based on last 6 months vendor's invoices",
         compute="compute_average_cost_price",
         store=True
     )
-
+    average_weight = fields.Float(
+        string="Average weight (6 month)",
+        help="Average weight based on last 6 months vendor's invoices",
+        compute="compute_average_cost_price",
+        store=True
+    )
     current_cost_price = fields.Float(
         string="Current Purchase",
         help="Average purchase price of stock.",
@@ -225,6 +231,7 @@ class ProductTemplate(models.Model):
     component_price = fields.One2many('product.component.hierarchy', 'product_tmpl_id', string='Component')
 
 
+
     def get_coef_workshop_cost(self):
         """ return coef to apply between workshop_cost_price and total_cost_price """
         return 1.12
@@ -248,89 +255,15 @@ class ProductTemplate(models.Model):
             product.standard_price = standard_price
 
     def compute_average_cost_price(self):
-        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+        """ futur Compute the average cost price """
         for product in self:
-            # Définir la date de début des 6 derniers mois
-            date_six_months_ago = fields.Date.to_date(fields.Date.context_today(self)) - timedelta(days=180)
-
-            if product.base_unit_count > 1:
-                base_product_ids = product.base_product_tmpl_id.product_variant_ids.ids
-            else:
-                base_product_ids = product.product_variant_ids.ids
-
-            # Récupérer les lignes de facture d'achat pour ce produit des 6 derniers mois
-            invoice_lines = self.env['account.move.line'].search([
-                ('product_id', 'in', base_product_ids),
-                ('move_id.move_type', '=', 'in_invoice'),  # Filtre les factures d'achat
-                ('move_id.state', '=', 'posted'),  # Seulement les factures validées
-                ('move_id.invoice_date', '>=', date_six_months_ago)
-            ])
-            # Calcul du prix moyen pondéré
-            total_cost_quantity = 0.0
-            total_cost_weight = 0.0
-            total_quantity = 0.0
-            total_weight = 0.0
-
-            for line in invoice_lines:
-                if line.product_uom_id == uom_weight:
-                    total_weight += line.quantity
-                    total_cost_weight += line.price_subtotal
-                else:
-                    total_quantity += line.quantity
-                    total_cost_quantity += line.price_subtotal
-
-            if total_weight:
-                product.average_cost_price = total_cost_weight / total_weight
-            elif total_quantity:
-                product.average_cost_price = total_cost_quantity / total_quantity
-            else:
-                product.average_cost_price = 0.0
+            product.average_cost_price = 0.0
+            product.average_weight = 0.0
 
     def compute_current_cost_price(self):
-        """ compute current stock value """
-        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+        """ futur compute current stock value """
         for product in self:
-            # Product in stock
-            if product.base_unit_count > 1:
-                base_product_ids = product.base_product_tmpl_id.product_variant_ids.ids
-            else:
-                base_product_ids = product.product_variant_ids.ids
-
-            # Récupérer les lignes de stock avec leur valeur
-            quant_ids = self.env['stock.quant'].search([
-                ('product_id', 'in', base_product_ids),
-                ('location_id.usage', '=', 'internal'),
-                ('lot_id', '!=', False)
-                ])
-
-            # Récupérer les lignes de facture d'achat pour ce produit des 6 derniers mois
-            invoice_line_lot = self.env['account.move.line.lot'].search([
-                ('product_id', 'in', base_product_ids),
-                ('account_move_line_id.move_id.move_type', '=', 'in_invoice'),  # Filtre les factures d'achat
-                ('account_move_line_id.move_id.state', '=', 'posted'),  # Seulement les factures validées
-                ('lot_id', 'in', quant_ids.lot_id.ids)
-                ])
-
-            # Calcul du prix moyen pondéré
-            total_cost_quantity = 0.0
-            total_cost_weight = 0.0
-            total_quantity = 0.0
-            total_weight = 0.0
-
-            for line in invoice_line_lot.stock_move_line_id:
-                if line.product_uom_id == uom_weight:
-                    total_weight += line.quantity
-                    total_cost_weight += line.price_subtotal
-                else:
-                    total_quantity += line.quantity
-                    total_cost_quantity += line.price_subtotal
-
-            if total_weight:
-                product.current_cost_price = total_cost_weight / total_weight
-            elif total_quantity:
-                product.current_cost_price = total_cost_quantity / total_quantity
-            else:
-                product.current_cost_price = 0.0
+            product.current_cost_price = product.average_cost_price
 
     def compute_cost_price(self):
         """ Compute all price """
