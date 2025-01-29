@@ -174,9 +174,14 @@
                             <tree>
                                 <field name="composant_tmpl_id"/>
                                 <field name="quantity"/>
+                                <field name="weight" sum="Total"/>
+                                <field name="average_cost_price" sum="Total"/>
+                                <field name="current_cost_price" sum="Total"/>
+                                <field name="total_cost_price" sum="Total"/>
                             </tree>
                         </field>
                         <button name="compute_cost_price" string="update price" type="object"/>
+                        <field name="cost_price_date" readonly="1"/>
                     </page>
 
                 </page>

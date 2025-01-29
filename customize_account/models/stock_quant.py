@@ -40,43 +40,10 @@ class StockQuant(models.Model):
                 continue
 
             # Check if there is a lot_id
-            if False and quant.unit_price:
-                quant.value = quant.unit_price * quant.quantity
-                quant.unit_weight = quant.unit_weight or quant.product_id.weight
-
-            elif quant.lot_id:
-                lot = quant.lot_id
-                # Check if there is invoice
-                invoice_lines_lot = self.env['account.move.line.lot'].search([('lot_id', '=', lot.id)])
-                invoice_lines = invoice_lines_lot.account_move_line_id
-                # Calcul du prix moyen pondéré
-                total_cost = 0.0
-                total_quantity = 0.0
-                total_weight = 0.0
-                average_cost_price = 0.0
-                for line in invoice_lines:
-                    total_cost += line.price_subtotal
-                    if line.product_uom_id == uom_weight:
-                        total_weight += line.quantity
-                        total_quantity += line.uom_qty
-                    else:
-                        total_weight += line.weight
-                        total_quantity += line.quantity
-
-                if invoice_lines:
-                    average_cost_price = total_quantity and total_cost / total_quantity or 0.0
-
-                if not average_cost_price:
-                    average_cost_price = quant.product_id.average_cost_price
-
-                if total_weight and total_quantity:
-                    quant.unit_weight = total_weight / total_quantity
-                else:
-                    quant.unit_weight = quant.product_id.weight
-
-                quant.unit_price = average_cost_price
-                quant.value = average_cost_price * quant.quantity
-
+            if quant.lot_id:
+                quant.value = quant.lot_id.unit_price * quant.quantity
+                quant.unit_weight = quant.lot_id.unit_weight or quant.product_id.weight
             else:
                 quant.value = quant.quantity * quant.product_id.with_company(quant.company_id).value_svl / quantity
                 quant.unit_weight = quant.unit_weight or quant.product_id.weight
+

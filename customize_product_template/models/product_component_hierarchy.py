@@ -15,9 +15,50 @@ class ProductComponentHierarchy(models.Model):
     product_id = fields.Many2one('product.product', string="Product", readonly=True)
     composant_tmpl_id = fields.Many2one('product.template', string="Component Template", readonly=True)
     composant_id = fields.Many2one('product.product', string="Component", readonly=True)
-    quantity = fields.Float(string="Quantity", readonly=True)
+    quantity = fields.Float(string="Quantity", readonly=True, digits='BOM line Unit of Measure')
     level = fields.Integer(string="Level", readonly=True)
     last_level = fields.Boolean(string="Is Last Level", readonly=True)
+
+    average_cost_price = fields.Float(
+        string="Average Purchase (6 month)",
+        help="Average purchase price based on last 6 months vendor's invoices",
+        compute="compute_price",
+    )
+
+    current_cost_price = fields.Float(
+        string="Current Purchase",
+        help="Average purchase price of stock.",
+        compute="compute_price",
+    )
+
+    total_cost_price = fields.Float(
+        string="Total Cost Price",
+        help="Average Purchase Price + Refinement, Cutting and Transformation Costs",
+        compute="compute_price",
+    )
+
+    weight = fields.Float(
+        string="Weight",
+        help="Total weight",
+        digits='BOM line Unit of Measure',
+        compute="compute_price",
+    )
+
+
+    def compute_price(self):
+        """ return price from original product """
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+
+        for component in self:
+            component.weight = component.quantity * component.composant_tmpl_id.weight
+            if component.composant_tmpl_id.uos_id == uom_weight:
+                component.average_cost_price = component.weight * component.composant_tmpl_id.average_cost_price
+                component.current_cost_price = component.weight * component.composant_tmpl_id.current_cost_price
+                component.total_cost_price = component.weight * component.composant_tmpl_id.total_cost_price
+            else:
+                component.average_cost_price = component.quantity * component.composant_tmpl_id.average_cost_price
+                component.current_cost_price = component.quantity * component.composant_tmpl_id.current_cost_price
+                component.total_cost_price = component.quantity * component.composant_tmpl_id.total_cost_price
 
     @property
     def _table_query(self):
