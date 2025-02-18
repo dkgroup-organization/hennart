@@ -125,3 +125,10 @@ class StockPicking(models.Model):
                     email_values = {'attachment_ids': [(6, 0, attachment_ids.ids)]}
                     res = template.send_mail(invoices[0].id, email_values=email_values)
 
+    def button_validate(self):
+        """ compute the account value of lot """
+        res = super().button_validate()
+        lot_ids = self.env['stock.lot']
+        lot_ids |= self.move_line_ids.lot_id
+        lot_ids.compute_cost_price()
+        return res

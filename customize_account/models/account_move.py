@@ -73,7 +73,7 @@ class AccountMove(models.Model):
         """ Compute the sale manager """
         for move in self:
             partner = move.partner_shipping_id or move.partner_id
-            move.user2_id = partner.user2_id or partner.parent_id.user2_id or False
+            move.user2_id = move.user2_id or partner.user2_id or partner.parent_id.user2_id or False
 
     def get_max_subtotal_tax(self):
         """ return subtotal and tax"""
@@ -366,3 +366,7 @@ class AccountMove(models.Model):
         duplicate_names = [row[0] for row in self.env.cr.fetchall()]
         return duplicate_names
 
+    def action_post(self):
+        """ post invoice """
+        self.update_discount_stock()
+        return super().action_post()

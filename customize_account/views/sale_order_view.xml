@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
 
                 <button id="create_invoice" position="attributes">
-                    <attribute name="name">create_custom_invoice</attribute>
+                    <attribute name="name">create_picking_invoice</attribute>
                     <attribute name="type">object</attribute>
                     <attribute name="context">{'open_invoices': True}</attribute>
                 </button>

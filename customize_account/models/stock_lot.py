@@ -11,10 +11,7 @@ class StockLot(models.Model):
     _inherit = 'stock.lot'
 
     invoice_lot_line_ids = fields.One2many('account.move.line.lot', 'lot_id', string='Invoicing line')
-
-    unit_weight = fields.Float('Weight', compute='_compute_value', store=True)
-    unit_price = fields.Monetary('Unit price', compute='_compute_value', store=True,
-                                 groups='stock.group_stock_manager')
+    categ_id = fields.Many2one('product.category', related='product_id.categ_id', store=True, index=True)
 
 
     def compute_cost_price(self):
@@ -27,24 +24,35 @@ class StockLot(models.Model):
             total_quantity = 0.0
             total_weight = 0.0
 
-            for line in lot.invoice_lot_line_ids:
-                if line.product_uom_id == uom_weight:
-                    total_quantity += line.uom_qty
-                    total_weight += line.quantity
-                else:
-                    total_quantity += line.quantity
-                    total_weight += line.weight
-
-                if line.account_move_line_id.uom_qty:
-                    total_cost += line.account_move_line_id.price_subtotal * line.uom_qty / line.account_move_line_id.uom_qty
-
-            if total_quantity:
-                lot.unit_weight = total_weight / total_quantity
-                lot.unit_price = total_cost / total_quantity
+            if lot.invoice_lot_line_ids:
+                for line in lot.invoice_lot_line_ids:
+                    account_move_line = line.account_move_line_id
+                    # Check if invoice purchase
+                    if account_move_line.move_id.move_type in ['in_invoice']:
+                        if account_move_line.product_uom_id == uom_weight:
+                            total_quantity += account_move_line.uom_qty
+                            total_weight += account_move_line.quantity
+                        else:
+                            total_quantity += account_move_line.quantity
+                            total_weight += account_move_line.weight
+                        total_cost += account_move_line.price_subtotal
             else:
-                lot.unit_weight = lot.product_id.weight
+                # check if there is purchase
+                purchase_line_ids = self.env['purchase.order.line']
+                move_line_ids = self.env['stock.move.line']. search([('lot_id', '=', lot.id), ('picking_type_code', '=', 'incoming')])
+                purchase_line_ids |= move_line_ids.move_id.purchase_line_id
+                for purchase_line in purchase_line_ids:
+                    total_quantity += purchase_line.product_qty
+                    total_weight += purchase_line.weight
+                    total_cost += purchase_line.price_subtotal
 
-                if lot.product_id.uos_id == uom_weight:
-                    lot.unit_price = lot.product_id.average_cost_price * lot.product_id.weight
-                else:
-                    lot.unit_price = lot.product_id.average_cost_price
+            if total_weight and total_quantity:
+                lot.unit_weight = total_weight / total_quantity
+            if total_cost and total_quantity:
+                lot.unit_price = total_cost / total_quantity
+            if total_cost and total_weight:
+                lot.kg_price = total_cost / total_weight
+
+
+
+
