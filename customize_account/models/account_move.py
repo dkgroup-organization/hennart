@@ -368,5 +368,5 @@ class AccountMove(models.Model):
 
     def action_post(self):
         """ post invoice """
-        self.update_discount_stock()
+        self.sudo().update_discount_stock()
         return super().action_post()
