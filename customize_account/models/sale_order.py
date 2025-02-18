@@ -25,10 +25,17 @@ class SaleOrder(models.Model):
         for invoice in res:
             if invoice.state == 'draft':
                 try:
-                    invoice.update_discount_stock()
                     invoice.sudo().action_post()
                 except:
                     pass
+        return res
+
+
+    def create_picking_invoice(self):
+        """ create invoice by picking """
+        for sale in self:
+            sale.picking_ids.action_create_invoice()
+
         if self.env.context.get('open_invoices'):
             return self.action_view_invoice()
         else:

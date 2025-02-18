@@ -33,8 +33,9 @@ class StockLot(models.Model):
         help='This is the date on which the goods with this Serial Number may become dangerous and must not be consumed.')
     date_label = fields.Char("label date text:", compute="get_date_text")
 
-    kg_price = fields.Float('Price Kg')
-    unit_price = fields.Float('Price Unit')
+    kg_price = fields.Float('Price Kg', compute=False, store=True)
+    unit_price = fields.Float('Price Unit', compute=False, store=True)
+    unit_weight = fields.Float('Unit Weight', compute=False, store=True) #v7 net_weight
 
     downstream_picking = fields.Many2many('stock.picking', string='Customer picking', compute='get_downstream_picking')
     upstream_picking = fields.Many2many('stock.picking', string='Supplier picking', compute='get_upstream_picking')

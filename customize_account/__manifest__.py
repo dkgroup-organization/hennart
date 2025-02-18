@@ -11,7 +11,7 @@
     "maintainer": "DK group",
     "images": [],
     "depends": ["account", "account_usability", "account_payment", "stock_account", "customize_purchase", "customize_sale", "customize_stock",
-                "customize_mrp", "intrastat_product"],
+                "customize_mrp", "intrastat_product", "web"],
 
     "data": [
         "security/ir.model.access.csv",
@@ -22,7 +22,14 @@
         "views/stock_picking_views.xml",
         "views/account_move_line_views.xml",
         "views/account_invoice_report_views.xml",
+        "views/stock_lot_views.xml",
     ],
+
+    'assets': {
+        'web.assets_backend': [
+            'customize_account/static/src/js/search_utils.js',
+        ],
+    },
 
     "installable": True,
 }
