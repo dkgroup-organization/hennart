@@ -140,15 +140,13 @@
                                     <td name="account_invoice_line_name" class="small-text">
                                         <span t-field="line.product_id.name"/>
 
-                                        <t t-foreach="line.account_move_line_lot_ids" t-as="move">
-                                            <p class="p_name" t-if="move.lot_id">
-
-                                                Lot: <span t-field="move.lot_id.name"/>
+                                        <t t-foreach="line.get_move_line_lot()" t-as="move">
+                                            <p class="p_name">
+                                                Lot: <span t-esc="move['name']"/>
                                                 |
-                                                <span t-field="move.lot_id.expiration_date"
-                                                      t-options='{"format": "dd-MM-yyyy"}'/>
+                                                <span t-esc="move['expiration_date']"/>
                                                 | QTE:
-                                                <span t-field="move.uom_qty"/>
+                                                <span t-esc="move['text_uom_qty']"/>
                                             </p>
 
                                         </t>

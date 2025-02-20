@@ -157,6 +157,26 @@ class AccountMoveLine(models.Model):
             else:
                 line.product_uom_id = self.env.ref('uom.product_uom_unit')
 
+    def get_move_line_lot(self):
+        """ return move_line_lot to report , group the line """
+        self.ensure_one()
+        lot_dic = {}
+        for move_line_lot in self.account_move_line_lot_ids:
+            if not move_line_lot.lot_id:
+                continue
+            if move_line_lot.lot_id not in list(lot_dic.keys()):
+                lot_dic[move_line_lot.lot_id] = {'name': move_line_lot.lot_id.name,
+                                                 'expiration_date': move_line_lot.lot_id.expiration_date.strftime("%d-%m-%Y"),
+                                                 'uom_qty': move_line_lot.uom_qty
+                                                 }
+            else:
+                lot_dic[move_line_lot.lot_id] += move_line_lot.uom_qty
+        res = []
+        for item in list(lot_dic.keys()):
+            lot_dic[item]['text_uom_qty'] = f"{lot_dic[item]['uom_qty']}"
+            res.append(lot_dic[item])
+        return res
+
     @api.constrains('product_uom_id')
     def _check_product_uom_category_id(self):
         """ Not used"""

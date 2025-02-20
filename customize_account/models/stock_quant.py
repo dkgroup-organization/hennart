@@ -9,8 +9,8 @@ from odoo.tools.misc import groupby
 class StockQuant(models.Model):
     _inherit = 'stock.quant'
 
-    value = fields.Monetary('Value', compute='_compute_value', groups='stock.group_stock_manager')
-    currency_id = fields.Many2one('res.currency', compute='_compute_value', groups='stock.group_stock_manager')
+    value = fields.Monetary('Value', compute='_compute_value', store=False, groups='stock.group_stock_manager')
+    currency_id = fields.Many2one('res.currency', compute='_compute_value', store=True,  groups='stock.group_stock_manager')
 
     @api.depends('company_id', 'location_id', 'owner_id', 'product_id', 'lot_id.unit_weight', 'lot_id.unit_price', 'lot_id.kg_price', 'quantity')
     def _compute_value(self):
@@ -28,10 +28,6 @@ class StockQuant(models.Model):
                 quant.sudo().value = 0
 
             elif quant.lot_id:
-                if not quant.lot_id.unit_price:
-                    db_synchro_line = self.env['synchro.obj.line'].search([
-                        ('local_id', '=', quant.lot_id.id), ('obj_id.name', '=', 'stock.lot')])
-                    db_synchro_line.update_values()
                 quant.sudo().value = quant.lot_id.unit_price * quant.quantity
 
             else:
