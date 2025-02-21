@@ -45,7 +45,7 @@ class StockPicking(models.Model):
         """ Create invoice, and print pdf """
         for picking in self:
             action_report = self.env['ir.actions.report'].search([('report_name', '=', report_name)])
-            action_report.sudo().with_delay().print_document([picking.id])
+            action_report.print_document([picking.id])
 
     def _check_expired_lots(self):
         """ Do not block expiry lot """
