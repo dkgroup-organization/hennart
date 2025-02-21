@@ -61,11 +61,11 @@ class StockPicking(models.Model):
                 message += 'Picking is printing'
 
             if partner.print_picking2:
-                picking.button_print_invoice_pick()
+                picking.sudo().button_print_invoice_pick()
                 message += 'Picking with price is printing'
 
             if partner.print_invoice:
-                picking.button_print_invoice()
+                picking.sudo().button_print_invoice()
                 message += 'Invoice is printing'
 
         return message
@@ -81,7 +81,7 @@ class StockPicking(models.Model):
                 partner = partner.parent_id
 
             if partner.invoice_auto:
-                invoices = picking.action_create_invoice()
+                invoices = picking.sudo().action_create_invoice()
 
             if partner.email_invoice:
                 for invoice in invoices:
