@@ -9,25 +9,26 @@ from odoo.tools.misc import groupby
 class StockQuant(models.Model):
     _inherit = 'stock.quant'
 
-    value = fields.Monetary('Value', compute='compute_value', groups='stock.group_stock_manager')
+    value = fields.Monetary('Value', compute='_compute_value', store=False, groups='stock.group_stock_manager')
+    currency_id = fields.Many2one('res.currency', compute='_compute_value', store=True,  groups='stock.group_stock_manager')
 
-    @api.depends('lot_id.unit_weight', 'lot_id.unit_price', 'lot_id.kg_price', 'quantity')
-    def compute_value(self):
+    @api.depends('company_id', 'location_id', 'owner_id', 'product_id', 'lot_id.unit_weight', 'lot_id.unit_price', 'lot_id.kg_price', 'quantity')
+    def _compute_value(self):
         """ Compute the quant value with real lot data """
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+        currency_id = self.env.company.currency_id
 
         for quant in self:
-            quant.currency_id = quant.company_id.currency_id
+            quant.currency_id = quant.company_id.currency_id or currency_id
 
             if not quant.location_id or not quant.product_id or\
                     not quant.location_id._should_be_valued() or\
                     quant._should_exclude_for_valuation() or\
                     float_is_zero(quant.quantity, precision_rounding=quant.product_id.uom_id.rounding):
-                quant.value = 0
-                continue
+                quant.sudo().value = 0
 
             elif quant.lot_id:
-                quant.value = quant.lot_id.unit_price * quant.quantity
+                quant.sudo().value = quant.lot_id.unit_price * quant.quantity
+
             else:
-                quant.value = quant.quantity * quant.product_id.with_company(quant.company_id).value_svl
-                
+                quant.sudo().value = quant.quantity * (quant.product_id.current_cost_price or quant.product_id.average_cost_price)

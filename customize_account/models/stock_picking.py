@@ -130,5 +130,5 @@ class StockPicking(models.Model):
         res = super().button_validate()
         lot_ids = self.env['stock.lot']
         lot_ids |= self.move_line_ids.lot_id
-        lot_ids.compute_cost_price()
+        lot_ids.sudo().compute_cost_price()
         return res
