@@ -170,7 +170,7 @@ class AccountMoveLine(models.Model):
                                                  'uom_qty': move_line_lot.uom_qty
                                                  }
             else:
-                lot_dic[move_line_lot.lot_id] += move_line_lot.uom_qty
+                lot_dic[move_line_lot.lot_id]['uom_qty'] += move_line_lot.uom_qty
         res = []
         for item in list(lot_dic.keys()):
             lot_dic[item]['text_uom_qty'] = f"{lot_dic[item]['uom_qty']}"

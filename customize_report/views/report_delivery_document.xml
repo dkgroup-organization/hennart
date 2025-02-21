@@ -23,7 +23,7 @@
             </t>
         </xpath>
 
-        <xpath expr="//table[@name='stock_move_table']" position="replace">
+        <xpath expr="//table[1]" position="replace">
             <table class="table table-sm" t-if="o.state!='done'" name="stock_move_table">
                 <thead>
                     <tr>
