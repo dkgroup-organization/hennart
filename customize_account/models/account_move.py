@@ -366,7 +366,7 @@ class AccountMove(models.Model):
         duplicate_names = [row[0] for row in self.env.cr.fetchall()]
         return duplicate_names
 
-    def action_update_stock_tax(self):
+    def action_post(self):
         """ post invoice """
         self.sudo().update_discount_stock()
 
@@ -422,4 +422,5 @@ class AccountMove(models.Model):
             invoice._compute_tax_totals()
             invoice._compute_amount()
 
+        return super().action_post()
 
