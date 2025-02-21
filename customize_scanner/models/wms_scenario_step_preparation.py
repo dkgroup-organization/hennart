@@ -648,6 +648,9 @@ class WmsScenarioStep(models.Model):
         """ Add som indication to user at the end of the preparation"""
         message = _("End of the preparation")
         res = f"<h1>{message}</h1>"
+        if data.get('message'):
+            res += data.get('message')
+        res.replace('\n', '<br/>')
         return res
 
     def check_weight(self, data):
@@ -790,6 +793,9 @@ class WmsScenarioStep(models.Model):
 
                 if picking.preparation_state == 'wait':
                     data['warning'] = _("This preparation is waiting after product to finish.")
+                    for line in picking.move_ids_without_package:
+                        if line.product_uom_qty > line.qty_done:
+                            data['warning'] += line.product_id.default_code + ' ' + line.product_id.name
                 elif picking.preparation_state in ['pick', 'weight', 'label']:
                     data['warning'] = _("The preparation is not finish.")
             else:
@@ -801,9 +807,7 @@ class WmsScenarioStep(models.Model):
                 data.pop('end_preparation', None)
                 picking.button_validate()
                 data['message'] = picking.preparation_end()
-                # TODO pas d'impression mais ok depuis l'interface? picking (test d'ajout du context dans scanner)
-                #picking.action_send_invoice_and_delivery()
-                # BUG sur action_send_invoice_and_delivery
+                picking.action_send_invoice_and_delivery()
         return data
 
     def delete_data_key(self, data, key):

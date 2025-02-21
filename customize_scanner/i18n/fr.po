@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-24 12:42+0000\n"
-"PO-Revision-Date: 2024-06-24 12:42+0000\n"
+"POT-Creation-Date: 2025-02-21 12:57+0000\n"
+"PO-Revision-Date: 2025-02-21 12:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -40,7 +40,7 @@ msgstr "Colis de "
 #. module: customize_scanner
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_weight_detail
 msgid "(tare:"
-msgstr "(tare: "
+msgstr ""
 
 #. module: customize_scanner
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_list_preparation
@@ -197,11 +197,6 @@ msgid "Kg)"
 msgstr ""
 
 #. module: customize_scanner
-#: model:wms.menu,name:customize_scanner.wms_scenario_menu_weight
-msgid "Weighting"
-msgstr "Peser"
-
-#. module: customize_scanner
 #. odoo-python
 #: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
 #, python-format
@@ -351,10 +346,17 @@ msgstr "Imprimer"
 
 #. module: customize_scanner
 #. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_print.py:0
+#, python-format
+msgid "Print label later: "
+msgstr "Imprimer plus tard"
+
+#. module: customize_scanner
+#. odoo-python
 #: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
 #, python-format
-msgid "Printing error"
-msgstr "Erreur d'impression"
+msgid "Print later"
+msgstr "Imprimer plus tard"
 
 #. module: customize_scanner
 #. odoo-python
@@ -378,6 +380,13 @@ msgstr "Produit à produire"
 #, python-format
 msgid "Production"
 msgstr ""
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_production.py:0
+#, python-format
+msgid "Production is OK"
+msgstr "Production est OK"
 
 #. module: customize_scanner
 #. odoo-python
@@ -601,9 +610,7 @@ msgstr ""
 #: code:addons/customize_scanner/models/wms_scenario_step.py:0
 #, python-format
 msgid "There is not enough quantity on the location. The maximum is {}"
-msgstr ""
-"Il n'y a pas suffisament de quantité dans cet emplacement. The maximum est "
-"{}"
+msgstr "Il n'y a pas suffisament de quantité dans cet emplacement. The maximum est {}"
 
 #. module: customize_scanner
 #. odoo-python
@@ -799,6 +806,11 @@ msgstr "Valider:"
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_body_title_weight
 msgid "Weight"
 msgstr "Poids"
+
+#. module: customize_scanner
+#: model:wms.menu,name:customize_scanner.wms_scenario_menu_weight
+msgid "Weighting"
+msgstr "Pesée"
 
 #. module: customize_scanner
 #. odoo-python
