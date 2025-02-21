@@ -19,8 +19,12 @@ class StockPicking(models.Model):
         for picking in self:
             if picking.state == 'done':
                 sale = picking.group_id.sale_id
-                invoices = sale.create_custom_invoice()
+                invoices = sale.sudo().create_custom_invoice()
                 invoices.picking_ids |= picking
+                invoices.sudo().action_update_stock_tax()
+                for invoice in invoices:
+                    if invoice.state == 'draft':
+                        invoice.sudo().action_post()
                 all_invoices |= invoices
         return all_invoices
 
@@ -45,7 +49,6 @@ class StockPicking(models.Model):
     def preparation_end(self):
         """ Use partner configuration to finish and print invoice """
         message = ''
-
         for picking in self:
             if picking.preparation_state == 'done':
                 message = _('End of preparation: ') + picking.name
@@ -70,6 +73,7 @@ class StockPicking(models.Model):
 
     def action_send_invoice_and_delivery(self):
         """Envoie la facture et le bon de livraison au client par email."""
+        return
         for picking in self:
             invoices = self.env['account.move']
             attachment_ids = self.env['ir.attachment']

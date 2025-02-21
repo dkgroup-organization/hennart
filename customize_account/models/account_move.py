@@ -366,11 +366,13 @@ class AccountMove(models.Model):
         duplicate_names = [row[0] for row in self.env.cr.fetchall()]
         return duplicate_names
 
-    def action_post(self):
+    def action_update_stock_tax(self):
         """ post invoice """
         self.sudo().update_discount_stock()
 
         for invoice in self:
+            if invoice.state != 'draft':
+                continue
             tax_repartition_line = {}
             sign = invoice.direction_sign
 
@@ -420,4 +422,4 @@ class AccountMove(models.Model):
             invoice._compute_tax_totals()
             invoice._compute_amount()
 
-        return super().action_post()
+

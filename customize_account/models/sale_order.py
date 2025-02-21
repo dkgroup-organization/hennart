@@ -30,7 +30,6 @@ class SaleOrder(models.Model):
                     pass
         return res
 
-
     def create_picking_invoice(self):
         """ create invoice by picking """
         for sale in self:
@@ -38,5 +37,3 @@ class SaleOrder(models.Model):
 
         if self.env.context.get('open_invoices'):
             return self.action_view_invoice()
-        else:
-            return res
