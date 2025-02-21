@@ -21,7 +21,6 @@ class StockPicking(models.Model):
                 sale = picking.group_id.sale_id
                 invoices = sale.sudo().create_custom_invoice()
                 invoices.picking_ids |= picking
-                invoices.sudo().action_update_stock_tax()
                 for invoice in invoices:
                     if invoice.state == 'draft':
                         invoice.sudo().action_post()
