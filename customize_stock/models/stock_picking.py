@@ -25,7 +25,7 @@ class StockPicking(models.Model):
         default="lot_label", string="Label strategy")
 
     def print_chronopost(self):
-        """ """
+        """ print label """
         for picking in self:
             if picking.carrier_id.delivery_type == 'chronopost':
                 attachment_ids = self.env['ir.attachment'].search([
