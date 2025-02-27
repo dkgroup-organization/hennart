@@ -9,6 +9,7 @@ class AccountInvoiceReport(models.Model):
     user2_id = fields.Many2one('res.users', string="Vendeur Manager", readonly=True)
     partner_shipping_id = fields.Many2one('res.partner', string="Partner Livraison", readonly=True)
     team_id = fields.Many2one(comodel_name='crm.team', string="Sales Team")
+    uom_qty = fields.Float(string="Quantity unit", readonly=True)
 
     @api.model
     def _select(self):
@@ -41,6 +42,8 @@ class AccountInvoiceReport(models.Model):
                 template.categ_id                                           AS product_categ_id,
                 line.quantity / NULLIF(COALESCE(uom_line.factor, 1) / COALESCE(uom_template.factor, 1), 0.0) * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)
                                                                             AS quantity,
+                line.uom_qty * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)
+                                                                            AS uom_qty,                                                     
                 -line.balance * currency_table.rate                         AS price_subtotal,
                 line.price_total * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)
                                                                             AS price_total,

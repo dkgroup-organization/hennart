@@ -154,6 +154,9 @@ class WmsScenarioStep(models.Model):
                     if lot.product_id != production.product_id:
                         data['warning'] = _("It is not the good product")
                         return data
+                    elif data.get('affinage', 'X') != 'X' and data['affinage'] != lot.product_id.default_code[-1]:
+                        data['warning'] = _("It is not the good product")
+                        return data
                     elif production.sale_id and production.lot_producing_id != lot:
                         # When the production is for a customer, the lot is already created
                         data['warning'] = _("It is not the good lot number")

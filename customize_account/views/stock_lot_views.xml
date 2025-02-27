@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+
     <record id="view_stock_lot_form_account_inherit" model="ir.ui.view">
         <field name="name">stock.lot.form.inherit</field>
         <field name="model">stock.lot</field>
@@ -13,21 +14,12 @@
                             <field name="unit_weight"/>
                             <field name="unit_price"/>
                             <field name="kg_price"/>
+                            <field name="uos_id"/>
+                            <field name="partner_supplier_id"/>
                         </group>
                         <group>
                             <button name="compute_cost_price" string="Update" type="object"/>
                         </group>
-                    </group>
-
-                    <group>
-                        <field name="invoice_lot_line_ids" readonly="1" nolabel="1">
-                            <tree editable="bottom">
-                                <field name="lot_id"/>
-                                <field name="product_uom_id"/>
-                                <field name="quantity"/>
-                                <field name="weight"/>
-                            </tree>
-                        </field>
                     </group>
                 </page>
             </notebook>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-21 13:00+0000\n"
-"PO-Revision-Date: 2025-02-21 13:00+0000\n"
+"POT-Creation-Date: 2025-02-27 16:57+0000\n"
+"PO-Revision-Date: 2025-02-27 16:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -68,6 +68,13 @@ msgid "Cancelled"
 msgstr "Annulé"
 
 #. module: customize_account
+#. odoo-python
+#: code:addons/customize_account/models/stock_picking.py:0
+#, python-format
+msgid "Chronopost label is printing\n"
+msgstr "Etiquette Chronopost imprimé\n"
+
+#. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__default_code
 msgid "Code"
 msgstr ""
@@ -115,6 +122,19 @@ msgstr "Devise"
 #: model:ir.model.fields,field_description:customize_account.field_account_payment__incoterm_date
 msgid "Date of arrival in UK"
 msgstr "Date d'arrivée au UK"
+
+#. module: customize_account
+#. odoo-javascript
+#: code:addons/customize_account/static/src/js/custom_date_filters.js:0
+#, python-format
+msgid "Day"
+msgstr "Jour"
+
+#. module: customize_account
+#: model:ir.model.fields,help:customize_account.field_stock_lot__uos_id
+#: model:ir.model.fields,help:customize_account.field_stock_quant__uos_id
+msgid "Default unit of Sale used for invoicing."
+msgstr "Unité de facturation par défaut."
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__partner_shipping_id
@@ -293,7 +313,7 @@ msgstr "Mentions légales à imprimer sur la facture."
 #. module: customize_account
 #: model:ir.model,name:customize_account.model_stock_lot
 msgid "Lot/Serial"
-msgstr "Lot"
+msgstr "Lot/N° série"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__user2_id
@@ -333,6 +353,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:customize_account.field_account_move__payment_method_id
 msgid "Methode de paiement"
 msgstr "Méthode de paiement"
+
+#. module: customize_account
+#. odoo-javascript
+#: code:addons/customize_account/static/src/js/custom_date_filters.js:0
+#, python-format
+msgid "Month"
+msgstr "Mois"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__number_of_pack
@@ -387,7 +414,7 @@ msgstr "Partiellement réglé"
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_invoice_report__partner_shipping_id
 msgid "Partner Livraison"
-msgstr ""
+msgstr "Adresse de livraison"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__payment_state
@@ -423,6 +450,20 @@ msgstr "Bon delivraison"
 #: model:ir.model.fields,field_description:customize_account.field_account_payment__incoterm_port
 msgid "Port of entry"
 msgstr "Port d'entrée"
+
+#. module: customize_account
+#. odoo-javascript
+#: code:addons/customize_account/static/src/js/custom_date_filters.js:0
+#, python-format
+msgid "Previous Period"
+msgstr ""
+
+#. module: customize_account
+#. odoo-javascript
+#: code:addons/customize_account/static/src/js/custom_date_filters.js:0
+#, python-format
+msgid "Previous Year"
+msgstr ""
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__initial_price
@@ -480,28 +521,28 @@ msgstr "Commande fournisseur"
 
 #. module: customize_account
 #. odoo-javascript
-#: code:addons/customize_account/static/src/js/dates_extension.js:0
+#: code:addons/customize_account/static/src/js/custom_date_filters.js:0
 #, python-format
 msgid "Q1"
 msgstr ""
 
 #. module: customize_account
 #. odoo-javascript
-#: code:addons/customize_account/static/src/js/dates_extension.js:0
+#: code:addons/customize_account/static/src/js/custom_date_filters.js:0
 #, python-format
 msgid "Q2"
 msgstr ""
 
 #. module: customize_account
 #. odoo-javascript
-#: code:addons/customize_account/static/src/js/dates_extension.js:0
+#: code:addons/customize_account/static/src/js/custom_date_filters.js:0
 #, python-format
 msgid "Q3"
 msgstr ""
 
 #. module: customize_account
 #. odoo-javascript
-#: code:addons/customize_account/static/src/js/dates_extension.js:0
+#: code:addons/customize_account/static/src/js/custom_date_filters.js:0
 #, python-format
 msgid "Q4"
 msgstr ""
@@ -518,9 +559,21 @@ msgid "Quantity"
 msgstr "Quantité"
 
 #. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_invoice_report__uom_qty
+msgid "Quantity unit"
+msgstr "Quantité en unité"
+
+#. module: customize_account
 #: model:ir.model,name:customize_account.model_stock_quant
 msgid "Quants"
-msgstr "Quantités"
+msgstr "Quantité"
+
+#. module: customize_account
+#. odoo-javascript
+#: code:addons/customize_account/static/src/js/custom_date_filters.js:0
+#, python-format
+msgid "Quarter"
+msgstr ""
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__discount1
@@ -586,6 +639,11 @@ msgid "Suitable Journal"
 msgstr "Journal convenable"
 
 #. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant__partner_supplier_id
+msgid "Supplier"
+msgstr "Fournisseur"
+
+#. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__supplierinfo_id
 msgid "Supplier info"
 msgstr "Info fournisseur"
@@ -623,7 +681,13 @@ msgid "Transfer"
 msgstr "Transfert"
 
 #. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.account_invoice_report_pivot_inherit
+msgid "True"
+msgstr "Vrai"
+
+#. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__type
+#: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__move_type
 msgid "Type"
 msgstr ""
 
@@ -631,7 +695,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__quantity
 #: model_terms:ir.ui.view,arch_db:customize_account.account_move_line_custom_form_view
 msgid "UDV qty"
-msgstr ""
+msgstr "UDV qté"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__product_uos
@@ -648,6 +712,12 @@ msgstr "Unité"
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__price_unit
 msgid "Unit Price"
 msgstr "Prix unitaire"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_stock_lot__uos_id
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant__uos_id
+msgid "Unit of Sale"
+msgstr "Unité de vente"
 
 #. module: customize_account
 #: model_terms:ir.ui.view,arch_db:customize_account.view_stock_lot_form_account_inherit
@@ -675,11 +745,25 @@ msgid "Vendeur Manager"
 msgstr "Commercial"
 
 #. module: customize_account
+#. odoo-javascript
+#: code:addons/customize_account/static/src/js/custom_date_filters.js:0
+#, python-format
+msgid "Week"
+msgstr "Semaine"
+
+#. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_invoice_report__weight
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__weight
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__weight
 msgid "Weight"
 msgstr "Poids"
+
+#. module: customize_account
+#. odoo-javascript
+#: code:addons/customize_account/static/src/js/custom_date_filters.js:0
+#, python-format
+msgid "Year"
+msgstr "Année"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__default_code
@@ -728,7 +812,9 @@ msgstr "Mouvement de stock détaillé"
 #, python-format
 msgid ""
 "this line has multiples production lot, uses the detailed view to update"
-msgstr "Cette ligne à de multiple lot, utilisez la vue détaillée pour les mises à jour."
+msgstr ""
+"Cette ligne à de multiple lot, utilisez la vue détaillée pour les mises à "
+"jour."
 
 #. module: customize_account
 #: model_terms:ir.ui.view,arch_db:customize_account.account_move_line_custom_form_view
@@ -744,4 +830,3 @@ msgstr "Mise à jour de la livraison"
 #: model_terms:ir.ui.view,arch_db:customize_account.account_move_customize_view_form
 msgid "update lot"
 msgstr "Mise à jour du lot"
-

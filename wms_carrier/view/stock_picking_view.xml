@@ -36,6 +36,12 @@
                     </page>
                 </notebook>
 
+                <xpath expr="//button[@name='action_cancel']" position="before">
+                    <button name="print_chronopost"
+                            attrs="{'invisible': ['|', '|', ('state', 'in', ('cancel', 'draft')), ('delivery_type', '!=', 'chronopost'), ('sscc_line_ids', '=', False)]}"
+                            string="Print Chronopost" type="object" class="oe_highlight"/>
+                </xpath>
+
             </field>
         </record>
     </data>

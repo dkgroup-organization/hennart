@@ -9,6 +9,8 @@
                 <header position="inside">
                     <button name="button_print_invoice" attrs="{'invisible': [('state', '!=', 'done')]}"
                             string="Print Invoice" type="object" class="oe_highlight"/>
+                    <button name="button_print_picking"
+                            string="Print Picking" type="object" class="oe_highlight"/>
                 </header>
             </field>
         </record>

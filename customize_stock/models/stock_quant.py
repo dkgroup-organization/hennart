@@ -9,6 +9,7 @@ class StockQuant(models.Model):
 
     blocked = fields.Boolean('Blocked', compute="compute_blocked", store=True)
     product_categ_id = fields.Many2one(related='product_tmpl_id.categ_id', store=True)
+    total_weight = fields.Float('Total Weight', compute='compute_total_weight')
 
     @api.depends('location_id.blocked', 'lot_id.blocked')
     def compute_blocked(self):
@@ -22,6 +23,18 @@ class StockQuant(models.Model):
                 quant.blocked = True
             else:
                 quant.blocked = False
+
+    def compute_total_weight(self):
+        """ get total weight """
+        for quant in self:
+            if quant.lot_id.unit_weight:
+                total_weight = quant.lot_id.unit_weight * quant.quantity
+            elif quant.lot_id.unit_price and quant.lot_id.kg_price:
+                total_weight = quant.lot_id.unit_price / quant.lot_id.kg_price * quant.quantity
+                quant.lot_id.unit_weight = quant.lot_id.unit_price / quant.lot_id.kg_price
+            else:
+                total_weight = quant.lot_id.product_id.weight * quant.quantity
+            quant.total_weight = total_weight
 
     def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None,
                                   strict=False):
