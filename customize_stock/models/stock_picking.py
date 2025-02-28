@@ -135,6 +135,13 @@ class StockPicking(models.Model):
         self.order_move_line()
         return res
 
+    def action_assign_by_pack(self):
+        """ Some customer want only one lot by pack , so check it """
+        for picking in self:
+            dic_lot = {}
+            partner = picking.partner_id.parent_id or picking.partner_id
+
+
     def compute_number_of_pack(self):
         """ compute number of pack on each line """
         self.move_line_ids.compute_number_of_pack()

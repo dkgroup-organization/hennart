@@ -794,7 +794,7 @@ class WmsScenarioStep(models.Model):
                 if picking.preparation_state == 'wait':
                     data['warning'] = _("This preparation is waiting after product to finish.")
                     for line in picking.move_ids_without_package:
-                        if line.product_uom_qty > line.qty_done:
+                        if line.product_uom_qty > line.quantity_done:
                             data['warning'] += line.product_id.default_code + ' ' + line.product_id.name
                 elif picking.preparation_state in ['pick', 'weight', 'label']:
                     data['warning'] = _("The preparation is not finish.")
