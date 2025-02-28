@@ -24,32 +24,6 @@ class StockPicking(models.Model):
          ('pack_label', 'Label all packs'), ('product_label', 'Label all products')],
         default="lot_label", string="Label strategy")
 
-    def print_chronopost(self):
-        """ print label """
-        for picking in self:
-            if picking.carrier_id.delivery_type == 'chronopost':
-                attachment_ids = self.env['ir.attachment'].search([
-                    ('res_model', '=', 'stock.picking'), ('res_id', '=', picking.id), ('name', 'ilike', '%Chronopost%')])
-                if not attachment_ids:
-                    if picking.sscc_line_ids:
-                        res = picking.carrier_id.chronopost_send_shipping(self)
-                        carrier_tracking_ref = ''
-                        for item in res:
-                            if item:
-                                carrier_tracking_ref += ','
-                            carrier_tracking_ref += item.get('tracking_number')
-                else:
-                    # Print label
-                    if picking.carrier_id.cpst_printer_id:
-                        printer = picking.carrier_id.cpst_printer_id
-                        doc_format = picking.carrier_id.cpst_label_format
-                        for attachment in attachment_ids:
-                            printer.print_document(
-                                report=picking.carrier_id,
-                                content=attachment.datas,
-                                doc_format=doc_format,
-                                action='server', tray='Main')
-
     def _check_expired_lots(self):
         """ Do not block expiry lot """
         expired_pickings = self.env['stock.picking']
