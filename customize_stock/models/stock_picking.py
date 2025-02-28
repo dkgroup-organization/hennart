@@ -44,7 +44,11 @@ class StockPicking(models.Model):
                         printer = picking.carrier_id.cpst_printer_id
                         doc_format = picking.carrier_id.cpst_label_format
                         for attachment in attachment_ids:
-                            printer.print_document(attachment.datas, doc_format=doc_format, action='server', tray='Main')
+                            printer.print_document(
+                                report=picking.carrier_id,
+                                content=attachment.datas,
+                                doc_format=doc_format,
+                                action='server', tray='Main')
 
     def button_print_picking(self, report_name="stock.report_deliveryslip"):
         """ Create invoice, and print pdf """
