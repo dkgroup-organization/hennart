@@ -165,7 +165,7 @@ class BaseSynchroServer(models.Model):
             update_lot_ids = self.env['stock.lot'].search([('quant_ids', '!=', False)])
             for lot in update_lot_ids:
                 for quant in lot.quant_ids:
-                    if quant.location_id.id == 11: # tmp SORTIE
+                    if quant.location_id.id in [11, 12]: # tmp SORTIE, PREPARATION
                         quant.sudo().unlink()
                 lot.expiration_date = lot.life_date or lot.use_date or lot.removal_date or lot.alert_date
                 lot.compute_cost_price()
