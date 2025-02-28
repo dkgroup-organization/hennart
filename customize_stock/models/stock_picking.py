@@ -50,12 +50,6 @@ class StockPicking(models.Model):
                                 doc_format=doc_format,
                                 action='server', tray='Main')
 
-    def button_print_picking(self, report_name="stock.report_deliveryslip"):
-        """ Create invoice, and print pdf """
-        for picking in self:
-            action_report = self.env['ir.actions.report'].search([('report_name', '=', report_name)])
-            action_report.print_document([picking.id])
-
     def _check_expired_lots(self):
         """ Do not block expiry lot """
         expired_pickings = self.env['stock.picking']

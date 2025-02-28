@@ -19,7 +19,6 @@
         "views/account_move_view.xml",
         "views/account_journal_view.xml",
         "views/sale_order_view.xml",
-        "views/stock_picking_views.xml",
         "views/account_move_line_views.xml",
         "views/account_invoice_report_views.xml",
         "views/stock_lot_views.xml",
