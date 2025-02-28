@@ -275,7 +275,7 @@ msgstr "Facture annulée"
 #: code:addons/customize_report/models/stock_picking.py:0
 #, python-format
 msgid "Chronopost label is printing\n"
-msgstr ""
+msgstr "Impression de l'étiquette Chronopost\n"
 
 #. module: customize_report
 #: model:ir.model,name:customize_report.model_res_company
