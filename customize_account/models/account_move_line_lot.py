@@ -23,6 +23,8 @@ class AccountMoveLineLot(models.Model):
     lot_id = fields.Many2one('stock.lot', string='Production lot', copy=True)
     base_unit_count = fields.Float('Pack qty', related="account_move_line_id.product_id.base_unit_count")
 
+    move_type = fields.Selection(related='account_move_line_id.move_type')
+
     uom_qty = fields.Float(string="Qty")
     product_uom_id = fields.Many2one('uom.uom', string="Udv", related="account_move_line_id.product_uom_id")
     quantity = fields.Float(

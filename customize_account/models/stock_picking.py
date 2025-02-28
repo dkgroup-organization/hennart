@@ -68,6 +68,10 @@ class StockPicking(models.Model):
                 picking.sudo().with_delay().button_print_invoice()
                 message += _('Invoice is printing\n')
 
+            if picking.delivery_type == 'chronopost':
+                picking.sudo().with_delay().print_chronopost()
+                message += _('Chronopost label is printing\n')
+
         return message
 
     def action_send_invoice_and_delivery(self):

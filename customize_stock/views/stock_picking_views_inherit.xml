@@ -128,12 +128,9 @@
                            attrs="{'column_invisible': [('parent.picking_type_code', '!=', 'incoming')]}"/>
                 </xpath>
 
-                <xpath expr="//button[@name='action_assign']" position="after">
+                <xpath expr="//button[@name='action_cancel']" position="before">
                     <button name="action_mrp" attrs="{'invisible': [('state', 'in', ('done', 'cancel', 'draft'))]}"
                             string="Produire" groups="base.group_user" type="object" class="oe_highlight"/>
-                    <button name="print_chronopost"
-                            attrs="{'invisible': [('state', 'in', ('cancel', 'draft')), ('delivery_type', '!=', 'chronopost')]}"
-                            string="Print Chronopost" type="object"/>
                 </xpath>
 
             </field>

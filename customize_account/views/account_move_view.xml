@@ -13,6 +13,10 @@
                         attrs="{'invisible': [('state', '!=', 'draft')]}"/>
             </header>
 
+            <field name="invoice_user_id" position="after">
+                <field name="user2_id"/>
+            </field>
+
             <xpath expr="//page[@name='other_info']" position="after">
                 <page id="other_tab_v7" string="Control V7" name="infos_v7"
                       attrs="{'invisible': [('piece_comptable', '=', False)]}">

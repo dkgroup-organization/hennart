@@ -6,9 +6,11 @@ import { getPeriodOptions as originalGetPeriodOptions } from "@web/search/utils/
 let customFiltersEnabled = true;
 
 
-
+alert("test")
 // Ajouter les nouveaux filtres seulement si activé dans la config
 function getPeriodOptions(referenceMoment) {
+
+alert("azdazdaz")
     const options = originalGetPeriodOptions(referenceMoment);
 
     if (customFiltersEnabled) {

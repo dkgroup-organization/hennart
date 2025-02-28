@@ -39,6 +39,7 @@ class StockLot(models.Model):
 
     downstream_picking = fields.Many2many('stock.picking', string='Customer picking', compute='get_downstream_picking')
     upstream_picking = fields.Many2many('stock.picking', string='Supplier picking', compute='get_upstream_picking')
+    partner_supplier_id = fields.Many2one('res.partner', string='Supplier', compute='get_partner_supplier')
 
     def get_downstream_lot(self):
         """ Get all linked in production """
@@ -67,7 +68,7 @@ class StockLot(models.Model):
 
         for lot in self:
             lot_ids = lot.get_downstream_lot()
-            outgoing_move_line = self.env['stock.move.line'].search([('lot_id', '=', lot_ids.ids),
+            outgoing_move_line = self.env['stock.move.line'].search([('lot_id', 'in', lot_ids.ids),
                                                                      ('picking_type_code', '=', 'outgoing')])
             downstream_picking = self.env['stock.picking']
             for line in outgoing_move_line:
@@ -110,14 +111,23 @@ class StockLot(models.Model):
 
         for lot in self:
             lot_ids = lot.get_upstream_lot()
-            incoming_move_line = self.env['stock.move.line'].search([('lot_id', '=', lot_ids.ids),
+            incoming_move_line = self.env['stock.move.line'].search([('lot_id', 'in', lot_ids.ids),
                                                                      ('picking_type_code', '=', 'incoming')])
             upstream_picking = self.env['stock.picking']
             for line in incoming_move_line:
                 upstream_picking |= line.picking_id
             lot.upstream_picking = upstream_picking
             res |= upstream_picking
+
         return res
+
+    def get_partner_supplier(self):
+        """ get supplier """
+        for lot in self:
+            if lot.upstream_picking:
+                lot.partner_supplier_id = lot.upstream_picking[0].partner_id
+            else:
+                lot.partner_supplier_id = False
 
     def update_imported_date(self):
         """ Some time the date is not set """
@@ -134,7 +144,7 @@ class StockLot(models.Model):
                 text = _("Best before date:")
             else:
                 text = _("Date:")
-
+            # ZPL adjust character code
             CODE_CP850 = {'Ç': '\80', 'ü': '\81', 'é': '\82', 'â': '\83', 'ä': '\84', 'à': '\85', 'å': '\86',
                           'ç': '\87', 'ê': '\88', 'ë': '\89',
                           'è': '\8A', 'ï': '\8B', 'î': '\8C', 'ì': '\8D', 'Ä': '\8E', 'Å': '\8F', '°': '\F8'}

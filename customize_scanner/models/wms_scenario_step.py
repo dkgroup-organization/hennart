@@ -77,6 +77,10 @@ class WmsScenarioStep(models.Model):
 
             # get the weight
             if not data.get('warning'):
+                data['affinage'] = scan[affinage]
+
+            # get the weight
+            if not data.get('warning'):
                 weight = scan[-6:]
                 if '.' not in weight:
                     # By convention, if there is no dote, the decimal is three digit.

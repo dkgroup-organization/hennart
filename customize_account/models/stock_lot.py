@@ -12,6 +12,7 @@ class StockLot(models.Model):
 
     invoice_lot_line_ids = fields.One2many('account.move.line.lot', 'lot_id', string='Invoicing line')
     categ_id = fields.Many2one('product.category', related='product_id.categ_id', store=True, index=True)
+    uos_id = fields.Many2one('uom.uom', related='product_id.uos_id', string='Unit of Sale')
 
 
     def compute_cost_price(self):

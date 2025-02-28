@@ -9,10 +9,17 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='price_subtotal']" position="before">
                     <field name="cost_price" optional="show" sum="Total"/>
-                    <field name="margin" optional="show" sum="Total"/>
                     <field name="weight" optional="show" sum="Total"/>
                     <field name="margin" optional="show" sum="Total"/>
                 </xpath>
+                <field name="quantity" position="replace">
+                    <field name="quantity" invisible="1"/>
+                    <field name="uom_qty" optional="show" sum="Total"/>
+                </field>
+                <field name="price_average" position="attributes">
+                    <attribut name="invisible">True</attribut>
+                </field>
+
             </field>
         </record>
 
