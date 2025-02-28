@@ -16,8 +16,10 @@
         "views/sale_report.xml",
         "views/res_company_view.xml",
         "views/report_purchasequotation_document_inherit.xml",
-        "views/report_delivery_document.xml",
         "views/report_invoice_bl_valued.xml",
+        "views/report_delivery_document_hennart.xml",
+        "views/stock_picking_views.xml",
         "reports/account_invoices_bl_valued.xml",
+        "reports/stock_picking_hennart.xml",
     ],
 }

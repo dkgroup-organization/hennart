@@ -1,27 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <template id="report_delivery_document_inherits" inherit_id="stock.report_delivery_document">
-        <xpath expr="//div[@class='page']" position="before">
-            <t t-if="o.state != 'done'">
-                <div style="margin-top: 10px;">
-                    <img src="/customize_report/static/img/preparation.png" style="width: 100px; height: auto;"/>
-                    <span>Preparation en cours (Informations non confirmées, ne pas envoyer au client)</span>
-                </div>
-            </t>
-        </xpath>
 
-        <xpath expr="//div[@class='page']//h2" position="replace">
-            <t t-if="o.location_dest_id.id == 5">
-                <h2>
-                    Bon de livraison <span t-field="o.name"/>
-                </h2>
-            </t>
-            <t t-else="">
-                <h2>
-                    <span t-field="o.name"/>
-                </h2>
-            </t>
-        </xpath>
+
+
 
         <xpath expr="//table[1]" position="replace">
             <table class="table table-sm" t-if="o.state!='done'" name="stock_move_table">
