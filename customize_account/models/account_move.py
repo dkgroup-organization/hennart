@@ -67,7 +67,7 @@ class AccountMove(models.Model):
         index=True,
         help="Delivery address for current invoice.",
     )
-    user2_id = fields.Many2one('res.users', string='Manager', compute=False, precompute='compute_user2', readonly="False", store=True)
+    user2_id = fields.Many2one('res.users', string='Manager', compute='compute_user2', readonly="False", store=True)
 
     def compute_user2(self):
         """ Compute the sale manager """
