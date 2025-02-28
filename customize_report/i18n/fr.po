@@ -308,7 +308,7 @@ msgstr "Brouillon"
 #: code:addons/customize_report/models/stock_picking.py:0
 #, python-format
 msgid "End of preparation: "
-msgstr ""
+msgstr "Fin de la préparation:"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
@@ -350,7 +350,7 @@ msgstr "Texte en haut de la facture"
 #: code:addons/customize_report/models/stock_picking.py:0
 #, python-format
 msgid "Invoice is printing\n"
-msgstr ""
+msgstr "Impression de la facture"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.external_layout_boxed_inherits
