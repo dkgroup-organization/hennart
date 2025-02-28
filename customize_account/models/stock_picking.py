@@ -27,35 +27,12 @@ class StockPicking(models.Model):
                 all_invoices |= invoices
         return all_invoices
 
-
-
     def preparation_end(self):
         """ Use partner configuration to finish and print invoice """
         message = ''
         for picking in self:
             if picking.preparation_state == 'done':
                 message = _('End of preparation: ') + picking.name
-
-            partner = picking.partner_id
-            if partner.parent_id and not partner.is_company:
-                partner = partner.parent_id
-
-            if partner.print_picking:
-                picking.sudo().with_delay().button_print_picking()
-                message += _('Picking is printing\n')
-
-            if partner.print_picking2:
-                picking.sudo().with_delay().button_print_invoice_pick()
-                message += _('Picking with price is printing\n')
-
-            if partner.print_invoice:
-                picking.sudo().with_delay().button_print_invoice()
-                message += _('Invoice is printing\n')
-
-            if picking.delivery_type == 'chronopost':
-                picking.sudo().with_delay().print_chronopost()
-                message += _('Chronopost label is printing\n')
-
         return message
 
     def action_send_invoice_and_delivery(self):

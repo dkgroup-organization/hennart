@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-28 13:18+0000\n"
-"PO-Revision-Date: 2025-02-28 13:18+0000\n"
+"POT-Creation-Date: 2025-02-28 13:48+0000\n"
+"PO-Revision-Date: 2025-02-28 13:48+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -271,6 +271,13 @@ msgid "Cancelled Invoice"
 msgstr "Facture annulée"
 
 #. module: customize_report
+#. odoo-python
+#: code:addons/customize_report/models/stock_picking.py:0
+#, python-format
+msgid "Chronopost label is printing\n"
+msgstr "Impression de l'étiquette Chronopost\n"
+
+#. module: customize_report
 #: model:ir.model,name:customize_report.model_res_company
 msgid "Companies"
 msgstr "Sociétés"
@@ -295,6 +302,13 @@ msgstr "Livraison"
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "Draft Invoice"
 msgstr "Brouillon"
+
+#. module: customize_report
+#. odoo-python
+#: code:addons/customize_report/models/stock_picking.py:0
+#, python-format
+msgid "End of preparation: "
+msgstr "Fin de la préparation:"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
@@ -332,6 +346,13 @@ msgid "Invoice Header Text"
 msgstr "Texte en haut de la facture"
 
 #. module: customize_report
+#. odoo-python
+#: code:addons/customize_report/models/stock_picking.py:0
+#, python-format
+msgid "Invoice is printing\n"
+msgstr "Impression de la facture"
+
+#. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.external_layout_boxed_inherits
 msgid "Logo"
 msgstr ""
@@ -350,6 +371,25 @@ msgstr "Commande"
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "Paid on"
 msgstr "à réglé pour le"
+
+#. module: customize_report
+#. odoo-python
+#: code:addons/customize_report/models/stock_picking.py:0
+#, python-format
+msgid "Picking is printing\n"
+msgstr "Impression de la livraison"
+
+#. module: customize_report
+#. odoo-python
+#: code:addons/customize_report/models/stock_picking.py:0
+#, python-format
+msgid "Picking with price is printing\n"
+msgstr "Impression du bon de livraison chiffré"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.stock_picking_print_form_view
+msgid "Print Chronopost"
+msgstr "Impression de Chronopost"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.stock_picking_print_form_view
