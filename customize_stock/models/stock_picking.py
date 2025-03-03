@@ -132,6 +132,7 @@ class StockPicking(models.Model):
     def action_assign(self):
         """ order stock.move.line by location name"""
         res = super().action_assign()
+        self.action_assign_by_pack()
         self.order_move_line()
         return res
 
@@ -139,8 +140,48 @@ class StockPicking(models.Model):
         """ Some customer want only one lot by pack , so check it """
         for picking in self:
             dic_lot = {}
-            partner = picking.partner_id.parent_id or picking.partner_id
+            product_pack = {}
+            # Check if all packs need to be labeled
+            if picking.partner_id.label_forced or picking.partner_id.parent_id.label_forced:
+                for move in picking.move_ids_without_package:
+                    if move.bom_line_id and move.bom_line_id.bom_id[0].type == 'phantom':
+                        # It is a pack
+                        base_unit_count = move.bom_line_id.bom_id[0].base_unit_count
+                        if move.product_id not in list(product_pack.keys()):
+                            product_pack[move.product_id] = 0.0
 
+                        for move_line in move.move_line_ids:
+                            if move_line.qty_done > 0.0:
+                                # Don't change previous pickup
+                                continue
+
+                            if move_line.reserved_uom_qty % base_unit_count != 0.0:
+                                needed_qty = base_unit_count - (move_line.reserved_uom_qty % base_unit_count)
+                                location_id = move_line.location_id
+                                lot_id = move_line.lot_id
+                                quant_reserved_qty = 0.0
+                                quant_qty = 0.0
+                                for quant in lot_id.quant_ids:
+                                    if quant.location_id == location_id:
+                                        available_quantity = quant.quantity - quant.reserved_quantity
+                                        if available_quantity >= needed_qty:
+                                            move_line.reserved_uom_qty += needed_qty
+                                            quant.reserved_quantity += needed_qty
+                                            product_pack[move.product_id] += needed_qty
+                                            break
+
+                for move in picking.move_ids_without_package:
+                    if move.product_id in list(product_pack.keys()):
+                        base_unit_count = move.bom_line_id.bom_id[0].base_unit_count
+                        for move_line in move.move_line_ids:
+                            modulo_qty = move_line.reserved_uom_qty % base_unit_count
+                            if modulo_qty % base_unit_count != 0.0 and product_pack[move.product_id] > 0.0:
+                                move_line.reserved_uom_qty -= modulo_qty
+                                product_pack[move.product_id] -= modulo_qty
+                                for quant in move_line.lot_id.quant_ids:
+                                    quant.reserved_quantity -= modulo_qty
+                                if product_pack[move.product_id] <= 0.0:
+                                    break
 
     def compute_number_of_pack(self):
         """ compute number of pack on each line """
