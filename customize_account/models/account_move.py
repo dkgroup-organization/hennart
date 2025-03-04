@@ -366,9 +366,21 @@ class AccountMove(models.Model):
         duplicate_names = [row[0] for row in self.env.cr.fetchall()]
         return duplicate_names
 
+    def update_statistic(self):
+        """ Update value to use in statistic """
+        for invoice in self:
+            if invoice.piece_comptable:
+                continue
+            for line in invoice.line_ids:
+                # if line.move_id.move_type in ['out_invoice', 'out_refund', 'out_receipt']:
+                line.cadeau = line.price_unit * line.quantity * line.discount / 100.0
+                if not line.cost_price:
+                    line.cost_price = line.product_id.total_cost_price
+
     def action_post(self):
         """ post invoice , update the invoice with the real weight and recompute tax """
         self.sudo().update_discount_stock()
+        self.sudo().update_statistic()
 
         for invoice in self:
             if invoice.state != 'draft':
