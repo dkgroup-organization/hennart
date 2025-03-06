@@ -44,7 +44,4 @@ class WmsPrintJob(models.Model):
 
     def print_job(self, data):
         """ Print current job """
-        if data.get('printer'):
-            for job in self:
-                # defined the api tu use
-                pass
+        pass

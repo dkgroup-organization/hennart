@@ -92,9 +92,14 @@ class WmsScenarioStep(models.Model):
         data = self.save_job(data)
         return data
 
-    def info_print(self, data):
-        """ Check print before message """
-        if data.get('button', '') == 'print_later':
-            self.save_job(data)
-            data = self.init_data(data)
+    def information_print(self, data):
+        """ Check information to print from information page """
+        if data.get('button') == 'print_later':
+            scan = data.get('print_later')
+            if scan.isnumeric():
+                lot = self.env['stock.lot'].search([('id', '=', int(scan))])
+                if lot:
+                    data['lot_id'] = lot
+                    self.print_later(data)
         return data
+

@@ -221,6 +221,12 @@
             </div>
         </template>
 
+        <template id="scanner_input_scan" name="scanner_input_lot_id">
+            <t t-call="customize_scanner.scanner_input">
+                <t t-set="action_variable" t-value="'scan'"/>
+            </t>
+        </template>
+
         <template id="scanner_input_location_id" name="scanner_input_location_id">
             <t t-call="customize_scanner.scanner_input">
                 <t t-set="action_variable" t-value="'location_id'"/>
