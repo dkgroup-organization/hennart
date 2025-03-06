@@ -27,10 +27,13 @@
         "views/scenario_production_list_template.xml",
         "views/scenario_production_line_template.xml",
         "views/scenario_create_lot_template.xml",
+        "views/scenario_information_template.xml",
 
         "data/scenario_preparation.xml",
         "data/scenario_preparation_transition.xml",
         "data/scenario_move.xml",
+        "data/scenario_information.xml",
+        "data/scenario_information_transition.xml",
         "data/scenario_move_transition.xml",
         "data/scenario_inventory.xml",
         "data/scenario_inventory_transition.xml",

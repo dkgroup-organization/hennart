@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<odoo>
+	<record id="wms_scenario_information_transition_10_20" model="wms.scenario.transition">
+		<field name="name">1-[10-20]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'information-10')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'information-20')]"/>
+		<field name="condition">True</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_information"/>
+	</record>
+	<record id="wms_scenario_information_lot_transition_20_10" model="wms.scenario.transition">
+		<field name="name">1-[20-10]</field>
+		<field name="sequence" eval="1"/>
+		<field name="from_id" model="wms.scenario.step" search="[('name', '=', 'information-20')]"/>
+		<field name="to_id" model="wms.scenario.step" search="[('name', '=', 'information-10')]"/>
+		<field name="condition">True</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_information"/>
+	</record>
+</odoo>

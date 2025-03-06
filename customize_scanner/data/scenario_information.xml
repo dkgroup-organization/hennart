@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<odoo>
+	<record id="wms_scenario_information" model="wms.scenario">
+		<field name="name">information</field>
+		<field name="sequence" eval="10"/>
+		<field name="scenario_image">information.svg</field>
+		<field name="scenario_qweb">customize_scanner.scenario_information</field>
+		<field name="debug_mode" eval="0"/>
+		<field name="active" eval="1"/>
+		<field name="warehouse_ids" eval="[(6,0,[])]"/>
+		<field name="company_id" ref="base.main_company"/>
+		<field name="group_ids" eval="[(6,0,[ref('stock.group_stock_user')])]"/>
+		<field name="user_ids" eval="[(6,0,[])]"/>
+	</record>
+	<record id="wms_scenario_step_information_10" model="wms.scenario.step">
+		<field name="sequence" eval="10"/>
+		<field name="name">information-10</field>
+		<field name="action_scanner">scan_info</field>
+		<field name="action_variable">scan</field>
+		<field name="action_message">Scan</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_information"/>
+		<field name="python_code">data = step.information_print(data)</field>
+	</record>
+	<record id="wms_scenario_step_information_20" model="wms.scenario.step">
+		<field name="sequence" eval="20"/>
+		<field name="name">information-20</field>
+		<field name="action_scanner">scan_info</field>
+		<field name="action_variable">scan</field>
+		<field name="action_message">Scan</field>
+		<field name="scenario_id" ref="customize_scanner.wms_scenario_information"/>
+		<field name="python_code">data = step.information_print(data)</field>
+	</record>
+</odoo>
