@@ -349,7 +349,7 @@ msgstr "Imprimer"
 #: code:addons/customize_scanner/models/wms_scenario_step_print.py:0
 #, python-format
 msgid "Print label later: "
-msgstr "Imprimer plus tard"
+msgstr "Imprimer plus tard: "
 
 #. module: customize_scanner
 #. odoo-python

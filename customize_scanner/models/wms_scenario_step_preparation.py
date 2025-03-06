@@ -479,7 +479,7 @@ class WmsScenarioStep(models.Model):
                 res.append(data.get('button_change_date'))
 
 
-        if not res and data.get('button_print_later') and (data.get('lot_id') or data.get('production_lot_id')
+        if not res and (data.get('button_print_later') or self.action_variable == 'button_print_later') and (data.get('lot_id') or data.get('production_lot_id')
                         or (data.get('production_id') and data['production_id'].lot_producing_id)):
             lot = data.get('lot_id') or data.get('production_lot_id')
             res.append({'text': _('Print later'), 'href': href_base + f"print_later"})

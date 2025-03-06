@@ -54,7 +54,7 @@
                         <t t-call="customize_scanner.scanner_input_production_lot_id"/>
                         <t t-call="customize_scanner.scanner_input_expiry_date"/>
                         <t t-call="customize_scanner.scanner_input_production_quantity"/>
-                        <t t-if="step.action_variable == 'printer' and not data.get('printer')" t-call="customize_scanner.scanner_input_printer"/>
+                        <t t-call="customize_scanner.scanner_printer_production"/>
                     </t>
 
                     <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
@@ -63,16 +63,20 @@
         </template>
 
         <template id="scanner_printer_production" name="scanner_printer_production">
-            <t t-if="data.get('step')">
-                <t t-set="step" t-value="data.get('step')"/>
-                <form class="flex flex-col items-center gap-2 landscape:gap-1 landscape:w-[49%]"
-                      t-att-action="'./scanner?scenario={}&amp;step={}'.format(step.scenario_id.id, step.id)"
-                      autoComplete="off"
-                      method="post">
-                    <t t-if="not data.get('printer')" t-call="customize_scanner.scanner_input_printer"/>
-                    <button type="submit" class="btn-green landscape:col-span-2">Valid</button>
-                </form>
-            </t>
+            <div class="w-full">
+                <div id="input_message"
+                     class="mt-4 w-90 flex flex-col gap-6 mx-auto landscape:gap-3 landscape:absolute landscape:w-[49%] landscape:right-0 landscape:top-0 landscape:pr-5 landscape:m-auto">
+                    <t t-if="data.get('weight_detail')" t-call="customize_scanner.scanner_weight_detail"/>
+                    <p t-if="data.get('warning')" class="border-b-2 pb-5 mb-5 border-gray-300 input-warning">
+                        <t t-out="data.get('warning')"/>
+                    </p>
+                    <p t-if="data.get('message')" class="border-b-2 pb-5 mb-5 border-gray-300">
+                        <t t-out="data.get('message')"/>
+                    </p>
+                    <t t-call="customize_scanner.scanner_button_option"/>
+
+                </div>
+            </div>
         </template>
 
         <template id="scanner_weight_production" name="scanner_weight_production">

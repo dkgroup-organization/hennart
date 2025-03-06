@@ -29,8 +29,6 @@
         "views/scenario_create_lot_template.xml",
         "views/scenario_information_template.xml",
 
-        "data/scenario_information.xml",
-        "data/scenario_information_transition.xml",
         "data/scenario_preparation.xml",
         "data/scenario_preparation_transition.xml",
         "data/scenario_move.xml",

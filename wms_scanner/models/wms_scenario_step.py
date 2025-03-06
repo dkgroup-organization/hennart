@@ -363,6 +363,13 @@ class WmsScenarioStep(models.Model):
                                 message += "%s: %s - %s<br/>" % (
                                     _('Lot'), quant.lot_id.ref, quant.removal_date.strftime("%d/%m/%Y"))
                             message += "<b> %s:</b> %s <br/>" % (_('Quantity'), quant.quantity)
+
+                            if quant.lot_id:
+                                scenario_id = data.get('scenario') and data['scenario'].id or 0
+                                step_id = data.get('step') and data['step'].id or 0
+                                href = f"./scanner?scenario={scenario_id}&amp;step={step_id}&amp;button=print_later&amp;scan={quant.lot_id.id}"
+                                message += f'<a class="border border-gray-200 items-center rounded-lg pl-2" href="{href}" >Imprimer plus tard</a>'
+                                                        
                             message += "</p>"
                     else:
                         field_list = ['barcode', 'name']

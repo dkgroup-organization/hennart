@@ -417,14 +417,14 @@ class WmsScenarioStep(models.Model):
         new_data = self.init_data()
         new_data['production_id'] = new_mo
         new_data['production_product_id'] = new_mo.product_id
-
+        new_data['button_print_later'] = True
+        new_data['message'] = 'Production terminée'
         return new_data
 
     def print_production_label(self, data):
         """ At the end print production lot """
-        if data.get('printer'):
+        if data.get('button', '') == 'print_later':
             data = self.save_job(data)
-            data = self.print_lot(data)
-            del data['printer']
+        data.update({'button_print_later': True})
         return data
 
