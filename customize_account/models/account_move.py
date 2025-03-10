@@ -159,12 +159,19 @@ class AccountMove(models.Model):
                     else:
                         tax_repartition_line[tax_repartition_line_id] += amount
 
-            for line in invoice.line_ids:
                 if line.tax_repartition_line_id.id in list(tax_repartition_line.keys()):
+
+
                     if sign * tax_repartition_line[line.tax_repartition_line_id.id] >= 0.0:
-                        line.credit = sign * tax_repartition_line[line.tax_repartition_line_id.id]
+                        if invoice.move_type in ['in_invoice', 'in_refund', 'in_receipt']:
+                            line.debit = sign * tax_repartition_line[line.tax_repartition_line_id.id]
+                        else:
+                            line.credit = sign * tax_repartition_line[line.tax_repartition_line_id.id]
                     else:
-                        line.debit = -1 * sign * tax_repartition_line[line.tax_repartition_line_id.id]
+                        if invoice.move_type in ['in_invoice', 'in_refund', 'in_receipt']:
+                            line.credit = -1 * sign * tax_repartition_line[line.tax_repartition_line_id.id]
+                        else:
+                            line.debit = -1 * sign * tax_repartition_line[line.tax_repartition_line_id.id]
 
             invoice._compute_tax_totals()
             invoice._compute_amount()
