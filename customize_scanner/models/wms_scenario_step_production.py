@@ -107,6 +107,7 @@ class WmsScenarioStep(models.Model):
         if data.get('product_id'):
             data['production_lot_id'] = self.env['stock.lot'].create_production_lot(data['product_id'])
             data['button_change_date'] = button_change_date
+            data['button_print_later'] = True
         else:
             data['Warning'] = _('This product is unknown')
         return data

@@ -25,7 +25,7 @@ class SaleOrder(models.Model):
         for invoice in res:
             if invoice.state == 'draft':
                 try:
-                    invoice.sudo().with_context('update_discount_stock').action_post()
+                    invoice.sudo().with_context(update_discount_stock=True).action_post()
                 except:
                     pass
         return res

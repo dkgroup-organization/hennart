@@ -47,20 +47,12 @@
 		<field name="sequence" eval="20"/>
 		<field name="name">create_lot-20</field>
 		<field name="description">Print lot</field>
-		<field name="action_scanner">scan_model</field>
+		<field name="action_scanner">no_scan</field>
 		<field name="action_model" ref="base_report_to_printer.model_printing_printer"/>
 		<field name="action_variable">printer</field>
+		<field name="action_message">Production terminée</field>
 		<field name="scenario_id"  ref="customize_scanner.wms_scenario_create_lot"/>
 		<field name="python_code">data = step.print_production_label(data)</field>
-	</record>
-
-	<record id="wms_scenario_step_create_lot30" model="wms.scenario.step">
-		<field name="sequence" eval="30"/>
-		<field name="name">create_lot-30</field>
-		<field name="description">save job lot</field>
-		<field name="action_scanner">routing</field>
-		<field name="scenario_id"  ref="customize_scanner.wms_scenario_create_lot"/>
-		<field name="python_code">data = step.print_later(data)</field>
 	</record>
 
 </odoo>
