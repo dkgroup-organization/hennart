@@ -206,8 +206,6 @@ class AccountMoveLine(models.Model):
             for stock_move_line_lot in invoice_line.account_move_line_lot_ids:
                 if stock_move_line_lot.state == "cancel":
                     to_delete |= stock_move_line_lot
-                if not stock_move_line_lot.stock_move_line_id:
-                    continue
                 if stock_move_line_lot.state == "manual" and invoice_line.product_id.type != 'service':
                     to_delete |= stock_move_line_lot
 
