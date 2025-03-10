@@ -1,0 +1,34 @@
+<odoo>
+    <record id="view_picking_label_wizard_form" model="ir.ui.view">
+        <field name="name">picking.label.wizard.form</field>
+        <field name="model">picking.label.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Print Labels">
+                <group>
+                    <field name="picking_id" readonly="1"/>
+                    <field name="printer_id" domain="[('barcode', '!=', False)]" required="1"/>
+                </group>
+                <field name="move_line_ids" mode="tree" widget="one2many_list"/>
+                <footer>
+                    <button string="Print" type="object" class="btn-primary" name="print_labels"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_picking_label_wizard_tree" model="ir.ui.view">
+        <field name="name">picking.label.wizard.tree</field>
+        <field name="model">picking.label.wizard.line</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom" create="0">
+                <field name="move_line_id" invisible="1"/>
+                <field name="product_id" readonly="1"/>
+                <field name="lot_id" readonly="1"/>
+                <field name="quantity" readonly="1"/>
+                <field name="label_qty"/>
+            </tree>
+        </field>
+
+    </record>
+</odoo>

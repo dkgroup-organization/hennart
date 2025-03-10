@@ -17,6 +17,10 @@
                 <field name="user2_id"/>
             </field>
 
+            <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
+                <attribute name="context">{'manual': True}</attribute>
+            </xpath>
+
             <xpath expr="//page[@name='other_info']" position="after">
                 <page id="other_tab_v7" string="Control V7" name="infos_v7"
                       attrs="{'invisible': [('piece_comptable', '=', False)]}">
@@ -42,7 +46,8 @@
                         <group>
                             <button class="oe_highlight" name="action_valide_imported" type="object" string="Valide"
                                     attrs="{'invisible': [('state', '!=', 'draft')]}"/>
-                            <button class="oe_highlight" name="action_reload_imported" type="object" string="Reload line"
+                            <button class="oe_highlight" name="action_reload_imported" type="object"
+                                    string="Reload line"
                                     attrs="{'invisible': [('state', '!=', 'draft')]}"/>
                             <button class="oe_highlight" name="action_write_lot_imported" type="object"
                                     string="update lot"/>
@@ -78,10 +83,8 @@
                            business_domain_compute="parent.move_type in ['out_invoice', 'out_refund', 'out_receipt'] and 'invoice' or parent.move_type in ['in_invoice', 'in_refund', 'in_receipt'] and 'bill' or 'general'"/>
 
                     <field name="uom_qty"/>
-
-                    <field name="weight" context="{'manual': True}"/>
-
-                    <field name="quantity" optional="show" context="{'manual': True}"/>
+                    <field name="weight"/>
+                    <field name="quantity" optional="show"/>
                     <field name="product_uom_category_id" invisible="1"/>
                     <field name="product_uom_id"/>
 

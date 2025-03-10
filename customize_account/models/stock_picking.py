@@ -23,7 +23,7 @@ class StockPicking(models.Model):
                 invoices.picking_ids |= picking
                 for invoice in invoices:
                     if invoice.state == 'draft':
-                        invoice.sudo().action_post()
+                        invoice.sudo().with_context('update_discount_stock').action_post()
                 all_invoices |= invoices
         return all_invoices
 

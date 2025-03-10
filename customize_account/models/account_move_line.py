@@ -185,8 +185,10 @@ class AccountMoveLine(models.Model):
     def update_stock_move(self):
         """ Update information based on picking"""
         for invoice_line in self:
+
             if invoice_line.move_id.state in ['cancel', 'posted'] or invoice_line.move_id.piece_comptable:
                 continue
+
             stock_move_ids = self.env['stock.move']
             for sale_line in invoice_line.sale_line_ids:
                 stock_move_ids |= sale_line.move_ids
@@ -196,6 +198,7 @@ class AccountMoveLine(models.Model):
             for stock_move in stock_move_ids:
                 if stock_move.state in ['draft']:
                     stock_move_ids -= stock_move
+                    pass
 
             stock_move_line_ids = invoice_line.account_move_line_lot_ids.mapped('stock_move_line_id')
             to_delete = self.env['account.move.line.lot']
@@ -203,6 +206,8 @@ class AccountMoveLine(models.Model):
             for stock_move_line_lot in invoice_line.account_move_line_lot_ids:
                 if stock_move_line_lot.state == "cancel":
                     to_delete |= stock_move_line_lot
+                if not stock_move_line_lot.stock_move_line_id:
+                    continue
                 if stock_move_line_lot.state == "manual" and invoice_line.product_id.type != 'service':
                     to_delete |= stock_move_line_lot
 
@@ -244,11 +249,14 @@ class AccountMoveLine(models.Model):
                 line_lot_vals['account_move_line_id'] = line.id
                 line_lot_vals['state'] = 'manual'
                 line.account_move_line_lot_ids.create(line_lot_vals)
-            elif len(line.account_move_line_lot_ids) == 1 and line.account_move_line_lot_ids[0].state == 'manual':
+            elif len(line.account_move_line_lot_ids) == 1 and (line.account_move_line_lot_ids[0].state == 'manual' or self.env.context.get('manual')):
                 line.account_move_line_lot_ids.update(line_lot_vals)
-            else:
+            elif self.env.context.get('manual'):
                 raise ValidationError(_("this line has multiples production lot, uses the detailed view to update"))
+            else:
+                continue
 
+    @api.onchange('weight')
     def put_weight(self):
         """ Create account_move_line_lot_ids to save value"""
         for line in self:
@@ -258,10 +266,13 @@ class AccountMoveLine(models.Model):
                 line_lot_vals['account_move_line_id'] = line.id
                 line_lot_vals['state'] = 'manual'
                 line.account_move_line_lot_ids.create(line_lot_vals)
-            elif len(line.account_move_line_lot_ids) == 1:
+            elif len(line.account_move_line_lot_ids) == 1 and (line.account_move_line_lot_ids[0].state == 'manual' or self.env.context.get('manual')):
                 line.account_move_line_lot_ids.update(line_lot_vals)
-            else:
+            elif self.env.context.get('manual'):
                 raise ValidationError(_("this line has multiples production lot, uses the detailed view to update"))
+            else:
+                continue
+
 
     @api.depends('account_move_line_lot_ids.quantity')
     def get_quantity(self):

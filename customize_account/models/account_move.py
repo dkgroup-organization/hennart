@@ -117,6 +117,58 @@ class AccountMove(models.Model):
             line_discount['invoice_line'].price_unit = - total_HT * line_discount['logistic_discount'] / 100.0
             line_discount['invoice_line'].uom_qty = 1.0
 
+        for invoice in self:
+            if invoice.state != 'draft':
+                continue
+            tax_repartition_line = {}
+            sign = invoice.direction_sign
+
+            for line in invoice.line_ids:
+                line._compute_all_tax()
+                line._compute_totals()
+
+                if line.display_type == 'tax':
+                    line.compute_all_tax = {}
+                    line.compute_all_tax_dirty = False
+                    continue
+                if line.display_type == 'product' and line.move_id.is_invoice(True):
+                    amount_currency = sign * line.price_unit * (1 - line.discount / 100)
+                    handle_price_include = True
+                    quantity = line.quantity
+                else:
+                    amount_currency = line.amount_currency
+                    handle_price_include = False
+                    quantity = 1
+                compute_all_currency = line.tax_ids.compute_all(
+                    amount_currency,
+                    currency=line.currency_id,
+                    quantity=quantity,
+                    product=line.product_id,
+                    partner=line.move_id.partner_id or line.partner_id,
+                    is_refund=line.is_refund,
+                    handle_price_include=handle_price_include,
+                    include_caba_tags=line.move_id.always_tax_exigible,
+                    fixed_multiplicator=sign,
+                )
+
+                for taxe in compute_all_currency.get('taxes'):
+                    tax_repartition_line_id = taxe.get('tax_repartition_line_id')
+                    amount = taxe.get('amount')
+                    if tax_repartition_line_id not in list(tax_repartition_line.keys()):
+                        tax_repartition_line[tax_repartition_line_id] = amount
+                    else:
+                        tax_repartition_line[tax_repartition_line_id] += amount
+
+            for line in invoice.line_ids:
+                if line.tax_repartition_line_id.id in list(tax_repartition_line.keys()):
+                    if sign * tax_repartition_line[line.tax_repartition_line_id.id] >= 0.0:
+                        line.credit = sign * tax_repartition_line[line.tax_repartition_line_id.id]
+                    else:
+                        line.debit = -1 * sign * tax_repartition_line[line.tax_repartition_line_id.id]
+
+            invoice._compute_tax_totals()
+            invoice._compute_amount()
+
         self.update_origin()
 
     def update_origin(self):
@@ -155,6 +207,7 @@ class AccountMove(models.Model):
             def split_origin(list_item):
                 res = []
                 for item in list_item:
+                    item = item or ''
                     for separator in [';', ' ', ',']:
                         item = item.replace(separator, ':')
                     item = item.replace(':::', ':').replace('::', ':').replace('::', ':')
@@ -379,60 +432,8 @@ class AccountMove(models.Model):
 
     def action_post(self):
         """ post invoice , update the invoice with the real weight and recompute tax """
-        self.sudo().update_discount_stock()
+        if self.env.context.get('update_discount_stock'):
+            self.sudo().update_discount_stock()
         self.sudo().update_statistic()
-
-        for invoice in self:
-            if invoice.state != 'draft':
-                continue
-            tax_repartition_line = {}
-            sign = invoice.direction_sign
-
-            for line in invoice.line_ids:
-                line._compute_all_tax()
-                line._compute_totals()
-
-                if line.display_type == 'tax':
-                    line.compute_all_tax = {}
-                    line.compute_all_tax_dirty = False
-                    continue
-                if line.display_type == 'product' and line.move_id.is_invoice(True):
-                    amount_currency = sign * line.price_unit * (1 - line.discount / 100)
-                    handle_price_include = True
-                    quantity = line.quantity
-                else:
-                    amount_currency = line.amount_currency
-                    handle_price_include = False
-                    quantity = 1
-                compute_all_currency = line.tax_ids.compute_all(
-                    amount_currency,
-                    currency=line.currency_id,
-                    quantity=quantity,
-                    product=line.product_id,
-                    partner=line.move_id.partner_id or line.partner_id,
-                    is_refund=line.is_refund,
-                    handle_price_include=handle_price_include,
-                    include_caba_tags=line.move_id.always_tax_exigible,
-                    fixed_multiplicator=sign,
-                )
-
-                for taxe in compute_all_currency.get('taxes'):
-                    tax_repartition_line_id = taxe.get('tax_repartition_line_id')
-                    amount = taxe.get('amount')
-                    if tax_repartition_line_id not in list(tax_repartition_line.keys()):
-                        tax_repartition_line[tax_repartition_line_id] = amount
-                    else:
-                        tax_repartition_line[tax_repartition_line_id] += amount
-
-            for line in invoice.line_ids:
-                if line.tax_repartition_line_id.id in list(tax_repartition_line.keys()):
-                    if sign * tax_repartition_line[line.tax_repartition_line_id.id] >= 0.0:
-                        line.credit = sign * tax_repartition_line[line.tax_repartition_line_id.id]
-                    else:
-                        line.debit = -1 * sign * tax_repartition_line[line.tax_repartition_line_id.id]
-
-            invoice._compute_tax_totals()
-            invoice._compute_amount()
-
         return super().action_post()
 
