@@ -361,6 +361,7 @@ class WmsScenarioStep(models.Model):
         lot = data.get('lot_id')
         expiry_date = data.get('expiry_date')
         location_origin = data.get('location_origin_id')
+        location_production = self.env['stock.warehouse'].browse(1).pbm_loc_id
         location_inventory = self.env['stock.location'].search([('usage', '=', 'production')], limit=1)
         quantity = data.get('quantity')
 
@@ -413,6 +414,8 @@ class WmsScenarioStep(models.Model):
         # confirm production
         new_mo.qty_producing = quantity
         new_mo.with_context(skip_expired=True).button_mark_done()
+        if location_origin !=  location_production:
+            new_mo.lot_producing_id.producted = False
 
         # Return MO to data
         new_data = self.init_data()
