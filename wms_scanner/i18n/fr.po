@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-20 12:52+0000\n"
-"PO-Revision-Date: 2023-07-20 12:52+0000\n"
+"POT-Creation-Date: 2025-03-11 12:05+0000\n"
+"PO-Revision-Date: 2025-03-11 12:05+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,31 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: wms_scanner
-#: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__menu_type
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
+msgid "1/ Python code preparation of data"
+msgstr ""
+
+#. module: wms_scanner
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
+msgid "2/ Qweb template configuration"
+msgstr ""
+
+#. module: wms_scanner
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
+msgid "3/ Python code analyse new data"
+msgstr ""
+
+#. module: wms_scanner
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
+msgid "4/ Outgoing transitions"
+msgstr "Transition de sortie"
+
+#. module: wms_scanner
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
+msgid "5/ options"
+msgstr ""
+
+#. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Action"
 msgstr ""
@@ -24,6 +48,7 @@ msgstr ""
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__active
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__active
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Active"
 msgstr ""
 
@@ -48,17 +73,12 @@ msgstr "Utilisateurs authorisés"
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Allowed Users Groups"
-msgstr ""
+msgstr "Groupes authorisés"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Allowed Warehouse"
 msgstr "Entrepots authorisés"
-
-#. module: wms_scanner
-#: model:ir.model.fields,help:wms_scanner.field_wms_scenario__name
-msgid "Appear on barcode reader screen."
-msgstr "Visible à l'écran du scanner"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_menu_search
@@ -67,13 +87,13 @@ msgid "Archived"
 msgstr "Archivé"
 
 #. module: wms_scanner
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_print_job__state__cancel
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_session__state__cancel
 msgid "Cancelled"
 msgstr "Annulé"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__href
-#: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__menu_code
 msgid "Code"
 msgstr ""
 
@@ -107,6 +127,7 @@ msgstr "Copie de %s"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__create_uid
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__create_uid
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__create_uid
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__create_uid
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__create_uid
@@ -116,6 +137,7 @@ msgstr "Créé par"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__create_date
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__create_date
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__create_date
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__create_date
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__create_date
@@ -130,13 +152,25 @@ msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__debug_mode
+#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Debug mode"
 msgstr "Mode Debug"
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_button_default_location
-msgid "Defaults locations"
-msgstr "Emplacements par défaut"
+#: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__action_variable
+msgid "Define a name for the result of the scan at this step "
+msgstr "Definir un nom pour le résultat du scan à cette étape"
+
+#. module: wms_scanner
+#: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__action_model
+msgid "Define the model used at this step."
+msgstr "Définir le model utilisé à cette étape."
+
+#. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__name
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__description
+msgid "Description"
+msgstr ""
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_menu_search
@@ -150,6 +184,7 @@ msgstr "Scénario"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__display_name
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__display_name
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__display_name
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__display_name
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__display_name
@@ -158,6 +193,7 @@ msgid "Display Name"
 msgstr "Nom"
 
 #. module: wms_scanner
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_print_job__state__done
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_session__state__done
 msgid "Done"
 msgstr "Terminé"
@@ -173,6 +209,11 @@ msgid "End Date"
 msgstr "Date de fin"
 
 #. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_session__data_end
+msgid "End data"
+msgstr "Fin des données"
+
+#. module: wms_scanner
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_text
 msgid "Enter Text"
 msgstr "Saisir le texte"
@@ -183,9 +224,11 @@ msgid "Enter quantity"
 msgstr "Entrer la quantité"
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
-msgid "Enter the python code here"
-msgstr "Saisir le code python"
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__error
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_session__error
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_print_job__state__error
+msgid "Error"
+msgstr "Erreur"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__from_id
@@ -199,6 +242,7 @@ msgstr "Bonjour"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__id
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__id
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__id
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__id
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__id
@@ -248,17 +292,18 @@ msgid "Input Placeholder"
 msgstr "Message"
 
 #. module: wms_scanner
-#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_variable
-msgid "Input name"
-msgstr "Nom"
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__label_id
+msgid "Label ID"
+msgstr "ID de l'étiquette"
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_inventory_body_main
-msgid "Inventory"
-msgstr "Inventaire"
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__label_qty
+msgid "Label qty"
+msgstr "Qté étiquette"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu____last_update
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job____last_update
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario____last_update
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step____last_update
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition____last_update
@@ -268,6 +313,7 @@ msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__write_uid
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__write_uid
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__write_uid
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__write_uid
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__write_uid
@@ -277,6 +323,7 @@ msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__write_date
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__write_date
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__write_date
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__write_date
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__write_date
@@ -285,19 +332,32 @@ msgid "Last Updated on"
 msgstr ""
 
 #. module: wms_scanner
+#. odoo-python
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "Location"
+msgstr "Emplacement"
+
+#. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_header
-msgid "Logout"
+msgid "Logout:<br/>"
 msgstr "Déconnection"
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_header
-msgid "Main menu"
-msgstr "Menu Principal"
+#. odoo-python
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "Lot"
+msgstr ""
 
 #. module: wms_scanner
-#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_menu__menu_type__menu
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_menu_search
 msgid "Menu"
+msgstr ""
+
+#. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_session__menu_code
+msgid "Menu code"
 msgstr ""
 
 #. module: wms_scanner
@@ -316,18 +376,22 @@ msgid "Message, no scan"
 msgstr "Message, pas de scan"
 
 #. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__debug_mode
+msgid "Mode debug"
+msgstr ""
+
+#. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__res_model
+msgid "Model"
+msgstr "Modèle"
+
+#. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_model
 msgid "Model to scan"
 msgstr "Modèle à scanner"
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_move_body_main
-msgid "Move"
-msgstr "Déplacer"
-
-#. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__name
-#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__name
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__name
 msgid "Name"
 msgstr "Nom"
@@ -336,6 +400,11 @@ msgstr "Nom"
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_transition__name
 msgid "Name of the transition."
 msgstr "Description"
+
+#. module: wms_scanner
+#: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__debug_mode
+msgid "No try/except protection when there is code execution."
+msgstr "Pas de protection anti bug lors de l'éxecution."
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
@@ -355,8 +424,12 @@ msgid "Odoo"
 msgstr ""
 
 #. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__menu_code
+msgid "Option"
+msgstr ""
+
+#. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__out_transition_ids
-#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Outgoing transitions"
 msgstr "Transition de sortie"
 
@@ -385,14 +458,43 @@ msgid "Please, enter a positive value"
 msgstr "Merci d'entrer une valeur positive"
 
 #. module: wms_scanner
+#. odoo-python
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "Please, select a value"
+msgstr "Merci de sélectionner une valeur"
+
+#. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_session__data_previous
+msgid "Previous data"
+msgstr "Données précédente"
+
+#. module: wms_scanner
+#. odoo-python
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "Product"
+msgstr "Produit"
+
+#. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__python_code
-msgid "Python code"
+msgid "Python code after form"
 msgstr "Code Python"
 
 #. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__python_code_before
+msgid "Python code before"
+msgstr "Code python avant"
+
+#. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__python_code
-msgid "Python code to execute."
+msgid "Python code to execute after qweb."
 msgstr "Code python"
+
+#. module: wms_scanner
+#: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__python_code_before
+msgid "Python code to execute before qweb."
+msgstr "Code python avant le rendu QWEB."
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__scenario_qweb
@@ -401,30 +503,61 @@ msgid "QWEB Template"
 msgstr ""
 
 #. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__scenario_title
+msgid "QWEB Title"
+msgstr "Titre QWEB"
+
+#. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "QWEB render"
 msgstr ""
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_zxing
-msgid "Reset"
+#. odoo-python
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "Quantity"
+msgstr "Quantité"
+
+#. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__res_id
+msgid "Record ID"
 msgstr ""
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_zxing
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_zxing2
-msgid "Result:"
-msgstr ""
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_session__request_method
+msgid "Request metode"
+msgstr "Méthode Request"
+
+#. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_session__request_param
+msgid "Request parameters"
+msgstr "Paramètre Request"
 
 #. module: wms_scanner
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__routing
-msgid "Routing choice, no scan"
+msgid "Routing, no scan"
 msgstr "Choix, pas de scan"
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_zxing
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_zxing2
-msgid "Scan barcode from Video Camera"
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_date
+msgid "Scan Date"
+msgstr ""
+
+#. module: wms_scanner
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_select
+msgid "Scan Select"
+msgstr ""
+
+#. module: wms_scanner
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_weight
+msgid "Scan Weight"
+msgstr ""
+
+#. module: wms_scanner
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_tare
+msgid "Scan Weight tare"
 msgstr ""
 
 #. module: wms_scanner
@@ -476,6 +609,11 @@ msgid "Scanner Session"
 msgstr ""
 
 #. module: wms_scanner
+#: model:ir.model,name:wms_scanner.model_wms_print_job
+msgid "Scanner print job"
+msgstr "Scannez l'impression"
+
+#. module: wms_scanner
 #: model:ir.actions.act_window,name:wms_scanner.act_open_wms_session_view
 #: model:ir.model,name:wms_scanner.model_wms_session
 #: model:ir.ui.menu,name:wms_scanner.menu_wms_session
@@ -487,7 +625,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__step_ids
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__scenario_id
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__scenario_id
-#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_menu__menu_type__scenario
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_search
 msgid "Scenario"
 msgstr ""
@@ -509,6 +646,11 @@ msgid "Scenario for this step."
 msgstr "Scenario de cette étape"
 
 #. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_presentation
+msgid "Screen presentation"
+msgstr "Présentation de l'écran"
+
+#. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Security"
 msgstr "Sécurité"
@@ -528,19 +670,10 @@ msgid "Sequence order."
 msgstr ""
 
 #. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__session_id
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session__name
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_session_search
 msgid "Session"
-msgstr ""
-
-#. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
-msgid "Some name variables is used by the system in data:"
-msgstr ""
-
-#. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_zxing
-msgid "Start"
 msgstr ""
 
 #. module: wms_scanner
@@ -550,10 +683,11 @@ msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__start
-msgid "Start scenario, no scan"
+msgid "Start, no scan"
 msgstr ""
 
 #. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__state
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session__state
 msgid "Status"
 msgstr ""
@@ -566,7 +700,7 @@ msgstr ""
 #. module: wms_scanner
 #: model:ir.model,name:wms_scanner.model_wms_scenario_step
 msgid "Step for scenario"
-msgstr ""
+msgstr "Etape du scénario"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario__step_ids
@@ -606,8 +740,8 @@ msgstr "Le code barre à de multiple références"
 #. odoo-python
 #: code:addons/wms_scanner/models/wms_scenario_step.py:0
 #, python-format
-msgid "The barcodde is empty"
-msgstr "Le barcode est vide"
+msgid "The barcode is empty"
+msgstr "Le codebare est vide"
 
 #. module: wms_scanner
 #. odoo-python
@@ -623,6 +757,13 @@ msgstr "Le barcode est inconnu"
 #, python-format
 msgid "The barcode is unreadable"
 msgstr "Le barcode est illisible"
+
+#. module: wms_scanner
+#. odoo-python
+#: code:addons/wms_scanner/models/wms_session.py:0
+#, python-format
+msgid "The name of the variable cannot contain dot:"
+msgstr "Le nom de la variable ne doit pas contenir de point:"
 
 #. module: wms_scanner
 #. odoo-python
@@ -648,16 +789,36 @@ msgstr "Il n'y a pas d'étape dans ce scénario"
 #. odoo-python
 #: code:addons/wms_scanner/models/wms_scenario_step.py:0
 #, python-format
+msgid "This code generate an error: %s"
+msgstr "Le code à généré une erreur: %s"
+
+#. module: wms_scanner
+#. odoo-python
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "This date format is not valid"
+msgstr "Le format de la date n'est pas valide"
+
+#. module: wms_scanner
+#. odoo-python
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
+#, python-format
 msgid ""
 "This scenario is currently under construction.Some parameters are not set. "
 "(no scan variable)"
-msgstr "Ce scénario est actuellement en construction. Certains paramétrages ne sont pas terminé"
-"(nom de variable vide)"
+msgstr ""
+"Ce scénario est actuellement en construction. Certains paramétrages ne sont "
+"pas terminé(nom de variable vide)"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__to_id
 msgid "To"
 msgstr "vers"
+
+#. module: wms_scanner
+#: model:ir.model.fields.selection,name:wms_scanner.selection__wms_print_job__state__todo
+msgid "To do"
+msgstr "à faire"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
@@ -668,11 +829,6 @@ msgstr ""
 #: model:ir.model,name:wms_scanner.model_wms_scenario_transition
 msgid "Transition for scenario"
 msgstr "Transition"
-
-#. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
-msgid "Transition out"
-msgstr "Transition pour sortir"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__in_transition_ids
@@ -686,7 +842,7 @@ msgstr "Transitions entrantes"
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__step_qweb
-msgid "Use a specific QWEB template at this step"
+msgid "Use a specific QWEB template at this step (optional)."
 msgstr "Utilisé un Template QWEB spécifique à cette étape"
 
 #. module: wms_scanner
@@ -696,10 +852,13 @@ msgstr "Utilisateur"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_information_body_main
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_inventory_body_main
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_move_body_main
 msgid "Valid"
 msgstr "Valider"
+
+#. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_variable
+msgid "Variable"
+msgstr "Nom"
 
 #. module: wms_scanner
 #: model:ir.ui.menu,name:wms_scanner.menu_wms
@@ -730,14 +889,24 @@ msgstr "Entrepôt pour ce scénario"
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid ""
-"You can use the object: object and env to acces to all functions and "
-"environment"
-msgstr "Vous pouvez utiliser 'object' et 'env' pour acceder à toutes les fonctions et à l'environement"
+"You can use variables: step, env and data, some data key is reserved: "
+"warning, scan, function, message, button, result"
+msgstr ""
+
+#. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__context
+msgid "context"
+msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session__data
 msgid "data"
 msgstr ""
+
+#. module: wms_scanner
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__name
+msgid "index"
+msgstr "Nom"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session__message
@@ -750,11 +919,6 @@ msgid "main menu"
 msgstr "Menu principal"
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_header
-msgid "menu"
-msgstr ""
-
-#. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__name
 msgid "name"
 msgstr "Nom"
@@ -765,6 +929,13 @@ msgid "sequence"
 msgstr ""
 
 #. module: wms_scanner
-#: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
-msgid "user, warning, scan, function, message, button, result"
+#: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__scenario_id
+msgid "technical field to filter"
 msgstr ""
+
+#. module: wms_scanner
+#. odoo-python
+#: code:addons/wms_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "this code generate a error: {}"
+msgstr "Ce code à généré une erreur: {}"

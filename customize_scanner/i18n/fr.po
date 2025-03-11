@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-21 12:57+0000\n"
-"PO-Revision-Date: 2025-02-21 12:57+0000\n"
+"POT-Creation-Date: 2025-03-11 12:02+0000\n"
+"PO-Revision-Date: 2025-03-11 12:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -168,6 +168,11 @@ msgid "Impresion des etiquettes"
 msgstr ""
 
 #. module: customize_scanner
+#: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_body_information
+msgid "Information"
+msgstr ""
+
+#. module: customize_scanner
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_body_title_inventory
 msgid "Inventory"
 msgstr "Inventaire"
@@ -181,6 +186,7 @@ msgstr "Ce n'est pas le bon lot"
 
 #. module: customize_scanner
 #. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_production.py:0
 #: code:addons/customize_scanner/models/wms_scenario_step_production.py:0
 #, python-format
 msgid "It is not the good product"
@@ -396,6 +402,12 @@ msgid "Production lot"
 msgstr "Lot de production"
 
 #. module: customize_scanner
+#: model:wms.scenario.step,action_message:customize_scanner.wms_scenario_step_create_lot20
+#: model:wms.scenario.step,action_message:customize_scanner.wms_scenario_step_production_110
+msgid "Production terminée"
+msgstr ""
+
+#. module: customize_scanner
 #. odoo-python
 #: code:addons/customize_scanner/models/wms_scenario_step_production.py:0
 #, python-format
@@ -408,6 +420,12 @@ msgstr "Entrez une valeur positive"
 #, python-format
 msgid "Reading weight error:"
 msgstr "Erreur de lecture de la balance"
+
+#. module: customize_scanner
+#: model:wms.scenario.step,action_message:customize_scanner.wms_scenario_step_information_10
+#: model:wms.scenario.step,action_message:customize_scanner.wms_scenario_step_information_20
+msgid "Scan"
+msgstr ""
 
 #. module: customize_scanner
 #. odoo-python
@@ -610,7 +628,8 @@ msgstr ""
 #: code:addons/customize_scanner/models/wms_scenario_step.py:0
 #, python-format
 msgid "There is not enough quantity on the location. The maximum is {}"
-msgstr "Il n'y a pas suffisament de quantité dans cet emplacement. The maximum est {}"
+msgstr ""
+"Il n'y a pas suffisament de quantité dans cet emplacement. The maximum est {}"
 
 #. module: customize_scanner
 #. odoo-python
@@ -781,12 +800,12 @@ msgstr "Vérifier les disponibilités"
 #. module: customize_scanner
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_end_preparation
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_line_change_lot
+#: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_line_information
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_line_inventory
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_line_move
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_line_preparation
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_line_production
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_printer_preparation
-#: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_printer_production
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_select_create_lot
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_select_print
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_select_weight
