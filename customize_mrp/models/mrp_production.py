@@ -32,7 +32,7 @@ class MRPProduction(models.Model):
         """ add """
         super().button_mark_done()
         for production in self:
-            production.lot_producting_id.producted = True
+            production.lot_producing_id.producted = True
 
     @api.depends('procurement_group_id')
     def _compute_sale_order(self):
