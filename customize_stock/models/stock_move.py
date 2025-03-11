@@ -49,6 +49,16 @@ class StockMove(models.Model):
         )
 
     wh_filter = fields.Boolean('In/Out move', compute="get_wh_in_out", store=True, index=True)
+    product_uos = fields.Many2one("uom.uom", compute="compute_product_uos", string="Invoicing unit")
+
+    @api.depends('purchase_line_id', 'product_id')
+    def compute_product_uos(self):
+        """ Add compute uos information """
+        for move in self:
+            if move.purchase_line_id:
+                move.product_uos = move.purchase_line_id.product_uos
+            else:
+                move.product_uos = move.product_id.uos_id
 
     @api.depends('location_id', 'location_dest_id', 'state', 'product_qty', 'product_id')
     def get_wh_in_out(self):
