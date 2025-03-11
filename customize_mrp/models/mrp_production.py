@@ -28,6 +28,12 @@ class MRPProduction(models.Model):
         issues = []
         return issues
 
+    def button_mark_done(self):
+        """ add """
+        super().button_mark_done()
+        for production in self:
+            production.lot_producting_id.producted = True
+
     @api.depends('procurement_group_id')
     def _compute_sale_order(self):
         """ sale order """

@@ -41,6 +41,8 @@ class StockLot(models.Model):
     upstream_picking = fields.Many2many('stock.picking', string='Supplier picking', compute='get_upstream_picking')
     partner_supplier_id = fields.Many2one('res.partner', string='Supplier', compute='get_partner_supplier')
 
+    producted = fields.Boolean('producted')
+
     def get_downstream_lot(self):
         """ Get all linked in production """
         res = self.env['stock.lot']

@@ -8,18 +8,21 @@ class StockQuant(models.Model):
     _inherit = 'stock.quant'
 
     blocked = fields.Boolean('Blocked', compute="compute_blocked", store=True)
+    producted = fields.Boolean('producted', related="lot_id.producted", store=True)
     product_categ_id = fields.Many2one(related='product_tmpl_id.categ_id', store=True)
     total_weight = fields.Float('Total Weight', compute='compute_total_weight')
 
-    @api.depends('location_id.blocked', 'lot_id.blocked')
+    @api.depends('location_id.blocked', 'lot_id.blocked', 'lot_id.producted')
     def compute_blocked(self):
         """ Block the reservation of a quant"""
         for quant in self:
-            if quant.location_id.blocked:
+            if quant.lot_id.blocked:
                 quant.blocked = True
-            if quant.location_id.location_id.blocked:
+            elif quant.lot_id.producted:
+                quant.blocked = False
+            elif quant.location_id.blocked:
                 quant.blocked = True
-            elif quant.lot_id.blocked:
+            elif quant.location_id.location_id.blocked:
                 quant.blocked = True
             else:
                 quant.blocked = False
