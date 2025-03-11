@@ -167,7 +167,7 @@ class BaseSynchroServer(models.Model):
                 for quant in lot.quant_ids:
                     if quant.location_id.id in [11, 12]: # tmp SORTIE, PREPARATION
                         quant.sudo().unlink()
-                    if quant.location_id.blocked:
+                    elif quant.location_id.blocked:
                         quant.compute_blocked()
                 lot.expiration_date = lot.life_date or lot.use_date or lot.removal_date or lot.alert_date
                 lot.compute_cost_price()

@@ -341,7 +341,7 @@ msgstr "Emplacement"
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_header
 msgid "Logout:<br/>"
-msgstr "Déconnection"
+msgstr "Déconnexion"
 
 #. module: wms_scanner
 #. odoo-python
