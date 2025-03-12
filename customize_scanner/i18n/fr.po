@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-11 12:02+0000\n"
-"PO-Revision-Date: 2025-03-11 12:02+0000\n"
+"POT-Creation-Date: 2025-03-12 18:02+0000\n"
+"PO-Revision-Date: 2025-03-12 18:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -286,6 +286,13 @@ msgstr "Nouvelle production"
 
 #. module: customize_scanner
 #. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#, python-format
+msgid "No Weight device finding"
+msgstr ""
+
+#. module: customize_scanner
+#. odoo-python
 #: code:addons/customize_scanner/models/wms_scenario_step_production.py:0
 #, python-format
 msgid "No component product to check"
@@ -368,6 +375,13 @@ msgstr "Imprimer plus tard"
 #. odoo-python
 #: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
 #, python-format
+msgid "Produced quantity"
+msgstr "Quantité produite"
+
+#. module: customize_scanner
+#. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
 msgid "Product"
 msgstr "Produit"
 
@@ -391,8 +405,8 @@ msgstr ""
 #. odoo-python
 #: code:addons/customize_scanner/models/wms_scenario_step_production.py:0
 #, python-format
-msgid "Production is OK"
-msgstr "Production est OK"
+msgid "Production enregistré"
+msgstr ""
 
 #. module: customize_scanner
 #. odoo-python
@@ -628,8 +642,7 @@ msgstr ""
 #: code:addons/customize_scanner/models/wms_scenario_step.py:0
 #, python-format
 msgid "There is not enough quantity on the location. The maximum is {}"
-msgstr ""
-"Il n'y a pas suffisament de quantité dans cet emplacement. The maximum est {}"
+msgstr "Il n'y a pas suffisament de quantité dans cet emplacement. The maximum est {}"
 
 #. module: customize_scanner
 #. odoo-python
@@ -737,6 +750,13 @@ msgstr "Ce produit n'est pas configuré pour la production"
 
 #. module: customize_scanner
 #. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
+#, python-format
+msgid "This product is not registered on this location"
+msgstr "Ce produit n'est pas enregistré à cettr emplacement"
+
+#. module: customize_scanner
+#. odoo-python
 #: code:addons/customize_scanner/models/wms_scenario_step_production.py:0
 #, python-format
 msgid "This product is unknown"
@@ -744,6 +764,8 @@ msgstr "Ce produit est inconnu"
 
 #. module: customize_scanner
 #. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
 #: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
 #, python-format
 msgid "This product need a lot number"
