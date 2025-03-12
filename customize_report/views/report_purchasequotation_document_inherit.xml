@@ -15,6 +15,7 @@
                 </div>
             </div>
         </xpath>
+
         <xpath expr="//th[@name='th_expected_date']" position="replace">
             <th name="th_code_product" class="text-center">
                 <strong>Code Hennart</strong>

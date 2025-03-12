@@ -120,9 +120,8 @@
                        position="after">
                     <!--<field name="product_packaging_qty"/>
                     <field name="product_packaging_id"/>-->
-                    <field name="product_uos" invisible="1"/>
-                    <field name="weight"/>
 
+                    <field name="weight"/>
                     <field name="move_line_ids" invisible="1"/>
                     <field name="prodlot_inv" string="Supplier N° lot"
                            attrs="{'column_invisible': [('parent.picking_type_code', '!=', 'incoming')]}"/>
