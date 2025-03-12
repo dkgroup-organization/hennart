@@ -120,6 +120,7 @@
                        position="after">
                     <!--<field name="product_packaging_qty"/>
                     <field name="product_packaging_id"/>-->
+
                     <field name="weight"/>
                     <field name="move_line_ids" invisible="1"/>
                     <field name="prodlot_inv" string="Supplier N° lot"

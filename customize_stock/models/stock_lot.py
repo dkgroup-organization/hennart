@@ -37,11 +37,21 @@ class StockLot(models.Model):
     unit_price = fields.Float('Price Unit', digits='Product Price', compute=False, store=True)
     unit_weight = fields.Float('Unit Weight', digits='Product Price', compute=False, store=True) #v7 net_weight
 
+    downstream_lot = fields.Many2many('stock.lot', string='downstream', compute='get_downstream_lot_ids')
+    upstream_lot = fields.Many2many('stock.lot', string='upstream', compute='get_upstream_lot_ids')
     downstream_picking = fields.Many2many('stock.picking', string='Customer picking', compute='get_downstream_picking')
     upstream_picking = fields.Many2many('stock.picking', string='Supplier picking', compute='get_upstream_picking')
     partner_supplier_id = fields.Many2one('res.partner', string='Supplier', compute='get_partner_supplier')
 
     producted = fields.Boolean('producted')
+
+    def get_upstream_lot_ids(self):
+        for lot in self:
+            lot.upstream_lot = lot.get_upstream_lot() - lot
+
+    def get_downstream_lot_ids(self):
+        for lot in self:
+            lot.downstream_lot = lot.get_downstream_lot() - lot
 
     def get_downstream_lot(self):
         """ Get all linked in production """

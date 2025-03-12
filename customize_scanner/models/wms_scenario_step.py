@@ -375,6 +375,7 @@ class WmsScenarioStep(models.Model):
         if lot_id:
             new_move.move_line_ids.lot_id = lot_id
 
+
         if weight:
             new_move.move_line_ids.weight = weight
         elif product_id:

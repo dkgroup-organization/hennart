@@ -50,6 +50,7 @@ class StockMove(models.Model):
 
     wh_filter = fields.Boolean('In/Out move', compute="get_wh_in_out", store=True, index=True)
 
+
     @api.depends('location_id', 'location_dest_id', 'state', 'product_qty', 'product_id')
     def get_wh_in_out(self):
         """ filter the move to use in report quantity and prevision"""
@@ -73,6 +74,7 @@ class StockMove(models.Model):
         """ check if all line has production lot information"""
         message = ""
         for move in self:
+
             for move_line in move.move_line_ids:
                 if move_line.state == "cancel":
                     continue
@@ -80,6 +82,7 @@ class StockMove(models.Model):
                     continue
                 if move_line.lot_id and not move_line.lot_id.expiration_date:
                     message += _(f"\nThis lot need a expiration date: {move.name} {move_line.lot_id.name}")
+
                 if (move_line.weight == 0.0 or move_line.to_weight) and move_line.qty_done > 0.0:
                     message += _(f"\nThis line need a weight: {move.name}")
         if message:

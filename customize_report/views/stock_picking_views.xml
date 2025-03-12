@@ -7,12 +7,14 @@
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
                 <header position="inside">
-                    <button name="button_print_invoice" attrs="{'invisible': [('state', '!=', 'done')]}"
+                    <button name="button_print_invoice"
+                            attrs="{'invisible': ['|',('state', '!=', 'done'), ('picking_type_code', '!=', 'outgoing')]}"
                             string="Print Invoice" type="object" class="oe_highlight"/>
                     <button name="button_print_picking"
+                            attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"
                             string="Print Picking" type="object" class="oe_highlight"/>
                     <button name="print_chronopost"
-                            attrs="{'invisible': ['|', '|', ('state', 'in', ('cancel', 'draft')), ('delivery_type', '!=', 'chronopost'), ('sscc_line_ids', '=', False)]}"
+                            attrs="{'invisible': ['|', '|', '|', ('picking_type_code', '!=', 'outgoing'), ('state', 'in', ('cancel', 'draft')), ('delivery_type', '!=', 'chronopost'), ('sscc_line_ids', '=', False)]}"
                             string="Print Chronopost" type="object" class="oe_highlight"/>
                 </header>
             </field>
