@@ -82,7 +82,12 @@ class StockPicking(models.Model):
         """ Return input class to qweb template"""
         res = ''
         for picking in self:
-            if picking.products_availability_state == 'available':
+            availability_state = True
+            for move in picking.move_ids_without_package:
+                if move.forecast_availability != move.reserved_availability:
+                    availability_state = False
+                    break
+            if availability_state:
                 res = "availability-green"
             else:
                 res = "availability-warning"

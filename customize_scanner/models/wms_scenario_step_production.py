@@ -336,7 +336,9 @@ class WmsScenarioStep(models.Model):
 
             if production.state == 'to_close':
                 production.button_mark_done()
-                data['message'] = _('Production is OK')
+                data['message'] = _('Production enregistré')
+                data['button_print_later'] = True
+
         return data
 
     def get_list_option(self, data):

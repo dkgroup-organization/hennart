@@ -165,7 +165,7 @@ class WmsScenarioStep(models.Model):
                 # weighting_device
                 data['weighting_device'] = weight_device_ids
             else:
-                data['warning'] = "No Weight device finding"
+                data['warning'] = _("No Weight device finding")
 
         elif len(scan) > 4 and scan[:4] == BARCODE_PRINTER:
             # In this case, it is a printer
@@ -221,7 +221,7 @@ class WmsScenarioStep(models.Model):
                 condition.append(('lot_id', '=', data['lot_id'].id))
             else:
                 if data['product_id'].tracking == 'lot':
-                    data['warning'] = "This product need a lot number"
+                    data['warning'] = _("This product need a lot number")
                     data['result'] = False
                     return data
 
@@ -299,7 +299,7 @@ class WmsScenarioStep(models.Model):
             if data.get('lot_id'):
                 condition.append(('lot_id', '=', data['lot_id'].id))
             elif data['product_id'].tracking == 'lot':
-                data['warning'] = "This product need a lot number"
+                data['warning'] = _("This product need a lot number")
             else:
                 condition.append(('lot_id', '=', False))
 

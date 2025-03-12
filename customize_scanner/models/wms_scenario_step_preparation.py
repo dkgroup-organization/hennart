@@ -181,7 +181,7 @@ class WmsScenarioStep(models.Model):
             if production:
                 res = f'{int(production.product_qty)} ' + _('Unit')
             else:
-                res = 'Produced quantity'
+                res = _('Produced quantity')
 
         if self.action_variable == 'printer':
             res = _('Scan Printer')
@@ -536,7 +536,7 @@ class WmsScenarioStep(models.Model):
                 quant_ids = self.env['stock.quant'].search(condition)
 
                 if not quant_ids:
-                    data['warning'] = "This product is not registered on this location"
+                    data['warning'] = _("This product is not registered on this location")
                 elif quantity:
                     max_quantity = sum(quant_ids.mapped('quantity'))
                     if quantity > max_quantity:
