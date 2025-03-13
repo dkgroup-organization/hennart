@@ -10,14 +10,7 @@ from odoo import api, fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
-    def button_update_account(self):
-        "Update All account code"
-        account_ids = self.env['account.account'].search([])
-        
-        for account in account_ids:
-            if len(account.code) == 6 and account.code[:2] != 99:
-                reconcile = account.reconcile
-                code = account.code + '00000'
-                account.write({'reconcile': reconcile, 'code': code})
-
-
+    coef_workshop_cost = fields.Float(
+        string="Coefficient Workshop Cost",
+        config_parameter='customize_account.coef_workshop_cost'
+    )

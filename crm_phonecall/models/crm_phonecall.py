@@ -87,7 +87,7 @@ class CrmPhonecall(models.Model):
     type1 = fields.Selection([
         ('spontaneous', 'Spontaneous'),
         ('todo', 'To call'),
-        ], 'Type', index=True, required=True)
+        ], 'Type', index=True, required=False, default='todo')
 
     appointment_id = fields.Many2one('partner.crm.appointment', 'Appointment')
 

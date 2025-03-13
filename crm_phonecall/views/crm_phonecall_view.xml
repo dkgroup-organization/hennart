@@ -63,6 +63,7 @@
             </tree>
         </field>
     </record>
+
     <record id="crm_case_phone_form_view" model="ir.ui.view">
         <field name="name">CRM - Phone Call Form</field>
         <field name="model">crm.phonecall</field>
