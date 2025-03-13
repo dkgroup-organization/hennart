@@ -141,4 +141,6 @@ class PartnerCrmAppointment(models.Model):
         futur_appointment_ids = last_phone_ids.mapped('appointment_id')
         appointment_ids = self.search([('id', 'not in', futur_appointment_ids.ids)])
         res = appointment_ids.create_next_appointment()
+        delete_phone_ids = self.env['crm.phonecall'].search([('date', '<', today - datetime.timedelta(days=50))])
+        delete_phone_ids.unlink()
         return res

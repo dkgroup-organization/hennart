@@ -230,11 +230,10 @@ class ProductTemplate(models.Model):
 
     component_price = fields.One2many('product.component.hierarchy', 'product_tmpl_id', string='Component')
 
-
-
     def get_coef_workshop_cost(self):
         """ return coef to apply between workshop_cost_price and total_cost_price """
-        return 1.12
+        coef_workshop_cost = self.env["ir.config_parameter"].sudo().get_param("customize_account.coef_workshop_cost", default="0.12")
+        return coef_workshop_cost
 
     @api.depends('total_cost_price', 'weight', 'uos_id')
     def _compute_standard_price(self):
