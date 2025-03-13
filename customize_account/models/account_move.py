@@ -432,10 +432,21 @@ class AccountMove(models.Model):
             if invoice.piece_comptable:
                 continue
             for line in invoice.line_ids:
-                # if line.move_id.move_type in ['out_invoice', 'out_refund', 'out_receipt']:
-                line.cadeau = line.price_unit * line.quantity * line.discount / 100.0
                 if not line.cost_price:
                     line.cost_price = line.product_id.workshop_cost_price
+
+                if line.discount <= 0.0 or not line.discount:
+                    cadeau = 0.0
+                elif line.discount > 100.0:
+                    cadeau = - line.move_id.direction_sign * line.price_subtotal
+                else:
+                    cadeau = - line.move_id.direction_sign * line.price_subtotal * line.discount / (100.0 - line.discount)
+
+                if cadeau <= 0.0:
+                    cadeau = 0.0
+                elif cadeau > line.price_subtotal:
+                    cadeau = line.price_subtotal
+                line.cadeau = - line.move_id.direction_sign * cadeau
 
     def action_post(self):
         """ post invoice , update the invoice with the real weight and recompute tax """

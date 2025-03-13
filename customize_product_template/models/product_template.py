@@ -232,8 +232,9 @@ class ProductTemplate(models.Model):
 
     def get_coef_workshop_cost(self):
         """ return coef to apply between workshop_cost_price and total_cost_price """
-        coef_workshop_cost = self.env["ir.config_parameter"].sudo().get_param("customize_account.coef_workshop_cost", default="0.12")
+        coef_workshop_cost = float(self.env["ir.config_parameter"].sudo().get_param("customize_account.coef_workshop_cost", '0.12'))
         return coef_workshop_cost
+
 
     @api.depends('total_cost_price', 'weight', 'uos_id')
     def _compute_standard_price(self):

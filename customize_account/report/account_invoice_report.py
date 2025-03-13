@@ -5,6 +5,7 @@ class AccountInvoiceReport(models.Model):
 
     cost_price = fields.Float(string="Cost Price", readonly=True)
     margin = fields.Float(string='Marge', readonly=True)
+    promo = fields.Float(string='Promo', readonly=True)
     weight = fields.Float(string="Weight", readonly=True)
     user2_id = fields.Many2one('res.users', string="Vendeur Manager", readonly=True)
     partner_shipping_id = fields.Many2one('res.partner', string="Partner Livraison", readonly=True)
@@ -23,6 +24,7 @@ class AccountInvoiceReport(models.Model):
                 line.company_id,
                 line.user2_id,
                 line.cost_price, 
+                line.cadeau AS promo,
                 line.margin,
                 line.weight,
                 line.partner_shipping_id,
