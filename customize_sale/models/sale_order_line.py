@@ -22,7 +22,7 @@ class SaleOrderLine(models.Model):
     product_uos_qty = fields.Float('Qty', compute="compute_uos", store=True, compute_sudo=True)
     product_uos_price = fields.Float('Price', compute="compute_uos", store=True, compute_sudo=True)
     product_uom_readonly = fields.Boolean("UOM readonly", default=True)
-    cadence = fields.Html(string="Cadencier", compute="compute_cadence", readonly=True, compute_sudo=True)
+    cadence = fields.Html(string="Cadencier", compute="compute_cadence", store=True, readonly=True, compute_sudo=True)
     display_qty_widget = fields.Boolean("display widget", store=True, compute='_compute_display_qty_widget')
     free_qty_at_date = fields.Float('Stock', compute='_compute_free_qty_at_date')
     logistic_discount = fields.Float('logistical discount')
@@ -77,53 +77,9 @@ class SaleOrderLine(models.Model):
 
     @api.depends('product_id', 'order_id.partner_id', 'order_id.commitment_date')
     def compute_cadence(self):
-        """ get the sale frequency of the product"""
-        nb_week = 13
-
+        """ get the sale frequency of the product, futur function in customize_account"""
         for line in self:
-            date_start = line.order_id.commitment_date or datetime.today()
-            date_start = date_start - timedelta(days=date_start.weekday())  # monday
-            if line.order_id.partner_shipping_id.parent_id:
-                partner_shipping_id = line.order_id.partner_shipping_id.parent_id
-            else:
-                partner_shipping_id = line.order_id.partner_shipping_id
-
-            condition = [
-                '&', '|', ('move_id.partner_id', 'child_of', line.order_id.partner_id.id),
-                ('move_id.partner_shipping_id', 'child_of', partner_shipping_id.id),
-                '&', ('product_id', '=', line.product_id.id),
-                # '&', ('move_id.state', '=', 'posted'),
-                # '&', ('uom_qty', '>=', 1.0),
-                '&', ('move_id.move_type', '=', 'out_invoice'),
-                ]
-            qty_by_week = {}
-            # Loop through the past 13 weeks
-            if line.product_id:
-                for week in range(0, nb_week):
-                    date_to = date_start - timedelta(weeks=week)
-                    date_from = date_start - timedelta(weeks=week + 1)
-                    # Get the quantity sold for the product for the current week
-                    invoice_lines = self.env['account.move.line'].search(condition + [
-                        '&', ('move_id.invoice_date', '<', date_to),
-                        ('move_id.invoice_date', '>=', date_from)
-                        ])
-                    qty = sum(invoice_lines.mapped('uom_qty'))
-                    if qty >= 1.0:
-                        qty_by_week['{}'.format(week)] = qty
-
-            # If there is data for the product, create a table to display the quantity sold by week
-            cadence_table = '<table style="border-collapse: collapse; width: 100%; table-layout: fixed;"><tr>'
-            style_td = "border-left: 1px solid grey; width:7.6%; padding-left: 5px; padding-right: 5px;"
-            style_text = " font-weight: bold; text-align: center;"
-            for week in range(1, 14):
-                qty = qty_by_week.get('{}'.format(week), '')
-                if qty and qty != '':
-                    qty_str = str(int(qty))
-                    cadence_table += '<td style="{}">{}</td>'.format(style_td + style_text, qty_str)
-                else:
-                    cadence_table += '<td style="{}"></td>'.format(style_td)
-            cadence_table += '</tr></table>'
-            line.cadence = cadence_table
+            line.cadence = ' ... '
 
     def _compute_customer_lead(self):
         """ The customer lead is more complexe in this project, It depends on location of customer: 1, 2 or 3 days """

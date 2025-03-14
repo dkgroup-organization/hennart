@@ -324,8 +324,18 @@ class CrmPhonecall(models.Model):
                     'carrier_id' : partner.appointment_delivery_ids[0].carrier_id.id,
                     'commitment_date':  date_entrepot
                     }
+            else:
+                sale_vals = {
+                    'user_id': partner.user_id.id or False,
+                    'partner_id': partner.id,
+                    'state': 'draft',
+                    'date_delivered': fields.Datetime.now(),
+                    'commitment_date':  fields.Datetime.now() + timedelta(days=1),
+                    }
 
             sale = self.env['sale.order'].create(sale_vals)
+            sale.onchange_partner_id_cadence()
+
             sale_ids |= sale
             phonecall.write({'state': 'done'})
 
