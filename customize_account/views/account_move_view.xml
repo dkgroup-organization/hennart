@@ -97,11 +97,16 @@
 
 
                     <field name="price_unit" string="Price"/>
+                    <field name="cost_price" string="Cout atelier" optional="hide"/>
+
                     <field name="discount" string="Promo" optional="hide"/>
                     <field name="tax_ids" widget="many2many_tags"
                            domain="[('type_tax_use', '=?', parent.invoice_filter_type_domain), ('company_id', '=', parent.company_id), ('country_id', '=', parent.tax_country_id)]"
                            context="{'append_type_to_tax_name': not parent.invoice_filter_type_domain}"
                            options="{'no_create': True}" optional="hide"/>
+
+                    <field name="cadeau" string="Total promotion" optional="hide" sum="total"/>
+                    <field name="margin" string="Total marge" optional="hide" sum="total"/>
                     <field name="price_subtotal" string="Subtotal"/>
                     <field name="price_total" string="Total" invisible="1"/>
 

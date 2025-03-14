@@ -428,6 +428,8 @@ class AccountMove(models.Model):
 
     def update_statistic(self):
         """ Update value to use in statistic """
+        uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+
         for invoice in self:
             if invoice.piece_comptable:
                 continue
@@ -447,6 +449,12 @@ class AccountMove(models.Model):
                 elif cadeau > line.price_subtotal:
                     cadeau = line.price_subtotal
                 line.cadeau = - line.move_id.direction_sign * cadeau
+
+                # margin
+                if invoice.move_type in ['in_invoice', 'in_refund', 'in_receipt']:
+                    line.margin = 0.0
+                else:
+                    line.margin = line.price_subtotal - line.cost_price * line.quantity
 
     def action_post(self):
         """ post invoice , update the invoice with the real weight and recompute tax """

@@ -14,3 +14,12 @@ class ResConfigSettings(models.TransientModel):
         string="Coefficient Workshop Cost",
         config_parameter='customize_account.coef_workshop_cost'
     )
+
+    coef_shipping_weight = fields.Float(
+        string="Coefficient Workshop Cost",
+        config_parameter='customize_account.shipping_weight'
+    )
+
+    def update_workshop_cost(self):
+        """ Update all product """
+        self.env['product.template'].search([])._compute_standard_price()
