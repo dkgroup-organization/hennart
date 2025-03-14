@@ -211,7 +211,7 @@ msgstr ""
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "<strong>Nb pallet:</strong>"
-msgstr ""
+msgstr "<strong>Nb palette:</strong>"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_purchaseorder_document_inherit

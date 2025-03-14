@@ -11,6 +11,15 @@ from odoo.exceptions import UserError
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
+    shipping_weight = fields.Float('Shipping Weight', compute='_compute_shipping_weight', store=True, readonly=False)
+
+    @api.depends('weight')
+    def _compute_shipping_weight(self):
+        coef_shipping_weight = float(self.env["ir.config_parameter"].sudo().get_param("customize_account.coef_shipping_weight", '1.1'))
+
+        for rec in self:
+            rec.shipping_weight = rec.weight * coef_shipping_weight
+
 
     def button_print_picking(self, report_name="customize_report.report_delivery_hennart"):
         """ Create invoice, and print pdf """

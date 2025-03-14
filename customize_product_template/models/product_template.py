@@ -230,9 +230,10 @@ class ProductTemplate(models.Model):
 
     component_price = fields.One2many('product.component.hierarchy', 'product_tmpl_id', string='Component')
 
+    @api.model
     def get_coef_workshop_cost(self):
         """ return coef to apply between workshop_cost_price and total_cost_price """
-        coef_workshop_cost = float(self.env["ir.config_parameter"].sudo().get_param("customize_account.coef_workshop_cost", '0.12'))
+        coef_workshop_cost = float(self.env["ir.config_parameter"].sudo().get_param("customize_account.coef_workshop_cost", '1.12'))
         return coef_workshop_cost
 
 
@@ -240,9 +241,9 @@ class ProductTemplate(models.Model):
     def _compute_standard_price(self):
         """ Compute the standard price """
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
+        coef_workshop_cost = self.get_coef_workshop_cost()
 
         for product in self:
-            coef_workshop_cost = product.get_coef_workshop_cost()
             product.workshop_cost_price = product.total_cost_price * coef_workshop_cost
 
             if product.uos_id == uom_weight and product.weight:
