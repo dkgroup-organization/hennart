@@ -27,12 +27,12 @@ class SaleOrderInherit(models.Model):
                 order="logistical_weight DESC")
 
         for discount in discount_product:
-            print('-----------------iscount.date_start, discount.date_end, self.commitment_date--------------------', discount.date_start, discount.date_end, self.commitment_date)
+
             if discount.date_start and discount.date_start > (self.commitment_date or fields.Datetime.now()):
                 continue
             if discount.date_end and discount.date_end < (self.commitment_date or fields.Datetime.now()):
                 continue
-            print('--------------self.total_weight >= discount.logistical_weight---------------', self.total_weight, discount.logistical_weight)
+
             if self.total_weight >= discount.logistical_weight:
                 if discount.discount_choice == 'no_discount':
                     return False
@@ -118,7 +118,7 @@ class SaleOrderInherit(models.Model):
     @api.onchange('total_weight', 'pricelist_id', 'commitment_date', 'partner_id')
     def _check_discount(self):
         discount = self._get_discount_product()
-        print('---_check_discount----discount-----------', discount)
+
         if discount:
             self.discount_unlocked = True
         else:

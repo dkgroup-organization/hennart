@@ -84,7 +84,7 @@ class SaleOrder(models.Model):
     def onchange_partner_id_cadence(self, date_order=None):
         # Clear the history lines when the partner is changed
         # If the partner is not null, get the order lines for the past 13 weeks
-        nb_week = 12
+        nb_week = 11
         date_track = time.time()
 
         self.ensure_one()
@@ -108,20 +108,22 @@ class SaleOrder(models.Model):
                 '|', ('move_id.partner_id', 'child_of', self.partner_id.id),
                 ('move_id.partner_shipping_id', 'child_of', partner_shipping_id.ids),
                 '&', ('move_id.invoice_date', '<=', date_start),
-                '&', ('move_id.invoice_date', '>=', date_from),
-                ('move_id.move_type', '=', 'out_invoice'),
+                ('move_id.invoice_date', '>=', date_from),
+                #('move_id.move_type', '=', 'out_invoice'),
                 #'&',
                 #('product_id.type', '=', 'product'),
                 #'&', ('uom_qty', '>=', 1.0),
                 #('move_id.state', '=', 'posted')
             ])
             # Get the product ids of the order lines
-            product_ids = (order_lines.mapped('product_id') - self.order_line.mapped('product_id')).sorted(key='name')
+            order_lines2 = self.env['account.move.line']
+            for line in order_lines:
+                if line.uom_qty >= 1.0 and line.move_id.move_type == 'out_invoice' and line.move_id.state == 'posted' and line.product_id.type ==  'product':
+                    order_lines2 |= line
+
+            product_ids = (order_lines2.mapped('product_id') - self.order_line.mapped('product_id')).sorted(key='name')
 
             for product in product_ids:
-                if product.type != 'product':
-                    continue
-
                 if product.sale_ok:
                     line_vals.append(Command.create({
                         'product_id': product.id,
