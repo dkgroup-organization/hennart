@@ -30,7 +30,7 @@ class StockLot(models.Model):
                     account_move_line = line.account_move_line_id
                     # Check if invoice purchase
                     if account_move_line.move_id.move_type in ['in_invoice']:
-                        uos_id = account_move_line.product_uom_i
+                        uos_id = account_move_line.product_uom_id
                         if uos_id == uom_weight:
                             total_quantity += account_move_line.uom_qty
                             total_weight += account_move_line.quantity

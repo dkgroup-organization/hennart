@@ -120,9 +120,7 @@
                             <field name="email_other"/>
                         </group>
                     </page>
-                    <page string="Cadence">
-                        <field name="cadence"/>
-                    </page>
+
                 </notebook>
             </field>
         </record>

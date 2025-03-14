@@ -35,23 +35,36 @@
                     <t t-foreach="data.get('picking_ids', [])" t-as="picking">
                         <li class="pb-2">
                             <a t-att-href="'./scanner?scenario={}&amp;step={}&amp;button=picking_id&amp;scan={}'.format(data['scenario'].id, data['step'].id, picking.id)"
-                            class="border-2 border-gray-300 rounded-md py-3 px-6">
+                               class="border-2 border-gray-300 rounded-md py-3 px-6">
 
                                 <div class="flex items-center justify-between">
                                     <p t-esc="picking.name" class="font-bold mb-1"/>
                                     <p t-esc="picking.carrier_id.name" class="font-bold mb-1"/>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <p><span t-att-class="picking.get_availability_class()" t-esc="picking.get_theoric_weight()"/> : <span t-esc="picking.products_availability"/></p>
+                                    <p>
+                                        <span t-att-class="picking.get_availability_class()"
+                                              t-esc="picking.get_theoric_weight()"/>
+                                        :
+                                        <span t-esc="picking.products_availability"/>
+                                    </p>
                                     <p t-esc="str(picking.scheduled_date).split(' ')[0]" class="mb-1"/>
 
                                 </div>
                                 <div class="flex justify-between">
-                                    <p><span t-if="picking.partner_id.parent_id" t-esc="picking.partner_id.parent_id.name"/>
+                                    <p>
+                                        <span t-if="picking.partner_id.parent_id"
+                                              t-esc="picking.partner_id.parent_id.name"/>
                                         <span t-if="not picking.partner_id.parent_id" t-esc="picking.partner_id.name"/>
-                                        , <span t-esc="picking.partner_id.city"/>
+                                        ,
+                                        <span t-esc="picking.partner_id.city"/>
                                     </p>
-
+                                </div>
+                                <div t-if="picking.partner_id.label_forced or picking.partner_id.parent_id.label_forced "
+                                     class="flex justify-between">
+                                    <p class="input-select">
+                                        <span>PRODUITS AU KG FLASHER SUR ETIQUETTE VIERGE</span>
+                                    </p>
                                 </div>
                             </a>
                         </li>
