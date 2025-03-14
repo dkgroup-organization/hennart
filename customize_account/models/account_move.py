@@ -176,16 +176,15 @@ class AccountMove(models.Model):
             invoice._compute_tax_totals()
             invoice._compute_amount()
 
-        self.update_origin()
-
     def update_origin(self):
         """ check order and picking origin"""
         for invoice in self:
-            ref = invoice.ref
             origin = []
             stock_move_ids = self.env['stock.move']
             if invoice.piece_comptable:
                 origin.append(invoice.invoice_origin)
+            if invoice.ref not in origin:
+                origin.append(invoice.ref)
 
             for invoice_line in invoice.invoice_line_ids:
 
@@ -461,5 +460,6 @@ class AccountMove(models.Model):
         if self.env.context.get('update_discount_stock'):
             self.sudo().update_discount_stock()
         self.sudo().update_statistic()
+        self.update_origin()
         return super().action_post()
 
