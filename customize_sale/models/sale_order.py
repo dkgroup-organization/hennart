@@ -109,9 +109,9 @@ class SaleOrder(models.Model):
                 ('move_id.partner_shipping_id', 'child_of', partner_shipping_id.ids),
                 '&', ('move_id.invoice_date', '<=', date_start),
                 '&', ('move_id.invoice_date', '>=', date_from),
-                '&', ('move_id.move_type', '=', 'out_invoice'),
+                ('move_id.move_type', '=', 'out_invoice'),
                 #'&',
-                ('product_id.type', '=', 'product'),
+                #('product_id.type', '=', 'product'),
                 #'&', ('uom_qty', '>=', 1.0),
                 #('move_id.state', '=', 'posted')
             ])
@@ -119,7 +119,9 @@ class SaleOrder(models.Model):
             product_ids = (order_lines.mapped('product_id') - self.order_line.mapped('product_id')).sorted(key='name')
 
             for product in product_ids:
-                product = product
+                if product.type != 'product':
+                    continue
+
                 if product.sale_ok:
                     line_vals.append(Command.create({
                         'product_id': product.id,

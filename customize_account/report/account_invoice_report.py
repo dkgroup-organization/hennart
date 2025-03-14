@@ -11,6 +11,7 @@ class AccountInvoiceReport(models.Model):
     partner_shipping_id = fields.Many2one('res.partner', string="Partner Livraison", readonly=True)
     team_id = fields.Many2one(comodel_name='crm.team', string="Sales Team")
     uom_qty = fields.Float(string="Quantity unit", readonly=True)
+    week = fields.Integer(string="Semaine", readonly=True)
 
     @api.model
     def _select(self):
@@ -39,6 +40,7 @@ class AccountInvoiceReport(models.Model):
                 move.fiscal_position_id,
                 move.payment_state,
                 move.invoice_date,
+                EXTRACT(WEEK FROM move.invoice_date) as week,
                 move.invoice_date_due,
                 uom_template.id                                             AS product_uom_id,
                 template.categ_id                                           AS product_categ_id,

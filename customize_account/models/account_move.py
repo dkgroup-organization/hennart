@@ -27,6 +27,14 @@ class AccountMove(models.Model):
             return timedate_date_port.date()
         return False
 
+    partner_shipping_id = fields.Many2one(
+        comodel_name='res.partner',
+        string='Delivery Address',
+        compute='_compute_partner_shipping_id', store=True, readonly=False, precompute=True, index=True,
+        domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]",
+        help="Delivery address for current invoice.",
+    )
+
     picking_id = fields.Char(string="Bon de livraison")
     incoterm_port = fields.Char(string="Port of entry")
     incoterm_date = fields.Date(string="Date of arrival in UK", default=_default_incoterm_date, copy=False)

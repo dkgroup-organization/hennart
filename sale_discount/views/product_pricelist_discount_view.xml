@@ -13,9 +13,14 @@
                     <field name="partner_id"/>
                     <field name="logistical_weight"/>
                     <field name="discount_choice"/>
-                    <field name="logistical_discount" attrs="{'readonly': [('discount_choice', '=', 'pricelist_discount')]}"/>
-                    <field name="product_discount_id" attrs="{'readonly': [('discount_choice', '=', 'pricelist_discount')]}"/>
-                    <field name="reduced_pricelist_id" attrs="{'readonly': [('discount_choice', '=', 'product_discount')]}"/>
+                    <field name="logistical_discount"
+                           attrs="{'readonly': [('discount_choice', '=', 'pricelist_discount')]}"/>
+                    <field name="product_discount_id"
+                           attrs="{'readonly': [('discount_choice', '=', 'pricelist_discount')]}"/>
+                    <field name="reduced_pricelist_id"
+                           attrs="{'readonly': [('discount_choice', '=', 'product_discount')]}"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
                 </tree>
             </field>
         </record>
@@ -27,10 +32,10 @@
         </record>
 
         <menuitem
-            id="discount_menu"
-            name="Logistical Discount"
-            action="product_pricelist_discount_action"
-            parent="sale.menu_sale_config"
-            sequence="10"/>
+                id="discount_menu"
+                name="Logistical Discount"
+                action="product_pricelist_discount_action"
+                parent="sale.menu_sale_config"
+                sequence="10"/>
     </data>
 </odoo>

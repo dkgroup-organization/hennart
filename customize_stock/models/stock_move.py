@@ -246,11 +246,13 @@ class StockMove(models.Model):
                     lots[move_line.lot_id] += move_line.qty_done
 
             for lot in lots:
+                if lot_description:
+                    lot_description += "\n"
                 lot_description += "{}".format(lot.ref or '?')
                 if lot.expiration_date:
                     lot_description += " {:%d/%m/%Y}".format(lot.expiration_date)
                 lot_description += " ({})".format(lots[lot])
-                lot_description += ", "
+
 
             move.lot_description = lot_description
 
