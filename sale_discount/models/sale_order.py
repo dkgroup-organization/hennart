@@ -27,6 +27,12 @@ class SaleOrderInherit(models.Model):
                 order="logistical_weight DESC")
 
         for discount in discount_product:
+            print('-----------------iscount.date_start, discount.date_end, self.commitment_date--------------------', discount.date_start, discount.date_end, self.commitment_date)
+            if discount.date_start and discount.date_start > (self.commitment_date or fields.Datetime.now()):
+                continue
+            if discount.date_end and discount.date_end < (self.commitment_date or fields.Datetime.now()):
+                continue
+            print('--------------self.total_weight >= discount.logistical_weight---------------', self.total_weight, discount.logistical_weight)
             if self.total_weight >= discount.logistical_weight:
                 if discount.discount_choice == 'no_discount':
                     return False
@@ -109,9 +115,10 @@ class SaleOrderInherit(models.Model):
             if line.product_id.is_discount:
                 line.unlink()
 
-    @api.onchange('total_weight', 'pricelist_id', 'partner_id')
+    @api.onchange('total_weight', 'pricelist_id', 'commitment_date', 'partner_id')
     def _check_discount(self):
         discount = self._get_discount_product()
+        print('---_check_discount----discount-----------', discount)
         if discount:
             self.discount_unlocked = True
         else:
@@ -125,12 +132,29 @@ class SaleOrderInherit(models.Model):
 
     def check_discount(self):
         """ Check discount before action confirm"""
-        discount_product_ids = self.env['product.pricelist.discount'].search(
-            [('product_discount_id', '!=', False)]).mapped('product_discount_id')
-        discount_pricelist_ids = self.env['product.pricelist.discount'].search(
-            [('reduced_pricelist_id', '!=', False)]).mapped('reduced_pricelist_id')
 
         for sale in self:
+
+            if not sale.commitment_date:
+                raise ValidationError(_("Il n'y pas de date d'entrepôt. Merci de compléter la commande."))
+
+            discount_product_ids = []
+            discount_pricelist_ids = []
+
+            for discount in self.env['product.pricelist.discount'].search([('product_discount_id', '!=', False)]):
+                if discount.date_start and discount.date_start < sale.commitment_date:
+                    continue
+                if discount.date_end and discount.date_end > sale.commitment_date:
+                    continue
+                discount_product_ids.append(discount.product_discount_id)
+
+            for discount in self.env['product.pricelist.discount'].search([('reduced_pricelist_id', '!=', False)]):
+                if discount.date_start and discount.date_start < sale.commitment_date:
+                    continue
+                if discount.date_end and discount.date_end > sale.commitment_date:
+                    continue
+                discount_pricelist_ids.append(discount.reduced_pricelist_id)
+
             check_line = {}
             for line in sale.order_line:
                 if line.product_id in discount_product_ids:

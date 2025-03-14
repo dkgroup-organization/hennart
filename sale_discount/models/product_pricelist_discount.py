@@ -4,8 +4,8 @@ class PriceListDiscount(models.Model):
     _name = 'product.pricelist.discount'
     _description = "Discount in pricelist"
 
-    date_start = fields.Date(string='Date de départ')
-    date_end = fields.Date(string='Date de fin')
+    date_start = fields.Datetime(string='Date de départ')
+    date_end = fields.Datetime(string='Date de fin')
     name = fields.Char(string='Description')
     pricelist_id = fields.Many2one(
         'product.pricelist',
