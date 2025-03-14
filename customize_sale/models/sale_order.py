@@ -233,4 +233,5 @@ class SaleOrder(models.Model):
                 pass
             if parent.third_account_customer == self.partner_id.third_account_customer:
                 res['partner_id'] = parent.id
+
         return res
