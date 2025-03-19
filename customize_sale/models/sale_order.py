@@ -84,7 +84,7 @@ class SaleOrder(models.Model):
     def onchange_partner_id_cadence(self, date_order=None):
         # Clear the history lines when the partner is changed
         # If the partner is not null, get the order lines for the past 13 weeks
-        nb_week = 11
+        nb_week = 12
         date_track = time.time()
 
         self.ensure_one()

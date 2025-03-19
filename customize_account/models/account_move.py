@@ -191,15 +191,13 @@ class AccountMove(models.Model):
             stock_move_ids = self.env['stock.move']
             if invoice.piece_comptable:
                 origin.append(invoice.invoice_origin)
-            if invoice.ref not in origin:
+            if invoice.ref and  invoice.ref not in origin:
                 origin.append(invoice.ref)
 
             for invoice_line in invoice.invoice_line_ids:
 
                 for sale_line in invoice_line.sale_line_ids:
-                    if sale_line.order_id.name not in origin:
-                        origin.append(sale_line.order_id.name)
-                    if sale_line.order_id.client_order_ref not in origin:
+                    if sale_line.order_id.client_order_ref and sale_line.order_id.client_order_ref not in origin:
                         origin.append(sale_line.order_id.name)
 
                     stock_move_ids |= sale_line.move_ids
@@ -215,8 +213,6 @@ class AccountMove(models.Model):
                 for picking in stock_move_ids.mapped('picking_id'):
                     if picking.name not in origin:
                         origin.append(picking.name)
-                    if picking.origin not in origin:
-                        origin.append(picking.origin)
 
             def split_origin(list_item):
                 res = []
@@ -233,7 +229,15 @@ class AccountMove(models.Model):
                 res = list(dict.fromkeys(res))
                 return res
 
-            invoice.invoice_origin = ': '.join(split_origin(origin))
+
+            if len(origin) == 1:
+                invoice_origin = origin[0]
+            elif len(origin) > 1:
+                invoice_origin = ': '.join(split_origin(origin))
+            else:
+                invoice_origin = ''
+
+            invoice.invoice_origin = invoice_origin
 
     @api.depends('company_id', 'invoice_filter_type_domain', 'src_dest_country_id')
     def _compute_suitable_journal2_ids(self):

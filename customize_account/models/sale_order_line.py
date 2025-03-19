@@ -29,8 +29,8 @@ class SaleOrderLine(models.Model):
                 '&', '|', ('move_id.partner_id', 'child_of', line.order_id.partner_id.id),
                 ('move_id.partner_shipping_id', 'child_of', partner_shipping_id.id),
                 '&', ('product_id', '=', line.product_id.id),
-                # '&', ('move_id.state', '=', 'posted'),
-                # '&', ('uom_qty', '>=', 1.0),
+                '&', ('move_id.state', '=', 'posted'),
+                '&', ('uom_qty', '>=', 1.0),
                 '&', ('move_id.move_type', '=', 'out_invoice'),
                 ]
             qty_by_week = {}

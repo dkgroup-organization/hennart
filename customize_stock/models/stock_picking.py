@@ -84,9 +84,22 @@ class StockPicking(models.Model):
         for picking in self:
             availability_state = True
             for move in picking.move_ids_without_package:
-                if move.forecast_availability != move.reserved_availability:
-                    availability_state = False
+                product_uom_qty = move.product_uom_qty
+                if move.quantity_done >= product_uom_qty:
+                    continue
+                else:
+                    for move_line in move.move_line_ids:
+                        if move_line.lot_id and move_line.lot_id.product_qty == 0.0:
+                            availability_state = False
+                            break
+                        product_uom_qty -= move_line.reserved_uom_qty
+
+                    if product_uom_qty > 0.0:
+                        availability_state = False
+
+                if not availability_state:
                     break
+
             if availability_state:
                 res = "availability-green"
             else:
