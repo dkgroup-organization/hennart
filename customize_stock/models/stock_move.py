@@ -49,7 +49,7 @@ class StockMove(models.Model):
         )
 
     wh_filter = fields.Boolean('In/Out move', compute="get_wh_in_out", store=True, index=True)
-
+    export_filter = fields.Char('In/Out move', compute="get_wh_in_out", store=True, index=True)
 
     @api.depends('location_id', 'location_dest_id', 'state', 'product_qty', 'product_id')
     def get_wh_in_out(self):
@@ -69,6 +69,18 @@ class StockMove(models.Model):
                     move.wh_filter = False
             else:
                 move.wh_filter = False
+
+            if move.state == 'done' and move.product_id.product_tmpl_id.type == 'product' and move.quantity_done != 0.0:
+                if move.location_id.usage == 'internal' and move.location_dest_id.usage == 'internal':
+                    move.export_filter = 'none'
+                elif move.location_id.usage == 'internal':
+                    move.export_filter = 'out'
+                elif move.location_dest_id.usage == 'internal':
+                    move.export_filter = 'in'
+                else:
+                    move.export_filter = 'none'
+            else:
+                move.export_filter = 'none'
 
     def check_line(self):
         """ check if all line has production lot information"""

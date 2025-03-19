@@ -23,6 +23,7 @@
         "views/account_invoice_report_views.xml",
         "views/stock_lot_views.xml",
         "views/stock_quant_view.xml",
+        'wizards/stock_quant_export_wizard_view.xml',
     ],
 
     'assets': {
