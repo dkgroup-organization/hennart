@@ -74,7 +74,7 @@ class StockQuantExportWizard(models.TransientModel):
         workbook.close()
         output.seek(0)
         file_data = base64.b64encode(output.read()).decode('utf-8')
-        file_name = self.date.strftime('stock_%Y_%m_%d.xl.xlsx')
+        file_name = self.date.strftime('stock_%Y_%m_%d.xlsx')
 
         attachment = self.env['ir.attachment'].create({
             'name': file_name,

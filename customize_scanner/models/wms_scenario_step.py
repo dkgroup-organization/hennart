@@ -306,7 +306,7 @@ class WmsScenarioStep(models.Model):
             quant_ids = self.env['stock.quant'].search(condition)
 
             if not quant_ids:
-                data['warning'] = "This product is not registered on this location."
+                data['warning'] = _("This product is not registered on this location")
             else:
                 data['max_quantity'] = sum(quant_ids.mapped('available_quantity'))
                 

@@ -753,7 +753,7 @@ msgstr "Ce produit n'est pas configuré pour la production"
 #: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
 #, python-format
 msgid "This product is not registered on this location"
-msgstr "Ce produit n'est pas enregistré à cettr emplacement"
+msgstr "Ce produit n'est pas enregistré à cet emplacement"
 
 #. module: customize_scanner
 #. odoo-python
