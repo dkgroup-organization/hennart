@@ -117,7 +117,6 @@ class StockPicking(models.Model):
     def _compute_sequence(self):
         for picking in self:
             dt = picking.scheduled_date or fields.Datetime.now()
-            # (2000 - dt.year) * 10000
             date_score = (dt.year - 2020)*1000000 + dt.month * 10000 + 100 * dt.day + dt.hour
             weight_score = int(sum(move.product_uom_qty * move.product_id.weight for move in picking.move_ids_without_package))
             if weight_score > 99.0:
