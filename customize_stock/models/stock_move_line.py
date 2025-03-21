@@ -153,7 +153,7 @@ class StockMoveLine(models.Model):
         res = False
         for line in self:
             if line.picking_id.state in ['done', 'cancel'] or line.print_ok or line.qty_done != line.reserved_uom_qty \
-                    or line.location_id != line.location_id.warehouse_id.wh_pack_stock_loc_id:
+                    or line.location_id != line.location_id.warehouse_id.wh_pack_stock_loc_id or (line.lot_id and line.lot_id.quantity == 0.0):
                 res = True
                 break
         return res

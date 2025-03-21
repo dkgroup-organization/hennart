@@ -202,6 +202,8 @@ class ImportPromotion(models.TransientModel):
         partner = {}
         products = []
         for promotion in price_purchase:
+            if not promotion.partner_id.typology_id.cadencier:
+                continue
             if promotion.partner_id.ref not in list(result.keys()):
                 result[promotion.partner_id.ref] = []
                 partner[promotion.partner_id.ref] = promotion.partner_id.name

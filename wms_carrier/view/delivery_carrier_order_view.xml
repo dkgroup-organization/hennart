@@ -142,9 +142,11 @@
             <field name="res_model">delivery.carrier.order</field>
             <field name="view_mode">tree,form</field>
         </record>
-        <menuitem id="delivery_carrier_order_menu" action="delivery_carrier_order_action"
-                  parent="stock.menu_stock_warehouse_mgmt" sequence="50"/>
 
+        <menuitem id="delivery_carrier_order_menu_root" string="Transport"
+                  parent="stock.menu_stock_root" sequence="3"/>
+        <menuitem id="delivery_carrier_order_menu" action="delivery_carrier_order_action"
+                  parent="wms_carrier.delivery_carrier_order_menu_root" sequence="50"/>
 
         <record id="action_report_delivery_carrier_order" model="ir.actions.report">
             <field name="name">Carrier Order</field>

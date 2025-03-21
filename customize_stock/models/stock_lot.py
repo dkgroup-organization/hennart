@@ -39,8 +39,8 @@ class StockLot(models.Model):
 
     downstream_lot = fields.Many2many('stock.lot', string='downstream', compute='get_downstream_lot_ids')
     upstream_lot = fields.Many2many('stock.lot', string='upstream', compute='get_upstream_lot_ids')
-    downstream_picking = fields.Many2many('stock.picking', string='Customer picking', compute='get_downstream_picking')
-    upstream_picking = fields.Many2many('stock.picking', string='Supplier picking', compute='get_upstream_picking')
+    downstream_move = fields.Many2many('stock.move', string='Customer move', compute='get_downstream_move')
+    upstream_move = fields.Many2many('stock.move', string='Supplier move', compute='get_upstream_move')
     partner_supplier_id = fields.Many2one('res.partner', string='Supplier', compute='get_partner_supplier')
 
     producted = fields.Boolean('producted')
@@ -69,40 +69,40 @@ class StockLot(models.Model):
         """ count the sale in downstream """
         for lot in self:
             sale_order_ids = self.env['sale.order']
-            for picking in lot.get_downstream_picking():
-                sale_order_ids |= picking.group_id.sale_id
+            for move in lot.get_downstream_move():
+                sale_order_ids |= move.picking_id.group_id.sale_id
             lot.sale_order_ids = sale_order_ids
             lot.sale_order_count = len(lot.sale_order_ids)
 
-    def get_downstream_picking(self):
+    def get_downstream_move(self):
         """ Get tracking of this lot """
-        res = self.env['stock.picking']
+        res = self.env['stock.move']
 
         for lot in self:
             lot_ids = lot.get_downstream_lot()
             outgoing_move_line = self.env['stock.move.line'].search([('lot_id', 'in', lot_ids.ids),
                                                                      ('picking_type_code', '=', 'outgoing')])
-            downstream_picking = self.env['stock.picking']
+            downstream_move = self.env['stock.move']
             for line in outgoing_move_line:
-                downstream_picking |= line.picking_id
-            lot.downstream_picking = downstream_picking
-            res |= downstream_picking
+                downstream_move |= line.move_id
+            lot.downstream_move = downstream_move
+            res |= downstream_move
         return res
 
     def _compute_delivery_ids(self):
         """ count customer with this lot """
         for lot in self:
-            lot.delivery_count = len(lot.downstream_picking)
+            lot.delivery_count = len(lot.downstream_move)
 
-    def action_lot_open_transfers(self):
+    def action_downstream_move(self):
         self.ensure_one()
 
         action = {
-            'res_model': 'stock.picking',
+            'res_model': 'stock.move',
             'type': 'ir.actions.act_window',
-            'name': _("Delivery orders of %s", self.display_name),
-            'domain': [('id', 'in', self.downstream_picking.ids)],
-            'view_mode': 'tree,form'
+            'name': _("Move of %s", self.display_name),
+            'domain': [('id', 'in', self.downstream_move.ids)],
+            'view_mode': 'tree'
         }
         return action
 
@@ -117,27 +117,27 @@ class StockLot(models.Model):
         res |= self
         return res
 
-    def get_upstream_picking(self):
+    def get_upstream_move(self):
         """ Get tracking of this lot """
-        res = self.env['stock.picking']
+        res = self.env['stock.move']
 
         for lot in self:
             lot_ids = lot.get_upstream_lot()
             incoming_move_line = self.env['stock.move.line'].search([('lot_id', 'in', lot_ids.ids),
                                                                      ('picking_type_code', '=', 'incoming')])
-            upstream_picking = self.env['stock.picking']
+            upstream_move = self.env['stock.move']
             for line in incoming_move_line:
-                upstream_picking |= line.picking_id
-            lot.upstream_picking = upstream_picking
-            res |= upstream_picking
+                upstream_move |= line.move_id
+            lot.upstream_move = upstream_move
+            res |= upstream_move
 
         return res
 
     def get_partner_supplier(self):
         """ get supplier """
         for lot in self:
-            if lot.upstream_picking:
-                lot.partner_supplier_id = lot.upstream_picking[0].partner_id
+            if lot.upstream_move:
+                lot.partner_supplier_id = lot.upstream_move[0].picking_id.partner_id
             else:
                 lot.partner_supplier_id = False
 

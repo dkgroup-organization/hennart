@@ -11,6 +11,7 @@
         'l10n_fr',
         'delivery',
         'mail',
+        'wms_carrier',
         'a4o_delivery_common',
         'a4o_delivery_relaypoint',
         ],

@@ -68,6 +68,19 @@ class StockQuantExportWizard(models.TransientModel):
             worksheet.write(row, 1, product.name)
             worksheet.write(row, 2, lot.ref)
             worksheet.write(row, 3, quantity)
+
+            product.transformation_cost
+            product.cutting_cost
+            product.refinement_cost
+            product.total_cost_price
+            product.average_cost_price
+            product.current_cost_price
+            product.workshop_cost_price
+            product.weight
+
+
+
+
             row += 1
 
         # Finaliser et enregistrer le fichier
@@ -89,21 +102,3 @@ class StockQuantExportWizard(models.TransientModel):
             'target': 'self',
         }
 
-
-    def action_download_file(self):
-        output = b"Hello, this is your file content!"  # Remplace par ton fichier
-        file_data = base64.b64encode(output).decode('utf-8')
-        file_name = "mon_fichier.txt"
-
-        attachment = self.env['ir.attachment'].create({
-            'name': file_name,
-            'datas': file_data,
-            'type': 'binary',
-            'mimetype': 'text/plain'
-        })
-
-        return {
-            'type': 'ir.actions.act_url',
-            'url': f'/web/content/{attachment.id}?download=true',
-            'target': 'self',
-        }

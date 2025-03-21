@@ -32,7 +32,10 @@ class WmsScenarioStep(models.Model):
             if data.get(key):
                 new_data[key] = data[key]
 
-        if data.get('printer'):
+        if data.get('printer') and data['printer'].status not in ['printing', 'available']:
+                data['warning'] = _("The printer is unavailable.")
+
+        elif data.get('printer'):
             session = self.env['wms.session'].get_session()
 
             if data.get('lot_id'):

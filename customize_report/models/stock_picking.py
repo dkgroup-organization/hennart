@@ -78,6 +78,8 @@ class StockPicking(models.Model):
             if picking.preparation_state == 'done':
                 message = _('End of preparation: ') + picking.name
 
+            picking.sudo().with_delay().action_create_invoice()
+
             partner = picking.partner_id
             if partner.parent_id and not partner.is_company:
                 partner = partner.parent_id

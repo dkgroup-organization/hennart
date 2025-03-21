@@ -16,15 +16,14 @@
 
                 <notebook position="inside">
                     <page string="tracking">
-                        <group>
-                            <group>
-                                <field name="upstream_picking"/>
-                                <field name="downstream_picking"/>
-                            </group>
-                            <group>
-                                <field name="upstream_lot"/>
-                                <field name="downstream_lot"/>
-                            </group>
+                        <button name="action_downstream_move" type="object" string="Ouvrir"/>
+                        <group string="Mouvements">
+                            <field name="downstream_move"/>
+                            <field name="upstream_move"/>
+                        </group>
+                        <group string="Lots">
+                            <field name="upstream_lot"/>
+                            <field name="downstream_lot"/>
                         </group>
                     </page>
                 </notebook>
