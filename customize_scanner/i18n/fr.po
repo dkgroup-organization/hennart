@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-12 18:02+0000\n"
-"PO-Revision-Date: 2025-03-12 18:02+0000\n"
+"POT-Creation-Date: 2025-03-24 13:22+0000\n"
+"PO-Revision-Date: 2025-03-24 13:22+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -40,6 +40,11 @@ msgstr "Colis de "
 #. module: customize_scanner
 #: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_weight_detail
 msgid "(tare:"
+msgstr ""
+
+#. module: customize_scanner
+#: model_terms:ir.ui.view,arch_db:customize_scanner.scanner_list_preparation
+msgid "<span>PRODUITS AU KG FLASHER SUR ETIQUETTE VIERGE</span>"
 msgstr ""
 
 #. module: customize_scanner
@@ -289,7 +294,7 @@ msgstr "Nouvelle production"
 #: code:addons/customize_scanner/models/wms_scenario_step.py:0
 #, python-format
 msgid "No Weight device finding"
-msgstr ""
+msgstr "Pas de balance trouvée"
 
 #. module: customize_scanner
 #. odoo-python
@@ -439,7 +444,7 @@ msgstr "Erreur de lecture de la balance"
 #: model:wms.scenario.step,action_message:customize_scanner.wms_scenario_step_information_10
 #: model:wms.scenario.step,action_message:customize_scanner.wms_scenario_step_information_20
 msgid "Scan"
-msgstr ""
+msgstr "Scanner"
 
 #. module: customize_scanner
 #. odoo-python
@@ -607,6 +612,15 @@ msgstr "Le mouvement précédent est enregistré"
 
 #. module: customize_scanner
 #. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
+#: code:addons/customize_scanner/models/wms_scenario_step_print.py:0
+#: code:addons/customize_scanner/models/wms_scenario_step_weight.py:0
+#, python-format
+msgid "The printer is unavailable."
+msgstr "L'imprimante n'est pas disponible."
+
+#. module: customize_scanner
+#. odoo-python
 #: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
 #, python-format
 msgid "The product is moving to preparation"
@@ -633,8 +647,7 @@ msgstr "Il n'y a pas suffisament de quantité dans ce lot. The maximum est {}"
 msgid ""
 "There is not enough quantity on production, move the component on production"
 " zone before"
-msgstr ""
-"Il n'y a pas suffisamment de quantité en zone de production. Déplacez les "
+msgstr "Il n'y a pas suffisamment de quantité en zone de production. Déplacez les "
 "composants avant."
 
 #. module: customize_scanner
@@ -642,7 +655,8 @@ msgstr ""
 #: code:addons/customize_scanner/models/wms_scenario_step.py:0
 #, python-format
 msgid "There is not enough quantity on the location. The maximum is {}"
-msgstr "Il n'y a pas suffisament de quantité dans cet emplacement. The maximum est {}"
+msgstr "Il n'y a pas suffisament de quantité dans cet emplacement. The maximum est "
+"{}"
 
 #. module: customize_scanner
 #. odoo-python
@@ -702,8 +716,7 @@ msgstr "Ce lot ne correspond pas au bon produit"
 #: code:addons/customize_scanner/models/wms_scenario_step_production.py:0
 #, python-format
 msgid "This lot is already used, you cannot create a new production with it"
-msgstr ""
-"Ce lot est déjà utilisé. Vous ne pouvez pas créer une production avec ce "
+msgstr "Ce lot est déjà utilisé. Vous ne pouvez pas créer une production avec ce "
 "lot."
 
 #. module: customize_scanner
@@ -750,6 +763,7 @@ msgstr "Ce produit n'est pas configuré pour la production"
 
 #. module: customize_scanner
 #. odoo-python
+#: code:addons/customize_scanner/models/wms_scenario_step.py:0
 #: code:addons/customize_scanner/models/wms_scenario_step_preparation.py:0
 #, python-format
 msgid "This product is not registered on this location"
