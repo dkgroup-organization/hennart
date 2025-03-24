@@ -56,7 +56,20 @@ class StockQuantExportWizard(models.TransientModel):
         worksheet.write(0, 0, 'code')
         worksheet.write(0, 1, 'produit')
         worksheet.write(0, 2, 'lot')
-        worksheet.write(0, 3, 'Quantité')
+        worksheet.write(0, 3, 'transformation')
+        worksheet.write(0, 4, 'coupe')
+        worksheet.write(0, 5, 'affinage')
+        worksheet.write(0, 6, 'achat 6 mois')
+        worksheet.write(0, 7, 'achat actuelle')
+        worksheet.write(0, 8, 'prix atelier')
+        worksheet.write(0, 9, 'poids')
+        worksheet.write(0, 10, 'Quantité')
+        worksheet.write(0, 11, 'prix unité')
+        worksheet.write(0, 12, 'prix poids')
+        worksheet.write(0, 13, 'unité vente')
+        worksheet.write(0, 14, 'unité achat')
+        worksheet.write(0, 15, 'fournisseur')
+        worksheet.write(0, 16, 'date entrée')
 
         row = 1
         for line in result_sql:
@@ -67,17 +80,20 @@ class StockQuantExportWizard(models.TransientModel):
             worksheet.write(row, 0, product.default_code)
             worksheet.write(row, 1, product.name)
             worksheet.write(row, 2, lot.ref)
-            worksheet.write(row, 3, quantity)
-
-            product.transformation_cost
-            product.cutting_cost
-            product.refinement_cost
-            product.total_cost_price
-            product.average_cost_price
-            product.current_cost_price
-            product.workshop_cost_price
-            product.weight
-
+            worksheet.write(row, 3, product.transformation_cost)
+            worksheet.write(row, 4, product.cutting_cost)
+            worksheet.write(row, 5, product.refinement_cost)
+            worksheet.write(row, 6, product.average_cost_price)
+            worksheet.write(row, 7, product.current_cost_price)
+            worksheet.write(row, 8, product.workshop_cost_price)
+            worksheet.write(row, 9, lot.total_weight)
+            worksheet.write(row, 10, quantity * lot.unit_weight)
+            worksheet.write(row, 11, lot.unit_price)
+            worksheet.write(row, 12, lot.kg_price)
+            worksheet.write(row, 13, lot.uos_id)
+            worksheet.write(row, 14, lot.partner_supplier_uos_id)
+            worksheet.write(row, 15, lot.partner_supplier_id)
+            worksheet.write(row, 16, lot.partner_supplier_date)
 
 
 

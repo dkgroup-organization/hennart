@@ -1,5 +1,3 @@
-
-
 from odoo import models, fields ,api, _, SUPERUSER_ID
 import time
 import datetime
@@ -37,7 +35,6 @@ class delivery_carrier_order(models.Model):
                         ('done', 'Done'),
                         ], 'Status', index=True)
 
-  
     weight = fields.Float(compute="_update_info", string='Weight')
     nb_line = fields.Integer(compute="_update_info", string='Nb line',)
     nb_picking = fields.Integer(compute="_update_info", string='Nb picking',)
@@ -223,6 +220,10 @@ class delivery_carrier_order(models.Model):
             if order.state != state_order:
                order.write({'state': state_order})
         return order
+
+    def action_send_invoice_and_delivery(self):
+        """ futur function, Envoie la facture et le bon de livraison au client par email."""
+        pass
 
     def button_action_done(self):
 
