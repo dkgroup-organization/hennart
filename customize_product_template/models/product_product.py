@@ -13,7 +13,7 @@ class ProductProduct(models.Model):
                                         compute="compute_base_product", store=True)
     base_unit_count = fields.Float('Unit Count', compute="compute_base_product", store=True)
     base_unit_price = fields.Float("Price", compute="compute_base_product", store=True)
-    base_unit_name = fields.Char('Name', compute="compute_base_product", store=True)
+    base_unit_name = fields.Char('compotment Name', compute="compute_base_product", store=True)
     lst_price = fields.Float("Product price", compute="compute_base_product", store=True)
 
     def compute_cost_price(self):

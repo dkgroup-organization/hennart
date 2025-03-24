@@ -86,16 +86,14 @@ class StockQuantExportWizard(models.TransientModel):
             worksheet.write(row, 6, product.average_cost_price)
             worksheet.write(row, 7, product.current_cost_price)
             worksheet.write(row, 8, product.workshop_cost_price)
-            worksheet.write(row, 9, lot.total_weight)
-            worksheet.write(row, 10, quantity * lot.unit_weight)
+            worksheet.write(row, 9, quantity * lot.unit_weight)
+            worksheet.write(row, 10, quantity)
             worksheet.write(row, 11, lot.unit_price)
             worksheet.write(row, 12, lot.kg_price)
-            worksheet.write(row, 13, lot.uos_id)
-            worksheet.write(row, 14, lot.partner_supplier_uos_id)
-            worksheet.write(row, 15, lot.partner_supplier_id)
+            worksheet.write(row, 13, lot.uos_id.name)
+            worksheet.write(row, 14, lot.partner_supplier_uos_id.name)
+            worksheet.write(row, 15, lot.partner_supplier_id.name)
             worksheet.write(row, 16, lot.partner_supplier_date)
-
-
 
             row += 1
 
