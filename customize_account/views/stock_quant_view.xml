@@ -11,8 +11,6 @@
                 <field name="product_uom_id" position="replace">
                     <field name="product_uom_id" invisible="1"/>
                     <field name="total_weight"/>
-                    <field name="uos_id"/>
-                    <field name="partner_supplier_id"/>
                 </field>
 
             </field>

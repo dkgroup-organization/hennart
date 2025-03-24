@@ -56,7 +56,21 @@ class StockQuantExportWizard(models.TransientModel):
         worksheet.write(0, 0, 'code')
         worksheet.write(0, 1, 'produit')
         worksheet.write(0, 2, 'lot')
-        worksheet.write(0, 3, 'Quantité')
+        worksheet.write(0, 3, 'transformation')
+        worksheet.write(0, 4, 'coupe')
+        worksheet.write(0, 5, 'affinage')
+        worksheet.write(0, 6, 'achat 6 mois')
+        worksheet.write(0, 7, 'achat actuelle')
+        worksheet.write(0, 8, 'prix atelier')
+        worksheet.write(0, 9, 'poids')
+        worksheet.write(0, 10, 'Quantité')
+        worksheet.write(0, 11, 'prix unité')
+        worksheet.write(0, 12, 'prix poids')
+        worksheet.write(0, 13, 'unité vente')
+        worksheet.write(0, 14, 'unité achat')
+        worksheet.write(0, 15, 'fournisseur')
+        worksheet.write(0, 16, 'date entrée')
+        worksheet.write(0, 17, 'Valeur')
 
         row = 1
         for line in result_sql:
@@ -67,14 +81,29 @@ class StockQuantExportWizard(models.TransientModel):
             worksheet.write(row, 0, product.default_code)
             worksheet.write(row, 1, product.name)
             worksheet.write(row, 2, lot.ref)
-            worksheet.write(row, 3, quantity)
+            worksheet.write(row, 3, product.transformation_cost)
+            worksheet.write(row, 4, product.cutting_cost)
+            worksheet.write(row, 5, product.refinement_cost)
+            worksheet.write(row, 6, product.average_cost_price)
+            worksheet.write(row, 7, product.current_cost_price)
+            worksheet.write(row, 8, product.workshop_cost_price)
+            worksheet.write(row, 9, quantity * lot.unit_weight)
+            worksheet.write(row, 10, quantity)
+            worksheet.write(row, 11, lot.unit_price)
+            worksheet.write(row, 12, lot.kg_price)
+            worksheet.write(row, 13, lot.uos_id.name)
+            worksheet.write(row, 14, lot.partner_supplier_uos_id.name)
+            worksheet.write(row, 15, lot.partner_supplier_id.name)
+            worksheet.write(row, 16, lot.partner_supplier_date)
+            worksheet.write(row, 17, quantity * lot.unit_price)
+
             row += 1
 
         # Finaliser et enregistrer le fichier
         workbook.close()
         output.seek(0)
         file_data = base64.b64encode(output.read()).decode('utf-8')
-        file_name = self.date.strftime('stock_%Y_%m_%d.xl.xlsx')
+        file_name = self.date.strftime('stock_%Y_%m_%d.xlsx')
 
         attachment = self.env['ir.attachment'].create({
             'name': file_name,
@@ -89,21 +118,3 @@ class StockQuantExportWizard(models.TransientModel):
             'target': 'self',
         }
 
-
-    def action_download_file(self):
-        output = b"Hello, this is your file content!"  # Remplace par ton fichier
-        file_data = base64.b64encode(output).decode('utf-8')
-        file_name = "mon_fichier.txt"
-
-        attachment = self.env['ir.attachment'].create({
-            'name': file_name,
-            'datas': file_data,
-            'type': 'binary',
-            'mimetype': 'text/plain'
-        })
-
-        return {
-            'type': 'ir.actions.act_url',
-            'url': f'/web/content/{attachment.id}?download=true',
-            'target': 'self',
-        }

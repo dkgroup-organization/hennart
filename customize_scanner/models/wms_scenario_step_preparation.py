@@ -26,6 +26,22 @@ class WmsScenarioStep(models.Model):
     def get_next_picking_line(self, data):
         """ Return the next preparation line to do, initialize the data with this new line"""
         self.ensure_one()
+
+        def return_move_line_todo(picking):
+            location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
+            move_line_todo = [
+                ('picking_id', '=', picking.id),
+                ('location_id', 'not in', location_preparation_ids.ids),
+                ('reserved_uom_qty', '>', 0.0), ('qty_done', '=', 0.0),
+            ]
+            move_line_ok = self.env['stock.move.line']
+            move_line_search_ids = self.env['stock.move.line'].search(move_line_todo, order='priority')
+            for move_line_check in move_line_search_ids:
+                if move_line_check.lot_id and move_line_check.lot_id.product_qty > 0.0:
+                    move_line_ok = move_line_check
+                    break
+            return move_line_ok
+
         # define the priority of the stock.move.line, by location name
         picking = self.get_picking(data)
         move_line = data.get('move_line')
@@ -38,13 +54,7 @@ class WmsScenarioStep(models.Model):
                 # this move line is to finish
                 new_data['move_line'] = move_line
             else:
-                location_preparation_ids = self.env['stock.warehouse'].search([]).mapped('wh_pack_stock_loc_id')
-                move_line_todo = [
-                    ('picking_id', '=', picking.id),
-                    ('location_id', 'not in', location_preparation_ids.ids),
-                    ('reserved_uom_qty', '>', 0.0), ('qty_done', '=', 0.0),
-                    ]
-                move_line_ids = self.env['stock.move.line'].search(move_line_todo, order='priority', limit=1)
+                move_line_ids = return_move_line_todo(picking)
 
                 if move_line_ids:
                     new_data['move_line'] = move_line_ids
@@ -53,7 +63,7 @@ class WmsScenarioStep(models.Model):
                     picking.compute_preparation_state()
                     if picking.preparation_state in ['wait', 'pick']:
                         picking.action_assign()
-                        move_line_ids = self.env['stock.move.line'].search(move_line_todo, order='priority', limit=1)
+                        move_line_ids = return_move_line_todo(picking)
                         if move_line_ids:
                             new_data['move_line'] = move_line_ids
         else:
@@ -806,7 +816,6 @@ class WmsScenarioStep(models.Model):
                 data.pop('end_preparation', None)
                 picking.button_validate()
                 data['message'] = picking.preparation_end()
-                picking.action_send_invoice_and_delivery()
         return data
 
     def delete_data_key(self, data, key):

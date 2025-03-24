@@ -59,7 +59,10 @@ class WmsScenarioStep(models.Model):
         """ Print the production lot """
 
         self.ensure_one()
-        if data.get('printer'):
+        if data.get('printer') and data['printer'].status not in ['printing', 'available']:
+                data['warning'] = _("The printer is unavailable.")
+
+        elif data.get('printer'):
             session = self.env['wms.session'].get_session()
             job_ids = self.env['wms.print.job'].search([('state', '=', 'todo'), ('session_id', '=', session.id)])
 

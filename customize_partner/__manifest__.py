@@ -16,9 +16,7 @@
         "views/res_partner_area_view.xml",
         "views/res_partner_function_view.xml",
         "views/res_partner_view.xml",
-
-
-        #"data/res.partner.function.csv",
+        "views/partner_typology_views.xml",
     ],
     "installable": True,
 

@@ -442,9 +442,14 @@ class AccountMove(models.Model):
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()
 
         for invoice in self:
+
             if invoice.piece_comptable:
                 continue
             for line in invoice.line_ids:
+                # Update lot information
+                line.account_move_line_lot_ids.lot_ids.sudo().compute_cost_price()
+                line.account_move_line_lot_ids.lot_ids.sudo().get_partner_supplier()
+
                 if not line.cost_price:
                     line.cost_price = line.product_id.workshop_cost_price
 

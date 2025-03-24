@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_res_partner_typology_tree" model="ir.ui.view">
+            <field name="name">res.partner.typology.tree</field>
+            <field name="model">res.partner.typology</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="name"/>
+                    <field name="cadencier" widget="boolean_toggle"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="action_res_partner_typology" model="ir.actions.act_window">
+            <field name="name">Partner Typologies</field>
+            <field name="res_model">res.partner.typology</field>
+            <field name="view_mode">tree</field>
+        </record>
+
+
+        <menuitem id="menu_res_partner_typology" name="Typologie client/fournisseur"
+                  parent="menu_partner_add_config"
+                  action="action_res_partner_typology"/>
+
+    </data>
+</odoo>

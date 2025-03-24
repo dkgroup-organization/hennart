@@ -20,7 +20,7 @@ class StockMove(models.Model):
         digits='Stock Weight',
     )
     quantity_done = fields.Float(
-        string="Done",
+        string="Qty Done",
         compute='get_quantity_done',
         inverse="put_quantity_done", readonly=False,
         store=True, precompute=False,

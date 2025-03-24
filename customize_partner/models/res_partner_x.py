@@ -35,3 +35,4 @@ class ResPartnerTypology(models.Model):
     _description = "Partner typology"
 
     name = fields.Char("name")
+    cadencier = fields.Boolean('Cadencier Achat')

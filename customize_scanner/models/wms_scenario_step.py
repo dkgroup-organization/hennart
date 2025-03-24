@@ -269,10 +269,18 @@ class WmsScenarioStep(models.Model):
         if data.get('lot_id'):
             if data.get('label_product') and not data.get('product_id'):
                 data['product_id'] = data.get('label_product')
-
         else:
             data['warning'] = _("Some information are missing to check production lot.")
 
+        return data
+
+    def check_printer(self, data):
+        """
+        Vérifie imprimante
+        """
+        if data.get('printer'):
+            if data['printer'].status not in ['printing', 'available']:
+                data['warning'] = _("The printer is unavailable.")
         return data
 
     def check_product_location_qty(self, data):
@@ -306,7 +314,7 @@ class WmsScenarioStep(models.Model):
             quant_ids = self.env['stock.quant'].search(condition)
 
             if not quant_ids:
-                data['warning'] = "This product is not registered on this location."
+                data['warning'] = _("This product is not registered on this location")
             else:
                 data['max_quantity'] = sum(quant_ids.mapped('available_quantity'))
                 

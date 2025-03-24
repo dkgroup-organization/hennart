@@ -44,7 +44,11 @@ class ImportPromotion(models.TransientModel):
     message = fields.Html("Message")
 
     def week_info(self,year,week):
-        startdate = datetime.date(int(year),1,1)+relativedelta(weeks=+week)
+        # Trouver le 4 janvier (qui est forcément dans la semaine 1)
+        jour_reference = datetime.date(int(year), 1, 4)
+        # Trouver le lundi de cette semaine
+        premier_lundi = jour_reference - datetime.timedelta(days=jour_reference.weekday())
+        startdate = premier_lundi + relativedelta(weeks=+week)
         enddate = startdate + datetime.timedelta(days=6)
         data = {'date_start':startdate.strftime('%Y-%m-%d 00:00:00'),'date_end':enddate.strftime('%Y-%m-%d 00:00:00')}
         return data
@@ -184,8 +188,6 @@ class ImportPromotion(models.TransientModel):
                         else:
                             self.env['purchase.promotion'].create(vals_promo)
 
-        #return True
-
 
     def from_data(self,year=False):
         fields = ['CODE_FOURNISSEUR','CODE_PRODUIT','DESCRIPTION(facultatif)']
@@ -200,6 +202,8 @@ class ImportPromotion(models.TransientModel):
         partner = {}
         products = []
         for promotion in price_purchase:
+            if not promotion.partner_id.typology_id.cadencier:
+                continue
             if promotion.partner_id.ref not in list(result.keys()):
                 result[promotion.partner_id.ref] = []
                 partner[promotion.partner_id.ref] = promotion.partner_id.name

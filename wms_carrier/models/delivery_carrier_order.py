@@ -1,5 +1,3 @@
-
-
 from odoo import models, fields ,api, _, SUPERUSER_ID
 import time
 import datetime
@@ -37,7 +35,6 @@ class delivery_carrier_order(models.Model):
                         ('done', 'Done'),
                         ], 'Status', index=True)
 
-  
     weight = fields.Float(compute="_update_info", string='Weight')
     nb_line = fields.Integer(compute="_update_info", string='Nb line',)
     nb_picking = fields.Integer(compute="_update_info", string='Nb picking',)
@@ -168,7 +165,6 @@ class delivery_carrier_order(models.Model):
                             field_value = field_value.replace('\n', ' ')
                             field_value = field_value.replace(';', ' ')
                             field_value = field_value.replace('\r\n', ' ')
-                            
                         else:
                            field_value = '%s' % (field_value)
 
@@ -186,7 +182,6 @@ class delivery_carrier_order(models.Model):
                         field_value = obj_current.note
                 
                     #Exception, date delivered always j+1
-
 
                     if field[0] == 'date_delivered':
                         next_date = line.scheduled_date + relativedelta(days=1)
@@ -226,35 +221,18 @@ class delivery_carrier_order(models.Model):
                order.write({'state': state_order})
         return order
 
-    
+    def action_send_invoice_and_delivery(self):
+        """ futur function, Envoie la facture et le bon de livraison au client par email."""
+        pass
+
     def button_action_done(self):
-        
-        location_obj = self.env['stock.location']
-        move_obj = self.env['stock.move']
-        picking_obj = self.env['stock.picking']
-        location_ids = location_obj.search([('usage', '=', 'customer')])
-        customer_location_id = location_ids[0]
-        move_output_ids = []
-        picking_ids = []
-        for order in self:
-            for picking in order.picking_ids:
-                picking_ids.append(picking.id)
-                for move in picking.move_line_ids:
-                    if move.state == 'done':
-                        move_output_ids.append(move.id)
-        date_done = picking.scheduled_date
-        moves = move_obj.search([('id','in',move_output_ids)])
-        for mm in moves:
-         mm.write({
-            'location_dest_id': customer_location_id,
-            'date': date_done,
-          
-            })
 
         for order in self:
             for picking in order.picking_ids:
                 if picking.state in ['assigned', 'confirmed','waiting']:
                     picking.button_validate()
+                picking.action_send_invoice_and_delivery()
+
         self.check_state()
         return True
 

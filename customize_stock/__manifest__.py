@@ -18,6 +18,7 @@
     'data': [
         "security/ir.model.access.csv",
         "views/stock_lot_view.xml",
+        "views/stock_move_view.xml",
         "views/stock_weight_device_views.xml",
         "views/stock_weight_value_views.xml",
         "views/stock_picking_views_inherit.xml",
