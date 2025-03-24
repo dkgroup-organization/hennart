@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-27 16:57+0000\n"
-"PO-Revision-Date: 2025-02-27 16:57+0000\n"
+"POT-Creation-Date: 2025-03-24 13:40+0000\n"
+"PO-Revision-Date: 2025-03-24 13:40+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,9 +18,24 @@ msgstr ""
 #. module: customize_account
 #: model_terms:ir.ui.view,arch_db:customize_account.view_it_config_settings
 msgid ""
-"<span class=\"o_form_label\">Customization</span>\n"
-"                            <span class=\"fa fa-lg fa-building-o\" title=\"Customization of account.\" aria-label=\"Customization of account.\" groups=\"base.group_multi_company\" role=\"img\"/>"
+"<span class=\"text-muted\">\n"
+"                                        Coefficient de coût Atelier.\n"
+"                                    </span>"
 msgstr ""
+"<span class=\"text-muted\">\n"
+"                                    Coefficient de coût Atelier.\n"
+"                                </span>"
+
+#. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.view_it_config_settings
+msgid ""
+"<span class=\"text-muted\">\n"
+"                                        Coefficient poids BRUT / poids NET.\n"
+"                                    </span>"
+msgstr ""
+"<span class=\"text-muted\">\n"
+"                                    Coefficient poids BRUT / poids NET.\n"
+"                                </span>"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__account_id
@@ -63,21 +78,25 @@ msgid "Bon de livraison"
 msgstr ""
 
 #. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.view_stock_quant_export_wizard
+msgid "Cancel"
+msgstr "Annulé"
+
+#. module: customize_account
 #: model:ir.model.fields.selection,name:customize_account.selection__account_move_line_lot__state__cancel
 msgid "Cancelled"
 msgstr "Annulé"
 
 #. module: customize_account
-#. odoo-python
-#: code:addons/customize_account/models/stock_picking.py:0
-#, python-format
-msgid "Chronopost label is printing\n"
-msgstr "Etiquette Chronopost imprimé\n"
-
-#. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__default_code
 msgid "Code"
 msgstr ""
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_res_config_settings__coef_shipping_weight
+#: model:ir.model.fields,field_description:customize_account.field_res_config_settings__coef_workshop_cost
+msgid "Coefficient Workshop Cost"
+msgstr "Coéfficient de coût atelier"
 
 #. module: customize_account
 #: model:ir.model,name:customize_account.model_res_config_settings
@@ -102,12 +121,21 @@ msgid "Country"
 msgstr "Pays"
 
 #. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.account_move_customize_view_form
+msgid "Cout atelier"
+msgstr ""
+
+#. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__create_uid
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export__create_uid
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export_wizard__create_uid
 msgid "Created by"
 msgstr "Créé par"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__create_date
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export__create_date
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export_wizard__create_date
 msgid "Created on"
 msgstr "Créé le"
 
@@ -115,6 +143,12 @@ msgstr "Créé le"
 #: model:ir.model.fields,field_description:customize_account.field_stock_quant__currency_id
 msgid "Currency"
 msgstr "Devise"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export__date
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export_wizard__date
+msgid "Date"
+msgstr ""
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__incoterm_date
@@ -132,7 +166,6 @@ msgstr "Jour"
 
 #. module: customize_account
 #: model:ir.model.fields,help:customize_account.field_stock_lot__uos_id
-#: model:ir.model.fields,help:customize_account.field_stock_quant__uos_id
 msgid "Default unit of Sale used for invoicing."
 msgstr "Unité de facturation par défaut."
 
@@ -176,6 +209,8 @@ msgstr "Remise%"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__display_name
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export__display_name
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export_wizard__display_name
 msgid "Display Name"
 msgstr "Nom"
 
@@ -184,7 +219,7 @@ msgstr "Nom"
 msgid ""
 "Display base unit price on your eCommerce pages. Set to 0 to hide it for "
 "this product."
-msgstr ""
+msgstr "Affichage de l'unité de facturation sur votre boutique d'ecommerce. Mettez 0 pour le cacher "
 
 #. module: customize_account
 #: model:ir.model.fields.selection,name:customize_account.selection__account_move_line_lot__state__done
@@ -197,6 +232,27 @@ msgstr "Terminé"
 #, python-format
 msgid "End of preparation: "
 msgstr "Fin de la préparation"
+
+#. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.view_stock_quant_export_wizard
+msgid "Export"
+msgstr ""
+
+#. module: customize_account
+#: model:ir.model,name:customize_account.model_stock_quant_export
+#: model_terms:ir.ui.view,arch_db:customize_account.view_stock_quant_export_wizard
+msgid "Export Stock Quantities"
+msgstr "Exporter les quantités en stock"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export__file
+msgid "File"
+msgstr "Fichier"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export__filename
+msgid "Filename"
+msgstr "Nom de fichier"
 
 #. module: customize_account
 #: model:ir.model,name:customize_account.model_account_fiscal_position
@@ -215,6 +271,8 @@ msgstr "Histo sous total"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__id
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export__id
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export_wizard__id
 msgid "ID"
 msgstr ""
 
@@ -243,13 +301,6 @@ msgid "In Payment"
 msgstr "En paiement"
 
 #. module: customize_account
-#. odoo-python
-#: code:addons/customize_account/models/stock_picking.py:0
-#, python-format
-msgid "Invoice is printing\n"
-msgstr "Facture imprimée\n"
-
-#. module: customize_account
 #: model:ir.model.fields,help:customize_account.field_account_move_line__quantity
 #: model:ir.model.fields,help:customize_account.field_account_move_line_lot__quantity
 msgid "Invoiced quantity in kg or unit."
@@ -269,6 +320,11 @@ msgstr "Historique de l'app facturation"
 #: model:ir.model.fields,field_description:customize_account.field_stock_lot__invoice_lot_line_ids
 msgid "Invoicing line"
 msgstr "Ligne d'écriture comptable"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_stock_move__product_uos
+msgid "Invoicing unit"
+msgstr "Unité de facturation"
 
 #. module: customize_account
 #: model:ir.model,name:customize_account.model_account_journal
@@ -292,16 +348,22 @@ msgstr "Ecritures comptable"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot____last_update
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export____last_update
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export_wizard____last_update
 msgid "Last Modified on"
 msgstr "Dernière modification le"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__write_uid
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export__write_uid
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export_wizard__write_uid
 msgid "Last Updated by"
 msgstr "Dernière mise à jour par"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__write_date
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export__write_date
+#: model:ir.model.fields,field_description:customize_account.field_stock_quant_export_wizard__write_date
 msgid "Last Updated on"
 msgstr "Dernière mise à jour le"
 
@@ -407,6 +469,11 @@ msgid "Paiement informations"
 msgstr "Informations de paiement"
 
 #. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.view_it_config_settings
+msgid "Parametres Hennart"
+msgstr "Paramettres Hennart"
+
+#. module: customize_account
 #: model:ir.model.fields.selection,name:customize_account.selection__account_move__payment_state__partial
 msgid "Partially Paid"
 msgstr "Partiellement réglé"
@@ -422,20 +489,6 @@ msgstr "Adresse de livraison"
 #: model:ir.model.fields,field_description:customize_account.field_account_payment__payment_state
 msgid "Payment Status"
 msgstr "Statut de paiement"
-
-#. module: customize_account
-#. odoo-python
-#: code:addons/customize_account/models/stock_picking.py:0
-#, python-format
-msgid "Picking is printing\n"
-msgstr "Bon de livraison imprimé\n"
-
-#. module: customize_account
-#. odoo-python
-#: code:addons/customize_account/models/stock_picking.py:0
-#, python-format
-msgid "Picking with price is printing\n"
-msgstr "Bon de livraison valorisé imprimé\n"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_bank_statement_line__picking_ids
@@ -456,14 +509,14 @@ msgstr "Port d'entrée"
 #: code:addons/customize_account/static/src/js/custom_date_filters.js:0
 #, python-format
 msgid "Previous Period"
-msgstr ""
+msgstr "Période précédente"
 
 #. module: customize_account
 #. odoo-javascript
 #: code:addons/customize_account/static/src/js/custom_date_filters.js:0
 #, python-format
 msgid "Previous Year"
-msgstr ""
+msgstr "Année précédente"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__initial_price
@@ -471,11 +524,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:customize_account.account_move_line_custom_form_view
 msgid "Price"
 msgstr "Prix"
-
-#. module: customize_account
-#: model_terms:ir.ui.view,arch_db:customize_account.stock_picking_print_form_view
-msgid "Print Invoice"
-msgstr "Imprimer la facture"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__cost_price
@@ -498,6 +546,11 @@ msgid "Product Category"
 msgstr "Catégorie de produit"
 
 #. module: customize_account
+#: model:ir.model,name:customize_account.model_stock_move_line
+msgid "Product Moves (Stock Move Line)"
+msgstr "Mouvements d'article (Ligne de mouvement de stock)"
+
+#. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__prodlot_id
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__lot_id
 #: model_terms:ir.ui.view,arch_db:customize_account.account_move_line_custom_form_view
@@ -505,6 +558,7 @@ msgid "Production lot"
 msgstr "Lot de production"
 
 #. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_invoice_report__promo
 #: model_terms:ir.ui.view,arch_db:customize_account.account_move_customize_view_form
 msgid "Promo"
 msgstr ""
@@ -566,14 +620,14 @@ msgstr "Quantité en unité"
 #. module: customize_account
 #: model:ir.model,name:customize_account.model_stock_quant
 msgid "Quants"
-msgstr "Quantité"
+msgstr "Quantités"
 
 #. module: customize_account
 #. odoo-javascript
 #: code:addons/customize_account/static/src/js/custom_date_filters.js:0
 #, python-format
 msgid "Quarter"
-msgstr ""
+msgstr "Trimestre"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__discount1
@@ -606,9 +660,19 @@ msgid "Sales Order"
 msgstr "Bon de commande"
 
 #. module: customize_account
+#: model:ir.model,name:customize_account.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Lignes de vente"
+
+#. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_invoice_report__team_id
 msgid "Sales Team"
 msgstr "Équipe commerciale"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_account_invoice_report__week
+msgid "Semaine"
+msgstr ""
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__partner_shipping_id
@@ -616,14 +680,20 @@ msgid "Shipping"
 msgstr "Livraison"
 
 #. module: customize_account
-#: model_terms:ir.ui.view,arch_db:customize_account.view_it_config_settings
-msgid "Specific configuration for customer."
-msgstr "Configuration spécifique pour le client."
-
-#. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__state
 msgid "State"
 msgstr "Status"
+
+#. module: customize_account
+#: model:ir.model,name:customize_account.model_stock_move
+msgid "Stock Move"
+msgstr "Stock déplacer"
+
+#. module: customize_account
+#: model:ir.actions.act_window,name:customize_account.action_stock_quant_export
+#: model:ir.ui.menu,name:customize_account.menu_stock_quant_export
+msgid "Stock à date"
+msgstr ""
 
 #. module: customize_account
 #: model_terms:ir.ui.view,arch_db:customize_account.account_move_customize_view_form
@@ -639,9 +709,14 @@ msgid "Suitable Journal"
 msgstr "Journal convenable"
 
 #. module: customize_account
-#: model:ir.model.fields,field_description:customize_account.field_stock_quant__partner_supplier_id
+#: model:ir.model.fields,field_description:customize_account.field_stock_lot__partner_supplier_id
 msgid "Supplier"
 msgstr "Fournisseur"
+
+#. module: customize_account
+#: model:ir.model.fields,field_description:customize_account.field_stock_lot__partner_supplier_date
+msgid "Supplier Date"
+msgstr "Date fournisseur"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line__supplierinfo_id
@@ -673,6 +748,16 @@ msgstr ""
 #: model:ir.model.fields,field_description:customize_account.field_account_move__total_tva
 #: model:ir.model.fields,field_description:customize_account.field_account_payment__total_tva
 msgid "Total TVA"
+msgstr ""
+
+#. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.account_move_customize_view_form
+msgid "Total marge"
+msgstr ""
+
+#. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.account_move_customize_view_form
+msgid "Total promotion"
 msgstr ""
 
 #. module: customize_account
@@ -715,19 +800,19 @@ msgstr "Prix unitaire"
 
 #. module: customize_account
 #: model:ir.model.fields,field_description:customize_account.field_stock_lot__uos_id
-#: model:ir.model.fields,field_description:customize_account.field_stock_quant__uos_id
 msgid "Unit of Sale"
 msgstr "Unité de vente"
 
 #. module: customize_account
-#: model_terms:ir.ui.view,arch_db:customize_account.view_stock_lot_form_account_inherit
-msgid "Update"
-msgstr "Mettre à jour"
+#: model:ir.model.fields,field_description:customize_account.field_stock_lot__partner_supplier_uos_id
+msgid "Unit of purchase"
+msgstr "Unté d'achat"
 
 #. module: customize_account
 #: model_terms:ir.ui.view,arch_db:customize_account.view_it_config_settings
-msgid "Update account code"
-msgstr "Actualiser le code de compte"
+#: model_terms:ir.ui.view,arch_db:customize_account.view_stock_lot_form_account_inherit
+msgid "Update"
+msgstr "Mettre à jour"
 
 #. module: customize_account
 #: model_terms:ir.ui.view,arch_db:customize_account.account_move_customize_view_form
@@ -757,6 +842,16 @@ msgstr "Semaine"
 #: model:ir.model.fields,field_description:customize_account.field_account_move_line_lot__weight
 msgid "Weight"
 msgstr "Poids"
+
+#. module: customize_account
+#: model:ir.model,name:customize_account.model_stock_quant_export_wizard
+msgid "Wizard for Stock Quant Export"
+msgstr "Assistant d'export des stocks"
+
+#. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.view_it_config_settings
+msgid "Workshop Configuration"
+msgstr "Configuration de l'atelier"
 
 #. module: customize_account
 #. odoo-javascript
@@ -817,6 +912,7 @@ msgstr ""
 "jour."
 
 #. module: customize_account
+#: model_terms:ir.ui.view,arch_db:customize_account.account_move_customize_view_form
 #: model_terms:ir.ui.view,arch_db:customize_account.account_move_line_custom_form_view
 msgid "total"
 msgstr ""

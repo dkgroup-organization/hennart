@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-11 12:05+0000\n"
-"PO-Revision-Date: 2025-03-11 12:05+0000\n"
+"POT-Creation-Date: 2025-03-24 13:28+0000\n"
+"PO-Revision-Date: 2025-03-24 13:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,17 +18,17 @@ msgstr ""
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "1/ Python code preparation of data"
-msgstr ""
+msgstr "1/ Code python de prétraitement des données"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "2/ Qweb template configuration"
-msgstr ""
+msgstr "2/ Configuration du template QWEB"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "3/ Python code analyse new data"
-msgstr ""
+msgstr "3/ Code python de traitement des données"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
@@ -73,7 +73,7 @@ msgstr "Utilisateurs authorisés"
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
 msgid "Allowed Users Groups"
-msgstr "Groupes authorisés"
+msgstr ""
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
@@ -159,12 +159,12 @@ msgstr "Mode Debug"
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__action_variable
 msgid "Define a name for the result of the scan at this step "
-msgstr "Definir un nom pour le résultat du scan à cette étape"
+msgstr "Définir le nom de variable pour le résultat "
 
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__action_model
 msgid "Define the model used at this step."
-msgstr "Définir le model utilisé à cette étape."
+msgstr "Définir le modèle à utiliser."
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__name
@@ -299,7 +299,7 @@ msgstr "ID de l'étiquette"
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_print_job__label_qty
 msgid "Label qty"
-msgstr "Qté étiquette"
+msgstr "Qté d'étiquette"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu____last_update
@@ -309,7 +309,7 @@ msgstr "Qté étiquette"
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition____last_update
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session____last_update
 msgid "Last Modified on"
-msgstr ""
+msgstr "Derniere modification le"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__write_uid
@@ -319,7 +319,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__write_uid
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "Derniere mise à jour par"
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_menu__write_date
@@ -329,7 +329,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_transition__write_date
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "Dernier mise à jour le"
 
 #. module: wms_scanner
 #. odoo-python
@@ -341,7 +341,7 @@ msgstr "Emplacement"
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.scanner_menu_body_header
 msgid "Logout:<br/>"
-msgstr "Déconnexion"
+msgstr "Déconnection"
 
 #. module: wms_scanner
 #. odoo-python
@@ -404,7 +404,7 @@ msgstr "Description"
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__debug_mode
 msgid "No try/except protection when there is code execution."
-msgstr "Pas de protection anti bug lors de l'éxecution."
+msgstr "Pas d'interception des erreurs pendant l'execution du code."
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
@@ -467,7 +467,7 @@ msgstr "Merci de sélectionner une valeur"
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session__data_previous
 msgid "Previous data"
-msgstr "Données précédente"
+msgstr "Données précédentes"
 
 #. module: wms_scanner
 #. odoo-python
@@ -494,7 +494,7 @@ msgstr "Code python"
 #. module: wms_scanner
 #: model:ir.model.fields,help:wms_scanner.field_wms_scenario_step__python_code_before
 msgid "Python code to execute before qweb."
-msgstr "Code python avant le rendu QWEB."
+msgstr "Code python exécuté après."
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__scenario_qweb
@@ -505,7 +505,7 @@ msgstr ""
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__scenario_title
 msgid "QWEB Title"
-msgstr "Titre QWEB"
+msgstr ""
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
@@ -528,12 +528,12 @@ msgstr ""
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session__request_method
 msgid "Request metode"
-msgstr "Méthode Request"
+msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_session__request_param
 msgid "Request parameters"
-msgstr "Paramètre Request"
+msgstr ""
 
 #. module: wms_scanner
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__routing
@@ -553,12 +553,12 @@ msgstr ""
 #. module: wms_scanner
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_weight
 msgid "Scan Weight"
-msgstr ""
+msgstr "Scanner le poids"
 
 #. module: wms_scanner
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_tare
 msgid "Scan Weight tare"
-msgstr ""
+msgstr "Scanner la tare"
 
 #. module: wms_scanner
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_scenario_step__action_scanner__scan_model
@@ -648,7 +648,7 @@ msgstr "Scenario de cette étape"
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario_step__action_presentation
 msgid "Screen presentation"
-msgstr "Présentation de l'écran"
+msgstr ""
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
@@ -818,7 +818,7 @@ msgstr "vers"
 #. module: wms_scanner
 #: model:ir.model.fields.selection,name:wms_scanner.selection__wms_print_job__state__todo
 msgid "To do"
-msgstr "à faire"
+msgstr "A faire"
 
 #. module: wms_scanner
 #: model_terms:ir.ui.view,arch_db:wms_scanner.view_wms_scenario_form
@@ -931,7 +931,7 @@ msgstr ""
 #. module: wms_scanner
 #: model:ir.model.fields,field_description:wms_scanner.field_wms_scenario__scenario_id
 msgid "technical field to filter"
-msgstr ""
+msgstr "Champs technique pourle filtrage"
 
 #. module: wms_scanner
 #. odoo-python
