@@ -95,7 +95,7 @@ class StockQuantExportWizard(models.TransientModel):
             worksheet.write(row, 14, lot.partner_supplier_uos_id.name)
             worksheet.write(row, 15, lot.partner_supplier_id.name)
             worksheet.write(row, 16, lot.partner_supplier_date)
-            worksheet.write(row, 16, quantity * lot.unit_price)
+            worksheet.write(row, 17, quantity * lot.unit_price)
 
             row += 1
 

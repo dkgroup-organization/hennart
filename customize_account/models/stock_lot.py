@@ -14,15 +14,15 @@ class StockLot(models.Model):
     categ_id = fields.Many2one('product.category', related='product_id.categ_id', store=True, index=True)
     uos_id = fields.Many2one('uom.uom', related='product_id.uos_id', string='Unit of Sale')
 
-    partner_supplier_id = fields.Many2one('res.partner', string='Supplier', compute='get_partner_supplier', store=True)
-    partner_supplier_date = fields.Datetime('Supplier Date', compute='get_partner_supplier', store=True)
-    partner_supplier_uos_id = fields.Many2one('uom.uom', string='Unit of purchase',  compute='get_partner_supplier', store=True)
+    partner_supplier_id = fields.Many2one('res.partner', string='Supplier', compute='get_partner_supplier', readonly=False, store=True)
+    partner_supplier_date = fields.Datetime('Supplier Date', compute='get_partner_supplier', readonly=False, store=True)
+    partner_supplier_uos_id = fields.Many2one('uom.uom', string='Unit of purchase',  compute='get_partner_supplier', readonly=False, store=True)
 
     def get_partner_supplier(self):
         """ get supplier """
         for lot in self:
-            partner_supplier_id = False
-            partner_supplier_date = False
+            partner_supplier_id = lot.partner_supplier_id
+            partner_supplier_date = lot.partner_supplier_date
             partner_supplier_uos_id = lot.product_id.uos_id
 
             if lot.upstream_move:
