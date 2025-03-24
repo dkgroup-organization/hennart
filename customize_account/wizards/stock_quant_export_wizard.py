@@ -70,6 +70,7 @@ class StockQuantExportWizard(models.TransientModel):
         worksheet.write(0, 14, 'unité achat')
         worksheet.write(0, 15, 'fournisseur')
         worksheet.write(0, 16, 'date entrée')
+        worksheet.write(0, 17, 'Valeur')
 
         row = 1
         for line in result_sql:
@@ -94,6 +95,7 @@ class StockQuantExportWizard(models.TransientModel):
             worksheet.write(row, 14, lot.partner_supplier_uos_id.name)
             worksheet.write(row, 15, lot.partner_supplier_id.name)
             worksheet.write(row, 16, lot.partner_supplier_date)
+            worksheet.write(row, 16, quantity * lot.unit_price)
 
             row += 1
 
