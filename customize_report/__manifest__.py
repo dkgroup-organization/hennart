@@ -11,7 +11,7 @@
                 "customize_stock", "customize_account"],
     "data": [
         "views/external_layout_inherit.xml",
-        "views/invoice_report.xml",
+        #"views/invoice_report.xml",
         "views/sale_portal_report.xml",
         "views/sale_report.xml",
         "views/res_company_view.xml",
