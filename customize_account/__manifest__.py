@@ -11,7 +11,7 @@
     "maintainer": "DK group",
     "images": [],
     "depends": ["account", "account_usability", "account_payment", "stock_account", "customize_purchase", "customize_sale", "customize_stock",
-                "customize_mrp", "intrastat_product", "web"],
+                "customize_mrp", "wms_carrier",  "intrastat_product", "web"],
 
     "data": [
         "security/ir.model.access.csv",
@@ -23,6 +23,7 @@
         "views/account_invoice_report_views.xml",
         "views/stock_lot_views.xml",
         "views/stock_quant_view.xml",
+        "views/delivery_carrier_order_views.xml",
         'wizards/stock_quant_export_wizard_view.xml',
     ],
 

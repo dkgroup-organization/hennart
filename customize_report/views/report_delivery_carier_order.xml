@@ -1,0 +1,159 @@
+<odoo>
+
+
+
+        <template id="report_delivery_carrier_order">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+
+
+                            <br></br>
+                            <h2>Bon de transport</h2>
+
+                            <table class="table table-sm o_main_table mt-4">
+                                <tr>
+
+                                    <td>
+
+                                        <h3>Date:
+                                            <span t-field="o.date_expected2"/>
+                                        </h3>
+                                    </td>
+                                    <td>
+                                        <h2>
+                                            <span t-field="o.carrier_id.name"/>
+                                        </h2>
+                                    </td>
+
+
+                                </tr>
+
+                            </table>
+
+                            <br/>
+
+                            <table class="table table-sm o_main_table mt-4">
+                                <tr>
+
+                                    <td style="text-align: center;">
+                                        Nb palettes ramenées:
+
+                                        <br/>
+                                        perdu:
+                                        <span t-field="o.nb_pallet_perdu"/>
+
+                                        <br/>
+                                        europe:
+                                        <span t-field="o.nb_pallet_europe"/>
+                                    </td>
+
+
+                                    <td style="text-align: center;">
+                                        Nb Palettes prises:
+
+                                        <p t-field="o.nb_pallet"/>
+                                    </td>
+
+
+                                    <td style="text-align: center;">
+                                        Nb palettes au sol:
+
+                                        <p t-field="o.nb_pallet_ground"/>
+                                    </td>
+
+
+                                    <td style="text-align: center;">
+                                        Poids:
+
+                                        <p t-field="o.weight"/>
+                                    </td>
+
+
+                                </tr>
+                            </table>
+
+                            <br/>
+
+
+                            <table class="table table-sm o_main_table mt-4">
+
+                                <thead style="display: table-row-group">
+                                    <tr>
+                                        <th name="th_bon" style="text-align: left;">Bon de livraison</th>
+                                        <th name="th_addresse" style="text-align: left;">Adresse</th>
+                                        <th name="th_container" style="text-align: left;">Palette</th>
+                                        <th name="th_priceunit" style="text-align: left;">Container</th>
+                                        <th name="th_colis" style="text-align: left;">Colis</th>
+                                        <th name="th_poids" style="text-align: left;">Pois</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+
+                                    <t t-foreach="o.picking_ids" t-as="line">
+                                        <tr>
+                                            <td name="td_name" style="text-align: left;">
+                                                <span t-field="line.name"/>
+                                            </td>
+                                            <td name="td_ndde" style="text-align: left;">
+                                                <span t-field="line.partner_id.contact_address"/>
+                                            </td>
+                                            <td name="tdpall" style="text-align: left;">
+                                                <span t-field="line.nb_pallet"/>
+                                            </td>
+                                            <td name="td_cont" style="text-align: left;">
+                                                <span t-field="line.nb_container"/>
+                                            </td>
+                                            <td name="td_clo" style="text-align: left;">
+                                                <span t-field="line.number_of_packages"/>
+                                            </td>
+                                            <td name="td_poid" style="text-align: left;">
+                                                <span t-field="line.weight"/>
+                                            </td>
+
+                                        </tr>
+
+
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <br/>
+
+
+                            <table class="table table-sm o_main_table mt-4">
+                                <tr>
+
+                                    <td>
+                                        <h5>
+                                            Nom du chauffeur:
+                                            <span t-field="o.driver_name"/>
+                                            <br/>
+                                            Température:
+                                            <span t-field="o.temperature"/>
+                                            <br/>
+                                            Heure de départ:
+                                            <br/>
+
+                                        </h5>
+                                    </td>
+                                    <td>
+                                        <h5>Signature</h5>
+                                    </td>
+
+
+                                </tr>
+
+                            </table>
+
+
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+</odoo>

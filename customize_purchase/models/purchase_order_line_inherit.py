@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models, api
+from odoo import fields, models, api, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 import logging
@@ -57,7 +57,9 @@ class PurchaseOrderLineInherit(models.Model):
 
                 promotions = self.env['purchase.promotion'].search(condition)
 
-                if promotions.discount:
+                if len(promotions) > 1:
+                    raise ValidationError(_('There is multiples promotions on this date.'))
+                elif promotions.discount:
                     line.discount = promotions.discount
                 else:
                     line.discount = 0.0

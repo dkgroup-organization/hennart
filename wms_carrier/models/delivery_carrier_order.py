@@ -4,14 +4,12 @@ import datetime
 import unicodedata
 import time
 import datetime
-from dateutil.relativedelta import relativedelta
 import pytz
 import pysftp
 import base64
-from odoo.exceptions import MissingError, UserError, ValidationError
+from odoo.exceptions import UserError
 
-
-class delivery_carrier_order(models.Model):
+class DeliveryCarrierOrder(models.Model):
 
     _name = "delivery.carrier.order"
     _description = "Carrier Order"
@@ -24,8 +22,8 @@ class delivery_carrier_order(models.Model):
     date_delivered = fields.Date(compute="_update_info")
     date_expected2 = fields.Date(compute="compute_date_exep", store=True )
     hour_expected = fields.Float('Hour expected')
-    name = fields.Char('description')
-    warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse', required=True, states={'done': [('readonly', True)]})
+    name = fields.Char('description', default='Non defini')
+    warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse', required=True, default=1,  states={'done': [('readonly', True)]})
     picking_ids = fields.One2many('stock.picking', 'carrier_order_id', 'Delivery Order')
     state = fields.Selection([
                         ('cancel', 'Cancelled'),
@@ -33,7 +31,7 @@ class delivery_carrier_order(models.Model):
                         ('confirmed', 'Waiting'),
                         ('assigned', 'Available'),
                         ('done', 'Done'),
-                        ], 'Status', index=True)
+                        ], 'Status', default="draft", index=True)
 
     weight = fields.Float(compute="_update_info", string='Weight')
     nb_line = fields.Integer(compute="_update_info", string='Nb line',)
@@ -107,7 +105,7 @@ class delivery_carrier_order(models.Model):
             obj_current.save_as = False
             mm = ""
             if obj_current.content:
-                obj_current.save_as = base64.encodebytes((obj_current.content).encode('utf-8'))
+                obj_current.save_as = base64.encodebytes(obj_current.content.encode('utf-8'))
             else:
                 obj_current.save_as = base64.encodebytes(mm.encode('utf-8'))
 
@@ -184,7 +182,7 @@ class delivery_carrier_order(models.Model):
                     #Exception, date delivered always j+1
 
                     if field[0] == 'date_delivered':
-                        next_date = line.scheduled_date + relativedelta(days=1)
+                        next_date = line.scheduled_date + datetime.timedelta(days=1)
                         field_value = next_date.strftime('%d%m%Y')
                     if field[0] == 'scheduled_date':
                         next_date = line.scheduled_date
@@ -222,7 +220,7 @@ class delivery_carrier_order(models.Model):
         return order
 
     def action_send_invoice_and_delivery(self):
-        """ futur function, Envoie la facture et le bon de livraison au client par email."""
+        """ futur function in customize_account, Envoie la facture et le bon de livraison au client par email."""
         pass
 
     def button_action_done(self):
@@ -231,8 +229,8 @@ class delivery_carrier_order(models.Model):
             for picking in order.picking_ids:
                 if picking.state in ['assigned', 'confirmed','waiting']:
                     picking.button_validate()
-                picking.action_send_invoice_and_delivery()
 
+        self.action_send_invoice_and_delivery()
         self.check_state()
         return True
 
@@ -285,7 +283,7 @@ class delivery_carrier_order(models.Model):
                         if picking.date_delivered:
                             data['date_livraison'] = format_date(picking.date_delivered)
                         else:
-                            date_delivered = datetime.datetime.strptime(str(picking.scheduled_date), '%Y-%m-%d %H:%M:%S') + relativedelta(days=1)
+                            date_delivered = datetime.datetime.strptime(str(picking.scheduled_date), '%Y-%m-%d %H:%M:%S') + datetime.timedelta(days=1)
                             data['date_livraison'] = date_delivered.strftime('%d%m%Y')
 
                         #address
