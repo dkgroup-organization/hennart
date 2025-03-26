@@ -16,7 +16,7 @@
 
                 <notebook position="inside">
                     <page string="tracking">
-                        <button name="action_downstream_move" type="object" string="Ouvrir"/>
+                        <button name="action_downstream_move" type="object" string="Liste des retraits produit"/>
                         <group string="Mouvements">
                             <field name="downstream_move"/>
                             <field name="upstream_move"/>

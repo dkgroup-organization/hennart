@@ -1,0 +1,149 @@
+<odoo>
+    <data>
+
+        <record id="delivery_carrier_order_tree_view" model="ir.ui.view">
+            <field name="name">delivery.carrier.order</field>
+            <field name="model">delivery.carrier.order</field>
+            <field name="arch" type="xml">
+
+                <tree string="Carrier Order">
+                    <field name="name" invisible="1"/>
+                    <field name="date_expected" widget="date"/>
+                    <field name="carrier_id"/>
+                    <field name="warehouse_id" invisible="1"/>
+                    <field name="edi_done"/>
+                    <field name="nb_picking"/>
+                    <field name="nb_line"/>
+                    <field name="weight"/>
+                    <field name="state"/>
+                </tree>
+
+            </field>
+        </record>
+
+        <record id="delivery_carrier_order_form_view" model="ir.ui.view">
+            <field name="name">delivery.carrier.order</field>
+            <field name="model">delivery.carrier.order</field>
+            <field name="arch" type="xml">
+
+                <form string="Carrier Order" >
+                    <header>
+                        <button name="button_action_done" string="Done" type="object" class="oe_highlight"
+                                groups="stock.group_stock_user"/>
+                        <button name="button_action_send" string="Send EDI" type="object" class="oe_highlight"
+                                groups="stock.group_stock_user" attrs="{'invisible': [('edi_done','=',True)]}"/>
+                        <button name="button_send_sftp" string="Send SFTP" type="object" class="oe_highlight"
+                                groups="stock.group_stock_user"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+
+                        <h1>
+                            <field name="name" class="oe_inline"/>
+                        </h1>
+                        <group>
+                            <group>
+                                <field name="carrier_id"/>
+                                <field name="warehouse_id"/>
+                                <field name="edi_done"/>
+                            </group>
+                            <group>
+                                <field name="date_expected"/>
+                            </group>
+
+                            <group>
+                                <field name="nb_pallet_europe"/>
+                                <field name="nb_pallet_perdu"/>
+                                <field name="nb_pallet_ground"/>
+                            </group>
+
+                            <group>
+                                <field name="driver_name"/>
+                                <field name="temperature"/>
+                            </group>
+
+                        </group>
+                        <notebook>
+                            <page string="Picking">
+                                <field name="picking_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                        <field name="nb_pallet" sum="Total"/>
+                                        <field name="nb_container" sum="Total"/>
+                                        <field name="weight" sum="Total"/>
+                                        <field name="state"/>
+                                    </tree>
+
+                                </field>
+                                <field name="note"/>
+                            </page>
+                            <page string="Delivery Information">
+                                <group string="Delivery Information">
+                                    <field name="nb_picking"/>
+                                    <field name="nb_line"/>
+                                    <field name="weight"/>
+                                    <field name="nb_container"/>
+                                    <field name="nb_pallet"/>
+                                </group>
+                            </page>
+                            <page string="Export">
+                                <group>
+                                    <group string="Export Information">
+                                        <field name="save_name" invisible="1"/>
+                                        <field name="save_as" filename="save_name"/>
+                                        <field name="content" colspan="3" rowspan="5" widget="text"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Export Chronopost">
+                                        <field name="chronopost_save_name" invisible="1"/>
+                                        <field name="chronopost_save_as" filename="chronopost_save_name"/>
+                                        <field name="chronopost_content" colspan="3" rowspan="5" widget="text"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <group string="Export SSCC Nagel">
+                                        <field name="sscc_save_name" invisible="1"/>
+                                        <field name="sscc_save_as" filename="sscc_save_name"/>
+                                        <field name="sscc_content" colspan="3" rowspan="5" widget="text"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+
+            </field>
+        </record>
+
+        <record id="delivery_carrier_order_action" model="ir.actions.act_window">
+            <field name="name">Bon de transport</field>
+            <field name="res_model">delivery.carrier.order</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem
+                id="delivery_carrier_order_menu_root"
+                name="Transport"
+                parent="stock.menu_stock_root"
+                groups="stock.group_stock_user"
+                sequence="3"
+        />
+
+        <menuitem
+                id="delivery_carrier_order_menu"
+                name="Bon de transport"
+                action="delivery_carrier_order_action"
+                parent="customize_account.delivery_carrier_order_menu_root"
+                groups="stock.group_stock_user"
+                sequence="10"
+        />
+
+    </data>
+
+</odoo>

@@ -189,8 +189,7 @@ class AccountMove(models.Model):
         for invoice in self:
             origin = []
             stock_move_ids = self.env['stock.move']
-            if invoice.piece_comptable:
-                origin.append(invoice.invoice_origin)
+
             if invoice.ref and  invoice.ref not in origin:
                 origin.append(invoice.ref)
 
@@ -198,7 +197,7 @@ class AccountMove(models.Model):
 
                 for sale_line in invoice_line.sale_line_ids:
                     if sale_line.order_id.client_order_ref and sale_line.order_id.client_order_ref not in origin:
-                        origin.append(sale_line.order_id.name)
+                        origin.append(sale_line.order_id.client_order_ref)
 
                     stock_move_ids |= sale_line.move_ids
 
@@ -236,6 +235,9 @@ class AccountMove(models.Model):
                 invoice_origin = ': '.join(split_origin(origin))
             else:
                 invoice_origin = ''
+
+            if invoice.piece_comptable:
+                invoice_origin = invoice.invoice_origin
 
             invoice.invoice_origin = invoice_origin
 

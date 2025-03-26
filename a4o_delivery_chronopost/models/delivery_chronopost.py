@@ -20,7 +20,7 @@ _logger = logging.getLogger(__name__)
 class Module(models.Model):
     _inherit = "ir.module.module"
 
-    def button_immediate_upgrade(self):
+    def button_immediate_upgrade2(self):
         super().button_immediate_upgrade()
         for module in list(self):
             if module.name == 'a4o_delivery_chronopost':

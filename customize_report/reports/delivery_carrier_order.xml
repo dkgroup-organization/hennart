@@ -1,0 +1,15 @@
+<odoo>
+    <data>
+
+        <record id="action_report_delivery_carrier_order" model="ir.actions.report">
+            <field name="name">Bon de transport</field>
+            <field name="model">delivery.carrier.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">customize_report.report_delivery_carrier_order</field>
+            <field name="report_file">customize_report.report_delivery_carrier_order</field>
+            <field name="binding_model_id" ref="wms_carrier.model_delivery_carrier_order"/>
+            <field name="binding_type">report</field>
+        </record>
+
+    </data>
+</odoo>
