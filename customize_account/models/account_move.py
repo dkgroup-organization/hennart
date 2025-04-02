@@ -449,8 +449,8 @@ class AccountMove(models.Model):
                 continue
             for line in invoice.line_ids:
                 # Update lot information
-                line.account_move_line_lot_ids.lot_ids.sudo().compute_cost_price()
-                line.account_move_line_lot_ids.lot_ids.sudo().get_partner_supplier()
+                line.account_move_line_lot_ids.lot_id.sudo().compute_cost_price()
+                line.account_move_line_lot_ids.lot_id.sudo().get_partner_supplier()
 
                 if not line.cost_price:
                     line.cost_price = line.product_id.workshop_cost_price

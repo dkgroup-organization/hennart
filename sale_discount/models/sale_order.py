@@ -142,9 +142,9 @@ class SaleOrderInherit(models.Model):
             discount_pricelist_ids = []
 
             for discount in self.env['product.pricelist.discount'].search([('product_discount_id', '!=', False)]):
-                if discount.date_start and discount.date_start < sale.commitment_date:
+                if discount.date_start and discount.date_start > sale.commitment_date:
                     continue
-                if discount.date_end and discount.date_end > sale.commitment_date:
+                if discount.date_end and discount.date_end < sale.commitment_date:
                     continue
                 discount_product_ids.append(discount.product_discount_id)
 
