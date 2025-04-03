@@ -154,7 +154,7 @@
                         <field name="invoice_payment_term_id"/>
                         <field name="payment_method_id"/>
                         <field name="payment_reference"/>
-                        <field name="payment_state" attrs="{'invisible': [('state', '!=', 'posted')]}"/>
+                        <field name="payment_state"/>
                     </group>
                 </page>
             </notebook>

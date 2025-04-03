@@ -218,15 +218,19 @@ class StockPicking(models.Model):
         label_type in ['no_label', 'weight_label', 'lot_label', 'pack_label', 'product_label'],
         """
         for picking in self:
-            partner = picking.partner_id.parent_id or picking.partner_id
+            partner = picking.partner_id
+            if partner.is_company:
+                parent = picking.partner_id
+            else:
+                parent = picking.partner_id.parent_id
 
             if not partner:
                 picking.label_nothing()
-            elif partner.label_forced:
+            elif partner.label_forced or parent.label_forced:
                 picking.label_all_pack()
-            elif partner.label_all_product:
+            elif partner.label_all_product or parent.label_all_product:
                 picking.label_all_product()
-            elif partner.label_needed:
+            elif partner.label_needed or parent.label_needed:
                 picking.label_all_weighted()
             else:
                 picking.label_nothing()

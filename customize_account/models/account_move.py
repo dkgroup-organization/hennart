@@ -38,7 +38,7 @@ class AccountMove(models.Model):
     picking_id = fields.Char(string="Bon de livraison")
     incoterm_port = fields.Char(string="Port of entry")
     incoterm_date = fields.Date(string="Date of arrival in UK", default=_default_incoterm_date, copy=False)
-    payment_method_id = fields.Char(string="Methode de paiement")
+    payment_method_id = fields.Many2one(related="partner_id.payment_method_id")
 
     total_ht = fields.Float(string='Total HT', copy=False)
     total_tva = fields.Float(string='Total TVA', copy=False)

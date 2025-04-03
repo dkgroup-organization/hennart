@@ -215,7 +215,7 @@ class ResPartner(models.Model):
     label_all_product = fields.Boolean('label all products', default=False)
     label_needed = fields.Boolean('label according to product sheet', default=False)
     hour_delivery = fields.Float('Hour delivery', default=0.0)
-    payment_method_id = fields.Many2one("account.payment.method", string="Payment method")
+    payment_method_id = fields.Many2one("account.payment.method", store=True, index=True, string="Payment method")
 
     def button_update_partner(self):
         "Update partner after import"
