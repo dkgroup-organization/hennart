@@ -40,6 +40,8 @@
                 <field name="description"/>
                 <field name="error"/>
                 <field name="update_date"/>
+                <field name="not_removed_date"/>
+                <field name="removed_date"/>
                 <button name="update_values" type="object" string="update" context="{'auto_update': True}"
                         icon="fa-update"/>
             </tree>

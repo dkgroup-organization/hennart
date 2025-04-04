@@ -475,7 +475,7 @@ class BaseSynchroObj(models.Model):
     def get_local_id(self, remote_id, no_create=False, no_search=False, check_local_id=True):
         "return the local_id associated with the remote_id"
         self.ensure_one()
-        condition = [('remote_id', '=', remote_id), ('obj_id', '=', self.id)]
+        condition = [('remote_id', '=', remote_id), ('obj_id', '=', self.id), ('active', 'in', [False, True])]
         local_ids = self.env['synchro.obj.line'].search(condition)
 
         if not local_ids:
@@ -637,6 +637,7 @@ class BaseSynchroObj(models.Model):
             remote_id = remote_value.get('id')
             local_id = self.get_local_id(remote_id, no_create=True)
             error = False
+            _logger.info("Synchro remote_value:%s " % remote_value)
 
             if local_id and (self.auto_update or self.env.context.get('auto_update')):
                 # Write
@@ -766,7 +767,6 @@ class BaseSynchroObj(models.Model):
 
     def button_update_all(self, limit=50):
         """ Change the update_date to trigger a new update by function get_last_update"""
-        self.update_remote_write_date()
         for obj in self:
             list_line = self.env[obj.line_id._name]
             for line in obj.line_id:
@@ -776,11 +776,35 @@ class BaseSynchroObj(models.Model):
                     list_line |= line
                 else:
                     list_line |= line
-                    try:
-                        list_line.update_values()
-                        list_line = self.env[obj.line_id._name]
-                    except:
-                        list_line.error = 'update error'
+                    list_line.update_values()
+                    list_line = self.env[obj.line_id._name]
+
+    def button_search_delete_remote(self, limit=50000):
+        """ find delete remote """
+        def remote_ids_exist(obj_to_check, remote_min_id, remote_max_id):
+            """ Check if remote id exist """
+            local_ids = self.env['synchro.obj.line'].search([('obj_id', '=', obj_to_check.id),
+                                                             ('remote_id', '>=', remote_min_id),
+                                                             ('remote_id', '<=', remote_max_id)])
+            remote_ids = obj_to_check.remote_search([('id', '>=', remote_min_id), ('id', '<=', remote_max_id)])
+
+            difference_remote_ids = list(set(remote_ids) - set(local_ids.mapped('remote_id')))
+
+            difference_local_ids = list(set(local_ids.mapped('remote_id')) - set(remote_ids))
+            deleted_ids = self.env['synchro.obj.line'].search([('obj_id', '=', obj_to_check.id), ('remote_id', 'in', difference_local_ids)])
+            deleted_ids.write({'removed_date': fields.Datetime.now(), 'active': False})
+
+        for obj in self:
+            if obj.line_id:
+                remote_min_id = obj.line_id.search([], order='remote_id asc', limit=1).remote_id
+                remote_max_id = obj.line_id.search([], order='remote_id desc', limit=1).remote_id
+                remote_middle_id = remote_min_id + limit
+                remote_ids_exist(obj, remote_min_id, remote_middle_id)
+
+                while remote_middle_id <= remote_max_id:
+                    remote_min_id += limit
+                    remote_middle_id += limit
+                    remote_ids_exist(obj, remote_min_id, remote_middle_id)
 
     def unlink_local_void(self):
         """ Unlink the line with local object deleted """

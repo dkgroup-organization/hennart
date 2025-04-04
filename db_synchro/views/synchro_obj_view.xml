@@ -54,19 +54,19 @@
                             <field name="avoid_ids">
                                 <tree string="Fields" editable="top"
                                       decoration-warning="check_remote != True"
-                                        decoration-danger="remote_type != 'one2many' and check_remote == True and synchronize != True">
+                                      decoration-danger="remote_type != 'one2many' and check_remote == True and synchronize != True">
                                     <field name="field_id" domain="[('model_id', '=', parent.model_id)]"/>
                                     <field name="name"/>
                                     <field name="check_remote" readonly="1"/>
                                     <field name="remote_type"/>
-                                    <field name="synchronize"  widget="boolean_toggle"/>
+                                    <field name="synchronize" widget="boolean_toggle"/>
                                 </tree>
                             </field>
                         </page>
-                         <page string="Remote Fields">
+                        <page string="Remote Fields">
                             <field name="remote_field_ids">
                                 <tree string="Remote fields" editable="top" decoration-muted="state == 'cancel'"
-                                        decoration-success="state in ['to_create', 'to_link']">
+                                      decoration-success="state in ['to_create', 'to_link']">
                                     <field name="name"/>
                                     <field name="description"/>
                                     <field name="state"/>
@@ -105,12 +105,17 @@
                                     <field name="resource_ref" widget="reference"/>
                                     <field name="error"/>
                                     <field name="update_date"/>
+                                    <field name="not_removed_date"/>
+                                    <field name="removed_date"/>
                                     <button name="update_values" type="object" string="update"
                                             context="{'auto_update': True}" icon="fa-update"/>
                                 </tree>
                             </field>
 
                             <button name="unlink_local_void" string="Unlink void mapping" type="object"/>
+                            <button name="button_search_delete_remote" string="button_search_delete_remote"
+                                    type="object"/>
+
                             <!--<button name="unlink_mapping" string="!!! Reset All mapping !!!!" type="object"/>-->
 
                         </page>
