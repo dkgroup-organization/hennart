@@ -239,7 +239,7 @@ class StockMoveLine(models.Model):
         """ Check if the line is to label """
         # label_type in ['no_label', 'weight_label', 'lot_label', 'pack_label', 'product_label'],
         for line in self:
-            label_type = line.picking_id.label_type
+            label_type = line.picking_id.label_type or 'no_label'
             if label_type == 'no_label' or line.protected_line():
                 line.to_label = False
             elif (line.product_id.to_label or line.pack_product_id.to_label) and label_type in ['product_label', 'weight_label']:

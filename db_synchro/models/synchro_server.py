@@ -326,9 +326,7 @@ class BaseSynchroServer(models.Model):
             partner_obj = server.obj_ids.search([('model_name', '=', 'res.partner')])
             partner_obj.domain = [('id', '>', 5), ('create_date', '>', '2024-10-01')]
             partner_obj.load_remote_record(limit=-1)
-        for server in self.search([]):
-            partner_obj = server.obj_ids.search([('model_name', '=', 'res.partner')])
-            partner_obj.domain = [('id', '>', 5)]
+
         return True
 
     def correction_avoir_20240813(self):

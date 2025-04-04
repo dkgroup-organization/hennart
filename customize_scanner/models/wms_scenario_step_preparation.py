@@ -702,6 +702,9 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         picking = data.get('picking')
         printer = data.get('printer')
+        data = self.check_printer(data)
+        if data.get('warning'):
+            return data
         if picking and printer:
             picking.print_label(printer=printer)
         if 'print_label' in list(data.keys()):
