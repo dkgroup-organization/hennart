@@ -42,10 +42,13 @@ class BaseSynchroObjLine(models.Model):
     todo = fields.Boolean('Todo')
     error = fields.Char("Error")
     update_date = fields.Datetime(string='Latest update')
+    not_removed_date = fields.Datetime(string='Not removed date')
+    removed_date = fields.Datetime(string='Removed date')
     remote_write_date = fields.Datetime(string='Latest remote write')
     removed = fields.Boolean(default=False, string="Removed on remote")
     resource_ref = fields.Reference(string='Record', selection='_selection_target_model',
                                     compute='_compute_resource_ref')
+    active = fields.Boolean(default=True, index=True)
 
     @api.depends('obj_id', 'local_id')
     def _compute_resource_ref(self):
