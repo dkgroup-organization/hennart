@@ -776,8 +776,11 @@ class BaseSynchroObj(models.Model):
                     list_line |= line
                 else:
                     list_line |= line
-                    list_line.update_values()
-                    list_line = self.env[obj.line_id._name]
+                    try:
+                        list_line.update_values()
+                        list_line = self.env[obj.line_id._name]
+                    except:
+                        list_line.error = 'update error'
 
     def unlink_local_void(self):
         """ Unlink the line with local object deleted """
