@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError, ValidationError
-
+from odoo.tools import OrderedSet, groupby
+from odoo.tools.float_utils import float_compare, float_is_zero, float_round
+from collections import Counter, defaultdict
 
 class StockMoveLine(models.Model):
     _inherit = "stock.move.line"
@@ -14,6 +16,7 @@ class StockMoveLine(models.Model):
         message = ""
 
         for move in self:
+
             if move.picking_id.picking_type_code == 'incoming':
                 for move_line in move.move_line_ids:
 
@@ -24,7 +27,7 @@ class StockMoveLine(models.Model):
                     move_line.to_weight = False
 
                     if move_line.weight == 0.0:
-                        if move.product_uos == uom_weight:
+                        if move.product_uos == uom_weight and not move.purchase_line_id:
                             message += _(f"\nThis line need a weight: {move.name}")
                         else:
                             move_line.weight = move_line.qty_done * move_line.product_id.weight
@@ -43,3 +46,6 @@ class StockMoveLine(models.Model):
         if self.move_id.product_uos == uom_weight:
             res['to_weight'] = True
         return res
+
+
+    def _action_done(self):

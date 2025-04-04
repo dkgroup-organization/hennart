@@ -472,6 +472,8 @@ class WmsScenarioStep(models.Model):
 
         if data['step'].action_variable == 'location_origin_id':
             location_ids = self.get_default_origin_location()
+            if data.get('last_location_id'):
+                location_ids |= data.get('last_location_id')
             for location in location_ids:
                 res.append({'text': location.name, 'href': href_base + f'location_origin_id&scan={location.id}'})
 

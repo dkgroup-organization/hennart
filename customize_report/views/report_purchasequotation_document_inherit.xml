@@ -29,6 +29,7 @@
             <t t-foreach="o.order_line" t-as="order_line">
                 <t t-if="not order_line.display_type and order_line.product_qty > 0.0">
                     <td id="product">
+                        <span t-if="order_line.supplierinfo_id.product_code" t-field="order_line.supplierinfo_id.product_code"> : </span>
                         <span t-field="order_line.name"/>
                     </td>
                     <td class="text-center">
@@ -98,6 +99,7 @@
         <xpath expr='//t[@t-if="not line.display_type"]' position="replace">
             <t t-if="not line.display_type and line.product_qty > 0.0">
                 <td id="product">
+                    <span t-if="order_line.supplierinfo_id.product_code" t-field="order_line.supplierinfo_id.product_code"> : </span>
                     <span t-field="line.name"/>
                 </td>
                 <td class="text-center">
