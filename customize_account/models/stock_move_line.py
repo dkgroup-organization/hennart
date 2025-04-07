@@ -46,6 +46,3 @@ class StockMoveLine(models.Model):
         if self.move_id.product_uos == uom_weight:
             res['to_weight'] = True
         return res
-
-
-    def _action_done(self):
