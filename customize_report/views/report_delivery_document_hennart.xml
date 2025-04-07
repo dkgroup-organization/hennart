@@ -81,7 +81,7 @@
                                     <span t-field="o.nb_container"/>
                                 </td>
                                 <td class="text-center">
-                                    <span t-field="o.origin"/>
+                                    <span t-field="o.partner_origin"/>
                                 </td>
                                 <td style="background-color: white; color: #495057;" class="text-center">
                                     <t t-if="o.state == 'done'">
