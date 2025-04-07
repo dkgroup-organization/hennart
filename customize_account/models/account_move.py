@@ -187,59 +187,30 @@ class AccountMove(models.Model):
     def update_origin(self):
         """ check order and picking origin"""
         for invoice in self:
-            origin = []
+            origin = ''
             stock_move_ids = self.env['stock.move']
+            if invoice.piece_comptable:
+                continue
 
-            if invoice.ref and  invoice.ref not in origin:
-                origin.append(invoice.ref)
+            if invoice.ref not in origin:
+                origin = invoice.ref
 
             for invoice_line in invoice.invoice_line_ids:
-
                 for sale_line in invoice_line.sale_line_ids:
-                    if sale_line.order_id.client_order_ref and sale_line.order_id.client_order_ref not in origin:
-                        origin.append(sale_line.order_id.client_order_ref)
-
                     stock_move_ids |= sale_line.move_ids
 
                 for purchase_line in invoice_line.purchase_line_id:
-                    if purchase_line.order_id.name not in origin:
-                        origin.append(purchase_line.order_id.name)
-                    if purchase_line.order_id.partner_ref not in origin:
-                        origin.append(purchase_line.order_id.partner_ref)
-
                     stock_move_ids |= purchase_line.move_ids
 
                 for picking in stock_move_ids.mapped('picking_id'):
+                    if picking.partner_origin not in origin:
+                        origin += ' ' + picking.partner_origin
+
+                for picking in stock_move_ids.mapped('picking_id'):
                     if picking.name not in origin:
-                        origin.append(picking.name)
+                        origin += ' ' + picking.name
 
-            def split_origin(list_item):
-                res = []
-                for item in list_item:
-                    item = item or ''
-                    for separator in [';', ' ', ',']:
-                        item = item.replace(separator, ':')
-                    item = item.replace(':::', ':').replace('::', ':').replace('::', ':')
-                    item = item.split(':')
-                    if len(item):
-                        for item_detail in item:
-                            res.append(item_detail)
-
-                res = list(dict.fromkeys(res))
-                return res
-
-
-            if len(origin) == 1:
-                invoice_origin = origin[0]
-            elif len(origin) > 1:
-                invoice_origin = ': '.join(split_origin(origin))
-            else:
-                invoice_origin = ''
-
-            if invoice.piece_comptable:
-                invoice_origin = invoice.invoice_origin
-
-            invoice.invoice_origin = invoice_origin
+            invoice.invoice_origin = origin
 
     @api.depends('company_id', 'invoice_filter_type_domain', 'src_dest_country_id')
     def _compute_suitable_journal2_ids(self):

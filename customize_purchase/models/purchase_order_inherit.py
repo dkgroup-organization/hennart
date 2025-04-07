@@ -82,3 +82,10 @@ class PurchaseOrder(models.Model):
                 line._compute_price_unit_and_date_planned_and_name()
                 line.calculate_discount_percentage()
 
+    def _prepare_invoice(self):
+        """ add picking information """
+        invoice_vals = super()._prepare_invoice()
+        for picking in self.picking_ids:
+            if picking.partner_origin not in invoice_vals['ref']:
+                invoice_vals['ref'] += ' ' + picking.partner_origin
+
