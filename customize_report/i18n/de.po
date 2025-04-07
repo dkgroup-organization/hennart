@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-11 14:15+0000\n"
-"PO-Revision-Date: 2025-03-11 14:15+0000\n"
+"POT-Creation-Date: 2025-04-07 16:25+0000\n"
+"PO-Revision-Date: 2025-04-07 16:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,11 +22,35 @@ msgid "(object.name+'.pdf')"
 msgstr ""
 
 #. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid ""
+"<br/>\n"
+"                                            Heure de départ:\n"
+"                                            <br/>"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid ""
+"<br/>\n"
+"                                            Température:"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid ""
+"<br/>\n"
+"                                        europe:"
+msgstr ""
+
+#. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid ""
 "<span groups=\"account.group_show_line_subtotals_tax_excluded\">Amount</span>\n"
-"                                <span groups=\"account.group_show_line_subtotals_tax_included\">Total Price</span>"
+"                            <span groups=\"account.group_show_line_subtotals_tax_included\">Total Price</span>"
 msgstr ""
+"<span groups=\"account.group_show_line_subtotals_tax_excluded\">Amount</span>\n"
+"                                    <span groups=\"account.group_show_line_subtotals_tax_included\">Total Price</span>"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_document_hennart
@@ -74,19 +98,27 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid ""
 "<span>Net\n"
-"                                    <br/>\n"
-"                                    price\n"
-"                                </span>"
+"                                <br/>\n"
+"                                price\n"
+"                            </span>"
 msgstr ""
+"<span>Net\n"
+"                                        <br/>\n"
+"                                        price\n"
+"                                    </span>"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid ""
 "<span>Pack\n"
-"                                    <br/>\n"
-"                                    of\n"
-"                                </span>"
+"                                <br/>\n"
+"                                of\n"
+"                            </span>"
 msgstr ""
+"<span>Pack\n"
+"                                        <br/>\n"
+"                                        of\n"
+"                                    </span>"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_document_hennart
@@ -126,10 +158,14 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid ""
 "<span>Unit\n"
-"                                    <br/>\n"
-"                                    price\n"
-"                                </span>"
+"                                <br/>\n"
+"                                price\n"
+"                            </span>"
 msgstr ""
+"<span>Unit\n"
+"                                        <br/>\n"
+"                                        price\n"
+"                                    </span>"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_document_hennart
@@ -140,11 +176,6 @@ msgstr ""
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "<strong class=\"mr16\">Subtotal</strong>"
-msgstr ""
-
-#. module: customize_report
-#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
-msgid "<strong>Amount Due</strong>"
 msgstr ""
 
 #. module: customize_report
@@ -251,6 +282,11 @@ msgid "<strong>Weight:</strong>"
 msgstr ""
 
 #. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Adresse"
+msgstr ""
+
+#. module: customize_report
 #: model:ir.actions.report,name:customize_report.action_report_delivery_hennart
 msgid "BL Hennart"
 msgstr ""
@@ -258,6 +294,17 @@ msgstr ""
 #. module: customize_report
 #: model:ir.actions.report,name:customize_report.account_invoices_bl_valued
 msgid "BL Valorisé"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Bon de livraison"
+msgstr ""
+
+#. module: customize_report
+#: model:ir.actions.report,name:customize_report.action_report_delivery_carrier_order
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Bon de transport"
 msgstr ""
 
 #. module: customize_report
@@ -273,9 +320,19 @@ msgid "Chronopost label is printing\n"
 msgstr ""
 
 #. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Colis"
+msgstr ""
+
+#. module: customize_report
 #: model:ir.model,name:customize_report.model_res_company
 msgid "Companies"
 msgstr "Unternehmen"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Container"
+msgstr ""
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
@@ -283,6 +340,7 @@ msgid "Customer:"
 msgstr ""
 
 #. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "Date:"
 msgstr ""
@@ -358,13 +416,37 @@ msgid "Lot:"
 msgstr ""
 
 #. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Nb Palettes prises:"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Nb palettes au sol:"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid ""
+"Nb palettes ramenées:\n"
+"\n"
+"                                        <br/>\n"
+"                                        perdu:"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Nom du chauffeur:"
+msgstr ""
+
+#. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_purchasequotation_document_inherit
 msgid "Order"
 msgstr ""
 
 #. module: customize_report
-#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
-msgid "Paid on"
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Palette"
 msgstr ""
 
 #. module: customize_report
@@ -379,6 +461,16 @@ msgstr ""
 #: code:addons/customize_report/models/stock_picking.py:0
 #, python-format
 msgid "Picking with price is printing\n"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Poids:"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Pois"
 msgstr ""
 
 #. module: customize_report
@@ -412,6 +504,11 @@ msgid "Report Text"
 msgstr ""
 
 #. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Signature"
+msgstr ""
+
+#. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "Supplier Invoice"
 msgstr ""
@@ -420,6 +517,18 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "Supplier Refund"
 msgstr ""
+
+#. module: customize_report
+#: model:ir.model.fields,help:customize_report.field_stock_picking__shipping_weight
+msgid ""
+"Total weight of packages and products not in a package. Packages with no "
+"shipping weight specified will default to their products' total weight. This"
+" is the weight used to compute the cost of the shipping."
+msgstr ""
+"Gesamtgewicht von Paketen und Produkten, die nicht in einem Paket enthalten "
+"sind. Bei Paketen, für die kein Versandgewicht angegeben ist, wird "
+"standardmäßig das Gesamtgewicht der Produkte verwendet. Dies ist das "
+"Gewicht, das zur Berechnung der Versandkosten verwendet wird."
 
 #. module: customize_report
 #: model:ir.model,name:customize_report.model_stock_picking
@@ -443,6 +552,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:customize_report.sale_order_portal_content_inherits
 msgid "Weight"
 msgstr ""
+
+#. module: customize_report
+#: model:ir.model.fields,field_description:customize_report.field_stock_picking__shipping_weight
+msgid "Weight for Shipping"
+msgstr "Gewicht für den Versand"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.external_layout_boxed_inherits
