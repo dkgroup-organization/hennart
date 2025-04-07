@@ -192,7 +192,7 @@ class AccountMove(models.Model):
             if invoice.piece_comptable:
                 continue
 
-            if invoice.ref not in origin:
+            if invoice.ref and invoice.ref not in origin:
                 origin = invoice.ref
 
             for invoice_line in invoice.invoice_line_ids:
@@ -203,7 +203,7 @@ class AccountMove(models.Model):
                     stock_move_ids |= purchase_line.move_ids
 
                 for picking in stock_move_ids.mapped('picking_id'):
-                    if picking.partner_origin not in origin:
+                    if picking.partner_origin and picking.partner_origin not in origin:
                         origin += ' ' + picking.partner_origin
 
                 for picking in stock_move_ids.mapped('picking_id'):

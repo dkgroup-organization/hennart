@@ -88,4 +88,5 @@ class PurchaseOrder(models.Model):
         for picking in self.picking_ids:
             if picking.partner_origin not in invoice_vals['ref']:
                 invoice_vals['ref'] += ' ' + picking.partner_origin
+        return invoice_vals
 
