@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
         <record id="stock_picking_form_view_inherit" model="ir.ui.view">
@@ -52,6 +52,10 @@
                                 class="btn btn-secondary"/>
                     </page>
                 </page>
+
+                <field name="origin" position="after">
+                    <field name="partner_origin" attrs="{'required': [('picking_type_code', '=', 'incoming')], 'invisible': [('picking_type_code', '!=', 'incoming')]}"/>
+                </field>
 
                 <xpath expr="//page[@name='operations']//button[@name='action_put_in_pack']" position="attributes">
                     <attribute name="invisible">1</attribute>

@@ -86,17 +86,17 @@ class StockMove(models.Model):
         """ check if all line has production lot information"""
         message = ""
         for move in self:
+            if move.picking_id.picking_type_code != 'incoming':
+                for move_line in move.move_line_ids:
+                    if move_line.state == "cancel":
+                        continue
+                    if not move_line.qty_done:
+                        continue
+                    if move_line.lot_id and not move_line.lot_id.expiration_date:
+                        message += _(f"\nThis lot need a expiration date: {move.name} {move_line.lot_id.name}")
 
-            for move_line in move.move_line_ids:
-                if move_line.state == "cancel":
-                    continue
-                if not move_line.qty_done:
-                    continue
-                if move_line.lot_id and not move_line.lot_id.expiration_date:
-                    message += _(f"\nThis lot need a expiration date: {move.name} {move_line.lot_id.name}")
-
-                if (move_line.weight == 0.0 or move_line.to_weight) and move_line.qty_done > 0.0:
-                    message += _(f"\nThis line need a weight: {move.name}")
+                    if (move_line.weight == 0.0 or move_line.to_weight) and move_line.qty_done > 0.0:
+                        message += _(f"\nThis line need a weight: {move.name}")
         if message:
             raise ValidationError(message)
 

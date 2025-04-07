@@ -19,6 +19,8 @@ class StockPicking(models.Model):
         ('ready', 'ready'), ('done', 'done')],
         string='Preparation', compute="compute_preparation_state", default='wait')
 
+    partner_origin = fields.Char('Référence', help="Référence du bon de livraison")
+
     label_type = fields.Selection(
         [('no_label', 'No label'), ('weight_label', 'Label all weighted'), ('lot_label', 'Label all lots'),
          ('pack_label', 'Label all packs'), ('product_label', 'Label all products')],

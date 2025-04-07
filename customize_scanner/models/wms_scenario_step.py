@@ -235,9 +235,12 @@ class WmsScenarioStep(models.Model):
                 new_inventory = self.env['stock.quant'].create(inventory_vals)
                 new_inventory.inventory_quantity_set = True
                 #new_inventory.action_apply_inventory()
+
+            last_location = data['location_origin_id']
             data = self.init_data(data)
             data.update({
                 'result': True,
+                'last_location_id': last_location,
                 'message': 'The inventory is done'})
         else:
             data['result'] = False
