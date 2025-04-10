@@ -39,10 +39,10 @@ class ProductCategory(models.Model):
 
         self.env['product.template'].invalidate_model()
         self.env['product.product'].invalidate_model()
-        self.env['product.category'].invalidate_model()
 
-        all_ids = self.env['product.template'].search([('categ_id', 'in', self.ids)])
-        all_ids.update_categ_value()
+
+
+
 
 
 
