@@ -17,7 +17,7 @@
         "views/sale_order_view.xml",
         "views/product_pricelist_view.xml",
         "views/sale_promotion_views.xml",
-
+        "views/res_partner_view.xml",
         "wizard/import_pricelist_view.xml",
 
     ],

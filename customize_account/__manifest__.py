@@ -15,6 +15,7 @@
 
     "data": [
         "security/ir.model.access.csv",
+        "data/cron_res_partner.xml",
         "views/res_config_view.xml",
         "views/account_move_view.xml",
         "views/account_journal_view.xml",

@@ -81,56 +81,33 @@ class SaleOrder(models.Model):
         return res
 
     @api.onchange('partner_id')
-    def onchange_partner_id_cadence(self, date_order=None):
+    def onchange_partner_id_cadence(self):
         # Clear the history lines when the partner is changed
-        # If the partner is not null, get the order lines for the past 13 weeks
-        nb_week = 12
-        date_track = time.time()
-
         self.ensure_one()
+        week_number = self.env['res.partner.cadence'].get_week_number()
         line_vals = []
         res = self.onchange_partner_id_dates()
         res.update(self.onchange_partner_id_address())
-        commitment_date = res.get('commitment_date') or datetime.today()
+        for unlink_line in self.order_line:
+            line_vals.append(Command.unlink(unlink_line.id))
 
         if self.partner_shipping_id.is_company:
-            partner_shipping_id = self.partner_shipping_id
-        elif self.partner_shipping_id.parent_id:
-            partner_shipping_id = self.partner_shipping_id.parent_id
+            partner = self.partner_shipping_id
         else:
-            partner_shipping_id = self.partner_shipping_id
+            partner = self.partner_id
 
-        if self.state == 'draft' and self.partner_id:
-            date_start = commitment_date - timedelta(days=commitment_date.weekday())  # monday
-            date_from = date_start - timedelta(weeks=nb_week)
-            order_lines = self.env['account.move.line'].search([
-                '&',
-                '|', ('move_id.partner_id', 'child_of', self.partner_id.id),
-                ('move_id.partner_shipping_id', 'child_of', partner_shipping_id.ids),
-                '&', ('move_id.invoice_date', '<=', date_start),
-                ('move_id.invoice_date', '>=', date_from),
-                #('move_id.move_type', '=', 'out_invoice'),
-                #'&',
-                #('product_id.type', '=', 'product'),
-                #'&', ('uom_qty', '>=', 1.0),
-                #('move_id.state', '=', 'posted')
-            ])
-            # Get the product ids of the order lines
-            order_lines2 = self.env['account.move.line']
-            for line in order_lines:
-                if line.uom_qty >= 1.0 and line.move_id.move_type == 'out_invoice' and line.move_id.state == 'posted' and line.product_id.type ==  'product':
-                    order_lines2 |= line
+        if partner.week_number != week_number:
+            partner.compute_cadence()
 
-            product_ids = (order_lines2.mapped('product_id') - self.order_line.mapped('product_id')).sorted(key='name')
-
-            for product in product_ids:
-                if product.sale_ok:
-                    line_vals.append(Command.create({
-                        'product_id': product.id,
-                        'name': product.name,
-                        'product_template_id': product.product_tmpl_id.id,
-                        'product_uom_qty': 0.0,
-                    }))
+        for line in partner.cadence_ids:
+            if line.product_id.sale_ok:
+                line_vals.append(Command.create({
+                    'product_id': line.product_id.id,
+                    'name': line.product_id.name,
+                    'cadence': line.name,
+                    'product_template_id': line.product_id.product_tmpl_id.id,
+                    'product_uom_qty': 0.0,
+                }))
         if line_vals:
             res.update({'order_line': line_vals})
         self.update(res)

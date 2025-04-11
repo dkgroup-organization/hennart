@@ -241,7 +241,7 @@ class WmsScenarioStep(models.Model):
             data.update({
                 'result': True,
                 'last_location_id': last_location,
-                'message': 'The inventory is done'})
+                'message': 'l inventaire est terminé'})
         else:
             data['result'] = False
         return data

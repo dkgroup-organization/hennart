@@ -237,6 +237,14 @@ class ProductTemplate(models.Model):
         return coef_workshop_cost
 
 
+    @api.onchange('categ_id')
+    def onchange_categ_id(self):
+        """ get configuration on categ """
+        for product in self:
+            product.tracking = product.categ_id.tracking
+
+
+
     @api.depends('total_cost_price', 'weight', 'uos_id')
     def _compute_standard_price(self):
         """ Compute the standard price """
@@ -337,11 +345,6 @@ class ProductTemplate(models.Model):
         """ update all route_ids"""
         self.route_ids = False
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        _logger.info(f'------create-----product.template----------------------\n{vals_list}')
-        return super().create(vals_list)
-
     def update_standard_price(self):
         """ update """
         for product in self.product_variant_ids:
@@ -354,6 +357,5 @@ class ProductTemplate(models.Model):
                 'value': product.qty_available * product.standard_price,
                 'remaining_qty': product.qty_available,
             }
-            print('---------------valuation_vals----------------', valuation_vals, product.standard_price)
             valuation = self.env['stock.valuation.layer'].create(valuation_vals)
             # action_revaluation
