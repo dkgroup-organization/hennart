@@ -22,7 +22,7 @@ class SaleOrderLine(models.Model):
     product_uos_qty = fields.Float('Qty', compute="compute_uos", store=True, compute_sudo=True)
     product_uos_price = fields.Float('Price', compute="compute_uos", store=True, compute_sudo=True)
     product_uom_readonly = fields.Boolean("UOM readonly", default=True)
-    cadence = fields.Html(string="Cadencier", compute="compute_cadence", store=True, readonly=True, compute_sudo=True)
+    cadence = fields.Html(string="Cadencier", compute=False, store=True, readonly=True, compute_sudo=False)
     display_qty_widget = fields.Boolean("display widget", store=True, compute='_compute_display_qty_widget')
     free_qty_at_date = fields.Float('Stock', compute='_compute_free_qty_at_date')
     logistic_discount = fields.Float('logistical discount')
@@ -74,12 +74,6 @@ class SaleOrderLine(models.Model):
         """Compute the visibility of the inventory widget."""
         for line in self:
             line.qty_to_deliver = line.product_uom_qty - line.qty_delivered
-
-    @api.depends('product_id', 'order_id.partner_id', 'order_id.commitment_date')
-    def compute_cadence(self):
-        """ get the sale frequency of the product, futur function in customize_account"""
-        for line in self:
-            line.cadence = ' ... '
 
     def _compute_customer_lead(self):
         """ The customer lead is more complexe in this project, It depends on location of customer: 1, 2 or 3 days """

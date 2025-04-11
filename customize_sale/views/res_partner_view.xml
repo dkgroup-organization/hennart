@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_partner_cadencier" model="ir.ui.view">
+            <field name="name">res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+
+                <notebook position="inside">
+                    <page string="Cadencier" name="cadencier">
+                        <field name="week_number" invisible="1"/>
+
+                        <field name="cadence_ids" readonly="1">
+                            <tree>
+                                <field name="partner_id" invisible="1"/>
+                                <field name="default_code"/>
+                                <field name="product_id"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+
+                        <button name="compute_cadence" type="object" string="Mise à jour"/>
+                    </page>
+                </notebook>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

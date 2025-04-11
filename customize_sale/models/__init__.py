@@ -4,3 +4,6 @@ from . import sale_order_line
 from . import stock_picking
 from . import product_price_list
 from . import product_pricelist_item
+from . import res_partner_cadence
+from . import account_move
+from . import res_partner
