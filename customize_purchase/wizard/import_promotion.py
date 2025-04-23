@@ -194,7 +194,7 @@ class ImportPromotion(models.TransientModel):
         if(not year):
             year = ANNEE + 1
 
-        last_2year = datetime.datetime(ANNEE - 2, 1, 1)
+        last_2year = datetime.datetime(ANNEE - 4, 1, 1)
 
         date_start_p = f"{year}-01-01 00:00:00"
         date_end_p = f"{year}-12-31 23:59:59"

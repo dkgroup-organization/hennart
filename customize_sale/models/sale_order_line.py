@@ -22,10 +22,24 @@ class SaleOrderLine(models.Model):
     product_uos_qty = fields.Float('Qty', compute="compute_uos", store=True, compute_sudo=True)
     product_uos_price = fields.Float('Price', compute="compute_uos", store=True, compute_sudo=True)
     product_uom_readonly = fields.Boolean("UOM readonly", default=True)
-    cadence = fields.Html(string="Cadencier", compute=False, store=True, readonly=True, compute_sudo=False)
+    cadence = fields.Html(string="Cadencier", compute="compute_cadence", store=False, readonly=True)
     display_qty_widget = fields.Boolean("display widget", store=True, compute='_compute_display_qty_widget')
     free_qty_at_date = fields.Float('Stock', compute='_compute_free_qty_at_date')
     logistic_discount = fields.Float('logistical discount')
+
+    def compute_cadence(self):
+        """ return cadence """
+        for line in self:
+            partner = self.order_id.get_cadence_partner()
+            cadence_ids = self.env['res.partner.cadence'].search([
+                ('partner_id', '=', partner.id),
+                ('product_id', '=', line.product_id.id),
+                ('week_number', '=', partner.week_number)
+                ])
+            if cadence_ids:
+                line.cadence = cadence_ids[0].name
+            else:
+                line.cadence = '...'
 
     @api.depends('product_id', 'product_uom_qty', 'product_uom', 'order_id.commitment_date')
     def _compute_free_qty_at_date(self):

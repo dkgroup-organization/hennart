@@ -7,7 +7,7 @@ class ResPartnerCadence(models.Model):
 
     @api.depends('product_id', 'week_number', 'partner_id')
     def compute_cadence(self):
-        """ get the sale frequency of the product, futur function in customize_account"""
+        """ get the sale frequency of the product, function in customize_account"""
         week_horizon = self.env['res.partner.cadence'].get_week_horizon()
 
         for line in self:

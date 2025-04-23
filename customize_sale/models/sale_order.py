@@ -80,6 +80,15 @@ class SaleOrder(models.Model):
                 res['partner_invoice_id'] = contact.id
         return res
 
+    def get_cadence_partner(self):
+        """ return partner to use with cadence """
+        self.ensure_one()
+        if self.partner_shipping_id.is_company:
+            partner = self.partner_shipping_id
+        else:
+            partner = self.partner_id
+        return partner
+
     @api.onchange('partner_id')
     def onchange_partner_id_cadence(self):
         # Clear the history lines when the partner is changed
@@ -91,10 +100,7 @@ class SaleOrder(models.Model):
         for unlink_line in self.order_line:
             line_vals.append(Command.unlink(unlink_line.id))
 
-        if self.partner_shipping_id.is_company:
-            partner = self.partner_shipping_id
-        else:
-            partner = self.partner_id
+        partner = self.get_cadence_partner()
 
         if partner.week_number != week_number:
             partner.compute_cadence()
@@ -104,7 +110,6 @@ class SaleOrder(models.Model):
                 line_vals.append(Command.create({
                     'product_id': line.product_id.id,
                     'name': line.product_id.name,
-                    'cadence': line.name,
                     'product_template_id': line.product_id.product_tmpl_id.id,
                     'product_uom_qty': 0.0,
                 }))
