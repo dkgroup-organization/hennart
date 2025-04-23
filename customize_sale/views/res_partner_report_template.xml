@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="client_report_template">
+        <t t-call="web.html_container">
+            <t t-call="web.internal_layout">
+                <div class="page">
+                    <t t-foreach="docs" t-as="partner">
+                        <!-- Adresse du client -->
+                        <div class="row mb-4">
+                            <div class="col">
+                                <h3><span t-field="partner.name"/></h3>
+                            </div>
+                        </div>
+
+                        <!-- Tableau de 3 colonnes -->
+                        <div class="row mt-4">
+                            <div class="col">
+                                <h3>Cadencier:</h3>
+                                <table class="table table-bordered mt-3">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Produit</th>
+                                            <th style="width: 50%;">Cadencier</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="partner.cadence_ids" t-as="line">
+                                            <tr>
+
+                                                <td>
+                                                    <span t-field="line.product_id.default_code"/>
+                                                </td>
+                                                <td>
+                                                    <span style="font-size: 12px;" t-field="line.product_id.name"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="line.name"/>
+                                                </td>
+
+                                            </tr>
+
+                                        </t>
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

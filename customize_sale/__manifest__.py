@@ -18,6 +18,8 @@
         "views/product_pricelist_view.xml",
         "views/sale_promotion_views.xml",
         "views/res_partner_view.xml",
+        "views/res_partner_report.xml",
+        "views/res_partner_report_template.xml",
         "wizard/import_pricelist_view.xml",
 
     ],

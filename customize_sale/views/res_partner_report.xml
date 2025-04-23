@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <report
+        id="action_client_report"
+        name="customize_sale.client_report_template"
+        model="res.partner"
+        report_type="qweb-pdf"
+        string="Cadencier Client"
+        attachment_use="False"
+    />
+</odoo>
