@@ -4,6 +4,37 @@
     <template id="report_invoice_document_inherits" inherit_id="account.report_invoice_document"
               priority="100"
     >
+        <xpath expr="//div[@class='row']" position="inside">
+            <div class="col-sm-5 ms-auto">
+
+                <t t-if="o.partner_id.incoterm_id">
+                    <p style="margin-bottom: 0;">INCOTERM:
+                        <span t-field="o.partner_id.incoterm_id.code"/>
+                    </p>
+                </t>
+                <t t-if="o.partner_id.oeri_code">
+                    <p style="margin-bottom: 0;">EORI:
+                        <span t-field="o.partner_id.oeri_code"/>
+                    </p>
+                </t>
+                <t t-if="o.partner_id.incoterm_contact_id">
+                    <p style="margin-bottom: 0;">Contact:
+                        <span t-field="o.partner_id.incoterm_contact_id.name"/>
+                    </p>
+                </t>
+                <t t-if="o.partner_id.incoterm_contact_id.phone">
+                    <p style="margin-bottom: 0;">Phone:
+                        <span t-field="o.partner_id.incoterm_contact_id.phone"/>
+                    </p>
+                </t>
+                <t t-if="o.partner_id.incoterm_contact_id.email">
+                    <p style="margin-bottom: 0;">Email:
+                        <span t-field="o.partner_id.incoterm_contact_id.email"/>
+                    </p>
+                </t>
+            </div>
+
+        </xpath>
         <xpath expr="//div[@class='page']" position="replace">
 
             <div id="informations" class="row mt-1 mb-1">
@@ -296,34 +327,34 @@
             </div>
 
             <t t-if="o.fiscal_position_id.country_id and o.fiscal_position_id.country_id.code == 'GB'">
-            <div class="row mt-1 mb-1" style="text-align: center !important;">
-                <div class="col-auto col-3 mw-100 mb-0">
-                    <strong>Incoterm:</strong>
-                    <p class="m-0">
-                        <span t-field="o.invoice_incoterm_id.code"/>
-                        -
-                        <span t-field="o.invoice_incoterm_id.name"/>
-                    </p>
-                </div>
-                <!--<div class="col-auto col-3 mw-100 mb-0">
-                    <strong>Date of arrival in UK:</strong>
-                    <p class="m-0">
-                        <span t-field="o.incoterm_date"/>
-                    </p>
-                </div>-->
-                <div class="col-auto col-3 mw-100 mb-0">
-                    <strong>Port of entry:</strong>
-                    <p class="m-0">
-                        <t t-if="o.incoterm_port">
-                            <span t-field="o.incoterm_port"/>
-                        </t>
-                        <t t-if="not o.incoterm_port">
-                            Folkestone
-                        </t>
-                    </p>
-                </div>
+                <div class="row mt-1 mb-1" style="text-align: center !important;">
+                    <div class="col-auto col-3 mw-100 mb-0">
+                        <strong>Incoterm:</strong>
+                        <p class="m-0">
+                            <span t-field="o.invoice_incoterm_id.code"/>
+                            -
+                            <span t-field="o.invoice_incoterm_id.name"/>
+                        </p>
+                    </div>
+                    <!--<div class="col-auto col-3 mw-100 mb-0">
+                        <strong>Date of arrival in UK:</strong>
+                        <p class="m-0">
+                            <span t-field="o.incoterm_date"/>
+                        </p>
+                    </div>-->
+                    <div class="col-auto col-3 mw-100 mb-0">
+                        <strong>Port of entry:</strong>
+                        <p class="m-0">
+                            <t t-if="o.incoterm_port">
+                                <span t-field="o.incoterm_port"/>
+                            </t>
+                            <t t-if="not o.incoterm_port">
+                                Folkestone
+                            </t>
+                        </p>
+                    </div>
 
-            </div>
+                </div>
             </t>
 
         </xpath>
