@@ -81,7 +81,7 @@ class ImportPromotion(models.TransientModel):
 
     def action_valide(self):
         self.ensure_one()
-        if(not self.file):
+        if not self.file:
 
             self.message ='<div class="alert alert-danger" role="alert"> Veuillez saisir le fichier xlsx </div>'
             return {
@@ -94,9 +94,9 @@ class ImportPromotion(models.TransientModel):
                 'type': 'ir.actions.act_window',
                 'target': 'new',
                 'res_id': self.id,
-            }
-            #return
-        elif(not self.year):
+                }
+
+        elif not self.year:
             self.message = '<div class="alert alert-danger" role="alert"> Veuillez sélectionner l\'année </div>'
             return {
                 'name': _('Import promotion'),
@@ -108,7 +108,7 @@ class ImportPromotion(models.TransientModel):
                 'type': 'ir.actions.act_window',
                 'target': 'new',
                 'res_id': self.id,
-            }
+                }
 
         elif(self.file):
             self.message = False
@@ -122,8 +122,7 @@ class ImportPromotion(models.TransientModel):
             # emulate Sheet.get_rows for pre-0.9.4
             for row in map(sheet.row, range(1, sheet.nrows)):
                 values = []
-                if (not row[0].value) or (not row[1].value) or str(row[0].value) == 'False' or str(
-                        row[1].value) == 'False':
+                if not row[0].value or not row[1].value or str(row[0].value) == 'False' or str(row[1].value) == 'False':
                     continue
                 code_product = str(row[1].value).strip()
                 code_product = code_product.split('.')[0]
@@ -137,7 +136,7 @@ class ImportPromotion(models.TransientModel):
                 product_id = self.env['product.product'].search([('default_code', '=', code_product)], limit=1)
                 if not product_id:
                     raise ValidationError(_('Unknown product code %s' % (code_product)))
-                # partner
+
                 supplier_id = self.env['res.partner'].search([('ref', '=', code_supplier)], limit=1)
                 if not supplier_id:
                     raise ValidationError(_('Unknown vendor code %s' % (code_supplier)))
@@ -197,8 +196,8 @@ class ImportPromotion(models.TransientModel):
 
         last_2year = datetime.datetime(ANNEE - 2, 1, 1)
 
-        date_start_p = "%s-01-01 00:00:00" % (year-1)
-        date_end_p = "%s-12-31 23:59:59" % (year)
+        date_start_p = f"{year}-01-01 00:00:00"
+        date_end_p = f"{year}-12-31 23:59:59"
         price_purchase = self.env['product.supplierinfo'].search([('date_start', '>=', last_2year)])
 
         result = {}
