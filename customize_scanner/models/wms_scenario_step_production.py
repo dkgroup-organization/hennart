@@ -336,6 +336,7 @@ class WmsScenarioStep(models.Model):
 
             if production.state == 'to_close':
                 production.button_mark_done()
+                self.env['stock.quant'].unreserve_quantity()
                 data['message'] = _('Production enregistré')
                 data['button_print_later'] = True
 

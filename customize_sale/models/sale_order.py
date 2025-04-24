@@ -223,4 +223,7 @@ class SaleOrder(models.Model):
         if self.client_order_ref:
             res['ref'] = self.client_order_ref
 
+        if self.fiscal_position_id.country_id.code == 'GB':
+            res['incoterm_date'] = self.date_delivered - timedelta(days=2)
+
         return res

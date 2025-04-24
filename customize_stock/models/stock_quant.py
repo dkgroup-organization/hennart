@@ -82,3 +82,41 @@ class StockQuant(models.Model):
             domain = expression.AND([[('owner_id', '=', owner_id and owner_id.id or False)], domain])
             domain = expression.AND([[('location_id', '=', location_id.id)], domain])
         return domain
+
+    @api.model
+    def unreserve_quantity(self):
+        """ Unreserve quantity after error """
+        sql = """
+            select sq.product_id, sq.location_id, sq.lot_id, 
+            sum(sq.reserved_quantity) as quant_reserved_qty, sum(sml.reserved_uom_qty) as move_reserved_qty
+            from stock_quant sq, stock_move_line sml
+            where sq.reserved_quantity > 0.0
+            and sml.state not in ('cancel', 'done')
+            and sq.product_id = sml.product_id
+            group by sq.product_id, sq.location_id, sq.lot_id
+            having sum(sq.reserved_quantity) != sum(sml.reserved_uom_qty) 
+        """
+        self.env.cr.execute(sql)
+        result_sql = self.env.cr.fetchall()
+
+        for row in result_sql:
+            product_id = row[0]
+            location_id = row[1]
+            lot_id = row[2]
+            quant_reserved_qty = row[3]
+            move_reserved_qty = row[4]
+            if quant_reserved_qty > move_reserved_qty:
+                condition = [('product_id', '=', product_id), ('location_id', '=', location_id), ('lot_id', '=', lot_id)]
+                quant_ids = self.env['stock.quant'].search(condition)
+                sum_qty = quant_reserved_qty - move_reserved_qty
+                for quant in quant_ids:
+                    if quant.reserved_quantity >= sum_qty:
+                        quant.sudo().reserved_quantity -= sum_qty
+                        sum_qty = 0.0
+                    else:
+                        sum_qty -= quant.reserved_quantity
+                        quant.sudo().reserved_quantity = 0.0
+                    if sum_qty == 0.0:
+                        break
+
+

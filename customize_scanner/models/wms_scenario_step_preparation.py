@@ -40,6 +40,7 @@ class WmsScenarioStep(models.Model):
                 if move_line_check.lot_id and move_line_check.lot_id.product_qty > 0.0:
                     move_line_ok = move_line_check
                     break
+
             return move_line_ok
 
         # define the priority of the stock.move.line, by location name
@@ -421,6 +422,7 @@ class WmsScenarioStep(models.Model):
         self.ensure_one()
         data = self.init_data()
         picking_type = self.env.ref('stock.picking_type_out')
+        self.env['stock.quant'].unreserve_quantity()
 
         picking_ids = self.env['stock.picking'].search([
             ('user_id', '=', self.env.user.id),
