@@ -3,12 +3,30 @@
     <template id="client_report_template">
         <t t-call="web.html_container">
             <t t-call="web.internal_layout">
+
                 <div class="page">
+                    <style>
+                    .no_padding td,
+                    .no_padding th {
+                    padding-top: 0 !important;
+                    padding-bottom: 0 !important;
+                    }
+
+                    .no_padding span {
+                    margin-top: 0;
+                    margin-bottom: 0;
+                    padding-top: 0;
+                    padding-bottom: 0;
+                    display: inline-block;
+                    }
+                    </style>
                     <t t-foreach="docs" t-as="partner">
                         <!-- Adresse du client -->
                         <div class="row mb-4">
                             <div class="col">
-                                <h3><span t-field="partner.name"/></h3>
+                                <h3>
+                                    <span t-field="partner.name"/>
+                                </h3>
                             </div>
                         </div>
 
@@ -16,7 +34,7 @@
                         <div class="row mt-4">
                             <div class="col">
                                 <h3>Cadencier:</h3>
-                                <table class="table table-bordered mt-3">
+                                <table class="table table-bordered no_padding">
                                     <thead>
                                         <tr>
                                             <th>Code</th>
@@ -27,7 +45,6 @@
                                     <tbody>
                                         <t t-foreach="partner.cadence_ids" t-as="line">
                                             <tr>
-
                                                 <td>
                                                     <span t-field="line.product_id.default_code"/>
                                                 </td>
@@ -35,14 +52,10 @@
                                                     <span style="font-size: 12px;" t-field="line.product_id.name"/>
                                                 </td>
                                                 <td>
-                                                    <span t-field="line.name"/>
+                                                    <t t-field="line.name"/>
                                                 </td>
-
                                             </tr>
-
                                         </t>
-
-
                                     </tbody>
                                 </table>
                             </div>

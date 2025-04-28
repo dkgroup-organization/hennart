@@ -96,12 +96,18 @@ class StockLot(models.Model):
 
     def action_downstream_move(self):
         self.ensure_one()
+        downstream_move_line = self.env['stock.move.line']
+        downstream_lot = self.get_downstream_lot()
+        for move in self.downstream_move:
+            for move_line in move.move_line_ids:
+                if move_line.lot_id in downstream_lot:
+                    downstream_move_line |= move_line
 
         action = {
-            'res_model': 'stock.move',
+            'res_model': 'stock.move.line',
             'type': 'ir.actions.act_window',
             'name': _("Move of %s", self.display_name),
-            'domain': [('id', 'in', self.downstream_move.ids)],
+            'domain': [('id', 'in', downstream_move_line.ids)],
             'view_mode': 'tree'
         }
         return action

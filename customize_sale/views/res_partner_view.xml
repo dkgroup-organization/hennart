@@ -16,7 +16,7 @@
                             <tree>
                                 <field name="partner_id" invisible="1"/>
                                 <field name="default_code"/>
-                                <field name="product_id"/>
+                                <field name="order_name"/>
                                 <field name="name"/>
                             </tree>
                         </field>

@@ -5,12 +5,15 @@ import datetime
 class ResPartnerCadence(models.Model):
     _name = 'res.partner.cadence'
     _description = "Cadencier"
+    _order = "order_name"
 
     partner_id = fields.Many2one('res.partner', 'Partner', index=True)
     product_id = fields.Many2one('product.product', 'product', index=True)
     default_code = fields.Char(related='product_id.default_code')
     week_number = fields.Integer('Week number', index=True)
     name = fields.Html(string="Cadencier", compute="compute_cadence", store=True, readonly=True, compute_sudo=True)
+    order_name = fields.Char(related='product_id.name', store=True)
+
 
     @api.depends('product_id', 'week_number', 'partner_id')
     def compute_cadence(self):
@@ -33,3 +36,4 @@ class ResPartnerCadence(models.Model):
         delta = date - debut
         nb_week = int(delta.days // 7 + 1)
         return nb_week
+
