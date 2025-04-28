@@ -392,7 +392,7 @@ class WmsScenarioStep(models.Model):
         """ Return input class to qweb template"""
         self.ensure_one()
         res = "text"
-        if self.action_scanner in ['scan_quantity', 'number_of_packages', 'nb_container', 'nb_pallet']:
+        if self.action_scanner in ['scan_quantity']:
             res = 'number'
         if self.action_scanner == 'scan_weight' and self.action_variable == 'weight':
             res = 'hidden'

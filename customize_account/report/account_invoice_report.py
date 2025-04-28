@@ -63,7 +63,7 @@ class AccountInvoiceReport(models.Model):
 
     @api.model
     def _from(self):
-        return '''
+        sql_from =  '''
             FROM account_move_line line
                 LEFT JOIN res_partner partner ON partner.id = line.partner_id
                 LEFT JOIN product_product product ON product.id = line.product_id
@@ -78,6 +78,7 @@ class AccountInvoiceReport(models.Model):
         '''.format(
             currency_table=self.env['res.currency']._get_query_currency_table({'multi_company': True, 'date': {'date_to': fields.Date.today()}}),
         )
+        return sql_from
 
     @api.model
     def _where(self):
