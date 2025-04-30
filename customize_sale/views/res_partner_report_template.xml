@@ -52,7 +52,7 @@
                                                     <span style="font-size: 12px;" t-field="line.product_id.name"/>
                                                 </td>
                                                 <td>
-                                                    <t t-field="line.name"/>
+                                                    <field name="line.name"/>
                                                 </td>
                                             </tr>
                                         </t>
