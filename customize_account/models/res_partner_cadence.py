@@ -42,4 +42,4 @@ class ResPartnerCadence(models.Model):
                     else:
                         cadence_table += f'<td style="{style_td}"></td>'
                 cadence_table += '</tr></table>'
-                line.name = cadence_table
+                line.name = cadence_table.strip().replace('  ', ' ')
