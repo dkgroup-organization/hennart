@@ -97,7 +97,7 @@
                                context="{'partner_id': parent.partner_id, 'quantity': product_uom_qty, 'pricelist': parent.pricelist_id, 'uom': product_uom, 'company_id': parent.company_id}"/>
 
                         <field name="discount" string="Disc.%" optional="show"/>
-                        <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}" optional="hide"/>
+                        <field name="price_unit" invisible="1"/>
                         <field name="qty_delivered"
                                widget="float" digits="[5,0]"
                                decoration-info="(not display_type and invoice_status == 'to invoice')"

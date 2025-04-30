@@ -8,6 +8,20 @@ from collections import Counter, defaultdict
 class StockMoveLine(models.Model):
     _inherit = "stock.move.line"
 
+    invoice_name = fields.Char('Facture', compute='get_invoice_name')
+
+    def get_invoice_name(self):
+        """ Add information to move line """
+        for move_line in self:
+            invoice_name = ''
+            account_lot_ids = self.env['account.move.line.lot'].search([
+                ('stock_move_line_id', '=', move_line.id)
+            ])
+            for account_lot in account_lot_ids:
+                if account_lot.account_move_line_id:
+                    invoice_name += f'{account_lot.account_move_line_id.move_id.name} {account_lot.account_move_line_id.move_id.invoice_date} '
+            move_line.invoice_name = invoice_name
+
     def check_line(self):
         """ check if all line has production lot information
             Add the purchase case (some time the purchase invoicing unit is not the sale invoicing unit

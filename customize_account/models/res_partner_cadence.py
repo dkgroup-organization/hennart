@@ -31,10 +31,10 @@ class ResPartnerCadence(models.Model):
                 qty_by_week = {}
                 for raw in result_sql:
                     if raw[1] >= 1:
-                        qty_by_week[raw[0]] = f'{int(raw[1])}'
+                        qty_by_week[raw[0]] = f'{int(raw[1])}'.strip().replace('  ', ' ')
 
-                cadence_table = '<table style="border-collapse: collapse; width: 100%; table-layout: fixed;"><tr>'
-                style_td = "border-left: 1px solid grey; width:7.6%; padding-left: 5px; padding-right: 5px;"
+                cadence_table = '<table style="border-collapse: collapse; width: 100%; table-layout: fixed; border-top: 0px white; border-bottom: 0px white; "><tr style="border-top: 0px white; border-bottom: 0px white; ">'
+                style_td = "border-left: 1px solid grey; border-top: 0px white; border-bottom: 0px white; width:7.6%; padding-left: 5px; padding-right: 5px;"
                 style_text = " font-weight: bold; text-align: center;"
                 for week in range(line.week_number - 1, week_number_start - 1, -1):
                     if qty_by_week.get(week):
@@ -43,4 +43,3 @@ class ResPartnerCadence(models.Model):
                         cadence_table += f'<td style="{style_td}"></td>'
                 cadence_table += '</tr></table>'
                 line.name = cadence_table
-
