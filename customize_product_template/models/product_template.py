@@ -229,6 +229,7 @@ class ProductTemplate(models.Model):
         help="""Used to value the product cost by unit based on total cost price.""")
 
     component_price = fields.One2many('product.component.hierarchy', 'product_tmpl_id', string='Component')
+    exclude_from_intrastat = fields.Boolean('Exclure de la déclaration DEB')
 
     @api.model
     def get_coef_workshop_cost(self):

@@ -199,6 +199,7 @@
                     <group string="Declaration DEB/DES">
                         <field name="hs_code_id"/>
                         <field name="origin_country_id" options="{'no_create': True}"/>
+                        <field name="exclude_from_intrastat"/>
                     </group>
                 </group>
 

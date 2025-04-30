@@ -14,6 +14,7 @@ class ResPartner(models.Model):
 
     is_customer = fields.Boolean('Customer')
     is_supplier = fields.Boolean('Supplier')
+    exclude_from_intrastat = fields.Boolean('Exclure de la déclaration DEB')
 
     @api.model_create_multi
     def create(self, vals_list):
