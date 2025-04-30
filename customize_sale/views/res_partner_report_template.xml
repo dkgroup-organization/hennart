@@ -49,10 +49,10 @@
                                                     <span t-field="line.product_id.default_code"/>
                                                 </td>
                                                 <td>
-                                                    <span style="font-size: 12px;" t-field="line.product_id.name"/>
+                                                    <span style="font-size: 11px; width: 100%;" t-field="line.product_id.name"/>
                                                 </td>
                                                 <td>
-                                                    <field name="line.name"/>
+                                                    <div t-field="line.name" style="text-align: center;"/>
                                                 </td>
                                             </tr>
                                         </t>
