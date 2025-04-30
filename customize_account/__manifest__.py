@@ -25,6 +25,7 @@
         "views/stock_lot_views.xml",
         "views/stock_quant_view.xml",
         "views/delivery_carrier_order_views.xml",
+
         'wizards/stock_quant_export_wizard_view.xml',
     ],
 

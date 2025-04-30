@@ -68,6 +68,7 @@
                         <field name="incoterm_city"/>
                         <field name="oeri_code"/>
                         <field name="vat"/>
+                        <field name="exclude_from_intrastat"/>
                     </group>
                 </group>
 

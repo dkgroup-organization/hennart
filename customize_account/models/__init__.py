@@ -16,3 +16,5 @@ from . import account_move_line
 from . import account_move_line_lot
 #from . import sale_order_line
 from . import res_partner_cadence
+from . import intrastat_product_declaration
+
