@@ -381,7 +381,7 @@ class DeliveryCarrierOrder(models.Model):
                 obj_current.sscc_save_as = base64.encodebytes((obj_current.sscc_content).encode('utf-8'))
             else:
                 obj_current.sscc_save_as = base64.encodebytes(mm.encode('utf-8'))
-                
+
     def _csv_content_chronopost(self):
         coef_brut_net = 1.1
 
@@ -582,7 +582,7 @@ class DeliveryCarrierOrder(models.Model):
 
             #Send
             message_id = message.create(message_vals)
-            message.send(message_id.id)
+            message_id.send()
             carrier_order.write({'edi_done': True})
 
         self.button_send_sftp()
