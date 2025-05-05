@@ -381,6 +381,7 @@ class DeliveryCarrierOrder(models.Model):
                 obj_current.sscc_save_as = base64.encodebytes((obj_current.sscc_content).encode('utf-8'))
             else:
                 obj_current.sscc_save_as = base64.encodebytes(mm.encode('utf-8'))
+                
     def _csv_content_chronopost(self):
         coef_brut_net = 1.1
 
@@ -495,15 +496,9 @@ class DeliveryCarrierOrder(models.Model):
     def button_action_send(self):
 
         message = self.env['mail.mail']
-        template_obj = self.env['mail.template']
-        model_obj = self.env['ir.model']
-
         attachement = self.env['ir.attachment']
-        invoice_obj = self.env['account.move']
         report = self.env['ir.actions.report']
         report_ids = report.search([('model', '=', "delivery.carrier.order")])
-        report_id = report_ids and report_ids[0] or False
-        report_service = report_id and 'report.' + report.browse(report_id.id).report_name or ''
 
         for carrier_order in self:
             if carrier_order.edi_done or not carrier_order.carrier_id or not carrier_order.carrier_id.edi_partner_id:
@@ -522,7 +517,7 @@ class DeliveryCarrierOrder(models.Model):
                 message_vals['record_name'] = ''
             message_vals['model'] = "delivery.carrier.order"
             message_vals['res_id'] = carrier_order.id
-            #mail_message_id
+
             #message_id
             if carrier_order.carrier_id.edi_partner_id:
                 message_vals['partner_ids'] = [(6, 0, [carrier_order.carrier_id.edi_partner_id.id])]
@@ -569,7 +564,6 @@ class DeliveryCarrierOrder(models.Model):
             #Attachment pdf
             if carrier_order.carrier_id.edi_pdf:
                 generated_report = self.env['ir.actions.report']._render_qweb_pdf("customize_report.action_report_delivery_carrier_order", carrier_order.id)
-                # generated_report = carrier_report_id._render_qweb_pdf(carrier_order.id)
                 data_record = base64.b64encode(generated_report[0])
                 ir_values = {
                 'name': carrier_order.save_name.replace('.csv', '.pdf') or '?',
@@ -587,9 +581,8 @@ class DeliveryCarrierOrder(models.Model):
                 message_vals['attachment_ids'] = [(6, 0, attachment_ids)]
 
             #Send
-            print('-------------message_vals---------', message_vals)
             message_id = message.create(message_vals)
-            #message.send(message_id.id)
+            message.send(message_id.id)
             carrier_order.write({'edi_done': True})
 
         self.button_send_sftp()
