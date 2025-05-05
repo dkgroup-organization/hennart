@@ -45,6 +45,8 @@ class IntrastatProductDeclaration(models.Model):
         logistical_discount_product = self.env['product.pricelist.discount'].get_discount_product()
 
         for invoice in invoices:
+            if invoice.partner_id.exclude_from_intrastat:
+                continue
 
             lines_current_invoice = []
             total_inv_accessory_costs_cc = 0.0  # in company currency
@@ -58,7 +60,7 @@ class IntrastatProductDeclaration(models.Model):
                 start=1,
             ):
                 # add logistical discount management
-                if inv_line.product_id in logistical_discount_product:
+                if inv_line.product_id in logistical_discount_product or inv_line.product_id.exclude_from_intrastat:
                     continue
 
                 notedict["invline_origin"] = _("%(invoice)s line %(line_nbr)s") % {
