@@ -481,7 +481,7 @@ class DeliveryCarrierOrder(models.Model):
                 carrier.chronopost_content = csv_header+ csv_picking
                 csv_header = carrier.chronopost_content
 
-        
+    
 
     def _get_content_chronopost(self):
 
@@ -528,6 +528,7 @@ class DeliveryCarrierOrder(models.Model):
                 message_vals['partner_ids'] = [(6, 0, [carrier_order.carrier_id.edi_partner_id.id])]
 
             message_vals['author_id'] = SUPERUSER_ID
+            message_vals['auto_delete'] = False
             # message_vals['type'] = "email"
             message_vals['email_from'] = carrier_order.warehouse_id.company_id.email or ''
 
@@ -567,7 +568,7 @@ class DeliveryCarrierOrder(models.Model):
 
             #Attachment pdf
             if carrier_order.carrier_id.edi_pdf:
-                generated_report = self.env['ir.actions.report']._render_qweb_pdf("wms_carrier.action_report_delivery_carrier_order", carrier_order.id)
+                generated_report = self.env['ir.actions.report']._render_qweb_pdf("customize_report.action_report_delivery_carrier_order", carrier_order.id)
                 # generated_report = carrier_report_id._render_qweb_pdf(carrier_order.id)
                 data_record = base64.b64encode(generated_report[0])
                 ir_values = {
@@ -586,8 +587,9 @@ class DeliveryCarrierOrder(models.Model):
                 message_vals['attachment_ids'] = [(6, 0, attachment_ids)]
 
             #Send
+            print('-------------message_vals---------', message_vals)
             message_id = message.create(message_vals)
-            message.send(message_id.id)
+            #message.send(message_id.id)
             carrier_order.write({'edi_done': True})
 
         self.button_send_sftp()
