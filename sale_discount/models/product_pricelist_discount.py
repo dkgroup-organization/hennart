@@ -34,3 +34,12 @@ class PriceListDiscount(models.Model):
         'product.pricelist',
         string='Liste de prix avec réduction',
         )
+
+    @api.model
+    def get_discount_product(self):
+        """ return the list of discount product """
+        discount_product = self.env['product.product']
+        for discount in self.search([]):
+            if discount.product_discount_id not in discount_product:
+                discount_product |= discount.product_discount_id
+        return discount_product

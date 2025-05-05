@@ -43,6 +43,7 @@ class AccountMove(models.Model):
     total_ht = fields.Float(string='Total HT', copy=False)
     total_tva = fields.Float(string='Total TVA', copy=False)
     total_ttc = fields.Float(string='Total TTC', copy=False)
+    total_logistical_discount = fields.Float(string='Total logistical discount', compute='compute_total_logistical_discount', store=True)
     piece_comptable = fields.Char(string='ID piece comptable', copy=False)
     imported_state = fields.Char('Imported status')
 
@@ -76,6 +77,18 @@ class AccountMove(models.Model):
         help="Delivery address for current invoice.",
     )
     user2_id = fields.Many2one('res.users', string='Manager', compute='compute_user2', readonly="False", store=True)
+
+    @api.depends('line_ids.price_subtotal')
+    def compute_total_logistical_discount(self):
+        """ save total of logistical discount """
+        logistical_discount_product = self.env['product.pricelist.discount'].get_discount_product()
+
+        for invoice in self:
+            total_logistical_discount = 0.0
+            for line in invoice.line_ids:
+                if line.product_id in logistical_discount_product:
+                    total_logistical_discount += line.price_subtotal
+            invoice.total_logistical_discount = total_logistical_discount
 
     def compute_user2(self):
         """ Compute the sale manager """
