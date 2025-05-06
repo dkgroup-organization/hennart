@@ -99,7 +99,7 @@
         <xpath expr='//t[@t-if="not line.display_type"]' position="replace">
             <t t-if="not line.display_type and line.product_qty > 0.0">
                 <td id="product">
-                    <span t-if="order_line.supplierinfo_id.product_code" t-field="order_line.supplierinfo_id.product_code"> : </span>
+                    <span t-if="line.supplierinfo_id.product_code" t-field="line.supplierinfo_id.product_code"> : </span>
                     <span t-field="line.name"/>
                 </td>
                 <td class="text-center">
