@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <report
-            id="account_invoices_bl_valued"
-            model="account.move"
-            string="BL Valorisé"
-            report_type="qweb-pdf"
-            name="customize_report.report_invoice_bl_valued"
-            file="customize_report.report_invoice_bl_valued"
-            print_report_name = "(object.name+'.pdf')"
-    />
-
+    <record id="account_invoices_bl_valued" model="ir.actions.report">
+        <field name="name">BL Valorisé</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">customize_report.report_invoice_bl_valued</field>
+        <field name="report_file">customize_report.report_invoice_bl_valued</field>
+        <field name="print_report_name">"'%s' % (object.name or 'Facture')"</field>
+    </record>
 
 </odoo>

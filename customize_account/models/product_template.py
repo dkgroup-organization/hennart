@@ -42,7 +42,7 @@ class ProductTemplate(models.Model):
             total_quantity = 0.0
             total_weight = 0.0
 
-            for line in invoice_line_lot.stock_move_line_id:
+            for line in invoice_line_lot.account_move_line_id:
                 if line.product_uom_id == uom_weight:
                     total_weight += line.quantity
                     total_cost_weight += line.price_subtotal

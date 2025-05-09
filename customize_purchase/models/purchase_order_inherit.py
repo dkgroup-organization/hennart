@@ -8,7 +8,7 @@ class PurchaseOrder(models.Model):
 
     date_planned = fields.Datetime(
         string='Warehouse date', index=True, copy=False, required=True,
-        default=lambda self: fields.Datetime.now(),
+        default=lambda self: fields.Datetime.now().replace(hour=5)  ,
         compute=False,
         help="Delivery date promised by vendor. This date is used to determine expected arrival of products.")
 
@@ -77,8 +77,9 @@ class PurchaseOrder(models.Model):
     def onchange_date_planned(self):
         """ recompute price , check promo"""
         if self.date_planned:
+            self.date_planned = self.date_planned
             for line in self.order_line:
-                line.date_planned = self.date_planned
+                line.date_planned = self.date_planned.replace(hour=5)
                 line._compute_price_unit_and_date_planned_and_name()
                 line.calculate_discount_percentage()
 
