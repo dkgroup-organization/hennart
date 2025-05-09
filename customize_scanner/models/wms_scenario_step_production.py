@@ -76,6 +76,9 @@ class WmsScenarioStep(models.Model):
                 production_lot = data['production_id'].lot_producing_id
                 if data.get('expiry_date'):
                     production_lot.expiration_date = data['expiry_date']
+                    production_lot.removal_date = data['expiry_date']
+                    production_lot.use_date = data['expiry_date']
+                    production_lot.alert_date = data['expiry_date']
                     del data['expiry_date']
                 else:
                     data['warning'] = _("Enter a valid date.")
@@ -91,6 +94,9 @@ class WmsScenarioStep(models.Model):
             lot = data.get('production_lot_id')
             if lot:
                 lot.expiration_date = data.get('expiry_date')
+                lot.removal_date = data.get('expiry_date')
+                lot.use_date = data.get('expiry_date')
+                lot.alert_date = data.get('expiry_date')
         else:
             data['Warning'] = _('This date is not valid')
         return data
