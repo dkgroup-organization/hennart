@@ -740,12 +740,14 @@ class WmsScenarioStep(models.Model):
             # currently in weighting process
             # get the weight by asking device
             weight_device = data['weighting_device'].get_weight(data=data)
-            data['tare'] = self.get_tare(data)
-
-            data['weight'] = data.get('weight', 0.0) + weight_device
-            weight_detail = data.get('weight_detail', []).copy()
-            weight_detail.append({'qty': 0.0, 'weight': round(weight_device, 3), 'tare': data['tare']})
-            data['weight_detail'] = weight_detail
+            if weight_device and weight_device > 0.0:
+                data['tare'] = self.get_tare(data)
+                data['weight'] = data.get('weight', 0.0) + weight_device
+                weight_detail = data.get('weight_detail', []).copy()
+                weight_detail.append({'qty': 0.0, 'weight': round(weight_device, 3), 'tare': data['tare']})
+                data['weight_detail'] = weight_detail
+            else:
+                data['warning'] = "La balance n'a pas renvoyé de poids."
 
         elif data.get('weight') and data.get('weight_line'):
             # save the weight
