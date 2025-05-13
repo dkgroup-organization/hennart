@@ -336,8 +336,8 @@ class WmsScenarioStep(models.Model):
                         for quant in stock_quants:
                             message += '<p class="mb-5"><b>Lieu:</b> %s <br/>' % quant.location_id.name
                             if quant.lot_id and quant.lot_id.expiration_date:
-                                message += "<b>Lot:</b> %s - %s<br/>" % (
-                                    quant.lot_id.ref, quant.lot_id.expiration_date.strftime("%d/%m/%Y"))
+                                expiration_date = quant.expiration_date and quant.expiration_date.strftime("%d/%m/%Y") or '??/??/????'
+                                message += "<b>Lot:</b> %s - %s<br/>" % (quant.lot_id.ref, expiration_date)
                             message += "<b>%s:</b> %s " % (_('Quantity'), quant.quantity)
 
                             if quant.lot_id:
@@ -360,8 +360,8 @@ class WmsScenarioStep(models.Model):
                             message += '<p class="mb-5"><b>[%s] %s</b><br/>' % (quant.product_id.default_code,
                                                                                  quant.product_id.name)
                             if quant.lot_id:
-                                message += "%s: %s - %s<br/>" % (
-                                    _('Lot'), quant.lot_id.ref, quant.removal_date.strftime("%d/%m/%Y"))
+                                expiration_date = quant.expiration_date and quant.expiration_date.strftime("%d/%m/%Y") or '??/??/????'
+                                message += "%s: %s - %s<br/>" % (_('Lot'), quant.lot_id.ref, expiration_date)
                             message += "<b> %s:</b> %s <br/>" % (_('Quantity'), quant.quantity)
 
                             if quant.lot_id:
