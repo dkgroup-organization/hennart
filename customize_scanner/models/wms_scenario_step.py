@@ -87,7 +87,7 @@ class WmsScenarioStep(models.Model):
                     weight = weight[:3] + '.' + weight[3:]
                 try:
                     weight_kg = float(weight)
-                    if weight_kg:
+                    if weight_kg and weight_kg > 0.0:
                         data['label_weight'] = weight_kg
                 except:
                     data['warning'] = _("Reading weight error:") + " {}".format(weight)
