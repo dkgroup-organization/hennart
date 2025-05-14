@@ -113,19 +113,7 @@ SHIPPINGMULTIPARCELV6 = [
                 },
             ],
         },
-    # scheduledValue
-    {
-        'struct': 'scheduledValue',
-        'loop': "[1]",  # ou une boucle réelle si plusieurs
-        'required': True,
-        'content': [
-            {
-                'dst': 'expirationDate',
-                'src': "(data['picking'].scheduled_date + timedelta(days=5)).strftime('%d/%m/%Y')",
-                'required': True,
-            },
-        ],
-    },
+
     #shipperValueV2 []
     {
         'struct': 'shipperValueV2',
@@ -586,6 +574,19 @@ SHIPPINGMULTIPARCELV6 = [
                 },
             ],
         },
+    # scheduledValue
+    {
+        'struct': 'scheduledValue',
+        'loop': "[1]",  # ou une boucle réelle si plusieurs
+        'required': True,
+        'content': [
+            {
+                'dst': 'expirationDate',
+                'src': "(data['picking'].scheduled_date + timedelta(days=5)).strftime('%d/%m/%Y')",
+                'required': True,
+            },
+        ],
+    },
     ]
 
 RECHERCHEPOINTCHRONOPOSTINTER = [
