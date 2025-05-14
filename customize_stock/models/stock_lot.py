@@ -221,7 +221,7 @@ class StockLot(models.Model):
                 while self.search([('ref', '=', lot_ref)]):
                     ref_index += 1
                     lot_ref = lot.name + "-" + "{}".format(ref_index).zfill(2)
-                    
+
             lot.ref = lot_ref
 
     @api.onchange('name')
