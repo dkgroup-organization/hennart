@@ -46,7 +46,7 @@ class SaleOrder(models.Model):
             app = self.partner_id.appointment_delivery_ids[0]
             res['carrier_id'] = self.partner_id.appointment_delivery_ids[0].carrier_id.id
             # load_time = self.partner_id.appointment_delivery_ids[0].load_time
-            load_time = 12
+            load_time = 16
 
             if today1 > self.timezone_2_utc(today1, 12):
                 today1 += timedelta(days=1)

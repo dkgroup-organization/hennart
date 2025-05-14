@@ -554,9 +554,9 @@ class WmsScenarioStep(models.Model):
                 elif quantity:
                     max_quantity = sum(quant_ids.mapped('quantity'))
                     if quantity > max_quantity:
-                        data['warning'] = _("The maximum quantity in this location is {}".format(max_quantity))
+                        data['warning'] = "la quantité maximal à cet emplacement est {}".format(max_quantity)
                     elif move_line and quantity > move_line.reserved_uom_qty:
-                        data['warning'] = _("The maximum quantity to pick is {}".format(move_line.reserved_uom_qty))
+                        data['warning'] = "La quantité maximum à prendre est {}".format(move_line.reserved_uom_qty)
         else:
             data['warning'] = _("Some information are missing to check product on location.")
         return data
