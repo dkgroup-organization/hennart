@@ -86,7 +86,7 @@
                                         <th name="th_container" style="text-align: left;">Palette</th>
                                         <th name="th_priceunit" style="text-align: left;">Container</th>
                                         <th name="th_colis" style="text-align: left;">Colis</th>
-                                        <th name="th_poids" style="text-align: left;">Pois</th>
+                                        <th name="th_poids" style="text-align: left;">Poids</th>
 
                                     </tr>
                                 </thead>

@@ -206,10 +206,10 @@ class StockLot(models.Model):
     def put_ref(self):
         """ Write ref on lot"""
         for lot in self:
-            # Search doubloon, format name
-            if lot._origin.id:
-                lot_ref = lot._origin.ref
+            if lot.ref:
+                lot_ref = lot.ref
             else:
+                # Search doubloon, format name
                 format_name = ''.join(filter(str.isalnum, lot.name))
                 format_name = format_name.upper().zfill(6)
                 ref_index = 1
@@ -222,7 +222,6 @@ class StockLot(models.Model):
                 while self.search([('ref', '=', lot_ref)]):
                     ref_index += 1
                     lot_ref = lot.name + "-" + "{}".format(ref_index).zfill(2)
-
             lot.ref = lot_ref
 
     @api.onchange('name')

@@ -8,6 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-05-13 17:52+0000\n"
 "PO-Revision-Date: 2025-05-13 17:52+0000\n"
+
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -106,7 +107,10 @@ msgid ""
 "                                <br/>\n"
 "                                price\n"
 "                            </span>"
-msgstr ""
+msgstr "<span>Prix\n"
+"                                <br/>\n"
+"                                NET\n"
+"                            </span>"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
@@ -115,7 +119,10 @@ msgid ""
 "                                <br/>\n"
 "                                of\n"
 "                            </span>"
-msgstr ""
+msgstr "<span>Colis\n"
+"                                <br/>\n"
+"                                de\n"
+"                            </span>"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_document_hennart
@@ -164,6 +171,10 @@ msgid ""
 "                                price\n"
 "                            </span>"
 msgstr ""
+"<span>Prix\n"
+"                                <br/>\n"
+"                                unité\n"
+"                            </span>"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_document_hennart
@@ -281,6 +292,11 @@ msgstr "<strong>Prix</strong>"
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "<strong>Shipping Address:</strong>"
+msgstr "<strong>Adresse de livraison:</strong>"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "<strong>Weight:</strong>"
 msgstr "<strong>Poids:</strong>"
 
@@ -333,6 +349,16 @@ msgid "Companies"
 msgstr "Sociétés"
 
 #. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.incoterm_info
+msgid "Contact:"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Container"
+msgstr ""
+
+#. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "Contact:"
 msgstr ""
@@ -365,12 +391,12 @@ msgid "Draft Invoice"
 msgstr "Brouillon"
 
 #. module: customize_report
-#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+#: model_terms:ir.ui.view,arch_db:customize_report.incoterm_info
 msgid "EORI:"
 msgstr ""
 
 #. module: customize_report
-#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+#: model_terms:ir.ui.view,arch_db:customize_report.incoterm_info
 msgid "Email:"
 msgstr ""
 
@@ -399,6 +425,11 @@ msgstr ""
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.view_company_form_inherit_add_text
 msgid "Header Text"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.incoterm_info
+msgid "INCOTERM:"
 msgstr ""
 
 #. module: customize_report
@@ -498,7 +529,7 @@ msgstr ""
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
-msgid "Pois"
+msgid "Poids"
 msgstr ""
 
 #. module: customize_report
@@ -534,7 +565,7 @@ msgstr "Texte à imprimer"
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.document_tax_totals_white
 msgid "Rounding"
-msgstr ""
+msgstr "Arrondi"
 
 #. module: customize_report
 #: model:ir.model.fields,field_description:customize_report.field_stock_picking__shipping_weight
@@ -555,6 +586,11 @@ msgstr "Facture fournisseur"
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "Supplier Refund"
 msgstr "Avoir fournisseur"
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "Tax ID"
+msgstr ""
 
 #. module: customize_report
 #: model:ir.model.fields,help:customize_report.field_stock_picking__shipping_weight
