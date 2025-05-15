@@ -3,7 +3,7 @@
 # contains the full copyright notices and license terms.
 from odoo.exceptions import UserError
 from odoo import fields, _
-from datetime import datetime
+from datetime import datetime, timedelta
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 from suds.client import Client, WebFault
 from suds.sudsobject import asdict
@@ -113,6 +113,7 @@ SHIPPINGMULTIPARCELV6 = [
                 },
             ],
         },
+
     #shipperValueV2 []
     {
         'struct': 'shipperValueV2',
@@ -573,6 +574,19 @@ SHIPPINGMULTIPARCELV6 = [
                 },
             ],
         },
+    # scheduledValue
+    {
+        'struct': 'scheduledValue',
+        'loop': "[1]",  # ou une boucle réelle si plusieurs
+        'required': True,
+        'content': [
+            {
+                'dst': 'expirationDate',
+                'src': "(data['picking'].scheduled_date + timedelta(days=5)).strftime('%d/%m/%Y')",
+                'required': True,
+            },
+        ],
+    },
     ]
 
 RECHERCHEPOINTCHRONOPOSTINTER = [

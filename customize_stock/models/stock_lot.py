@@ -206,7 +206,6 @@ class StockLot(models.Model):
     def put_ref(self):
         """ Write ref on lot"""
         for lot in self:
-
             if lot.ref:
                 lot_ref = lot.ref
             else:

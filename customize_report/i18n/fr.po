@@ -6,8 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-15 14:38+0000\n"
-"PO-Revision-Date: 2025-05-15 14:38+0000\n"
+"POT-Creation-Date: 2025-05-13 17:52+0000\n"
+"PO-Revision-Date: 2025-05-13 17:52+0000\n"
+
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,7 +23,7 @@ msgstr ""
 
 #. module: customize_report
 #: model:ir.actions.report,print_report_name:customize_report.account_invoices_bl_valued
-msgid "'%s' % (object.name or 'Facture')"
+msgid "(object.name or 'FACTURE')+'.pdf'"
 msgstr ""
 
 #. module: customize_report
@@ -359,6 +360,16 @@ msgstr ""
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "Contact:"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
+msgid "Container"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "Customer:"
 msgstr "Client"
 
@@ -418,6 +429,11 @@ msgstr ""
 
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.incoterm_info
+msgid "INCOTERM:"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
 msgid "INCOTERM:"
 msgstr ""
 
@@ -485,6 +501,11 @@ msgstr "Commande"
 #. module: customize_report
 #: model_terms:ir.ui.view,arch_db:customize_report.report_delivery_carrier_order
 msgid "Palette"
+msgstr ""
+
+#. module: customize_report
+#: model_terms:ir.ui.view,arch_db:customize_report.report_invoice_document_inherits
+msgid "Phone:"
 msgstr ""
 
 #. module: customize_report
