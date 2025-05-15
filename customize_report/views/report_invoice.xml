@@ -27,21 +27,21 @@
             <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
                 <tr>
                     <t t-if="tax_totals['display_tax_base']">
-                        <td  style="background-color: white; color: black; border-right: none; ">
+                        <td style="background-color: white; color: black; border-right: none; ">
                             <span t-esc="amount_by_group['tax_group_name']"/>
                             <span t-if="not amount_by_group['hide_base_amount']" class="text-nowrap">on
                                 <t t-esc="amount_by_group['formatted_tax_group_base_amount']"/>
                             </span>
                         </td>
-                        <td class="text-end o_price_total"  style="background-color: white; color: black; ">
+                        <td class="text-end o_price_total" style="background-color: white; color: black; ">
                             <span class="text-nowrap" t-esc="amount_by_group['formatted_tax_group_amount']"/>
                         </td>
                     </t>
                     <t t-else="">
-                        <td  style="background-color: white; color: black; border-right: none; ">
+                        <td style="background-color: white; color: black; border-right: none; ">
                             <span class="text-nowrap" t-esc="amount_by_group['tax_group_name']"/>
                         </td>
-                        <td class="text-end o_price_total"  style="background-color: white; color: black; ">
+                        <td class="text-end o_price_total" style="background-color: white; color: black; ">
                             <span class="text-nowrap" t-esc="amount_by_group['formatted_tax_group_amount']"/>
                         </td>
                     </t>
@@ -69,48 +69,91 @@
         </tr>
     </template>
 
+    <template id="incoterm_info">
+        <p t-if="o.partner_id.incoterm_id" style="margin-bottom: 0;">INCOTERM:
+            <span t-field="o.partner_id.incoterm_id.code"/>
+        </p>
+        <p t-if="o.partner_id.oeri_code" style="margin-bottom: 0;">EORI:
+            <span t-field="o.partner_id.oeri_code"/>
+        </p>
+        <p t-if="o.partner_id.incoterm_contact_id"  style="margin-bottom: 0;">Contact:
+            <span t-field="o.partner_id.incoterm_contact_id.name"/>
+        </p>
+        <p t-if="o.partner_id.incoterm_contact_id.email"  style="margin-bottom: 0;">Email:
+            <span t-field="o.partner_id.incoterm_contact_id.email"/>
+        </p>
+    </template>
 
     <template id="report_invoice_document_inherits" inherit_id="account.report_invoice_document"
               priority="100"
     >
-        <xpath expr="//div[@class='row']" position="inside">
-            <div class="col-sm-5 ms-auto">
-
-                <t t-if="o.partner_id.incoterm_id">
-                    <p style="margin-bottom: 0;">INCOTERM:
-                        <span t-field="o.partner_id.incoterm_id.code"/>
-                    </p>
+        <xpath expr="//div[@class='row']" position="replace">
+            <div class="row">
+                <t t-if="o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)">
+                    <div class="col-6">
+                        <t t-set="information_block">
+                            <div groups="account.group_delivery_invoice_address" name="shipping_address_block">
+                                <strong>Shipping Address:</strong>
+                                <div t-field="o.partner_shipping_id"
+                                     t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="col-6" name="address_not_same_as_shipping">
+                        <t t-set="address">
+                            <address class="mb-0" t-field="o.partner_id"
+                                     t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+                            <div t-if="o.partner_id.vat" id="partner_vat_address_not_same_as_shipping">
+                                <t t-if="o.company_id.account_fiscal_country_id.vat_label"
+                                   t-esc="o.company_id.account_fiscal_country_id.vat_label" id="inv_tax_id_label"/>
+                                <t t-else="">Tax ID</t>:
+                                <span t-field="o.partner_id.vat"/>
+                            </div>
+                            <t t-call="customize_report.incoterm_info"/>
+                        </t>
+                    </div>
                 </t>
-                <t t-if="o.partner_id.oeri_code">
-                    <p style="margin-bottom: 0;">EORI:
-                        <span t-field="o.partner_id.oeri_code"/>
-                    </p>
+                <t t-elif="o.partner_shipping_id and (o.partner_shipping_id == o.partner_id)">
+                    <div class="offset-col-6 col-6" name="address_same_as_shipping">
+                        <t t-set="address">
+                            <address class="mb-0" t-field="o.partner_id"
+                                     t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+                            <div t-if="o.partner_id.vat" id="partner_vat_address_same_as_shipping">
+                                <t t-if="o.company_id.account_fiscal_country_id.vat_label"
+                                   t-esc="o.company_id.account_fiscal_country_id.vat_label" id="inv_tax_id_label"/>
+                                <t t-else="">Tax ID</t>:
+                                <span t-field="o.partner_id.vat"/>
+                            </div>
+                            <t t-call="customize_report.incoterm_info"/>
+                        </t>
+                    </div>
                 </t>
-                <t t-if="o.partner_id.incoterm_contact_id">
-                    <p style="margin-bottom: 0;">Contact:
-                        <span t-field="o.partner_id.incoterm_contact_id.name"/>
-                    </p>
-                </t>
-                <t t-if="o.partner_id.incoterm_contact_id.phone">
-                    <p style="margin-bottom: 0;">Phone:
-                        <span t-field="o.partner_id.incoterm_contact_id.phone"/>
-                    </p>
-                </t>
-                <t t-if="o.partner_id.incoterm_contact_id.email">
-                    <p style="margin-bottom: 0;">Email:
-                        <span t-field="o.partner_id.incoterm_contact_id.email"/>
-                    </p>
+                <t t-else="">
+                    <div class="offset-col-6 col-6" name="no_shipping">
+                        <t t-set="address">
+                            <address class="mb-0" t-field="o.partner_id"
+                                     t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;], &quot;no_marker&quot;: True}"/>
+                            <div t-if="o.partner_id.vat" id="partner_vat_no_shipping">
+                                <t t-if="o.company_id.account_fiscal_country_id.vat_label"
+                                   t-esc="o.company_id.account_fiscal_country_id.vat_label" id="inv_tax_id_label"/>
+                                <t t-else="">Tax ID</t>:
+                                <span t-field="o.partner_id.vat"/>
+                            </div>
+                            <t t-call="customize_report.incoterm_info"/>
+                        </t>
+                    </div>
                 </t>
             </div>
 
         </xpath>
+
         <xpath expr="//div[@class='page']" position="replace">
 
             <div id="informations" class="row mt-1 mb-1">
-                <div class="col-auto text-center col-3 mw-100 mb-1" t-if="o.invoice_date" name="invoice_date"
+                <div class="col-auto text-center col-3 mw-100 mb-1" name="invoice_date"
                      style="border: 1px solid black !important;">
                     <h5>Date:
-                        <p t-field="o.invoice_date"/>
+                        <p t-if="o.invoice_date" t-field="o.invoice_date"/>
                     </h5>
 
                 </div>
@@ -127,27 +170,26 @@
                         <p t-if="o.name != '/'" t-field="o.name"/>
                     </h5>
                 </div>
-                <div class="col-auto text-center col-3 mw-100 mb-1" t-if="o.picking_ids" name="partner_id"
+                <div class="col-auto text-center col-3 mw-100 mb-1" name="partner_id"
                      style="border: 1px solid black !important;">
                     <h5>Delivery:
-                        <p t-field="o.picking_ids[0].name"/>
+                        <p t-if="o.picking_ids" t-field="o.picking_ids[0].name"/>
                     </h5>
                 </div>
-                <div class="col-auto text-center col-3 mw-100 mb-1" t-if="o.partner_id.ref" name="customer_ref"
+                <div class="col-auto text-center col-3 mw-100 mb-1" name="customer_ref"
                      style="border: 1px solid black !important;">
                     <h5>Customer:
-                        <p t-field="o.partner_id.ref"/>
+                        <p t-if="o.partner_id.ref" t-field="o.partner_id.ref"/>
                     </h5>
                 </div>
-                <div class="col-auto text-center col-3 mw-100 mb-1" t-if="o.partner_id.ref" name="client_code"
+                <div class="col-auto text-center col-3 mw-100 mb-1" name="client_code"
                      style="border: 1px solid black !important;">
                     <h5>Reference:
-                        <p t-field="o.invoice_origin"/>
+                        <p t-if="o.partner_id.ref" t-field="o.invoice_origin"/>
                     </h5>
                 </div>
             </div>
 
-            <t t-set="display_discount" t-value="any(l.discount for l in o.invoice_line_ids)"/>
 
             <style>
                 .small-header {
@@ -425,7 +467,6 @@
                     <p class="m-0" t-field="o.picking_ids[0].shipping_weight"/>
                 </div>
             </div>
-
 
 
         </xpath>
