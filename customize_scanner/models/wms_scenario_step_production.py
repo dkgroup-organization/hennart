@@ -307,6 +307,8 @@ class WmsScenarioStep(models.Model):
         if data.get('move_line') and data.get('lot_id'):
             if data['move_line'].product_id != data['lot_id'].product_id:
                 data['warning'] = _('This not the good product')
+            elif data['lot_id'].expiration_date < fields.datetime.now():
+                data['warning'] = "La date du lot est périmée"
             else:
                 source_location = production.location_src_id
                 location_origin_ids = self.env['stock.location'].search([('id', 'child_of', source_location.id)])
@@ -326,7 +328,8 @@ class WmsScenarioStep(models.Model):
                             move_line.reserved_uom_qty = move_line.qty_done
 
         elif data.get('move_line'):
-            data['warning'] = _('This lot is unknown')
+            if not data.get('warning'):
+                data['warning'] = _('This lot is unknown')
         else:
             data['warning'] = _('No component product to check')
         return data
@@ -340,11 +343,10 @@ class WmsScenarioStep(models.Model):
             if production.consumption != 'flexible':
                 production.sudo().consumption = 'flexible'
 
-            if production.state == 'to_close':
-                production.button_mark_done()
-                self.env['stock.quant'].unreserve_quantity()
-                data['message'] = _('Production enregistré')
-                data['button_print_later'] = True
+            production.button_mark_done()
+            self.env['stock.quant'].unreserve_quantity()
+            data['message'] = _('Production enregistré')
+            data['button_print_later'] = True
 
         return data
 
