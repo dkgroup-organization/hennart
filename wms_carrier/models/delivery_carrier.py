@@ -1,6 +1,7 @@
 from odoo import models, fields ,api, _
 from odoo.exceptions import ValidationError
 import time
+import pytz
 import datetime
 
 class delivery_carrier(models.Model):
@@ -36,6 +37,16 @@ class delivery_carrier(models.Model):
                 if not (0 <= getattr(self, f'dow_{weekday}') < 24):
                     raise ValidationError("This time must be between 0 and 24.")
 
+    @api.model
+    def timezone_2_utc(self, nextday, time, timezone="Europe/Paris"):
+        """ return datetime with time (in float) with conversion in  timezone to UTC"""
+        time = time or 8.0
+        hour = int(time)
+        minute = int((float(time) - float(hour)) * 60.0)
+        nextday = nextday.replace(hour=hour, minute=minute, second=0)
+        nextday_timezone = pytz.timezone(timezone).localize(nextday, is_dst=False)
+        return nextday_timezone.astimezone(pytz.utc).replace(tzinfo=None)
+
     def get_delivery_hours(self, date):
         """ Return the hour of delivery carrier load by day """
         self.ensure_one()
@@ -44,8 +55,4 @@ class delivery_carrier(models.Model):
             delivery_hour = getattr(self, f'dow_{weekday}')
         else:
             delivery_hour = 12.00
-
-        hour = int(delivery_hour)
-        minute = int(float(hour) - delivery_hour) * 60
-        date = date.replace(hour=hour, minute=minute)
-        return date
+        return self.timezone_2_utc(date, delivery_hour)

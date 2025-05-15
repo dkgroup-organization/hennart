@@ -48,4 +48,6 @@ class StockPicking(models.Model):
                         }
                     carrier_order_id = carrier_order_obj.create(carrier_order_vals)
                     picking.carrier_order_id = carrier_order_id.id
+
+                picking.scheduled_date = carrier_order_id.date_expected
         return super(StockPicking, self).action_confirm()
