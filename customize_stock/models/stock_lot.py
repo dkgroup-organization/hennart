@@ -20,6 +20,7 @@ class StockLot(models.Model):
     date = fields.Date(string='Date de création')
     ref = fields.Char('Internal Reference', compute="put_ref", readonly=False, index=True, store=True,
                       help="Internal reference with incremente index ")
+    ref_index = fields.Char('Internal Index Reference')
     life_date = fields.Date(string='Date limite de consommation')
     temp_old_barcode = fields.Char(string='migration Barcode 1', index=True)
     temp2_old_barcode = fields.Char(string='migration Barcode 2', index=True)

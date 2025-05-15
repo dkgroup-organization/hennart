@@ -150,7 +150,7 @@ class WmsScenarioStep(models.Model):
                                                                 ('product_id', '=', product.id)])
                         if len(lot_ids) == 1 and lot_ids.expiration_date and data.get('label_date') and \
                                 lot_ids.expiration_date.strftime('%Y-%m-%d') != data['label_date'].strftime('%Y-%m-%d'):
-                            data['warning'] = _("The expiration date of this label is not correct: {}".format(data['label_date'].strftime('%d-%m-%y')))
+                            data['warning'] = "La date sur cette étiquette est incorrecte: {}".format(data['label_date'].strftime('%d-%m-%y'))
 
             # Get the lot name to possible creation if lot is finding
             if product and data.get('label_date') and not data.get('lot_id'):
