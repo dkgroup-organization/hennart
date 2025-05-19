@@ -24,7 +24,7 @@ class AccountInvoiceReport(models.Model):
                 line.account_id,
                 line.journal_id,
                 line.company_id,
-                line.user2_id,
+                partner.user2_id,
                 line.cost_price, 
                 line.cadeau AS promo,
                 line.margin,

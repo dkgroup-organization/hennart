@@ -10,7 +10,7 @@
     "website": "https://dkgroup.fr",
     "maintainer": "DK group",
     "images": [],
-    "depends": ["account", "sale", "stock", "sale_stock", "sale_mrp", "crm_phonecall",
+    "depends": ["account", "sale", "stock", "sale_stock", "sale_mrp", "crm_phonecall", "wms_planning",
                 "delivery", "customize_product_template", "customize_mrp", "customize_stock", "product"],
     "data": [
         "security/ir.model.access.csv",

@@ -62,6 +62,9 @@
                                     <strong>Containers:</strong>
                                 </th>
                                 <th class="text-center">
+                                    <strong>Weight:</strong>
+                                </th>
+                                <th class="text-center">
                                     <strong>Order:</strong>
                                 </th>
                                 <th class="text-center">
@@ -79,6 +82,9 @@
                                 </td>
                                 <td class="text-center">
                                     <span t-field="o.nb_container"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-field="o.weight"/>
                                 </td>
                                 <td class="text-center">
                                     <span t-field="o.partner_origin"/>
@@ -145,6 +151,10 @@
                                     <t t-else="">
                                         <span t-field="move.quantity_done"
                                               t-options='{"widget": "float", "precision": 1}'/>
+                                        <t t-if="o.state != 'done'">
+                                            &#47;<span t-field="move.product_uom_qty"
+                                              t-options='{"widget": "float", "precision": 1}'/>
+                                        </t>
                                     </t>
 
                                 </td>
