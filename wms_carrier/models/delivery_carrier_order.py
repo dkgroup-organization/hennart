@@ -39,9 +39,9 @@ class DeliveryCarrierOrder(models.Model):
     number_of_packages = fields.Integer(compute="_update_info", string='Nb packages')
     nb_container = fields.Integer(compute="_update_info", string='Nb container',)
     nb_pallet = fields.Integer(compute="_update_info", string='Nb pallet',)
-    nb_pallet_europe = fields.Integer(compute="_update_info", string='Nb Pallets europes')
-    nb_pallet_perdu = fields.Integer(compute="_update_info", string='Nb Pallets Perdus')
-    nb_pallet_ground = fields.Integer('Nb Pallets on Ground')
+    nb_pallet_europe = fields.Integer(compute=False, string='Nb Palettes europes')
+    nb_pallet_perdu = fields.Integer(compute=False, string='Nb Palettes Perdus')
+    nb_pallet_ground = fields.Integer('Nb Palettes au sol')
 
     driver_name = fields.Char('Driver name')
     temperature = fields.Float('Temperature')
@@ -79,9 +79,6 @@ class DeliveryCarrierOrder(models.Model):
                 carrier_order.nb_picking= 0
                 carrier_order.nb_line=0
                 carrier_order.nb_container=0
-                carrier_order.nb_pallet= 0
-                carrier_order.nb_pallet_europe= 0
-                carrier_order.nb_pallet_perdu= 0
                 carrier_order.weight= 0
                 date = carrier_order.date_expected or date_now
                 carrier_order.nb_picking = len(carrier_order.picking_ids)
@@ -92,8 +89,6 @@ class DeliveryCarrierOrder(models.Model):
                         carrier_order.number_of_packages += picking.number_of_packages
                         carrier_order.nb_container += picking.nb_container
                         carrier_order.nb_pallet += picking.nb_pallet
-                        carrier_order.nb_pallet_europe += picking.nb_pallet_europe
-                        carrier_order.nb_pallet_perdu += picking.nb_pallet_perdu
                         date_delivered = picking.scheduled_date + datetime.timedelta(days=1)
                         carrier_order.date_delivered = date_delivered.strftime('%Y-%m-%d 12:00:00')
                         for line in picking.move_ids:

@@ -93,8 +93,11 @@ class AccountMove(models.Model):
     def compute_user2(self):
         """ Compute the sale manager """
         for move in self:
-            partner = move.partner_shipping_id or move.partner_id
-            move.user2_id = partner.user2_id or partner.parent_id.user2_id or False
+            if move.partner_shipping_id.user2_id:
+                user2_id = move.partner_shipping_id.user2_id
+            else:
+                user2_id = move.partner_id.user2_id or move.partner_id.parent_id.user2_id
+            move.user2_id = user2_id
 
     def get_max_subtotal_tax(self):
         """ return subtotal and tax"""
@@ -248,6 +251,8 @@ class AccountMove(models.Model):
                 res['journal_id'] = self.suitable_journal_ids[0]
         else:
             res['journal_id'] = False
+
+        self.compute_user2()
         self.update(res)
 
     def _must_check_constrains_date_sequence(self):

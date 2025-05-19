@@ -47,19 +47,37 @@ class SaleOrderLine(models.Model):
         It is not exactly the reality, it is a simple secure way to reserved enough qty
         more precision need a lot of compute and are slowing
         """
+        warehouse_id = 1
         for line in self:
             if line.product_id.type == 'product' and line.order_id.state in ['draft', 'send']:
-                futur_lines = self.search([
-                    ('scheduled_date', '>=', line.scheduled_date),
-                    ('product_uom_qty', '>', 0),
-                    ('order_id', '!=', line.order_id.id),
-                    ('state', 'in', ['sale']),
+                commitment_date = line.order_id.commitment_date and line.order_id.commitment_date.date() or fields.Date.today()
+                day_quantity_ids =  self.env['report.stock.dayprevision'].search([
                     ('product_id', '=', line.product_id.id),
-                    ])
-                futur_outgoing_qty = sum(futur_lines.mapped('product_uom_qty'))
-                free_qty_at_date = line.virtual_available_at_date - futur_outgoing_qty
-                if free_qty_at_date < 0.0:
+                    ('warehouse_id', '=', warehouse_id)
+                    ], order="date desc")
+
+                if day_quantity_ids:
+                    free_qty_at_date = day_quantity_ids[0].product_qty
+                else:
                     free_qty_at_date = 0.0
+
+                move_ids = self.env['stock.move']
+                for day_quantity_id in day_quantity_ids:
+                    if day_quantity_id.product_qty < free_qty_at_date:
+                        free_qty_at_date = day_quantity_id.product_qty
+                        move_ids = self.env['stock.move']
+
+                    if day_quantity_id.date <= commitment_date:
+                        break
+                    else:
+                        move_ids |= day_quantity_id.move_ids
+
+                for move in move_ids:
+                    if move.location_dest_id.usage == 'internal':
+                        free_qty_at_date += move.product_uom_qty
+                    else:
+                        free_qty_at_date -= move.product_uom_qty
+
                 line.free_qty_at_date = free_qty_at_date
             else:
                 line.free_qty_at_date = line.product_uom_qty

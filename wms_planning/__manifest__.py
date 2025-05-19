@@ -13,6 +13,7 @@
         "security/ir.model.access.csv",
 
         "views/report_stock_prevision.xml",
+        "views/report_stock_prevision_day.xml",
 
     ],
     'demo_xml': [],

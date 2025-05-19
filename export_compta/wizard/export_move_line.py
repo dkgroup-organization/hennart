@@ -152,7 +152,7 @@ class AccountExportMoveLine(models.TransientModel):
                     # Date format
                     for key in ['date', "date_maturity"]:
                         if data_line[key]:
-                            date_txt = data_line.get(key).strftime('%d%m%Y')
+                            date_txt = data_line.get(key).strftime('%d%m%y')
                             data_line[key] = date_txt
                         else:
                             data_line[key] = ''
@@ -186,7 +186,7 @@ class AccountExportMoveLine(models.TransientModel):
             attachment_vals['res_model'] = 'account.export.history'
             attachment = self.env['ir.attachment'].create(attachment_vals)
 
-            file_name = 'export_%s_%s_%s.csv' % (
+            file_name = 'export_%s_%s_%s.txt' % (
                             fields.Date.today(),
                             wizard.journal_id.code,
                             attachment.id)
