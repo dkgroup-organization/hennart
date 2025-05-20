@@ -57,6 +57,6 @@ class StockSSCC(models.Model):
         records = super().create(vals_list)
         for record in records:
             if record.serial == '/':
-                serial = self.env['ir.sequence'].get('stock.sscc.code') or '/'
+                serial = self.env['ir.sequence'].next_by_code('stock.sscc.code') or '/'
                 record.update({'serial': serial})
         return records
