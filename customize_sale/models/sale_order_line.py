@@ -47,36 +47,66 @@ class SaleOrderLine(models.Model):
         It is not exactly the reality, it is a simple secure way to reserved enough qty
         more precision need a lot of compute and are slowing
         """
+
+        def get_day_quantity(product, commitment_date, warehouse_id=1):
+            """" return max quantity on this product at commitment_date"""
+
+            day_quantity_ids = self.env['report.stock.dayprevision'].search([
+                ('product_id', '=', product.id),
+                ('warehouse_id', '=', warehouse_id)
+            ], order="date desc")
+
+            if day_quantity_ids:
+                free_qty_at_date = day_quantity_ids[0].product_qty
+            else:
+                free_qty_at_date = 0.0
+
+            move_ids = self.env['stock.move']
+            for day_quantity_id in day_quantity_ids:
+                if day_quantity_id.product_qty < free_qty_at_date:
+                    free_qty_at_date = day_quantity_id.product_qty
+                    move_ids = self.env['stock.move']
+
+                if day_quantity_id.date <= commitment_date:
+                    break
+                else:
+                    move_ids |= day_quantity_id.move_ids
+
+            for move in move_ids:
+                if move.location_dest_id.usage == 'internal':
+                    free_qty_at_date += move.product_uom_qty
+                else:
+                    free_qty_at_date -= move.product_uom_qty
+            return float(int(free_qty_at_date))
+
+        def get_bom_free_qty(product, commitment_date, warehouse_id=1):
+            """ Check recursively all level of BOM about free qty """
+            bom_free_qty_at_date_list = {}
+            bom_free_qty_at_date_bom = []
+            if product.bom_ids:
+                for bom_line in product.bom_ids[0].bom_line_ids:
+                    bom_free_qty_at_date_list[bom_line.product_id] = []
+                    bom_free_qty_at_date = float(int(get_day_quantity(bom_line.product_id, commitment_date) / (bom_line.product_qty or 1.0)))
+                    bom_free_qty_at_date_list[bom_line.product_id].append(bom_free_qty_at_date)
+                    if bom_line.product_id.bom_ids:
+                        bom_free_qty_at_date = float(int(get_bom_free_qty(bom_line.product_id, commitment_date, warehouse_id=warehouse_id) / (bom_line.product_qty or 1.0)))
+                        bom_free_qty_at_date_list[bom_line.product_id].append(bom_free_qty_at_date)
+                    bom_free_qty_at_date_bom.append(sum(bom_free_qty_at_date_list[bom_line.product_id]))
+
+            if not bom_free_qty_at_date_bom:
+                bom_free_qty_at_date_bom = [0.0]
+
+            return min(bom_free_qty_at_date_bom)
+
         warehouse_id = 1
         for line in self:
             if line.product_id.type == 'product' and line.order_id.state in ['draft', 'send']:
                 commitment_date = line.order_id.commitment_date and line.order_id.commitment_date.date() or fields.Date.today()
-                day_quantity_ids =  self.env['report.stock.dayprevision'].search([
-                    ('product_id', '=', line.product_id.id),
-                    ('warehouse_id', '=', warehouse_id)
-                    ], order="date desc")
 
-                if day_quantity_ids:
-                    free_qty_at_date = day_quantity_ids[0].product_qty
+                if line.product_id.bom_ids:
+                    free_qty_at_date = get_day_quantity(line.product_id, commitment_date) + get_bom_free_qty(line.product_id, commitment_date)
                 else:
-                    free_qty_at_date = 0.0
-
-                move_ids = self.env['stock.move']
-                for day_quantity_id in day_quantity_ids:
-                    if day_quantity_id.product_qty < free_qty_at_date:
-                        free_qty_at_date = day_quantity_id.product_qty
-                        move_ids = self.env['stock.move']
-
-                    if day_quantity_id.date <= commitment_date:
-                        break
-                    else:
-                        move_ids |= day_quantity_id.move_ids
-
-                for move in move_ids:
-                    if move.location_dest_id.usage == 'internal':
-                        free_qty_at_date += move.product_uom_qty
-                    else:
-                        free_qty_at_date -= move.product_uom_qty
+                    free_qty_at_date = get_day_quantity(line.product_id, commitment_date)
 
                 line.free_qty_at_date = free_qty_at_date
             else:

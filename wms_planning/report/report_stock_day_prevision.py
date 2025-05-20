@@ -64,12 +64,12 @@ class ReportStockDayPrevision(models.Model):
         tools.drop_view_if_exists(self._cr, 'report_stock_dayprevision')
 
         # the construction of the id has some limitation to know due to the max value of integer: 2 147 483 648
-        #only 200 warehouses_id, only 99 999 product_id, only 1 years forecast
+        #only 200 warehouses_id, only 99 999 product_id, only 99 days forecast
         #COALESCE(warehouse_id, 0)::int * 10000000 + product_id * 100 + to_char(date, 'WW')::int AS id,
         # With this computing there is no double id
 
-        futur_horizon = '20 day'
-        past_horizon = '10 day'
+        futur_horizon = '10 day'
+        past_horizon = '5 day'
 
         query = """
 CREATE or REPLACE VIEW report_stock_dayprevision AS (
