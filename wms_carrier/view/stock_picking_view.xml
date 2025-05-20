@@ -26,6 +26,9 @@
                                     </tree>
                                 </field>
                             </group>
+                            <group string="Bon de transport">
+                                <field name="carrier_order_id" domain="[('state', '!=', 'done')]"/>
+                            </group>
                         </group>
                         <group>
                             <group string="Incomming/ougoing">
