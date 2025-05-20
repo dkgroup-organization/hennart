@@ -23,21 +23,27 @@ class StockPicking(models.Model):
 
         return True
 
-    def action_confirm(self):
+    @api.onchange('carrier_id', 'scheduled_date')
+    def onchange_carrier_date(self):
+        self.action_carrier_order()
+
+    def action_carrier_order(self):
         carrier_order_obj = self.env['delivery.carrier.order']
         for picking in self:
             if picking.carrier_id:
                 date_picking = picking.scheduled_date.date()
 
                 carrier_order_id = carrier_order_obj.search([('carrier_id', '=', picking.carrier_id.id),
-                                                             ('date_expected2','=',date_picking)])
+                                                             ('date_expected2','=',date_picking)],
+                                                            order='id desc', limit=1)
                 if carrier_order_id:
                     picking.carrier_order_id = carrier_order_id.id
                 else:
-                    carrier_order_name = picking.carrier_id.name
+                    carrier_order_name = picking.carrier_id.name or ""
                     date_expected = picking.carrier_id.get_delivery_hours(picking.scheduled_date)
+                    date_name = date_expected and f"{date_expected}"[:10]
                     carrier_order_vals = {
-                        'name': carrier_order_name or "",
+                        'name': f"{carrier_order_name} {date_name}",
                         'carrier_id': picking.carrier_id.id,
                         'date_expected': date_expected,
                         'warehouse_id': 1,
@@ -50,4 +56,7 @@ class StockPicking(models.Model):
                     picking.carrier_order_id = carrier_order_id.id
 
                 picking.scheduled_date = carrier_order_id.date_expected
+
+    def action_confirm(self):
+        self.action_carrier_order()
         return super(StockPicking, self).action_confirm()
