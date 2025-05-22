@@ -3,18 +3,28 @@
     <template id="report_delivery_document_inherits" inherit_id="stock.report_delivery_document">
 
 
-
-
         <xpath expr="//table[1]" position="replace">
             <table class="table table-sm" t-if="o.state!='done'" name="stock_move_table">
                 <thead>
                     <tr>
-                        <th name="th_sm_code"><strong>Code</strong></th>
-                        <th name="th_sm_qty"><strong>Qté</strong></th>
-                        <th name="th_sm_product"><strong>Produit</strong></th>
-                        <th name="th_sm_colisage"><strong>Colisage</strong></th>
-                        <th name="th_sm_unite"><strong>Unité</strong></th>
-                        <th name="th_sm_production_lot"><strong>Lot de production</strong></th>
+                        <th name="th_sm_code">
+                            <strong>Code</strong>
+                        </th>
+                        <th name="th_sm_qty">
+                            <strong>Qté</strong>
+                        </th>
+                        <th name="th_sm_product">
+                            <strong>Produit</strong>
+                        </th>
+                        <th name="th_sm_colisage">
+                            <strong>Colisage</strong>
+                        </th>
+                        <th name="th_sm_unite">
+                            <strong>Unité</strong>
+                        </th>
+                        <th name="th_sm_production_lot">
+                            <strong>Lot de production</strong>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,7 +66,8 @@
                         <!-- Colisage -->
                         <td>
                             <t t-if="move.bom_line_id">
-                                <span t-field="move.bom_line_id.bom_id.base_unit_count" t-options='{"widget": "float", "precision": 0}'/>
+                                <span t-field="move.bom_line_id.bom_id.base_unit_count"
+                                      t-options='{"widget": "float", "precision": 0}'/>
                             </t>
                         </td>
 
@@ -106,16 +117,9 @@
         <xpath expr="//div[@name='div_sched_date']" position="replace">
             <div t-if="o.state" class="col-auto" name="div_sched_date">
                 <strong>Shipping Date:</strong>
-                <t t-if="o.state == 'done'">
-                    <p>
-                        <t t-esc="o.date_done.strftime('%Y-%m-%d')"/>
-                    </p>
-                </t>
-                <t t-if="o.state != 'done'">
-                    <p>
-                        <t t-esc="o.scheduled_date.strftime('%Y-%m-%d')"/>
-                    </p>
-                </t>
+                <p>
+                    <t t-esc="o.date_deadline.strftime('%Y-%m-%d')"/>
+                </p>
             </div>
         </xpath>
 
