@@ -1,7 +1,7 @@
 from odoo import fields, models, api, Command
 import logging
 import datetime
-from odoo.tools import float_is_zero
+from odoo.tools import float_is_zero, float_round
 from dateutil.relativedelta import relativedelta
 logger = logging.getLogger('wms_scanner')
 
@@ -186,36 +186,23 @@ class AccountMove(models.Model):
             invoice = line_discount['invoice_line'].move_id
             tax, total_HT = invoice.get_max_subtotal_tax()
             line_discount['invoice_line'].tax_ids = tax
-            line_discount['invoice_line'].price_unit = - total_HT * line_discount['logistic_discount'] / 100.0
+            line_discount['invoice_line'].price_unit = float_round(- total_HT * line_discount['logistic_discount'] / 100.0, precision_digits=2, rounding_method='HALF-UP')
             line_discount['invoice_line'].uom_qty = 1.0
 
     def update_origin(self):
         """ check order and picking origin"""
         for invoice in self:
-            origin = ''
-            stock_move_ids = self.env['stock.move']
             if invoice.piece_comptable:
                 continue
 
-            if invoice.ref and invoice.ref not in origin:
-                origin = invoice.ref
+            sale_orders = invoice.invoice_line_ids.sale_line_ids.order_id
+            sale_order = sale_orders and sale_orders[0] or sale_orders
 
-            for invoice_line in invoice.invoice_line_ids:
-                for sale_line in invoice_line.sale_line_ids:
-                    stock_move_ids |= sale_line.move_ids
-
-                for purchase_line in invoice_line.purchase_line_id:
-                    stock_move_ids |= purchase_line.move_ids
-
-                for picking in stock_move_ids.mapped('picking_id'):
-                    if picking.partner_origin and picking.partner_origin not in origin:
-                        origin += ' ' + picking.partner_origin
-
-                for picking in stock_move_ids.mapped('picking_id'):
-                    if picking.name not in origin:
-                        origin += ' ' + picking.name
-
-            invoice.invoice_origin = origin
+            if sale_order.client_order_ref:
+                invoice.invoice_origin = sale_order.client_order_ref
+            if sale_order.commitment_date:
+                invoice.invoice_date = sale_order.commitment_date.date()
+                invoice.date = invoice.invoice_date
 
     @api.depends('company_id', 'invoice_filter_type_domain', 'src_dest_country_id')
     def _compute_suitable_journal2_ids(self):
@@ -435,7 +422,7 @@ class AccountMove(models.Model):
 
                 if line.discount <= 0.0 or not line.discount:
                     cadeau = 0.0
-                elif line.discount > 100.0:
+                elif line.discount >= 100.0:
                     cadeau = - line.move_id.direction_sign * line.price_subtotal
                 else:
                     cadeau = - line.move_id.direction_sign * line.price_subtotal * line.discount / (100.0 - line.discount)

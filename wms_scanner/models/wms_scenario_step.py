@@ -316,11 +316,13 @@ class WmsScenarioStep(models.Model):
                 field_list = []
                 for scan_model_id in scan_model:
 
-                    if scan_model_id._name in ['product.product', 'stock.lot']:
+                    if scan_model_id._name in ['product.product', 'product.template', 'stock.lot']:
 
                         field_list = ['default_code', 'barcode', 'name']
                         if scan_model_id._name == 'product.product':
                             product = scan_model_id
+                        elif scan_model_id._name == 'product.template':
+                            product = scan_model_id.product_variant_id
                         else:
                             product = scan_model_id.product_id
 
