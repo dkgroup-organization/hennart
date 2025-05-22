@@ -1,6 +1,7 @@
 from odoo import fields, models, api, Command
 import logging
 import datetime
+from odoo.tools import float_is_zero
 from dateutil.relativedelta import relativedelta
 logger = logging.getLogger('wms_scanner')
 
@@ -123,6 +124,53 @@ class AccountMove(models.Model):
         else:
             return False, 0.0
 
+
+    def check_taxes_amount(self):
+        """ Check if the amount of taxes is Ok return True """
+        res = True
+
+        for invoice in self:
+
+            actual_taxes = 0.0
+            computed_taxes = 0.0
+
+            for line in invoice.line_ids:
+
+                if line.display_type == 'tax':
+                    actual_taxes += line.amount_currency
+
+                # Compute taxes
+                if line.tax_ids:
+                    line_discount_price_unit = line.price_unit * (1 - (line.discount / 100.0))
+                    taxes_res = line.tax_ids.compute_all(
+                        line_discount_price_unit,
+                        quantity=line.quantity,
+                        currency=line.currency_id,
+                        product=line.product_id,
+                        partner=line.partner_id,
+                        is_refund=line.is_refund,
+                    )
+                    for taxes in taxes_res.get('taxes', []):
+                        computed_taxes += taxes['amount']
+
+            tax_amount_error = abs(actual_taxes) - abs(computed_taxes)
+            if not float_is_zero(tax_amount_error, precision_rounding=invoice.currency_id.rounding):
+                res = False
+        return res
+
+    def recompute_tax(self):
+        """ recompute tax after the writing of real weight """
+
+        for invoice in self:
+            if invoice.state != 'draft' and invoice.check_taxes_amount():
+                continue
+
+            for line in invoice.invoice_line_ids:
+                if line.tax_ids:
+                    copy_line = line.copy()
+                    copy_line.unlink()
+                    break
+
     def update_discount_stock(self):
         """ check the sale line logistical discount """
         line_discount_data = []
@@ -140,65 +188,6 @@ class AccountMove(models.Model):
             line_discount['invoice_line'].tax_ids = tax
             line_discount['invoice_line'].price_unit = - total_HT * line_discount['logistic_discount'] / 100.0
             line_discount['invoice_line'].uom_qty = 1.0
-
-        for invoice in self:
-            if invoice.state != 'draft':
-                continue
-            tax_repartition_line = {}
-            sign = invoice.direction_sign
-
-            for line in invoice.line_ids:
-                line._compute_all_tax()
-                line._compute_totals()
-
-                if line.display_type == 'tax':
-                    line.compute_all_tax = {}
-                    line.compute_all_tax_dirty = False
-                    continue
-                if line.display_type == 'product' and line.move_id.is_invoice(True):
-                    amount_currency = sign * line.price_unit * (1 - line.discount / 100)
-                    handle_price_include = True
-                    quantity = line.quantity
-                else:
-                    amount_currency = line.amount_currency
-                    handle_price_include = False
-                    quantity = 1
-                compute_all_currency = line.tax_ids.compute_all(
-                    amount_currency,
-                    currency=line.currency_id,
-                    quantity=quantity,
-                    product=line.product_id,
-                    partner=line.move_id.partner_id or line.partner_id,
-                    is_refund=line.is_refund,
-                    handle_price_include=handle_price_include,
-                    include_caba_tags=line.move_id.always_tax_exigible,
-                    fixed_multiplicator=sign,
-                )
-
-                for taxe in compute_all_currency.get('taxes'):
-                    tax_repartition_line_id = taxe.get('tax_repartition_line_id')
-                    amount = taxe.get('amount')
-                    if tax_repartition_line_id not in list(tax_repartition_line.keys()):
-                        tax_repartition_line[tax_repartition_line_id] = amount
-                    else:
-                        tax_repartition_line[tax_repartition_line_id] += amount
-
-                if line.tax_repartition_line_id.id in list(tax_repartition_line.keys()):
-
-
-                    if sign * tax_repartition_line[line.tax_repartition_line_id.id] >= 0.0:
-                        if invoice.move_type in ['in_invoice', 'in_refund', 'in_receipt']:
-                            line.debit = sign * tax_repartition_line[line.tax_repartition_line_id.id]
-                        else:
-                            line.credit = sign * tax_repartition_line[line.tax_repartition_line_id.id]
-                    else:
-                        if invoice.move_type in ['in_invoice', 'in_refund', 'in_receipt']:
-                            line.credit = -1 * sign * tax_repartition_line[line.tax_repartition_line_id.id]
-                        else:
-                            line.debit = -1 * sign * tax_repartition_line[line.tax_repartition_line_id.id]
-
-            invoice._compute_tax_totals()
-            invoice._compute_amount()
 
     def update_origin(self):
         """ check order and picking origin"""
@@ -467,6 +456,7 @@ class AccountMove(models.Model):
         """ post invoice , update the invoice with the real weight and recompute tax """
         if self.env.context.get('update_discount_stock'):
             self.sudo().update_discount_stock()
+            self.sudo().recompute_tax()
         self.sudo().update_statistic()
         self.update_origin()
         return super().action_post()
