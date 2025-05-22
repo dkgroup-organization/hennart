@@ -526,7 +526,7 @@ class AccountMoveLine(models.Model):
             unit_valuation_difference_curr = self.company_id.currency_id._convert(unit_valuation_difference, self.currency_id, self.company_id, self.date, round=False)
             unit_valuation_difference_curr = product_uom._compute_price(unit_valuation_difference_curr, self.product_uom_id)
             out_qty_to_invoice = product_uom._compute_quantity(out_qty_to_invoice, self.product_uom_id)
-            if not float_is_zero(unit_valuation_difference_curr * out_qty_to_invoice, c):
+            if not float_is_zero(unit_valuation_difference_curr * out_qty_to_invoice, precision_rounding=self.currency_id.rounding):
                 aml_vals_list += self._prepare_pdiff_aml_vals(out_qty_to_invoice, unit_valuation_difference_curr)
 
             # Generate the SVL values for the on hand quantities (and impact the parent layer)
