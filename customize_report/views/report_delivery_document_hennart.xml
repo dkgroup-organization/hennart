@@ -134,7 +134,7 @@
                                 <!-- Code -->
                                 <td>
                                     <t t-if="move.bom_line_id.bom_id.type == 'phantom'">
-                                        <span t-field="move.bom_line_id.bom_id.product_id.default_code"/>
+                                        <span t-field="move.bom_line_id.bom_id.product_tmpl_id.default_code"/>
                                     </t>
                                     <t t-else="">
                                         <span t-field="move.product_id.default_code"/>
@@ -162,7 +162,7 @@
                                 <!-- Produit -->
                                 <td>
                                     <t t-if="move.bom_line_id.bom_id.type == 'phantom'">
-                                        <span t-esc="move.bom_line_id.bom_id.product_id.name"/>
+                                        <span t-esc="move.bom_line_id.bom_id.product_tmpl_id.name"/>
                                     </t>
                                     <t t-else="">
                                         <span t-esc="move.product_id.name"/>
