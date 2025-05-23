@@ -191,7 +191,7 @@
                 <div class="col-auto text-center col-3 mw-100 mb-1" name="client_code"
                      style="border: 1px solid black !important;">
                     <h5>Reference:
-                        <p t-if="o.partner_id.invoice_origin" t-field="o.invoice_origin"/>
+                        <p t-if="o.invoice_origin" t-field="o.invoice_origin"/>
                     </h5>
                 </div>
             </div>
