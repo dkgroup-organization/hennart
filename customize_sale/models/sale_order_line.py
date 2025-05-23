@@ -67,10 +67,13 @@ class SaleOrderLine(models.Model):
                     free_qty_at_date = day_quantity_id.product_qty
                     move_ids = self.env['stock.move']
 
-                if day_quantity_id.date <= commitment_date:
-                    break
                 else:
-                    move_ids |= day_quantity_id.move_ids
+                    if day_quantity_id.date == commitment_date:
+                        move_ids = self.env['stock.move']
+                    elif day_quantity_id.date < commitment_date:
+                        move_ids |= day_quantity_id.move_ids
+                    else:
+                        pass
 
             for move in move_ids:
                 if move.location_dest_id.usage == 'internal':
