@@ -11,6 +11,8 @@ import logging
 import re
 import binascii
 import copy
+import base64
+import binascii
 
 _logger = logging.getLogger(__name__)
 # logging.getLogger('suds.transport').setLevel(logging.DEBUG)
@@ -582,7 +584,7 @@ SHIPPINGMULTIPARCELV6 = [
         'content': [
             {
                 'dst': 'expirationDate',
-                'src': "(data['picking'].scheduled_date + timedelta(days=5)).strftime('%d/%m/%Y')",
+                'src': "(data['picking'].scheduled_date + timedelta(days=5)).strftime('%Y-%m-%d')",
                 'required': True,
             },
         ],
@@ -866,6 +868,7 @@ class ChronopostRequest():
         self.client = Client(carrier.cpst_shipping_url)
         # Getting data and build the parameters ...
         model = SHIPPINGMULTIPARCELV6
+
         keys = self._model_keys(model)
         data = self._build_values(model, data)
 
@@ -882,11 +885,12 @@ class ChronopostRequest():
         _logger.debug("shipping_request: %s" % values)
         try:
             # To print XML query (to be continued) ...
-            # self.client.set_options(nosend=True)
+            #self.client.set_options(nosend=True)
             # Beware the query must respect the field order
             self.response = self.client.service.shippingMultiParcelV6(*values)
             # ... to print XML query.
             # print(self.response.envelope)
+
         except WebFault as e:
             _logger.error('Error from Chronopost API: %s' % e)
             raise UserError(_('Error from Chronopost API: %s') % (e))
