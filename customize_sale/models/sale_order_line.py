@@ -53,30 +53,15 @@ class SaleOrderLine(models.Model):
 
             day_quantity_ids = self.env['report.stock.dayprevision'].search([
                 ('product_id', '=', product.id),
-                ('warehouse_id', '=', warehouse_id)
+                ('warehouse_id', '=', warehouse_id),
+                ('date', '>=', commitment_date)
             ], order="date desc")
 
             if day_quantity_ids:
-                free_qty_at_date = day_quantity_ids[0].product_qty
+                free_qty_at_date = min(day_quantity_ids.mapped('product_qty'))
             else:
                 free_qty_at_date = 0.0
 
-            move_ids = self.env['stock.move']
-            for day_quantity_id in day_quantity_ids:
-                if day_quantity_id.product_qty < free_qty_at_date:
-                    free_qty_at_date = day_quantity_id.product_qty
-                    move_ids = self.env['stock.move']
-
-                if day_quantity_id.date <= commitment_date:
-                    break
-                else:
-                    move_ids |= day_quantity_id.move_ids
-
-            for move in move_ids:
-                if move.location_dest_id.usage == 'internal':
-                    free_qty_at_date += move.product_uom_qty
-                else:
-                    free_qty_at_date -= move.product_uom_qty
             return float(int(free_qty_at_date))
 
         def get_bom_free_qty(product, commitment_date, warehouse_id=1):
@@ -98,7 +83,6 @@ class SaleOrderLine(models.Model):
 
             return min(bom_free_qty_at_date_bom)
 
-        warehouse_id = 1
         for line in self:
             if line.product_id.type == 'product' and line.order_id.state in ['draft', 'send']:
                 commitment_date = line.order_id.commitment_date and line.order_id.commitment_date.date() or fields.Date.today()
