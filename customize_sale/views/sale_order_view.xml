@@ -2,6 +2,20 @@
 <odoo>
     <data>
 
+        <record id="menu_order_report_all" model="ir.ui.menu">
+            <field name="name">Analyse de vente</field>
+            <field name="parent_id" ref="sale.menu_sale_report"/> 
+            <field name="action" ref="sale.action_order_report_all"/>
+            <field name="sequence" eval="80"/>
+        </record>
+
+        <record id="menu_invoice_analysis_from_sales" model="ir.ui.menu">
+            <field name="name">Analyse de Facture vente</field>
+            <field name="parent_id" ref="sale.menu_sale_report"/> 
+            <field name="action" ref="account.action_account_invoice_report_all"/>
+            <field name="sequence" eval="90"/>
+        </record>
+
         <record id="view_order_form_inherit_sale_add_dates" model="ir.ui.view">
             <field name="name">sale.order.form.sale.add.dates</field>
             <field name="model">sale.order</field>
@@ -28,8 +42,8 @@
                 <group name="order_details" position="after">
                     <group name="order_details_custom">
                         <field name="pricelist_id" options="{'no_open':True,'no_create': True}"/>
-                        <field name="commitment_date" string="Warehouse date"/>
-                        <field name="date_delivered" string="Customer delivery date"/>
+                        <field name="commitment_date" string="Date entrepôt"/>
+                        <field name="date_delivered" string="Date de livraison"/>
                         <field name="carrier_id"/>
                     </group>
                 </group>
