@@ -140,13 +140,12 @@ class AccountExportMoveLine(models.TransientModel):
                     data_line['libelle'] = move.partner_id.name or ''
                     data_line['currency'] = line.currency_id.name
 
-                    if move.move_type in ['out_refund', 'in_refund'] and line.journal_id.export_code_refund:
-                        data_line['journal'] = line.journal_id.export_code_refund
+                    """if move.move_type in ['out_refund', 'in_refund'] and line.journal_id.export_code_refund:
+                        data_line['journal'] = line.journal_id.export_code_refund"""
 
                     # Unicode,currency_rate
                     for key in ['libelle']:
                         data_line[key] = txt_cleanup(data_line[key])
-
 
 
                     # Date format
@@ -159,22 +158,21 @@ class AccountExportMoveLine(models.TransientModel):
 
                     datas.append(data_line)
 
-            content = ''
-            for column in column_template:
-                if content:
-                    content += ';'
-                content += column
-            content += '\n'
+            # Construction des lignes avec CRLF, sans retour final inutile
+            lines = []
 
+            # Ligne d'en-tête
+            lines.append(';'.join(column_template))
+
+            # Lignes de données
             for data_line in datas:
-                line_text = ''
-                for column in column_template:
-                    if column != column_template[0]:
-                        line_text += ';'
-                    if column in list(data_line.keys()):
-                        line_text += "%s" % (data_line[column])
-                content += line_text + '\n'
+                line_text = ';'.join(str(data_line.get(column, '')) for column in column_template)
+                lines.append(line_text)
 
+            # Join final avec CRLF sans ligne vide à la fin
+            content = '\r\n'.join(lines)
+
+            # Affectation au wizard
             wizard.content = content or ''
 
             # Attachment csv
