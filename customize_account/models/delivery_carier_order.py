@@ -15,6 +15,7 @@ class delivery_carrier_order(models.Model):
                 invoices = self.env['account.move']
                 attachment_ids = self.env['ir.attachment']
 
+                
                 partner = picking.partner_id
                 if partner.parent_id and not partner.is_company:
                     partner = partner.parent_id
@@ -63,4 +64,3 @@ class delivery_carrier_order(models.Model):
                     if template:
                         email_values = {'attachment_ids': [(6, 0, attachment_ids.ids)]}
                         res = template.send_mail(invoices[0].id, email_values=email_values)
-

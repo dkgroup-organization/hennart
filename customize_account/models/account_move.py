@@ -4,7 +4,7 @@ import datetime
 from odoo.tools import float_is_zero, float_round
 from dateutil.relativedelta import relativedelta
 logger = logging.getLogger('wms_scanner')
-
+from datetime import datetime
 from odoo.exceptions import UserError, ValidationError
 _logger = logging.getLogger(__name__)
 
@@ -20,6 +20,51 @@ PAYMENT_STATE_SELECTION = [
 
 class AccountMove(models.Model):
     _inherit = "account.move"
+
+    @api.model
+    def check_wrong_journals(self):
+        """Lister les factures non françaises avec journal 'Ventes FRANCE' après le 12/05/2025"""
+        france = self.env.ref('base.fr')
+        wrong_journal = self.env['account.journal'].search([('name', '=', 'Ventes FRANCE')], limit=1)
+        if not wrong_journal:
+            _logger.warning(" WARNING_DKGROUP Journal 'Ventes FRANCE' introuvable.")
+            return
+
+        cutoff_date = datetime.strptime('2025-05-12', '%Y-%m-%d').date()
+
+        domain = [
+            ('src_dest_country_id', '!=', france.id),
+            ('journal_id', '=', wrong_journal.id),
+            ('invoice_date', '>', cutoff_date),
+        ]
+
+        invoices = self.search(domain)
+
+        for inv in invoices:
+
+            _logger.info("WARNING_DKGROUP Facture %s | Pays: %s", inv.name, inv.src_dest_country_id.name)
+            suggested_id = inv.get_suggested_journal_id()
+            if not suggested_id:
+                _logger.warning("WARNING_DKGROUP Aucune suggestion de journal pour facture %s", inv.name)
+                continue
+
+            if inv.journal_id.id == suggested_id:
+                _logger.info("WARNING_DKGROUP Facture %s : journal déjà correct", inv.name)
+                continue
+
+            try:
+                self.env.cr.execute(
+                    "UPDATE account_move SET journal_id = %s WHERE id = %s",
+                    (suggested_id, inv.id)
+                )
+                self.env.cr.commit()
+                _logger.info("WARNING_DKGROUP ✅ Journal corrigé pour facture %s : %s → %s",
+                            inv.name, inv.journal_id.name, self.env['account.journal'].browse(suggested_id).name)
+            except Exception as e:
+                self.env.cr.rollback()
+                _logger.error("❌ Erreur correction facture %s : %s", inv.name, str(e))
+
+        return invoices
 
     def _default_incoterm_date(self):
         if self._context.get('default_picking_id') and self._context.get('default_picking_id').date_expected:
@@ -98,6 +143,8 @@ class AccountMove(models.Model):
                 user2_id = move.partner_shipping_id.user2_id
             else:
                 user2_id = move.partner_id.user2_id or move.partner_id.parent_id.user2_id
+
+            _logger.info("WARNING_DKGROUP move.user2_id  %s " % str(move.user2_id))
             move.user2_id = user2_id
 
     def get_max_subtotal_tax(self):
@@ -217,10 +264,57 @@ class AccountMove(models.Model):
                     domain += [('country_ids', '=', False)]
             m.suitable_journal_ids = self.env['account.journal'].search(domain)
 
+
+    def get_suggested_journal_id(self):
+        """
+        Retourne l'ID du journal comptable adapté à `src_dest_country_id` pour un seul record.
+        À utiliser uniquement sur un record unique (self.ensure_one()).
+        """
+        self.ensure_one()
+        if not self.suitable_journal_ids:
+            return False
+
+        matched = self.suitable_journal_ids.filtered(
+            lambda j: self.src_dest_country_id in j.country_ids
+        )
+        return matched[0].id if matched else self.suitable_journal_ids[0].id
+
+    def set_journal_by_country(self):
+        """
+        Fixe le journal comptable en fonction du pays d'origine/destination (`src_dest_country_id`),
+        en utilisant la liste `suitable_journal_ids`.
+
+        À appeler uniquement en brouillon (`draft`), avant validation.
+        """
+        for move in self:
+            if move.state != 'draft':
+                continue  # Ne pas modifier les factures déjà validées
+
+            if not move.suitable_journal_ids:
+                continue  # Aucun journal disponible
+
+            # Cherche un journal correspondant exactement au pays
+            matched_journals = move.suitable_journal_ids.filtered(
+                lambda j: move.src_dest_country_id in j.country_ids
+            )
+
+            if matched_journals:
+                move.journal_id = matched_journals[0]
+            else:
+                # Fallback : prendre le premier journal disponible
+                move.journal_id = move.suitable_journal_ids[0]
+
+            _logger.info("WARNING_DKGROUP move.journal_id  %s " % str(move.journal_id))
+
+
     @api.onchange('partner_id')
     def onchange_partner2_id(self):
         """ select journal by country"""
         self.ensure_one()
+        
+        _logger.info("WARNING_DKGROUP self.suitable_journal_ids  %s " % str(self.suitable_journal_ids))
+        _logger.info("WARNING_DKGROUP self.journal_id  %s " % str(self.journal_id))
+
         res = {}
         if self.suitable_journal_ids:
             if self.journal_id not in self.suitable_journal_ids:
@@ -228,6 +322,7 @@ class AccountMove(models.Model):
         else:
             res['journal_id'] = False
 
+        _logger.info("WARNING_DKGROUP res  %s " % str(res))
         self.compute_user2()
         self.update(res)
 

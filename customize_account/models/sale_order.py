@@ -8,11 +8,13 @@ from datetime import date, timedelta, datetime
 from odoo import api, fields, models, Command, _
 from odoo.exceptions import UserError, ValidationError
 
+import logging
+_logger = logging.getLogger(__name__)
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    def create_custom_invoice(self):
+    def create_custom_invoice(self, auto_post=True):
         """ custom create invoice"""
         res = self.env['account.move']
         for sale in self:
@@ -20,14 +22,15 @@ class SaleOrder(models.Model):
                 invoices = sale._create_invoices()
             else:
                 invoices = sale.invoice_ids
+                
             res |= invoices
-
-        for invoice in res:
-            if invoice.state == 'draft':
-                try:
-                    invoice.sudo().with_context(update_discount_stock=True).action_post()
-                except:
-                    pass
+        if auto_post:
+            for invoice in res:
+                if invoice.state == 'draft':
+                    try:
+                        invoice.sudo().with_context(update_discount_stock=True).action_post()
+                    except:
+                        pass
         return res
 
     def create_picking_invoice(self):

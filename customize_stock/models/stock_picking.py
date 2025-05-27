@@ -19,7 +19,17 @@ class StockPicking(models.Model):
         ('ready', 'ready'), ('done', 'done')],
         string='Preparation', compute="compute_preparation_state", default='wait')
 
-    partner_origin = fields.Char('Référence', help="Référence du bon de livraison")
+    partner_origin = fields.Char(
+        string='Référence',
+        compute='_compute_partner_origin',
+        help="Référence du bon de livraison"
+    )
+
+    @api.depends('sale_id.client_order_ref')
+    def _compute_partner_origin(self):
+        for rec in self:
+            rec.partner_origin = rec.sale_id.client_order_ref if rec.sale_id else False
+
 
     label_type = fields.Selection(
         [('no_label', 'No label'), ('weight_label', 'Label all weighted'), ('lot_label', 'Label all lots'),
