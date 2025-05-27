@@ -7,6 +7,8 @@
 from odoo import api, fields, models, _, Command
 from odoo.exceptions import UserError
 
+import logging
+_logger = logging.getLogger(__name__)
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'

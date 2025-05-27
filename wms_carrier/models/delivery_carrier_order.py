@@ -9,6 +9,9 @@ import pysftp
 import base64
 from odoo.exceptions import UserError
 
+import logging
+_logger = logging.getLogger(__name__)
+
 class DeliveryCarrierOrder(models.Model):
 
     _name = "delivery.carrier.order"
@@ -214,16 +217,77 @@ class DeliveryCarrierOrder(models.Model):
                order.write({'state': state_order})
         return order
 
-    def action_send_invoice_and_delivery(self):
-        """ futur function in customize_account, Envoie la facture et le bon de livraison au client par email."""
-        pass
 
-    def button_action_done(self):
+    def action_send_invoice_and_delivery(self):
+        """Envoie la facture et le bon de livraison au client par email."""
 
         for order in self:
             for picking in order.picking_ids:
+                invoices = self.env['account.move']
+                attachment_ids = self.env['ir.attachment']
+
+                partner = picking.partner_id
+                if partner.parent_id and not partner.is_company:
+                    partner = partner.parent_id
+
+                if partner.invoice_auto:
+                    invoices = picking.sudo().action_create_invoice()
+
+                if partner.email_invoice:
+                    for invoice in invoices:
+                        # Générer les PDF pour la facture et le bon de livraison account.report_invoice
+                        if not invoice.attachment_ids:
+                            invoice_pdf, doc_format = self.env['ir.actions.report']._render_qweb_pdf(
+                                'account.report_invoice', res_ids=invoice.ids)
+
+                            invoice_attachment = self.env['ir.attachment'].create({
+                                'name': f'{invoice.name}.pdf',
+                                'type': 'binary',
+                                'datas': base64.b64encode(invoice_pdf).decode('utf-8'),
+                                'res_model': 'account.move',
+                                'res_id': invoice.id,
+                                'mimetype': 'application/pdf',
+                            })
+                        else:
+                            invoice_attachment = invoice.attachment_ids
+                        attachment_ids |= invoice_attachment
+
+                # if partner.email_picking:
+                #     # Générer les PDF pour chaque bon de livraison
+                #     delivery_pdf, doc_format = self.env['ir.actions.report']._render_qweb_pdf(
+                #         'stock.action_report_delivery', res_ids=picking.ids)
+                #     delivery_attachment = self.env['ir.attachment'].create({
+                #         'name': '%s.pdf' % picking.name,
+                #         'type': 'binary',
+                #         'datas': base64.b64encode(delivery_pdf).decode('utf-8'),
+                #         'res_model': 'stock.picking',
+                #         'res_id': picking.id,
+                #         'mimetype': 'application/pdf',
+                #     })
+                #
+                #     attachment_ids |= delivery_attachment
+
+                if partner.email_invoice:
+                    # Envoyer l'email
+                    template = self.env.ref('account.email_template_edi_invoice')
+
+                    if template:
+                        email_values = {'attachment_ids': [(6, 0, attachment_ids.ids)]}
+                        res = template.send_mail(invoices[0].id, email_values=email_values)
+
+                        """_logger.info("WARNING_DKGROUP invoice.partner_id.email %s ", str(invoice.partner_id.email))
+                        _logger.info("WARNING_DKGROUP partner.email_invoice %s ", str(partner.email_invoice))
+                        _logger.info("WARNING_DKGROUP template %s ", str(template))
+                        _logger.info("WARNING_DKGROUP email_values %s ", str(email_values))
+                        _logger.info("WARNING_DKGROUP invoices[0].id %s ", str(invoices[0].id))"""
+
+    def button_action_done(self):
+
+        _logger.info("WARNING_DKGROUP button_action_done %s ", str("button_action_done"))
+        """for order in self:
+            for picking in order.picking_ids:
                 if picking.state in ['assigned', 'confirmed','waiting']:
-                    picking.button_validate()
+                    picking.button_validate()"""
 
         self.action_send_invoice_and_delivery()
         self.check_state()

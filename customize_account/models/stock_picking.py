@@ -8,21 +8,23 @@ from odoo import api, fields, models, _, Command
 from odoo.exceptions import UserError
 import base64
 
+import logging
+_logger = logging.getLogger(__name__)
+
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
-
 
     def action_create_invoice(self):
         """ Create invoice from picking """
         all_invoices = self.env['account.move']
-
         for picking in self:
             if picking.state == 'done':
                 sale = picking.group_id.sale_id
-                invoices = sale.sudo().create_custom_invoice()
+                invoices = sale.sudo().create_custom_invoice(auto_post=False)
                 invoices.picking_ids |= picking
                 for invoice in invoices:
                     if invoice.state == 'draft':
+                        invoice.set_journal_by_country()
                         invoice.sudo().with_context(update_discount_stock=True).action_post()
                 all_invoices |= invoices
         return all_invoices

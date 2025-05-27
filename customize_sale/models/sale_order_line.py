@@ -7,6 +7,8 @@ from collections import defaultdict
 from odoo.exceptions import UserError, ValidationError
 import time
 
+import logging
+_logger = logging.getLogger(__name__)
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
@@ -134,14 +136,40 @@ class SaleOrderLine(models.Model):
         """ """
         outgoing_moves = self.env['stock.move']
         incoming_moves = self.env['stock.move']
-        # TODO: import the weight, import the kit
 
-        moves = self.move_ids.filtered(lambda r: r.state != 'cancel' and not r.scrapped and
-                    (self.product_id == r.product_id or self.product_id == r.bom_line_id.bom_id.product_id))
+        """for move in self.move_ids:
+            _logger.warning(
+                "WARNING_DKGROUP - MOVE %s | move.product: %s | move.state: %s | move.scrapped: %s | move.sale_line_id: %s | move.bom_line_id: %s | BOM Product: %s",
+                move.name,
+                move.product_id.default_code,
+                move.state,
+                move.scrapped,
+                move.sale_line_id.id if move.sale_line_id else "None",
+                move.bom_line_id.id if move.bom_line_id else "None",
+                move.bom_line_id.bom_id.product_tmpl_id.default_code if move.bom_line_id and move.bom_line_id.bom_id else "None"
+            )"""
+
+        """moves = self.move_ids.filtered(lambda r: r.state != 'cancel' and not r.scrapped and
+                    (self.product_id == r.product_id or self.product_id == r.bom_line_id.bom_id.product_id))"""
+
+        moves = self.move_ids.filtered(
+            lambda r: r.state != 'cancel'
+            and not r.scrapped
+            and (
+                self.product_id == r.product_id
+                or (
+                    r.bom_line_id
+                    and r.bom_line_id.bom_id
+                    and self.product_id.product_tmpl_id == r.bom_line_id.bom_id.product_tmpl_id
+                )
+            )
+        )
+
         if self._context.get('accrual_entry_date'):
             moves = moves.filtered(lambda r: fields.Date.context_today(r, r.date) <= self._context['accrual_entry_date'])
 
         for move in moves:
+
             if move.location_dest_id.usage == "customer":
                 if not move.origin_returned_move_id or (move.origin_returned_move_id and move.to_refund):
                     outgoing_moves |= move
@@ -153,11 +181,13 @@ class SaleOrderLine(models.Model):
     @api.depends('move_ids.state', 'move_ids.scrapped', 'move_ids.product_uom_qty', 'move_ids.product_uom', 'order_id.delivery_status')
     def _compute_qty_delivered(self):
         super(SaleOrderLine, self)._compute_qty_delivered()
-
+       
         for line in self:
             qty = 0.0
+           
             if line.qty_delivered_method == 'stock_move':
                 outgoing_moves, incoming_moves = line._get_outgoing_incoming_moves()
+
                 for move in outgoing_moves:
                     if move.state != 'done':
                         continue
