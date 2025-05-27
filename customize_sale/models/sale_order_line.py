@@ -137,7 +137,7 @@ class SaleOrderLine(models.Model):
         outgoing_moves = self.env['stock.move']
         incoming_moves = self.env['stock.move']
 
-        for move in self.move_ids:
+        """for move in self.move_ids:
             _logger.warning(
                 "WARNING_DKGROUP - MOVE %s | move.product: %s | move.state: %s | move.scrapped: %s | move.sale_line_id: %s | move.bom_line_id: %s | BOM Product: %s",
                 move.name,
@@ -147,7 +147,7 @@ class SaleOrderLine(models.Model):
                 move.sale_line_id.id if move.sale_line_id else "None",
                 move.bom_line_id.id if move.bom_line_id else "None",
                 move.bom_line_id.bom_id.product_tmpl_id.default_code if move.bom_line_id and move.bom_line_id.bom_id else "None"
-            )
+            )"""
 
         """moves = self.move_ids.filtered(lambda r: r.state != 'cancel' and not r.scrapped and
                     (self.product_id == r.product_id or self.product_id == r.bom_line_id.bom_id.product_id))"""

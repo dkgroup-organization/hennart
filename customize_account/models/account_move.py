@@ -144,7 +144,6 @@ class AccountMove(models.Model):
             else:
                 user2_id = move.partner_id.user2_id or move.partner_id.parent_id.user2_id
 
-            _logger.info("WARNING_DKGROUP move.user2_id  %s " % str(move.user2_id))
             move.user2_id = user2_id
 
     def get_max_subtotal_tax(self):
@@ -304,17 +303,11 @@ class AccountMove(models.Model):
                 # Fallback : prendre le premier journal disponible
                 move.journal_id = move.suitable_journal_ids[0]
 
-            _logger.info("WARNING_DKGROUP move.journal_id  %s " % str(move.journal_id))
-
 
     @api.onchange('partner_id')
     def onchange_partner2_id(self):
         """ select journal by country"""
         self.ensure_one()
-        
-        _logger.info("WARNING_DKGROUP self.suitable_journal_ids  %s " % str(self.suitable_journal_ids))
-        _logger.info("WARNING_DKGROUP self.journal_id  %s " % str(self.journal_id))
-
         res = {}
         if self.suitable_journal_ids:
             if self.journal_id not in self.suitable_journal_ids:
@@ -322,7 +315,6 @@ class AccountMove(models.Model):
         else:
             res['journal_id'] = False
 
-        _logger.info("WARNING_DKGROUP res  %s " % str(res))
         self.compute_user2()
         self.update(res)
 
