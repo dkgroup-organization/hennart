@@ -54,11 +54,16 @@ class SaleOrderLine(models.Model):
             day_quantity_ids = self.env['report.stock.dayprevision'].search([
                 ('product_id', '=', product.id),
                 ('warehouse_id', '=', warehouse_id),
-                ('date', '>=', commitment_date)
-            ], order="date desc")
+                ('date', '=', commitment_date)
+                ], order="date desc")
 
             if day_quantity_ids:
-                free_qty_at_date = min(day_quantity_ids.mapped('product_qty'))
+                day_quantity_futur_ids = self.env['report.stock.dayprevision'].search([
+                    ('product_id', '=', product.id),
+                    ('warehouse_id', '=', warehouse_id),
+                    ('date', '>=', commitment_date)
+                    ], order="date desc")
+                free_qty_at_date = min(day_quantity_futur_ids.mapped('product_qty'))
             else:
                 free_qty_at_date = 0.0
 
