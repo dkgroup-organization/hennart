@@ -7,11 +7,18 @@
         <field name="arch" type="xml">
            <xpath expr="//header" position="inside">
                 <button class="oe_stat_button"
-                        string="Add claim"
-                        name="add_claim"
+                        string="Réclamations"
+                        name="action_view_related_claims"
                         type="object"
-                        attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}">
+                        attrs="{
+                            'invisible': [
+                                '|',
+                                ('has_claim', '=', False),
+                                ('move_type', 'not in', ('out_invoice', 'out_refund'))
+                            ]
+                        }">
                 </button>
+
             </xpath>
         </field>
     </record>

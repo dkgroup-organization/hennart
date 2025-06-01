@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="spreadsheet_dashboard_group_access_type_inherit" model="ir.ui.view">
+        <field name="name">spreadsheet.dashboard.group.access.type.inherit</field>
+        <field name="model">spreadsheet.dashboard.group</field>
+        <field name="inherit_id" ref="spreadsheet_dashboard.spreadsheet_dashboard_container_view_form"/>
+        <field name="arch" type="xml">
+            <!-- On place un nouveau groupe juste avant le notebook -->
+            <xpath expr="//notebook" position="before">
+                <group>
+                    <field name="access_type"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

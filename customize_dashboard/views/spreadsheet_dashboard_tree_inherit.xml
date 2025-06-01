@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="spreadsheet_dashboard_view_list_inherit_authorized_users" model="ir.ui.view">
+        <field name="name">spreadsheet.dashboard.view.list.inherit.authorized.users</field>
+        <field name="model">spreadsheet.dashboard</field>
+        <field name="inherit_id" ref="spreadsheet_dashboard.spreadsheet_dashboard_view_list"/>
+        <field name="arch" type="xml">
+             <xpath expr="//field[@name='group_ids']" position="replace">
+
+                <field name="dashboard_group_access_type" invisible="True"/>
+                
+                <!-- group_ids visible uniquement si type droit = group -->
+                <field name="group_ids" widget="many2many_tags"/>
+                <!-- authorized_user_ids visible uniquement si type droit = user -->
+                <field name="authorized_user_ids"  widget="many2many_tags"/>
+                <!-- authorized_team_ids visible uniquement si type droit = sales_team -->
+                <field name="authorized_team_ids"  widget="many2many_tags"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -50,17 +50,16 @@ class DeliveryCarrierOrder(models.Model):
     temperature = fields.Float('Temperature')
     note = fields.Text('Comment')
     save_as = fields.Binary(compute="_get_content", string='save as')
-    save_name = fields.Char(compute="_update_info", size=32, string='save as',)
+    save_name = fields.Char(compute="_update_info", size=62, string='save as',)
     content = fields.Text(compute="_csv_content", string='Content of export')
 
     sscc_save_as = fields.Binary(compute="_get_content_sscc", string='save as')
-    sscc_save_name = fields.Char(compute="_update_info",  size=32, string='save as')
+    sscc_save_name = fields.Char(compute="_update_info",  size=62, string='save as')
     sscc_content = fields.Text(compute="_csv_content_sscc3", string='Content of export')
 
     chronopost_save_as = fields.Binary(compute="_get_content_chronopost", string='save as')
     chronopost_save_name = fields.Char(compute="_update_info", size=62, string='save as')
     chronopost_content = fields.Text(compute="_csv_content_chronopost", string='Content of export')
-
 
     def _update_info(self):
         
@@ -97,6 +96,9 @@ class DeliveryCarrierOrder(models.Model):
                         for line in picking.move_ids:
                             weight += line.weight
                     carrier_order.weight = weight
+
+                _logger.info("WARNING_DKGROUP carrier_order.save_name %s ", str(carrier_order.save_name))
+                _logger.info("WARNING_DKGROUP carrier_order.name.replace(' ', '_') + '_' + str(order_date)+ '.csv' %s ", str(carrier_order.name.replace(' ', '_') + '_' + str(order_date)+ '.csv'))
 
     def _get_content(self):
         for obj_current in self:

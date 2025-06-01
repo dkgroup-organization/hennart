@@ -34,6 +34,8 @@
                                 groups="stock.group_stock_user" attrs="{'invisible': [('edi_done','=',True)]}"/>
                         <button name="button_send_sftp" string="Send SFTP" type="object" class="oe_highlight"
                                 groups="stock.group_stock_user"/>
+
+                
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
@@ -88,6 +90,7 @@
                                 </group>
                             </page>
                             <page string="Export">
+
                                 <group>
                                     <group string="Export Information">
                                         <field name="save_name" invisible="1"/>

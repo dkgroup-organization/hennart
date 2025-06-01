@@ -20,15 +20,19 @@ class StockPicking(models.Model):
         string='Preparation', compute="compute_preparation_state", default='wait')
 
     partner_origin = fields.Char(
-        string='Référence',
-        compute='_compute_partner_origin',
+        string='Référence Origine',
         help="Référence du bon de livraison"
     )
 
+    sale_reference   = fields.Char(
+        string='Référence de la commande',
+        compute='_compute_sale_reference',
+        help="Référence de commande client liée au bon de livraison"
+    )
     @api.depends('sale_id.client_order_ref')
-    def _compute_partner_origin(self):
+    def _compute_sale_reference(self):
         for rec in self:
-            rec.partner_origin = rec.sale_id.client_order_ref if rec.sale_id else False
+            rec.sale_reference = rec.sale_id.client_order_ref or False
 
 
     label_type = fields.Selection(

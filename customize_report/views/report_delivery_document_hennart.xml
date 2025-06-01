@@ -87,7 +87,12 @@
                                     <span t-field="o.weight"/>
                                 </td>
                                 <td class="text-center">
-                                    <span t-field="o.partner_origin"/>
+                                    <t t-if="o.picking_type_code == 'outgoing'">
+                                        <span t-field="o.sale_reference"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="o.partner_origin"/>
+                                    </t>
                                 </td>
                                 <td style="background-color: white; color: #495057;" class="text-center">
                                     <t t-if="o.state == 'done'">
