@@ -27,7 +27,6 @@
         "views/stock_quant_view.xml",
         "wizard/import_product_template.xml",
 
-
     ],
     'demo': [
     ],

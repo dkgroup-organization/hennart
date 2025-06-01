@@ -5,6 +5,9 @@
 from odoo import _, api, fields, models
 from odoo.tools import html2plaintext
 
+import logging
+_logger = logging.getLogger(__name__)
+
 APPLICABLE_MODELS = [
     "account.invoice",
     "event.registration",
@@ -108,12 +111,16 @@ class CrmClaim(models.Model):
 
     all_lines = fields.Boolean(default=True,string="la Totalité de la facture ?")
 
+    
     invoice_line_ids = fields.One2many(  # /!\ invoice_line_ids is just a subset of line_ids.
         'account.move.line',
         'claim_id',
         string='Invoice lines',
         copy=False,
-        domain=[('display_type', 'in', ('product', 'line_section', 'line_note'))],
+        domain=[
+            ('display_type', 'in', ('product', 'line_section', 'line_note')),
+            ('move_id.move_type', 'not in', ['out_refund'])
+        ],
         states={'draft': [('readonly', False)]},
     )
 
@@ -169,6 +176,96 @@ class CrmClaim(models.Model):
     )
     cause = fields.Text(string="Root Cause")
 
+    def action_open_form(self):
+        self.ensure_one()
+        return {
+        'type': 'ir.actions.act_window',
+        'res_model': 'crm.claim',
+        'view_mode': 'form',
+        'res_id': self.id,
+        'target': 'new',
+        'views': [(self.env.ref('crm_claim.view_claim_form_popup').id, 'form')],
+    }
+
+    def action_view_related_claims(self):
+        self.ensure_one()
+        return self.invoice.action_view_related_claims()
+
+    def action_validate_claim(self):
+        self.ensure_one()
+        invoice = self.invoice
+        if not invoice:
+            raise UserError(_("No invoice linked to this claim."))
+
+        _logger.info("WARNING_DKGROUP all_lines %s ", str(self.all_lines))
+        _logger.info("WARNING_DKGROUP invoice %s ", str(self.invoice))
+        _logger.info("WARNING_DKGROUP invoice_line_ids %s ", str(self.invoice_line_ids))
+
+        # Copie de la facture (avoir total, toutes les lignes)
+        new_move_vals = invoice.copy_data({
+            'move_type': 'out_refund',
+            'reversed_entry_id': invoice.id,
+            'invoice_date': fields.Date.context_today(self),
+            'ref': _('Partial Refund for Claim: %s') % self.name,
+        })[0]
+
+        # Supprimer toutes les lignes créées par défaut
+        credit_note = self.env['account.move'].create(new_move_vals)
+       
+
+        # Si on veut un avoir partiel (all_lines == False)
+        if not self.all_lines:
+
+            credit_note.invoice_line_ids.unlink()
+            partial_lines = []
+            for line in self.invoice_line_ids:
+                if line.quantity_claim > 0:
+                    vals = line.copy_data()[0]
+                    vals['move_id'] = credit_note.id  # IMPORTANT pour le lien vers l’avoir
+                    vals['quantity'] = line.quantity_claim
+                    vals['uom_qty'] = line.quantity_claim
+               
+                    partial_lines.append((0, 0, vals))
+            if not partial_lines:
+                raise UserError(_("No invoice lines selected for refund."))
+
+            credit_note.write({'invoice_line_ids': partial_lines})
+
+        # Optionnel : valider l'avoir automatiquement
+        # credit_note.action_post()
+
+        stage_on_refund = self.env['crm.claim.stage'].search([
+            ('set_on_refund', '=', True),
+        ], limit=1)
+
+        if stage_on_refund:
+            self.stage_id = stage_on_refund.id
+
+        # Ouvre l'avoir en popup
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Credit Note'),
+            'res_model': 'account.move',
+            'res_id': credit_note.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
+
+    def action_validate_claim_old(self):
+        # self = un ou plusieurs crm.claim (normalement self.ensure_one())
+        # Parcours des lignes de facture liées
+
+        _logger.info("WARNING_DKGROUP Facture %s ", str(self.invoice))
+
+        for line in self.invoice_line_ids:
+            # Ici, tu fais le traitement que tu veux, ex :
+            if line.quantity_claim > 0:
+                # Appliquer la logique pour la création/modification de l'avoir
+                # Ex : préparer un avoir partiel sur cette ligne, etc.
+                pass
+        # Tu peux retourner une action, un message, etc.
+        return {'type': 'ir.actions.act_window_close'}
 
     @api.depends('partner_id.email_account')
     def _compute_email_from(self):

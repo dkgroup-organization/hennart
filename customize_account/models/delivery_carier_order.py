@@ -6,6 +6,13 @@ class delivery_carrier_order(models.Model):
 
     _inherit = "delivery.carrier.order"
 
+    def action_update_info(self):
+        """
+        Action manuelle pour recalculer les infos via _update_info.
+        Utilisable depuis une action serveur ou un bouton.
+        """
+        self._update_info()
+        return True
 
     def action_send_invoice_and_delivery(self):
         """Envoie la facture et le bon de livraison au client par email."""

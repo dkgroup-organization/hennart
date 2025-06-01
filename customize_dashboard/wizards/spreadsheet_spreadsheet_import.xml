@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="spreadsheet_spreadsheet_import_form_view_inherit_comparison"
+            model="ir.ui.view">
+        <field name="name">spreadsheet.spreadsheet.import.form.comparison.inherit</field>
+        <field name="model">spreadsheet.spreadsheet.import</field>
+        <field name="inherit_id" ref="spreadsheet_oca.spreadsheet_spreadsheet_import_form_view"/>
+        <field name="arch" type="xml">
+            <!--<xpath expr="//field[@name='mode_id']" position="replace">
+                <field name="mode_id" widget="selection_badge"/>
+            </xpath>-->
+            <field name="datasource_name" position="after">
+                <field name="is_comparison_mode" readonly="1"/>
+            </field>
+            <!-- Rends le champ dynamic invisible si is_comparison_mode est vrai -->
+            <xpath expr="//field[@name='dynamic']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_comparison_mode', '=', True)]}</attribute>
+            </xpath>
+            <!-- Rends le champ dynamic_cols invisible si is_comparison_mode est vrai -->
+            <xpath expr="//field[@name='dynamic_cols']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_comparison_mode', '=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

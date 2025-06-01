@@ -33,3 +33,8 @@ class CrmClaimStage(models.Model):
         "on each sales team. It will not assign this stage to existing "
         "teams.",
     )
+
+    set_on_refund = fields.Boolean(
+        string="Définir automatiquement lors de la création d'un avoir",
+        help="Si cette case est cochée, cette étape sera définie automatiquement lorsque qu'un avoir est généré pour la réclamation."
+    )

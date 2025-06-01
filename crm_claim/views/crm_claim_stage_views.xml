@@ -18,6 +18,7 @@
                 <group col="4">
                     <field name="name" />
                     <field name="case_default" />
+                    <field name="set_on_refund" />
                     <field name="sequence" />
                 </group>
                 <group>
