@@ -14,6 +14,11 @@
         "views/spreadsheet_dashboard_tree_inherit.xml",
         "wizards/spreadsheet_spreadsheet_import.xml"
     ],
+    "assets": {
+        "web.assets_backend": [
+            "customize_dashboard/static/src/js/pivot_controller_patch.js",
+        ],
+    },
     'installable': True,
     'application': False,
     'license': 'LGPL-3',

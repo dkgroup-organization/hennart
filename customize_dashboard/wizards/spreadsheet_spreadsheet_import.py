@@ -46,45 +46,15 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
         comparison = self.import_data.get("searchParams", {}).get("comparison")
         return bool(comparison and comparison.get("domains"))
     
+    def _column_letter(self, n):
+        """Convertit un index de colonne en lettre de colonne Excel (A, B, ..., Z, AA, AB, ...)"""
+        result = ''
+        while n >= 0:
+            result = chr(n % 26 + 65) + result
+            n = n // 26 - 1
+        return result
 
-    def _resolve_origin(self, record, origins, search_params):
-        """
-        Associe un record à une origine basée sur le trimestre de la date de facture.
-        Ex : T1 2024, T2 2025, etc.
-        """
-        invoice_date = getattr(record, 'invoice_date', None)
-        if not invoice_date:
-            return origins[0]
-
-        year = invoice_date.year
-        month = invoice_date.month
-
-        # Détermine le trimestre
-        if month in [1, 2, 3]:
-            quarter = "T1"
-        elif month in [4, 5, 6]:
-            quarter = "T2"
-        elif month in [7, 8, 9]:
-            quarter = "T3"
-        else:
-            quarter = "T4"
-
-        target = f"{quarter} {year}"
-        if target in origins:
-            return target
-
-        return origins[0]  # fallback au cas où le mapping échoue
-
-
-    def  _format_cell_value(self,val):
-        if isinstance(val, str) and val.startswith("="):
-            return val
-        elif isinstance(val, (int, float)):
-            return f"{val:.2f}"
-        return str(val)
-
-
-    def _build_pivots_from_periods(self, periods, row_group_bys, col_group_bys, search_context):
+    def _build_pivots_from_periods(self, periods, row_group_bys, col_group_bys, search_context,base_domain=None):
         """
         Construit dynamiquement les pivots Odoo à partir des périodes.
         :param periods: liste des périodes (ex: ["2024-T1", "2025-01"])
@@ -96,6 +66,7 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
         pivots = {}
         pivot_id = 1
         domains = []
+        base_domain = base_domain or []
 
         for period in periods:
             try:
@@ -117,11 +88,18 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
                     date_start = datetime(int(year), month_start, 1)
                     date_end = date_start + relativedelta(months=3) - relativedelta(days=1)
 
-                else:
-                    continue  # Format non reconnu
+                # Format 'YYYY' → année complète
+                elif re.fullmatch(r"\d{4}", period):
+                    date_start = datetime(int(period), 1, 1)
+                    date_end = datetime(int(period), 12, 31)
+                    _logger.info("Période interprétée comme année complète : %s à %s", date_start, date_end)
 
-                domain = [
-                    ["move_type", "in", ["out_invoice", "out_refund"]],
+                else:
+                    _logger.warning("Format de période non reconnu, ignoré : %s", period)
+                    continue
+
+                period_domain = base_domain + [
+                    #["move_type", "in", ["out_invoice", "out_refund"]],
                     ["invoice_date", ">=", date_start.strftime("%Y-%m-%d")],
                     ["invoice_date", "<=", date_end.strftime("%Y-%m-%d")]
                 ]
@@ -131,7 +109,7 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
                     "name": f"Pivot {period}",
                     "model": "account.invoice.report",
                     "measures": [{"field": "price_subtotal"}],
-                    "domain": domain,
+                    "domain": period_domain,
                     "rowGroupBys": row_group_bys,
                     "colGroupBys": col_group_bys,
                     "context": search_context,
@@ -140,7 +118,7 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
                 }
 
                 pivots[str(pivot_id)] = pivot
-                domains.append(domain)
+                domains.append(period_domain)
                 pivot_id += 1
 
             except Exception:
@@ -231,6 +209,13 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
                     for val, label in field.get("selection", [])
                     if val in present_vals
                 ]
+                # Si c'est le champ 'state', on veut commencer par 'posted'
+                if col_group_by == "state":
+                    # On trie pour avoir 'posted' en premier, puis le reste
+                    col_values_set = sorted(
+                        col_values_set,
+                        key=lambda x: 0 if x["id"] == "posted" else 1
+                    )
             elif field.get('type') == 'many2one':
                 relation_model = field['relation']
                 # Respecte l'ordre alpha du display_name
@@ -250,32 +235,28 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
 
         return col_values_set
 
-    
     def _generate_comparison_spreadsheet_json(self):
-
         import_data = self.import_data
         meta_data = import_data["metaData"]
         title = meta_data.get("title", "Analyse Comparée")
         fields = meta_data.get("fields", {})
-        periods = sorted(meta_data.get("origins", []), key=self._period_key)
+        periods = sorted(meta_data.get("origins", []))
         measures = meta_data.get("activeMeasures", [])
         search_params = import_data.get("searchParams", {})
-        
-        # Colonne (pivot colonne group by)
+
         col_group_bys = (
             meta_data.get("expandedColGroupBys")
             or meta_data.get("colGroupBys")
-            or import_data.get("searchParams", {}).get("context", {}).get("pivot_column_groupby", [])
+            or search_params.get("context", {}).get("pivot_column_groupby", [])
         )
 
-        # Ligne (pivot ligne group by)
         row_group_bys = (
             meta_data.get("expandedRowGroupBys")
             or meta_data.get("rowGroupBys")
-            or import_data.get("searchParams", {}).get("context", {}).get("pivot_row_groupby", [])
+            or search_params.get("context", {}).get("pivot_row_groupby", [])
         )
 
-        allowed_labels = ["Mois", "Semaine"] 
+        allowed_labels = ["Mois", "Semaine"]
         for row_group_by in row_group_bys:
             label = fields.get(row_group_by, {}).get("string")
             if label not in allowed_labels:
@@ -283,23 +264,24 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
                     f"Filtre '{label}' interdit en ligne de comparaison. Utilisez uniquement : {', '.join(allowed_labels)}."
                 )
 
-
-        # Génération des pivots dynamiquement
-        pivots, pivotNextId, domains  = self._build_pivots_from_periods(
+        pivots, pivotNextId, domains = self._build_pivots_from_periods(
             periods,
             row_group_bys,
             col_group_bys,
-            search_params.get("context", {})
+            search_params.get("context", {}),
+            search_params.get("domain", [])
         )
+        _logger.info("WARNING_DKGROUP domains %s ", str(domains))
+       
+        """_logger.info("WARNING_DKGROUP row_group_bys %s ", str(row_group_bys))
+        _logger.info("WARNING_DKGROUP col_group_bys %s ", str(col_group_bys))
+        _logger.info("WARNING_DKGROUP search_params %s ", str(search_params))
+        _logger.info("WARNING_DKGROUP pivots %s ", str(pivots))
+        _logger.info("WARNING_DKGROUP pivotNextId %s ", str(pivotNextId))
+        _logger.info("WARNING_DKGROUP domains %s ", str(domains))"""
 
         row_values_set = self._get_row_group_values(row_group_bys, search_params)
         col_values_set = self._get_col_group_values(col_group_bys, fields, domains)
-
-        _logger.info("WARNING_DKGROUP import_data %s ", str(col_group_bys))
-        _logger.info("WARNING_DKGROUP row_group_bys %s ", str(row_group_bys))
-        #_logger.info("WARNING_DKGROUP search_params %s ", str(search_params))
-        #_logger.info("WARNING_DKGROUP fields %s ", str(fields))
-        #_logger.info("WARNING_DKGROUP col_values_set %s ", str(col_values_set))
 
         styles = {
             "1": {"bold": True, "fillColor": "#f2f2f2"},
@@ -307,7 +289,6 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
             "3": {"bold": False, "italic": False, "underline": False, "textColor": "#000000", "fillColor": "#ffffff"},
             "4": {"textColor": "#d00000", "bold": True},
             "5": {"textColor": "#1c9c50", "bold": True},
-            
         }
 
         conditional_formats = [
@@ -319,7 +300,7 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
                     "values": ["0"],
                     "style": {"textColor": "#FF0000", "fillColor": ""}
                 },
-                "ranges": []  # tu ajouteras ici les cellules D3, G3, J3, etc.
+                "ranges": []
             },
             {
                 "id": "positive-variation",
@@ -343,20 +324,20 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
         for i, col_item in enumerate(col_values_set):
             col = col_offset + i * col_state_width
             column_map[col_item["id"]] = col
-            cells[f"{chr(65 + col)}1"] = {"content": col_item["label"], "style": 1}
+            cells[f"{self._column_letter(col)}1"] = {"content": col_item["label"], "style": 1}
 
         total_col = col_offset + len(col_values_set) * col_state_width
-        cells[f"{chr(65 + total_col)}1"] = {"content": "Total", "style": 1}
+        cells[f"{self._column_letter(total_col)}1"] = {"content": "Total", "style": 1}
 
         for col_item in col_values_set:
             col = column_map[col_item["id"]]
-            cells[f"{chr(65 + col)}2"] = {"content": periods[0], "style": 2}
-            cells[f"{chr(65 + col + 1)}2"] = {"content": periods[1], "style": 2}
-            cells[f"{chr(65 + col + 2)}2"] = {"content": "Variation", "style": 2}
+            cells[f"{self._column_letter(col)}2"] = {"content": periods[0], "style": 2}
+            cells[f"{self._column_letter(col + 1)}2"] = {"content": periods[1], "style": 2}
+            cells[f"{self._column_letter(col + 2)}2"] = {"content": "Variation", "style": 2}
 
-        cells[f"{chr(65 + total_col)}2"] = {"content": periods[0], "style": 2}
-        cells[f"{chr(65 + total_col + 1)}2"] = {"content": periods[1], "style": 2}
-        cells[f"{chr(65 + total_col + 2)}2"] = {"content": "Variation", "style": 2}
+        cells[f"{self._column_letter(total_col)}2"] = {"content": periods[0], "style": 2}
+        cells[f"{self._column_letter(total_col + 1)}2"] = {"content": periods[1], "style": 2}
+        cells[f"{self._column_letter(total_col + 2)}2"] = {"content": "Variation", "style": 2}
 
         pivot_mapping = {period: str(i + 1) for i, period in enumerate(periods)}
 
@@ -370,9 +351,9 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
                 pivot_id_1 = pivot_mapping.get(periods[0])
                 pivot_id_2 = pivot_mapping.get(periods[1])
 
-                c1 = f"{chr(65 + col)}{row_index}"
-                c2 = f"{chr(65 + col + 1)}{row_index}"
-                cv = f"{chr(65 + col + 2)}{row_index}"
+                c1 = f"{self._column_letter(col)}{row_index}"
+                c2 = f"{self._column_letter(col + 1)}{row_index}"
+                cv = f"{self._column_letter(col + 2)}{row_index}"
 
                 formula_1 = (
                     f'=IF(ODOO.PIVOT({pivot_id_1},"price_subtotal","{row_group_bys[0]}","{row_value}","{col_group_bys[0]}","{col_val}"),'
@@ -388,17 +369,15 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
                 cells[cv] = {
                     "content": f"=IF({c1}=0, 0, ROUND(({c2}-{c1})/{c1}*100, 2))",
                     "format": "0.00",
-                    #"style": 3,
                 }
 
                 conditional_formats[0]["ranges"].append(cv)
                 conditional_formats[1]["ranges"].append(cv)
                 row_values[col_val] = (c1, c2)
 
-            # Totaux par ligne
-            tc1 = f"{chr(65 + total_col)}{row_index}"
-            tc2 = f"{chr(65 + total_col + 1)}{row_index}"
-            tcv = f"{chr(65 + total_col + 2)}{row_index}"
+            tc1 = f"{self._column_letter(total_col)}{row_index}"
+            tc2 = f"{self._column_letter(total_col + 1)}{row_index}"
+            tcv = f"{self._column_letter(total_col + 2)}{row_index}"
 
             cells[tc1] = {"content": f"={'+'.join([v[0] for v in row_values.values()])}", "format": "0.00"}
             cells[tc2] = {"content": f"={'+'.join([v[1] for v in row_values.values()])}", "format": "0.00"}
@@ -412,10 +391,9 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
             conditional_formats[1]["ranges"].append(tcv)
             row_index += 1
 
-        # Totaux finaux
         cells[f"A{row_index}"] = {"content": "Total", "style": 1}
         for col in range(col_offset, total_col + 3):
-            col_letter = chr(65 + col)
+            col_letter = self._column_letter(col)
             cells[f"{col_letter}{row_index}"] = {
                 "content": f"=ROUND(SUM({col_letter}{row_start}:{col_letter}{row_index - 1}),2)",
                 "format": "0.00"
@@ -521,7 +499,7 @@ class SpreadsheetSpreadsheetImportInherit(models.TransientModel):
         import_data = self.import_data
         if self._is_comparison_mode():
             spreadsheet_content = self._generate_comparison_spreadsheet_json()
-            _logger.info("WARNING_DKGROUP customize_dashboard spreadsheet_content %s ", str(spreadsheet_content))
+            #_logger.info("WARNING_DKGROUP customize_dashboard spreadsheet_content %s ", str(spreadsheet_content))
             encoded_data = base64.encodebytes(json.dumps(spreadsheet_content).encode("utf-8"))
             spreadsheet = self.env["spreadsheet.spreadsheet"].create({
                 "name": self.datasource_name,
