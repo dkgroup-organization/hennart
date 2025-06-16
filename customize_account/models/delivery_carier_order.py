@@ -14,9 +14,9 @@ class delivery_carrier_order(models.Model):
         self._update_info()
         return True
 
-    def action_send_invoice_and_delivery(self):
+    def action_send_invoice_and_delivery_OLD(self):
         """Envoie la facture et le bon de livraison au client par email."""
-
+       
         for order in self:
             for picking in order.picking_ids:
                 invoices = self.env['account.move']
