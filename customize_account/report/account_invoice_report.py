@@ -25,10 +25,10 @@ class AccountInvoiceReport(models.Model):
                 line.journal_id,
                 line.company_id,
                 partner.user2_id,
-                line.cost_price, 
+                (line.cost_price * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)) AS cost_price,
                 line.cadeau AS promo,
-                line.margin,
-                line.weight,
+                (line.margin * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)) AS margin,
+                (line.weight * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)) AS weight,
                 line.partner_shipping_id,
                 line.company_currency_id,
                 line.partner_id AS commercial_partner_id,
@@ -53,7 +53,7 @@ class AccountInvoiceReport(models.Model):
                 -line.balance * currency_table.rate                         AS price_subtotal,
                 line.price_total * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)
                                                                             AS price_total,
-                -COALESCE(
+                COALESCE(
                    -- Average line price
                    (line.balance / NULLIF(line.quantity, 0.0)) * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)
                    -- convert to template uom

@@ -2,6 +2,8 @@ from odoo import fields, models, api, _
 from odoo.exceptions import UserError
 from odoo.exceptions import UserError, ValidationError
 
+import logging
+_logger = logging.getLogger(__name__)
 
 class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
@@ -161,7 +163,10 @@ class SaleOrderInherit(models.Model):
                     key = str(line.product_id)
                     if key not in list(check_line.keys()):
                         check_line[key] = line
+                        _logger.info("WARNING_DKGROUP line %s ", str(line.product_id.name))
                         if sale.pricelist_id in discount_pricelist_ids:
+                            _logger.info("WARNING_DKGROUP sale.pricelist_id %s ", str(sale.pricelist_id))
+                            _logger.info("WARNING_DKGROUP discount_pricelist_ids %s ", str(discount_pricelist_ids))
                             raise ValidationError(_(
                                 "There is a logistical discounts and a price list discount. Please, check this"))
                     else:

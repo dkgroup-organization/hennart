@@ -223,12 +223,15 @@ class DeliveryCarrierOrder(models.Model):
     def action_send_invoice_and_delivery(self):
         """Envoie la facture et le bon de livraison au client par email."""
 
+        
         for order in self:
             for picking in order.picking_ids:
                 invoices = self.env['account.move']
                 attachment_ids = self.env['ir.attachment']
-
                 partner = picking.partner_id
+
+                #_logger.info("WARNING_DKGROUP email_invoice  %s ", str(partner.email_invoice))
+                
                 if partner.parent_id and not partner.is_company:
                     partner = partner.parent_id
 

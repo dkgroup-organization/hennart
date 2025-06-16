@@ -51,8 +51,48 @@ class ResPartner(models.Model):
                 function_txt += " %s" % function.name
             partner.function = function_txt
 
-    @api.depends('child_ids.email_function')
+    #@api.depends('child_ids.email_function')
+    @api.depends('child_ids.email_function', 'email')
     def get_function_email(self):
+        """Return email by function: from child if found, else fallback to partner's email"""
+        for partner in self:
+            if partner.is_company:
+                parent = partner
+            elif partner.parent_id:
+                parent = partner.parent_id
+            else:
+                parent = partner
+
+            default_email = parent.email or ''
+            contact_function = {}
+
+            # 1. Rassembler les e-mails des contacts enfants par fonction
+            for contact in parent.child_ids:
+                if not contact.email:
+                    continue
+                for function in contact.email_function:
+                    if function.code not in contact_function:
+                        contact_function[function.code] = contact.email
+                    else:
+                        contact_function[function.code] += ',' + contact.email
+
+            # 2. Pour chaque fonction, prioriser les contacts enfants sinon fallback sur l'e-mail société
+            for code in [
+                'email_delivery', 'email_accounting', 'email_director',
+                'email_vendor', 'email_sale', 'email_quality',
+                'email_department_manager', 'email_other'
+            ]:
+                # Si on a trouvé un ou plusieurs e-mails pour cette fonction, on les prend
+                if code in contact_function:
+                    setattr(partner, code, contact_function[code])
+                else:
+                    # Sinon on met l'e-mail général de la société
+                    setattr(partner, code, default_email)
+
+
+
+
+    def get_function_email_OLD(self):
         """ return email by function"""
         for partner in self:
             if partner.is_company:

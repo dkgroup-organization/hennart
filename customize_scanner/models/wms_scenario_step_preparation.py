@@ -109,7 +109,7 @@ class WmsScenarioStep(models.Model):
         if data.get('picking'):
             res = data['picking'].name
             if data['picking'].partner_id:
-                res += data['picking'].partner_id.name
+                res += data['picking'].partner_id.name or ''
         return res
 
     def get_input_name(self, data):
