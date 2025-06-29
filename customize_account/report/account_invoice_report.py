@@ -16,6 +16,8 @@ class AccountInvoiceReport(models.Model):
 
     @api.model
     def _select(self):
+
+        """ (line.margin * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)) AS margin,"""
         return '''
             SELECT
                 line.id,
@@ -27,7 +29,12 @@ class AccountInvoiceReport(models.Model):
                 partner.user2_id,
                 (line.cost_price * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)) AS cost_price,
                 line.cadeau AS promo,
-                (line.margin * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)) AS margin,
+                (CASE
+                    WHEN template.default_code IN ('30000', '30002', '30005', '30006', '30100') THEN 0.0
+                    ELSE (line.margin * 
+                        (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)
+                    )
+                END) AS margin,
                 (line.weight * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)) AS weight,
                 line.partner_shipping_id,
                 line.company_currency_id,

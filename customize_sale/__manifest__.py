@@ -21,7 +21,7 @@
         "views/res_partner_report.xml",
         "views/res_partner_report_template.xml",
         "wizard/import_pricelist_view.xml",
-
+        "wizard/recompute_account_move_from_excel_view.xml",
     ],
     "installable": True,
 }

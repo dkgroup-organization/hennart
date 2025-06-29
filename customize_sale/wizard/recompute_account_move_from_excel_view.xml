@@ -1,0 +1,32 @@
+<odoo>
+    <record id="view_recompute_account_move_excel_form" model="ir.ui.view">
+        <field name="name">recompute.account.move.from.excel.form</field>
+        <field name="model">recompute.account.move.from.excel</field>
+        <field name="arch" type="xml">
+            <form string="Recalculer les factures depuis Excel">
+                <group>
+                    <field name="excel_file" filename="file_name"/>
+                    <field name="file_name" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="action_recompute_moves" string="Recalculer" type="object" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_recompute_account_move_excel" model="ir.actions.act_window">
+        <field name="name">Recalcul des factures via fichier Excel</field>
+        <field name="res_model">recompute.account.move.from.excel</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Ajoute dans le menu "Configuration" de Facturation -->
+    <menuitem id="menu_recompute_account_move_excel"
+          name="Recalcul des factures via Excel"
+          parent="account.menu_account_config"
+          action="action_recompute_account_move_excel"
+          sequence="9999"/>
+</odoo>
