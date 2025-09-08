@@ -1,0 +1,12 @@
+<odoo>
+    <record id="view_stock_move_line_operation_tree_expiry_inherit" model="ir.ui.view">
+        <field name="name">product.expiry.view_stock_move_line_operation_tree_expiry.inherit</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="product_expiry.view_stock_move_line_operation_tree_expiry"/>
+        <field name="arch" type="xml">
+            <field name="expiration_date" position="replace">
+                <field name="expiration_date" force_save="1"/>
+            </field>
+        </field>
+    </record>
+</odoo>

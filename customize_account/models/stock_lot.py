@@ -5,7 +5,8 @@ from collections import defaultdict
 import datetime
 import time
 
-
+import logging
+_logger = logging.getLogger(__name__)
 
 class StockLot(models.Model):
     _inherit = 'stock.lot'
@@ -67,6 +68,12 @@ class StockLot(models.Model):
                             total_quantity += account_move_line.quantity
                             total_weight += account_move_line.weight
                         total_cost += account_move_line.price_subtotal
+
+                _logger.info(
+                    "WARNING_DKGROUP lot=%s (factures) -> qty=%.3f, weight=%.3f, cost=%.3f",
+                    lot.display_name, total_quantity, total_weight, total_cost
+                )
+
             else:
                 # check if there is purchase
                 purchase_line_ids = self.env['purchase.order.line']
@@ -77,6 +84,25 @@ class StockLot(models.Model):
                     total_weight += purchase_line.weight
                     total_cost += purchase_line.price_subtotal
 
+                _logger.info(
+                    "WARNING_DKGROUP lot=%s (achats) -> moves=%s, pol_ids=%s, qty=%.3f, weight=%.3f, cost=%.3f",
+                    lot.display_name, move_line_ids.ids, purchase_line_ids.ids,
+                    total_quantity, total_weight, total_cost
+                )
+
+            # 🔹 Fallback : si aucun prix/poids trouvé, chercher le lot parent en amont
+            if not total_cost or not total_weight or not total_quantity:
+                parent_lots = lot.get_upstream_lot() - lot
+                if parent_lots:
+                    parent_lot = parent_lots[0]
+                    _logger.info(
+                        "WARNING_DKGROUP lot=%s fallback parent lot=%s",
+                        lot.name, parent_lot.name
+                    )
+                    total_cost = total_cost or (parent_lot.unit_price * parent_lot.unit_weight)
+                    total_weight = total_weight or parent_lot.unit_weight
+                    total_quantity = total_quantity or 1  # éviter division par zéro
+
             if total_weight and total_quantity:
                 lot.unit_weight = total_weight / total_quantity
             if total_cost and total_quantity:
@@ -84,5 +110,9 @@ class StockLot(models.Model):
             if total_cost and total_weight:
                 lot.kg_price = total_cost / total_weight
 
+            _logger.info(
+                "WARNING_DKGROUP lot=%s -> unit_weight=%.3f, unit_price=%.3f, kg_price=%.3f",
+                lot.display_name, lot.unit_weight or 0.0, lot.unit_price or 0.0, lot.kg_price or 0.0
+            )
 
 

@@ -75,7 +75,7 @@ class StockLot(models.Model):
             lot.sale_order_ids = sale_order_ids
             lot.sale_order_count = len(lot.sale_order_ids)
 
-    def get_downstream_move(self):
+    def get_downstream_move_BK20250906(self):
         """ Get tracking of this lot """
         res = self.env['stock.move']
 
@@ -89,8 +89,33 @@ class StockLot(models.Model):
             lot.downstream_move = downstream_move
             res |= downstream_move
         return res
+    def get_downstream_move(self):
+        """Get tracking of this lot (mouvements sortants liés au lot et à ses lots aval)."""
+        Move = self.env['stock.move']
+        MoveLine = self.env['stock.move.line']
+        for lot in self:
+            lot_ids = lot.get_downstream_lot()
+            if not lot_ids:
+                lot.downstream_move = Move.browse()  # ✅ toujours assigné (vide)
+                continue
+            lines = MoveLine.search([
+                ('lot_id', 'in', lot_ids.ids),
+                ('picking_type_code', '=', 'outgoing'),
+            ])
+            moves = lines.mapped('move_id')
+            lot.downstream_move = moves or Move.browse()  # ✅ jamais None
+        # renvoyer quelque chose de cohérent si besoin
+        return self.mapped('downstream_move')
 
     def _compute_delivery_ids(self):
+        """Assigne delivery_ids et delivery_count à partir des mouvements aval."""
+        Picking = self.env['stock.picking']
+        for lot in self:
+            moves = lot.downstream_move or self.env['stock.move']
+            pickings = moves.mapped('picking_id').filtered(lambda p: p and p.state != 'cancel')
+            lot.delivery_ids = pickings or Picking.browse()  # ✅ toujours assigné
+            lot.delivery_count = len(pickings)
+    def _compute_delivery_ids_BK20250906(self):
         """ count customer with this lot """
         for lot in self:
             lot.delivery_count = len(lot.downstream_move)

@@ -25,6 +25,7 @@
         "views/stock_move_line_views_inherit.xml",
         "views/stock_location_view.xml",
         "views/stock_quant_view.xml",
+        "views/stock_move_operations_form_inherit.xml",
         "wizard/import_product_template.xml",
 
     ],

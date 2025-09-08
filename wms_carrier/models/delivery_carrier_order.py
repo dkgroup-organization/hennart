@@ -223,14 +223,16 @@ class DeliveryCarrierOrder(models.Model):
     def action_send_invoice_and_delivery(self):
         """Envoie la facture et le bon de livraison au client par email."""
 
-        
+        Report = self.env['ir.actions.report']
+        Attachment = self.env['ir.attachment']
+
         for order in self:
+
             for picking in order.picking_ids:
+
                 invoices = self.env['account.move']
                 attachment_ids = self.env['ir.attachment']
                 partner = picking.partner_id
-
-                #_logger.info("WARNING_DKGROUP email_invoice  %s ", str(partner.email_invoice))
                 
                 if partner.parent_id and not partner.is_company:
                     partner = partner.parent_id
@@ -238,53 +240,53 @@ class DeliveryCarrierOrder(models.Model):
                 if partner.invoice_auto:
                     invoices = picking.sudo().action_create_invoice()
 
-                if partner.email_invoice:
-                    for invoice in invoices:
-                        # Générer les PDF pour la facture et le bon de livraison account.report_invoice
-                        if not invoice.attachment_ids:
-                            invoice_pdf, doc_format = self.env['ir.actions.report']._render_qweb_pdf(
-                                'account.report_invoice', res_ids=invoice.ids)
+                if not invoices or not partner.email_invoice:
+                    continue
 
-                            invoice_attachment = self.env['ir.attachment'].create({
-                                'name': f'{invoice.name}.pdf',
-                                'type': 'binary',
-                                'datas': base64.b64encode(invoice_pdf).decode('utf-8'),
-                                'res_model': 'account.move',
-                                'res_id': invoice.id,
-                                'mimetype': 'application/pdf',
-                            })
-                        else:
-                            invoice_attachment = invoice.attachment_ids
-                        attachment_ids |= invoice_attachment
+                for invoice in invoices:
+                    # Nom stable pour la pièce jointe
+                    att_name = f"Facture_{invoice.name}.pdf"
+                    # Cherche s'il existe déjà
+                    existing = Attachment.search([
+                        ('res_model', '=', 'account.move'),
+                        ('res_id', '=', invoice.id),
+                        ('name', '=', att_name),
+                        ('mimetype', '=', 'application/pdf'),
+                    ], limit=1)
 
-                # if partner.email_picking:
-                #     # Générer les PDF pour chaque bon de livraison
-                #     delivery_pdf, doc_format = self.env['ir.actions.report']._render_qweb_pdf(
-                #         'stock.action_report_delivery', res_ids=picking.ids)
-                #     delivery_attachment = self.env['ir.attachment'].create({
-                #         'name': '%s.pdf' % picking.name,
-                #         'type': 'binary',
-                #         'datas': base64.b64encode(delivery_pdf).decode('utf-8'),
-                #         'res_model': 'stock.picking',
-                #         'res_id': picking.id,
-                #         'mimetype': 'application/pdf',
-                #     })
-                #
-                #     attachment_ids |= delivery_attachment
+                    if not existing:
+                        pdf_bytes, _fmt = Report._render_qweb_pdf('account.report_invoice', res_ids=invoice.ids)
+                        existing = Attachment.create({
+                            'name': att_name,
+                            'type': 'binary',
+                            'datas': base64.b64encode(pdf_bytes).decode('utf-8'),
+                            'res_model': 'account.move',
+                            'res_id': invoice.id,
+                            'mimetype': 'application/pdf',
+                        })
 
-                if partner.email_invoice:
-                    # Envoyer l'email
-                    template = self.env.ref('account.email_template_edi_invoice')
+                    # Utiliser le template standard mais désactiver l'ajout automatique du rapport
+                    template = self.env.ref('account.email_template_edi_invoice', raise_if_not_found=False)
+                    if not template:
+                        _logger.error("Template 'account.email_template_edi_invoice' introuvable.")
+                        continue
 
-                    if template:
-                        email_values = {'attachment_ids': [(6, 0, attachment_ids.ids)]}
-                        res = template.send_mail(invoices[0].id, email_values=email_values)
+                    # Créer une copie en mémoire avec report_template_id nul
+                    template = template.with_context(no_report=True)
+                    template.report_template = False
+                    template.report_name = False
 
-                        """_logger.info("WARNING_DKGROUP invoice.partner_id.email %s ", str(invoice.partner_id.email))
-                        _logger.info("WARNING_DKGROUP partner.email_invoice %s ", str(partner.email_invoice))
-                        _logger.info("WARNING_DKGROUP template %s ", str(template))
-                        _logger.info("WARNING_DKGROUP email_values %s ", str(email_values))
-                        _logger.info("WARNING_DKGROUP invoices[0].id %s ", str(invoices[0].id))"""
+                    # Envoyer avec uniquement notre PJ
+                    email_values = {
+                        'attachment_ids': [(6, 0, [existing.id])],
+                    }
+                    mail_id = template.send_mail(invoice.id, force_send=True, email_values=email_values)
+
+                    _logger.info("WARNING_DKGROUP invoice.partner_id.email2 %s ", str(invoice.partner_id.email))
+                    _logger.info("WARNING_DKGROUP partner.email_invoice2 %s ", str(partner.email_invoice))
+                    _logger.info("WARNING_DKGROUP template2 %s ", str(template))
+                    _logger.info("WARNING_DKGROUP email_values2 %s ", str(email_values))
+                    _logger.info("WARNING_DKGROUP invoices[0].id2 %s ", str(invoices[0].id))
 
     def button_action_done(self):
 

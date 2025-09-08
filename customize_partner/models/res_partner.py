@@ -66,15 +66,12 @@ class ResPartner(models.Model):
             default_email = parent.email or ''
             contact_function = {}
 
-            # 1. Rassembler les e-mails des contacts enfants par fonction
+            # 1. Rassembler les e-mails des contacts enfants par fonction (sans doublons)
             for contact in parent.child_ids:
                 if not contact.email:
                     continue
                 for function in contact.email_function:
-                    if function.code not in contact_function:
-                        contact_function[function.code] = contact.email
-                    else:
-                        contact_function[function.code] += ',' + contact.email
+                    contact_function.setdefault(function.code, set()).add(contact.email)
 
             # 2. Pour chaque fonction, prioriser les contacts enfants sinon fallback sur l'e-mail société
             for code in [
@@ -82,13 +79,11 @@ class ResPartner(models.Model):
                 'email_vendor', 'email_sale', 'email_quality',
                 'email_department_manager', 'email_other'
             ]:
-                # Si on a trouvé un ou plusieurs e-mails pour cette fonction, on les prend
-                if code in contact_function:
-                    setattr(partner, code, contact_function[code])
+                if code in contact_function and contact_function[code]:
+                    emails_str = ','.join(sorted(contact_function[code]))
+                    setattr(partner, code, emails_str)
                 else:
-                    # Sinon on met l'e-mail général de la société
                     setattr(partner, code, default_email)
-
 
 
 

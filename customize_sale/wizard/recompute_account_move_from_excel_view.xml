@@ -5,8 +5,12 @@
         <field name="arch" type="xml">
             <form string="Recalculer les factures depuis Excel">
                 <group>
-                    <field name="excel_file" filename="file_name"/>
-                    <field name="file_name" invisible="1"/>
+                    <field name="excel_file_1" filename="file_name_1"/>
+                    <field name="file_name_1" invisible="1"/>
+                </group>
+                <group>
+                    <field name="excel_file_2" filename="file_name_2"/>
+                    <field name="file_name_2" invisible="1"/>
                 </group>
                 <footer>
                     <button name="action_recompute_moves" string="Recalculer" type="object" class="btn-primary"/>
