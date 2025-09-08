@@ -4,17 +4,153 @@ import io
 import pandas as pd
 from odoo.exceptions import UserError
 import logging
+import re
+from fractions import Fraction
 _logger = logging.getLogger(__name__)
 
 class RecomputeAccountMoveFromExcel(models.TransientModel):
     _name = 'recompute.account.move.from.excel'
     _description = 'Recalcul des montants de factures depuis fichier Excel'
 
-    excel_file = fields.Binary(string="Fichier Excel", required=True)
-    file_name = fields.Char(string="Nom du fichier")
+    # Premier fichier
+    excel_file_1 = fields.Binary(string="Factures GB montants € et £ erronés")
+    file_name_1 = fields.Char(string="Nom du fichier (1)")
+
+    # Deuxième fichier
+    excel_file_2 = fields.Binary(string="Factures GB montants € erronés")
+    file_name_2 = fields.Char(string="Nom du fichier (2)")
+
+    def _get_colis_factor(self,name):
+        name = name.lower()
+
+        # Format explicite : "colis 6", "colis 2x1/2"
+        match_colis = re.search(r'colis\s+([\d x\/]+)', name)
+        if match_colis:
+            raw = match_colis.group(1).strip()
+            try:
+                if 'x' in raw:
+                    parts = raw.split('x')
+                    values = [float(Fraction(p.strip())) for p in parts]
+                    return float(eval('*'.join(str(v) for v in values)))
+                else:
+                    return float(Fraction(raw))
+            except Exception:
+                return 1.0
+
+        # Format implicite : "x12", "x6", etc. en fin de libellé
+        match_x = re.search(r'x\s*(\d+)$', name)
+        if match_x:
+            return float(match_x.group(1))
+
+        return 1.0  # défaut si aucun format reconnu
 
     def action_recompute_moves(self):
-        if not self.excel_file:
+
+        if not self.excel_file_1 and not self.excel_file_2:
+            raise UserError("Veuillez importer au moins un des deux fichiers Excel pour lancer le traitement.")
+
+        df1 = df2 = None
+
+        # Traitement fichier 1
+        if self.excel_file_1:
+
+            file_data_1 = base64.b64decode(self.excel_file_1)
+            df1 = pd.read_excel(io.BytesIO(file_data_1), skiprows=0)
+
+            # Renommer les colonnes proprement
+            df1.columns = [
+                "Numéro",
+                "Adresse de livraison",
+                "Date de facturation",
+                "V7 €",
+                "V7 £",
+                "€",
+                "£"
+            ]
+
+            # Parcours de chaque ligne du fichier
+            for index, row in df1.iterrows():
+                ref = str(row["Numéro"]).strip()
+                _logger.info("WARNING_DKGROUP ref : %s", str(ref))
+                
+                # Recherche de la facture dans Odoo
+                move = self.env['account.move'].search([('name', '=', ref)], limit=1)
+                
+                for line in move.invoice_line_ids:
+                    product_name = (line.product_id.name or "").lower()
+
+                    # ✅ Ajout de la contrainte : uniquement si unité = U (id=1)
+                    if line.product_uom_id.id != 1:
+                        continue
+
+                    # Vérifie s'il y a "colis" OU un "xN" à la fin
+                    if "colis" not in product_name and not re.search(r'x\s*\d+$', product_name):
+                        continue  # on ignore cette ligne
+
+                    factor = self._get_colis_factor(product_name)
+                    if factor <= 0 or factor == 1:
+                        continue
+
+                    line.uom_qty = line.uom_qty / factor if factor > 0 else qty
+                    line.quantity = line.quantity / factor
+                    _logger.info(f"WARNING_DKGROUP product_id : {line.product_id.name}")
+                    _logger.info(f"WARNING_DKGROUP uom_qty : {line.uom_qty}")
+
+                if not move:
+                    _logger.warning(f"Aucune facture trouvée dans Odoo pour : {ref}")
+                    continue
+
+        # Traitement uniquement de df2 ici pour l'exemple
+        if self.excel_file_2:
+         
+            file_data_2 = base64.b64decode(self.excel_file_2)
+            df2 = pd.read_excel(io.BytesIO(file_data_2), skiprows=0)
+
+            # Renommer les colonnes proprement
+            df2.columns = [
+                "Numéro",
+                "Adresse de livraison",
+                "Date de facturation",
+                "V7 €",
+                "V7 £",
+                "€",
+                "£"
+            ]
+
+            # Parcours de chaque ligne
+            _logger.info("WARNING_DKGROUP df2 : %s", str(df2))
+            for index, row in df2.iterrows():
+                ref = str(row["Numéro"]).strip()
+                _logger.info("WARNING_DKGROUP ref : %s", str(ref))
+
+                montant_excel = float(str(row["V7 €"]).replace(",", "."))
+                montant_ajuste = float(str(row["€"]).replace(",", "."))
+
+                _logger.info("WARNING_DKGROUP ref : %s", str(ref))
+                move = self.env['account.move'].search([('name', '=', ref)], limit=1)
+                zero_lines = move.line_ids.filtered(lambda l: not l.debit and not l.credit)
+                for line in zero_lines:
+                    origin_price_unit = line.price_unit
+                    line.price_unit = origin_price_unit+1
+                    line.price_unit = origin_price_unit
+
+        return True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if not self.excel_file_1:
             raise UserError("Veuillez importer un fichier Excel contenant les numéros de facture.")
 
         try:

@@ -241,6 +241,9 @@ class AccountMove(models.Model):
             if invoice.piece_comptable:
                 continue
 
+            if invoice.move_type in ('out_refund', 'in_refund'):
+                continue
+
             sale_orders = invoice.invoice_line_ids.sale_line_ids.order_id
             sale_order = sale_orders and sale_orders[0] or sale_orders
 
