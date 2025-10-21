@@ -30,7 +30,7 @@ class AccountInvoiceReport(models.Model):
                 (line.cost_price * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)) AS cost_price,
                 line.cadeau AS promo,
                 (CASE
-                    WHEN template.default_code IN ('30000', '30002', '30005', '30006', '30100') THEN 0.0
+                    WHEN template.name ILIKE '- Remise%' THEN 0.0
                     ELSE (line.margin * 
                         (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)
                     )
