@@ -20,10 +20,10 @@ class RecomputeAccountMoveFromExcel(models.TransientModel):
     excel_file_2 = fields.Binary(string="Factures GB montants € erronés")
     file_name_2 = fields.Char(string="Nom du fichier (2)")
 
-    def _get_colis_factor(self,name):
-        name = name.lower()
+    def _get_colis_factor(self, name):
+        name = (name or '').lower()
 
-        # Format explicite : "colis 6", "colis 2x1/2"
+        # --- 1️⃣ Format explicite : "colis 6", "colis 2x1/2"
         match_colis = re.search(r'colis\s+([\d x\/]+)', name)
         if match_colis:
             raw = match_colis.group(1).strip()
@@ -37,12 +37,18 @@ class RecomputeAccountMoveFromExcel(models.TransientModel):
             except Exception:
                 return 1.0
 
-        # Format implicite : "x12", "x6", etc. en fin de libellé
+        # --- 2️⃣ Format implicite : "x12", "x6", etc. en fin de libellé
         match_x = re.search(r'x\s*(\d+)$', name)
         if match_x:
             return float(match_x.group(1))
 
-        return 1.0  # défaut si aucun format reconnu
+        # --- 3️⃣ Format "cosv 12" ou "cosv12"
+        match_cosv = re.search(r'cosv\s*(\d+)', name)
+        if match_cosv:
+            return float(match_cosv.group(1))
+
+        # --- Aucun format reconnu
+        return 1.0
 
     def action_recompute_moves(self):
 

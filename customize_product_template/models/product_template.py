@@ -56,6 +56,9 @@ class ProductTemplate(models.Model):
     uos_id = fields.Many2one('uom.uom', string='Unit of Sale',
                              default=_get_default_uos_id, required=True,
                              help="Default unit of Sale used for invoicing.")
+
+    uos_po_id = fields.Many2one('uom.uom', string="Unité d'achat fournisseur")
+
     code_ean_prix = fields.Char('Code EAN Prix', size=12)
     code_ean_poids = fields.Char('Code EAN Poids', size=12)
     code_DUN14 = fields.Char('Code DUN14', size=14)

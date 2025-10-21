@@ -57,6 +57,7 @@
                             <group>
                                 <field name="list_price"/>
                                 <field name="uos_id"/>
+                                <field name="uos_po_id"/>
                                 <field name="weight"/>
                                 <label for="base_unit_count" string="Pack"
                                        attrs="{'invisible': [('base_unit_count','=', 1)]}"/>
