@@ -62,6 +62,16 @@ class PartnerCrmAppointment(models.Model):
         return hour, minute
 
     @api.model
+    def timezone_2_utc(self, nextday, time, timezone="Europe/Paris"):
+        """ return datetime with time (in float) with conversion in  timezone to UTC"""
+        time = time or 8.0
+        hour = int(time)
+        minute = int((float(time) - float(hour)) * 60.0)
+        nextday = nextday.replace(hour=hour, minute=minute, second=0)
+        nextday_timezone = pytz.timezone(timezone).localize(nextday, is_dst=False)
+        return nextday_timezone.astimezone(pytz.utc).replace(tzinfo=None)
+        
+    @api.model
     def _to_utc_naive(self, dt_localized):
         """Prend un datetime timezone-aware et retourne un naive UTC (pour stockage DB)."""
         return dt_localized.astimezone(pytz.utc).replace(tzinfo=None)
@@ -90,6 +100,71 @@ class PartnerCrmAppointment(models.Model):
     # ================= Logique "mois glissant" =================
 
     def create_month_appointments(self, days=31):
+        """
+        Pour chaque appointment, s’assure que TOUTES les occurrences attendues existent
+        entre maintenant et maintenant+days, selon 'day' + 'frequency' (7/14/21/28/42).
+        Idempotent : ne crée pas de doublons si ça existe déjà.
+        """
+        Phone = self.env['crm.phonecall']
+        now = fields.Datetime.now()
+        window_end = now + datetime.timedelta(days=days)
+
+        for appt in self:
+            partner = appt.partner_id
+            if not partner:
+                continue
+
+            tz = self._partner_tz(partner)
+            weekday = int(appt.day)  # '0'..'6'
+            freq_days = int(appt.frequency or '7')  # '7','14','21','28','42' -> int
+            weekly = list(self._iter_weekly_slots(now, window_end, weekday, appt.time, tz))
+            if not weekly:
+                continue
+
+            step_weeks = max(1, freq_days // 7)  # 1,2,3,4,6
+            desired_dates = [dt for idx, dt in enumerate(weekly) if idx % step_weeks == 0]
+
+            # Récupère ce qui existe déjà dans la fenêtre pour CET appointment
+            existing = Phone.search([
+                ('appointment_id', '=', appt.id),
+                ('date', '>=', now),
+                ('date', '<=', window_end),
+                ('state', 'not in', ['cancel', 'done']),
+            ])
+
+            def key_min(dt): return dt.replace(second=0, microsecond=0)
+            existing_map = {key_min(x.date): x for x in existing}
+
+            for dt_utc in desired_dates:
+                k = key_min(dt_utc)
+                if k in existing_map:
+                    continue  # déjà planifié (± à la minute)
+
+                # 🔒 Sécurité anti-doublon SQL (cron concurrent)
+                already_exists = Phone.search_count([
+                    ('appointment_id', '=', appt.id),
+                    ('date', '=', dt_utc),
+                    ('state', 'not in', ['cancel', 'done']),
+                ])
+                if already_exists:
+                    continue
+
+                Phone.create({
+                    'user_id': partner.user_id.id or False,
+                    'name': partner.name or '?',
+                    'partner_id': partner.id,
+                    'partner_phone': partner.phone or '',
+                    'partner_mobile': partner.mobile or '',
+                    'duration': 0.5,  # 30 min
+                    'appointment_id': appt.id,
+                    'channel': appt.channel,
+                    'type1': appt.type1,
+                    'date': dt_utc,
+                    'state': 'open',
+                })
+        return True
+
+    def create_month_appointments_OLD(self, days=31):
         """
         Pour chaque appointment, s’assure que TOUTES les occurrences attendues existent
         entre maintenant et maintenant+days, selon 'day' + 'frequency' (7/14/21/28/42).
@@ -181,8 +256,13 @@ class PartnerCrmAppointment(models.Model):
 
     @api.model
     def cron_phone_appointment_month(self, days=31):
-        """Cron idempotent (toutes les 6 h OK) : remplit le planning du mois prochain."""
-        appointments = self.search([])
-        appointments.create_month_appointments(days=days)
-        # (optionnel) purge douce de très vieux appels : à ajouter si nécessaire.
+        """
+        Cron idempotent (toutes les 6 h OK) : remplit le planning du mois prochain.
+        Traite chaque appointment individuellement pour éviter les doublons.
+        """
+        for appt in self.search([]):
+            try:
+                appt.create_month_appointments(days=days)
+            except Exception as e:
+                _logger.warning(f"Erreur lors de la génération d'appels pour {appt.partner_id.display_name}: {e}")
         return True
