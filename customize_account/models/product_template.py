@@ -11,6 +11,15 @@ _logger = logging.getLogger(__name__)
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
+    is_discount_line = fields.Boolean(
+        compute="_compute_is_discount_line", store=True, index=True
+    )
+
+    @api.depends("name")
+    def _compute_is_discount_line(self):
+        for rec in self:
+            rec.is_discount_line = rec.name and rec.name.upper().startswith("- REMISE")
+
     def compute_current_cost_price(self):
         """ compute current stock value """
         uom_weight = self.env['product.template']._get_weight_uom_id_from_ir_config_parameter()

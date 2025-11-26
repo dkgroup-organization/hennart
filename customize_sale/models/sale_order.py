@@ -31,6 +31,7 @@ class SaleOrder(models.Model):
             else:
                 sale.date_order = fields.Datetime.now
 
+        
     @api.model
     def timezone_2_utc(self, date, time, timezone="Europe/Paris"):
         """ return datetime with time (in float) with conversion in  timezone to UTC
@@ -120,6 +121,12 @@ class SaleOrder(models.Model):
 
     def action_confirm(self):
         """ Check the sale order before confirmation"""
+        for order in self:
+            partner = order.partner_id
+            if partner.sale_warn == "block":
+                if partner.sale_warn_msg:
+                    raise UserError(_("Cette commande ne peut pas être confirmée :\n\n%s") % partner.sale_warn_msg)
+
         self.check_discount()
         self.check_line()
 
