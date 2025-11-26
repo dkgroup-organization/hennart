@@ -21,15 +21,23 @@ class RecomputeAccountMoveFromExcel(models.TransientModel):
     file_name_2 = fields.Char(string="Nom du fichier (2)")
 
     def _get_colis_factor(self, name):
-        name = (name or '').lower()
+        """
+        Détecte automatiquement le facteur colis dans un libellé produit.
+        Gère :
+        - "colis 6", "colis 2x1/2", "colis 3 x 4"
+        - suffixes "x12", "x 6", "x4"
+        - formats cosv 12 / cosv12 / cosv 4 / cosv4
+        - cas ajoutés par Dkgroup
+        """
+        name = (name or '').lower().replace('.', ' ').strip()
 
         # --- 1️⃣ Format explicite : "colis 6", "colis 2x1/2"
-        match_colis = re.search(r'colis\s+([\d x\/]+)', name)
+        match_colis = re.search(r'colis\s*([\d x\/]+)', name)
         if match_colis:
             raw = match_colis.group(1).strip()
             try:
                 if 'x' in raw:
-                    parts = raw.split('x')
+                    parts = re.split(r'\s*x\s*', raw)
                     values = [float(Fraction(p.strip())) for p in parts]
                     return float(eval('*'.join(str(v) for v in values)))
                 else:
@@ -37,17 +45,17 @@ class RecomputeAccountMoveFromExcel(models.TransientModel):
             except Exception:
                 return 1.0
 
-        # --- 2️⃣ Format implicite : "x12", "x6", etc. en fin de libellé
+        # --- 2️⃣ Format implicite : "x12", "x6", "x 4" en fin de libellé
         match_x = re.search(r'x\s*(\d+)$', name)
         if match_x:
             return float(match_x.group(1))
 
-        # --- 3️⃣ Format "cosv 12" ou "cosv12"
+        # --- 3️⃣ Format cosv 12 / cosv12 (tous tes nouveaux cas)
         match_cosv = re.search(r'cosv\s*(\d+)', name)
         if match_cosv:
             return float(match_cosv.group(1))
 
-        # --- Aucun format reconnu
+        # --- Aucun format reconnu → facteur 1
         return 1.0
 
     def action_recompute_moves(self):
@@ -74,10 +82,10 @@ class RecomputeAccountMoveFromExcel(models.TransientModel):
                 "£"
             ]
 
+            products_seen = set()
             # Parcours de chaque ligne du fichier
             for index, row in df1.iterrows():
                 ref = str(row["Numéro"]).strip()
-                _logger.info("WARNING_DKGROUP ref : %s", str(ref))
                 
                 # Recherche de la facture dans Odoo
                 move = self.env['account.move'].search([('name', '=', ref)], limit=1)
@@ -90,12 +98,18 @@ class RecomputeAccountMoveFromExcel(models.TransientModel):
                         continue
 
                     # Vérifie s'il y a "colis" OU un "xN" à la fin
-                    if "colis" not in product_name and not re.search(r'x\s*\d+$', product_name):
-                        continue  # on ignore cette ligne
+                    #if "colis" not in product_name and not re.search(r'x\s*\d+$', product_name):
+                    #    continue  # on ignore cette ligne
 
                     factor = self._get_colis_factor(product_name)
                     if factor <= 0 or factor == 1:
                         continue
+
+                    products_seen.add(f"{line.product_id.name} (factor={factor})")
+                    
+                    #_logger.info(f"WARNING_DKGROUP product_name : {line.product_id.name} factor {factor}")
+                    
+                    #continue
 
                     line.uom_qty = line.uom_qty / factor if factor > 0 else qty
                     line.quantity = line.quantity / factor
@@ -105,6 +119,12 @@ class RecomputeAccountMoveFromExcel(models.TransientModel):
                 if not move:
                     _logger.warning(f"Aucune facture trouvée dans Odoo pour : {ref}")
                     continue
+
+            """if products_seen:
+                final_list = sorted(products_seen)
+                _logger.warning(f" WARNING_DKGROUP Produits rencontrés : {final_list}")
+            else:
+                _logger.warning("Aucun produit rencontré dans le traitement.")"""
 
         # Traitement uniquement de df2 ici pour l'exemple
         if self.excel_file_2:

@@ -3,6 +3,8 @@ import base64
 import io
 import xlsxwriter
 
+from datetime import datetime
+
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -102,8 +104,8 @@ class StockQuantExportWizard(models.TransientModel):
 
         headers = [
             'code', 'produit', 'lot', 'transformation', 'coupe', 'affinage',
-            'prix atelier', 'poids', 'Quantité', 'prix unité', 'prix poids',
-            'unité vente', 'unité achat', 'fournisseur', 'date entrée', 'Valeur'
+             'poids', 'Quantité',
+            'unité vente', 'unité achat', 'fournisseur', 'date entrée','date de retrait','prix achat net du lot','prix de revient'
         ]
         for col, name in enumerate(headers):
             worksheet.write(0, col, name)
@@ -125,6 +127,8 @@ class StockQuantExportWizard(models.TransientModel):
             partner_uos = lot.partner_supplier_uos_id.name or fallback_lot.partner_supplier_uos_id.name or ''
             unit_weight = lot.unit_weight or fallback_lot.unit_weight or 1.0
 
+            date_format = workbook.add_format({'num_format': 'dd/mm/yyyy'})
+
             # Valeurs calculées
             poids_total = quantity * unit_weight
             valeur = quantity * unit_price
@@ -135,16 +139,23 @@ class StockQuantExportWizard(models.TransientModel):
             worksheet.write(row, 3, product.transformation_cost)
             worksheet.write(row, 4, product.cutting_cost)
             worksheet.write(row, 5, product.refinement_cost)
-            worksheet.write(row, 6, product.workshop_cost_price)
-            worksheet.write(row, 7, poids_total)
-            worksheet.write(row, 8, quantity)
-            worksheet.write(row, 9, unit_price)
-            worksheet.write(row, 10, kg_price)
-            worksheet.write(row, 11, uos_name)
-            worksheet.write(row, 12, partner_uos)
-            worksheet.write(row, 13, supplier)
-            worksheet.write(row, 14, supplier_date)
-            worksheet.write(row, 15, valeur)
+            worksheet.write(row, 6, poids_total)
+            worksheet.write(row, 7, quantity)
+            worksheet.write(row, 8, product.uos_po_id.name)
+            worksheet.write(row, 9, partner_uos)
+            worksheet.write(row, 10, supplier)
+            worksheet.write(row, 11, supplier_date)
+            
+            if lot.removal_date:
+                # S’assurer qu’on a bien un objet datetime (pas une chaîne)
+                removal_date = fields.Datetime.from_string(lot.removal_date) \
+                    if isinstance(lot.removal_date, str) else lot.removal_date
+                worksheet.write_datetime(row, 12, removal_date, date_format)
+            else:
+                worksheet.write(row, 12, "", date_format)
+
+            worksheet.write(row, 13, "")
+            worksheet.write(row, 14, product.total_cost_price)
 
             row += 1
 

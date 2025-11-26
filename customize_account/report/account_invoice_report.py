@@ -17,7 +17,17 @@ class AccountInvoiceReport(models.Model):
     @api.model
     def _select(self):
 
-        """ (line.margin * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)) AS margin,"""
+       
+        """  
+           (CASE
+                    WHEN template.default_code IN ('30000', '30002', '30005', '30006', '30100') THEN 0.0
+                    ELSE (line.margin * 
+                        (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)
+                    )
+                END) AS margin,
+
+          
+            """
         return '''
             SELECT
                 line.id,
@@ -28,13 +38,19 @@ class AccountInvoiceReport(models.Model):
                 line.company_id,
                 partner.user2_id,
                 (line.cost_price * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)) AS cost_price,
-                line.cadeau AS promo,
-                (CASE
-                    WHEN template.name ILIKE '- Remise%' THEN 0.0
-                    ELSE (line.margin * 
-                        (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)
-                    )
-                END) AS margin,
+                (line.quantity*line.price_unit * (line.discount / 100.0)) AS promo,
+                (
+                    CASE
+                        WHEN template.is_discount_line THEN
+                            (line.price_total * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END))
+                        ELSE
+                            (
+                                ((line.price_unit - (line.price_unit * (line.discount / 100.0))) - line.cost_price)
+                                * line.quantity
+                            ) *
+                            (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)
+                    END
+                ) AS margin,
                 (line.weight * (CASE WHEN move.move_type IN ('in_invoice','out_refund','in_receipt') THEN -1 ELSE 1 END)) AS weight,
                 line.partner_shipping_id,
                 line.company_currency_id,
