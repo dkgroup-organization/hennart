@@ -1,0 +1,39 @@
+<odoo>
+    <!-- Vue du wizard -->
+    <record id="view_import_lot_barcodes_wizard_form" model="ir.ui.view">
+        <field name="name">import.lot.barcodes.wizard.form</field>
+        <field name="model">import.lot.barcodes.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import des codes barres lots">
+                <group>
+                    <field name="excel_file" filename="file_name"/>
+                    <field name="file_name" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="action_import_lots"
+                            string="Importer"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Annuler"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action du wizard -->
+    <record id="action_import_lot_barcodes" model="ir.actions.act_window">
+        <field name="name">Import codes barres lots</field>
+        <field name="res_model">import.lot.barcodes.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu (par ex. dans Stock > Configuration) -->
+    <menuitem id="menu_import_lot_barcodes"
+              name="Import codes barres lots"
+              parent="stock.menu_stock_config_settings"
+              action="action_import_lot_barcodes"
+              sequence="9999"/>
+</odoo>

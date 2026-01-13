@@ -30,6 +30,22 @@ class MrpBom(models.Model):
                 bom.base_unit_count = 1.0
                 bom.base_product_id = self.env['product.product']
 
+
+    def action_refresh_component_hierarchy(self):
+        # Recrée la VIEW SQL
+        self.env['product.component.hierarchy'].init()
+
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Hiérarchie composants"),
+                "message": _("La vue product_component_hierarchy a été rafraîchie."),
+                "type": "success",
+                "sticky": False,
+            }
+        }
+
 class MrpBomLine(models.Model):
     """ Defines bills of material for a product or a product template """
     _inherit = 'mrp.bom.line'

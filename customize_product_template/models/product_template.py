@@ -210,6 +210,11 @@ class ProductTemplate(models.Model):
         help="Cost of transforming the product in €"
     )
 
+    transport_cost = fields.Float(
+        string="Coût transport",
+        help="Coût de transport unitaire à intégrer dans la valorisation du stock."
+    )
+
     transformation_cost = fields.Float(
         string="Transformation Cost (€)",
         help="Cost of cutting and packaging the product in €"
@@ -218,6 +223,14 @@ class ProductTemplate(models.Model):
     total_cost_price = fields.Float(
         string="Total Cost Price",
         help="Average Purchase Price + Refinement, Cutting and Transformation Costs"
+    )
+
+    manual_stock_valuation = fields.Boolean(
+        related='categ_id.manual_stock_valuation',
+        string="Valorisation manuelle du stock (Excel)",
+        store=True,
+        readonly=False,
+        help="Repris depuis la catégorie. Si cochée : la valorisation ignore les OF et utilise les valeurs Excel / prix de revient."
     )
 
     workshop_cost_price = fields.Float(
@@ -230,9 +243,197 @@ class ProductTemplate(models.Model):
         inverse='_set_standard_price', search=False,
         digits='Product Price', groups="base.group_user",
         help="""Used to value the product cost by unit based on total cost price.""")
+    
+
+    global_component_quantity = fields.Float(
+        string="Global Component Quantity",
+        compute="_compute_global_component_quantity",
+        store=True,
+        help="Total quantity of all final components used in the product BOM."
+    )
+
+    def _compute_global_component_quantity(self):
+        for tmpl in self:
+            tmpl.global_component_quantity = sum(
+                tmpl.component_price.mapped('quantity')
+            )
 
     component_price = fields.One2many('product.component.hierarchy', 'product_tmpl_id', string='Component')
     exclude_from_intrastat = fields.Boolean('Exclure de la déclaration DEB')
+
+
+    transformation_tmpl_ids_path = fields.Text(
+        string="Transformation (Template IDs)",
+        compute="_compute_transformation_paths",
+        store=False,
+    )
+
+    transformation_variant_ids_path = fields.Text(
+        string="Transformation (Variant IDs)",
+        compute="_compute_transformation_paths",
+        store=False,
+    )
+
+    def _compute_transformation_paths(self):
+        Bom = self.env['mrp.bom']
+        cache = {}  # {tmpl_id: [ [tmpl_id, tmpl_id, ...], ... ]}
+
+        def walk(tmpl, visited):
+            if not tmpl:
+                return []
+            tmpl = tmpl.exists()
+            if not tmpl:
+                return []
+            tmpl.ensure_one()
+
+            if tmpl.id in visited:
+                return []
+
+            if tmpl.id in cache:
+                return cache[tmpl.id]
+
+            visited = visited | {tmpl.id}
+
+            bom = Bom.search([('product_tmpl_id', '=', tmpl.id)], limit=1)
+            if not bom or not bom.bom_line_ids:
+                cache[tmpl.id] = []
+                return []
+
+            paths = []
+            for line in bom.bom_line_ids:
+                comp_tmpl = line.product_tmpl_id
+                if not comp_tmpl:
+                    continue
+                comp_tmpl = comp_tmpl.exists()
+                if not comp_tmpl:
+                    continue
+                comp_tmpl.ensure_one()
+
+                subpaths = walk(comp_tmpl, visited)
+                if subpaths:
+                    for sp in subpaths:
+                        paths.append([int(comp_tmpl.id)] + [int(x) for x in sp])
+                else:
+                    paths.append([int(comp_tmpl.id)])
+
+            cache[tmpl.id] = paths
+            return paths
+
+        def tmpl_id_to_variant_id(tmpl_id):
+            tmpl = self.env['product.template'].browse(tmpl_id).exists()
+            if not tmpl:
+                return False
+            tmpl.ensure_one()
+            # mono-variant => product_variant_id, sinon 1ère variante
+            variant = tmpl.product_variant_id or tmpl.product_variant_ids[:1]
+            return int(variant.id) if variant else False
+
+        for rec in self:
+            rec = rec.exists()
+            if not rec:
+                rec.transformation_tmpl_ids_path = ""
+                rec.transformation_variant_ids_path = ""
+                continue
+            rec.ensure_one()
+
+            tmpl_paths = walk(rec, set())
+
+            # 1) Champ Template IDs : "12;45;78 | 12;90"
+            rec.transformation_tmpl_ids_path = " | ".join(
+                ";".join(str(x) for x in path)
+                for path in tmpl_paths
+                if path
+            ) if tmpl_paths else ""
+
+            # 2) Champ Variant IDs : conversion template -> product.product
+            variant_paths = []
+            for path in tmpl_paths:
+                vpath = []
+                for tmpl_id in path:
+                    vid = tmpl_id_to_variant_id(tmpl_id)
+                    if vid:
+                        vpath.append(vid)
+                if vpath:
+                    variant_paths.append(vpath)
+
+            rec.transformation_variant_ids_path = " | ".join(
+                ";".join(str(x) for x in vpath)
+                for vpath in variant_paths
+            ) if variant_paths else ""
+            
+    
+    transformation_ids_path = fields.Text(
+        string="Transformation (IDs)",
+        compute="_compute_transformation_ids_path",
+        store=False,
+    )
+
+    def _compute_transformation_ids_path(self):
+        Bom = self.env['mrp.bom']
+        cache = {}  # {tmpl_id: [ [int,int,...], ... ]}
+
+        def walk(tmpl, visited):
+            # tmpl doit être un record unique
+            if not tmpl:
+                return []
+            tmpl = tmpl.sudo().exists()
+            if not tmpl:
+                return []
+            tmpl.ensure_one()
+
+            if tmpl.id in visited:
+                return []
+
+            if tmpl.id in cache:
+                return cache[tmpl.id]
+
+            visited = visited | {tmpl.id}
+
+            # Récupère 1 BOM pertinente (à ajuster si tu as plusieurs BOM)
+            bom = Bom.search([('product_tmpl_id', '=', tmpl.id)], limit=1)
+            if not bom or not bom.bom_line_ids:
+                cache[tmpl.id] = []
+                return []
+
+            paths = []
+            for line in bom.bom_line_ids:
+                comp_tmpl = line.product_tmpl_id
+                if not comp_tmpl:
+                    continue
+                comp_tmpl = comp_tmpl.exists()
+                if not comp_tmpl:
+                    continue
+                comp_tmpl.ensure_one()
+
+                subpaths = walk(comp_tmpl, visited)
+                if subpaths:
+                    # on préfixe le chemin par l'id du composant template
+                    for sp in subpaths:
+                        # sp doit être une liste d'int, on force
+                        paths.append([int(comp_tmpl.id)] + [int(x) for x in sp])
+                else:
+                    # feuille
+                    paths.append([int(comp_tmpl.id)])
+
+            cache[tmpl.id] = paths
+            return paths
+
+        for rec in self:
+            rec = rec.exists()
+            if not rec:
+                rec.transformation_ids_path = ""
+                continue
+            rec.ensure_one()
+
+            all_paths = walk(rec, set())
+
+            # format: "id1;id2;id3 | idA;idB"
+            rec.transformation_ids_path = " | ".join(
+                ";".join(str(x) for x in path)
+                for path in all_paths
+                if path
+            ) if all_paths else ""
+
 
     @api.model
     def get_coef_workshop_cost(self):

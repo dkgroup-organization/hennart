@@ -57,13 +57,86 @@ class RecomputeAccountMoveFromExcel(models.TransientModel):
 
         # --- Aucun format reconnu → facteur 1
         return 1.0
+    
 
     def action_recompute_moves(self):
 
-        if not self.excel_file_1 and not self.excel_file_2:
-            raise UserError("Veuillez importer au moins un des deux fichiers Excel pour lancer le traitement.")
+        def _norm(v):
+            if v is None:
+                return False
+            v = str(v).strip()
+            return v or False
 
-        df1 = df2 = None
+        # Traitement fichier 1
+        if self.excel_file_1:
+            file_data_1 = base64.b64decode(self.excel_file_1)
+            df1 = pd.read_excel(io.BytesIO(file_data_1), skiprows=0)
+
+            # Renommer les colonnes proprement (SELON TA TRAME)
+            df1.columns = [
+                "Article",
+                "Référence interne",
+                "Barcode (DIGI)",
+                "Code barres",
+                "Code barre (externe)",
+            ]
+
+            Lot = self.env["stock.lot"].sudo()
+
+            updated = 0
+            not_found = []
+            skipped = 0
+
+            # Parcours de chaque ligne du fichier
+            for index, row in df1.iterrows():
+                ref = _norm(row["Référence interne"])
+                if not ref:
+                    skipped += 1
+                    continue
+
+                barcode_digi = _norm(row["Barcode (DIGI)"])
+                code_barres = _norm(row["Code barres"])
+                barcode_externe = _norm(row["Code barre (externe)"])
+
+                # Recherche du lot dans Odoo via lot.ref
+                lot = Lot.search([("ref", "=", ref)], limit=1)
+                if not lot:
+                    not_found.append(ref)
+                    _logger.warning("Aucun lot trouvé pour Référence interne: %s", ref)
+                    continue
+
+                vals = {}
+                # Mapping champs
+                if code_barres is not False:
+                    vals["barcode"] = code_barres
+                if barcode_digi is not False:
+                    vals["barcode_ext"] = barcode_externe
+                if barcode_externe is not False:
+                    vals["barcode_ext2"] = barcode_digi
+
+                if not vals:
+                    skipped += 1
+                    continue
+
+                lot.write(vals)
+                updated += 1
+
+            msg = (
+                f"Traitement terminé.\n"
+                f"- Lots mis à jour : {updated}\n"
+                f"- Références internes non trouvées : {len(not_found)}\n"
+                f"- Lignes ignorées : {skipped}\n"
+            )
+            if not_found:
+                msg += "\nExemples non trouvés (max 20) : " + ", ".join(not_found[:20])
+
+            # comme dans ton action : on remonte un message de fin
+            """raise UserError(msg)"""
+
+        return False
+
+
+        return False
 
         # Traitement fichier 1
         if self.excel_file_1:
@@ -159,72 +232,3 @@ class RecomputeAccountMoveFromExcel(models.TransientModel):
                     origin_price_unit = line.price_unit
                     line.price_unit = origin_price_unit+1
                     line.price_unit = origin_price_unit
-
-        return True
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        if not self.excel_file_1:
-            raise UserError("Veuillez importer un fichier Excel contenant les numéros de facture.")
-
-        try:
-            file_data = base64.b64decode(self.excel_file)
-            df = pd.read_excel(io.BytesIO(file_data))
-        except Exception as e:
-            raise UserError(f"Erreur de lecture du fichier : {e}")
-
-        # Log des colonnes pour debug
-        _logger.info("WARNING_DKGROUP Colonnes détectées : %s", list(df.columns))
-
-        # Vérification colonne obligatoire
-        if 'Numéro' not in df.columns:
-            raise UserError("La colonne 'Numéro' est absente du fichier Excel.")
-
-        # Extraction des numéros de facture
-        facture_refs = df['Numéro'].dropna().astype(str).unique().tolist()
-        _logger.info("WARNING_DKGROUP Facture %s ", str(len(facture_refs)))
-
-        #facture_refs = ['F504882']
-        moves = self.env['account.move'].search([('name', 'in', facture_refs)])
-        if not moves:
-            raise UserError("Aucune facture trouvée dans Odoo avec les références fournies.")
-
-        errors = []
-        # Diviser les moves en batchs de 200
-        batch_size = 200
-        for i in range(0, len(moves), batch_size):
-            batch = moves[i:i + batch_size]
-            for move in batch:
-                try:
-                    if move.state == 'posted':
-                        move.button_draft()         # Remise en brouillon
-                        move._compute_amount()      # Recalcule les montants
-                        move.action_post()          # Revalidation
-                except Exception as e:
-                    errors.append(f"{move.name}: {str(e)}")
-
-        message = f"{len(moves)} factures traitées avec succès."
-        if errors:
-            message += f"\n⚠️ {len(errors)} erreurs :\n" + "\n".join(errors[:10])  # Limite à 10 erreurs
-
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Résultat du recalcul',
-                'message': message,
-                'type': 'warning' if errors else 'success',
-            }
-        }

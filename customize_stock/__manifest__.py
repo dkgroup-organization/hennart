@@ -27,6 +27,7 @@
         "views/stock_quant_view.xml",
         "views/stock_move_operations_form_inherit.xml",
         "wizard/import_product_template.xml",
+        "wizard/import_lot_barcodes_wizard.xml"
 
     ],
     'demo': [

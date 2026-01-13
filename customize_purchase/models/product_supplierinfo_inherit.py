@@ -16,7 +16,7 @@ class ProductSupplierinfoInherit(models.Model):
     packaging = fields.Many2one('product.packaging',
                                 'Packaging',help="It specifies attributes of packaging like type, quantity of packaging,etc.")
     product_uos = fields.Many2one("uom.uom", string="Invoicing unit")
-    pricelist_ids = fields.One2many("product.supplierinfo.historic", "suppinfo_id", "Supplier Pricelist",readonly=True)
+    pricelist_ids = fields.One2many("product.supplierinfo.historic", "suppinfo_id", "Supplier Pricelist")
 
     package_domain = fields.Binary(string="Package domain", compute="_compute_package_domain")
     no_purchase = fields.Boolean('Stop Purchase', help="""Select this option if you want stopping to purchase 

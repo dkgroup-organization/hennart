@@ -24,6 +24,11 @@ class ProductCategory(models.Model):
 
     use_expiration_date = fields.Boolean("Use expiration date", default=True)
 
+    manual_stock_valuation = fields.Boolean(
+        string="Valorisation manuelle du stock (Excel)",
+        help="Si cochée : le calcul de valorisation ignore les OF et prend les valeurs issues d'Excel et du prix de revient article."
+    )
+
     @api.onchange('tracking', 'detailed_type', 'use_expiration_date')
     def onchange_detailed_type(self):
         """ change the configuration"""
