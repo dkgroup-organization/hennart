@@ -72,6 +72,67 @@ class ProductComponentHierarchy(models.Model):
                 line.product_id AS composant_id,
                 line.product_tmpl_id AS composant_tmpl_id,
                 line.product_qty AS quantity,
+                1 AS level,
+                NOT EXISTS (
+                    SELECT 1
+                    FROM mrp_bom sub_bom
+                    WHERE (sub_bom.product_id = line.product_id AND sub_bom.product_id IS NOT NULL)
+                    OR (sub_bom.product_tmpl_id = line.product_tmpl_id AND sub_bom.product_tmpl_id IS NOT NULL)
+                ) AS last_level
+            FROM mrp_bom bom
+            JOIN mrp_bom_line line ON bom.id = line.bom_id
+
+            UNION ALL
+
+            -- Niveau récursif : parcourir les sous-composants
+            SELECT 
+                ch.product_tmpl_id AS product_tmpl_id,
+                ch.product_id AS product_id,
+                line.product_id AS composant_id,
+                line.product_tmpl_id AS composant_tmpl_id,
+                ch.quantity * line.product_qty AS quantity,
+                ch.level + 1 AS level,
+                NOT EXISTS (
+                    SELECT 1
+                    FROM mrp_bom sub_bom
+                    WHERE (sub_bom.product_id = line.product_id AND sub_bom.product_id IS NOT NULL)
+                    OR (sub_bom.product_tmpl_id = line.product_tmpl_id AND sub_bom.product_tmpl_id IS NOT NULL)
+                ) AS last_level
+            FROM component_hierarchy ch
+            JOIN mrp_bom bom
+            ON (bom.product_id = ch.composant_id AND bom.product_id IS NOT NULL)
+            OR (bom.product_tmpl_id = ch.composant_tmpl_id AND bom.product_tmpl_id IS NOT NULL)
+            JOIN mrp_bom_line line ON bom.id = line.bom_id
+        )
+        SELECT
+            -- ID robuste : ne dépend pas de product_id (qui peut être NULL)
+            row_number() OVER () AS id,
+            product_tmpl_id,
+            product_id,
+            composant_tmpl_id,
+            composant_id,
+            quantity,
+            level,
+            last_level
+        FROM component_hierarchy
+        WHERE last_level IS TRUE
+        """
+
+
+
+
+
+    def _table_query_OLD(self):
+        """Définit la requête SQL de la vue"""
+        return """
+        WITH RECURSIVE component_hierarchy AS (
+            -- Niveau initial : récupérer les composants directs du produit
+            SELECT 
+                bom.product_tmpl_id AS product_tmpl_id,
+                bom.product_id AS product_id,
+                line.product_id AS composant_id,
+                line.product_tmpl_id AS composant_tmpl_id,
+                line.product_qty AS quantity,
                 1 AS level, -- Niveau initial
                 NOT EXISTS (
                     SELECT 1

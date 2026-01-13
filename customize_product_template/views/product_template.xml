@@ -153,6 +153,8 @@
                                 <field name="to_personnalize"/>
                                 <field name="to_label"/>
                                 <field name="min_production_qty"/>
+                                <field name="transformation_tmpl_ids_path"/>
+                                <field name="transformation_variant_ids_path"/>
                             </group>
                         </group>
                     </page>
@@ -162,6 +164,7 @@
                             <group string="cost">
                                 <field name="transformation_cost"/>
                                 <field name="cutting_cost"/>
+                                <field name="transport_cost"/>
                                 <field name="refinement_cost"/>
                                 <field name="total_cost_price"/>
                             </group>

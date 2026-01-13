@@ -16,14 +16,6 @@ class StockQuantExportWizard(models.TransientModel):
 
     # Fallback par lot parent (même produit, même préfixe de lot)
     def _get_fallback_lot(self,lot):
-
-        # 1) Priorité : lot upstream (many2many) -> on prend le premier
-        if lot.upstream_lot:
-            # recordset => [0] renvoie le 1er record
-            return lot.upstream_lot[0]
-        
-        return False
-    
         # On cherche un lot du même produit, avec des infos complètes
         fallback = self.env['stock.lot'].search([
             ('product_id', '=', lot.product_id.id),
@@ -64,198 +56,16 @@ class StockQuantExportWizard(models.TransientModel):
             return max(weighted, key=lambda l: l.unit_weight)
 
         return parent_lots[0]
-    
-
-    def lot_reception_info(self, lot):
-        """
-        Retourne les infos de réception du lot depuis le mouvement amont incoming
-        """
-        # Valeurs par défaut (fallback sur le lot)
-        supplier = lot.partner_supplier_id.name if lot.partner_supplier_id else ''
-        supplier_date = lot.partner_supplier_date
-        uos = lot.partner_supplier_uos_id.name if lot.partner_supplier_uos_id else ''
-        unit_price = 0.0
-        average_reception_weight = 0.0
-        qty_received = 0.0
-        weight = 0.0
-
-        # Analyse du mouvement amont
-        if lot.upstream_move:
-            for move in lot.upstream_move:
-               
-                # critère STRICT comme tu l’as demandé
-                if move.picking_code != 'incoming':
-                    continue
-
-                # fournisseur + date
-                if move.picking_id:
-                    supplier = move.picking_id.partner_id.name if move.picking_id.partner_id else supplier
-                    supplier_date = (
-                        move.picking_id.date_done
-                        or move.picking_id.scheduled_date
-                        or supplier_date
-                    )
-
-                # unité achat
-                if move.product_uos:
-                    uos = move.product_uos.name
-
-                # quantité reçue
-                qty_received = move.product_uom_qty or 0.0
-                weight = move.weight or 0.0
-
-                picking_origin = move.origin or ""
-
-                if not picking_origin and move.reference:
-                    picking = self.env['stock.picking'].search([('name', '=', move.reference)], limit=1)
-                    picking_origin = picking.origin or ""
-                    
-                # prix d'achat via PO
-                if picking_origin:
-                    po = self.env['purchase.order'].search(
-                        [('name', '=', picking_origin)],
-                        limit=1
-                    )
-                    if po:
-                        for line in po.order_line:
-                            if line.product_id.id == lot.product_id.id:
-                                unit_price = line.price_unit or unit_price
-                                break
-
-                break 
-
-        # poids moyen réception
-        if qty_received > 0:
-            average_reception_weight = round(weight / qty_received, 2)
-
-        return {
-            'supplier': supplier,
-            'date': supplier_date,
-            'uos': uos,
-            'unit_price': unit_price,
-            'average_reception_weight': average_reception_weight,
-        }
-    
-
-    def fallback_lot_reception_info(self, lot):
-        """
-        Retourne les infos de réception du lot depuis le mouvement amont incoming
-        """
-        # Valeurs par défaut (fallback sur le lot)
-        supplier = lot.partner_supplier_id.name if lot.partner_supplier_id else ''
-        supplier_date = lot.partner_supplier_date
-        uos = lot.partner_supplier_uos_id.name if lot.partner_supplier_uos_id else ''
-        unit_price = 0.0
-        average_reception_weight = 0.0
-        qty_received = 0.0
-        weight = 0.0
-
-        # Analyse du mouvement amont
-        if lot.upstream_move:
-            for move in lot.upstream_move:
-
-               
-                # critère STRICT comme tu l’as demandé
-                if move.picking_code != 'incoming':
-                    continue
-
-               
-                # fournisseur + date
-                if move.picking_id:
-                    supplier = move.picking_id.partner_id.name if move.picking_id.partner_id else supplier
-                    supplier_date = (
-                        move.picking_id.date_done
-                        or move.picking_id.scheduled_date
-                        or supplier_date
-                    )
-
-                # unité achat
-                if move.product_uos:
-                    uos = move.product_uos.name
-
-                # quantité reçue
-                qty_received = move.product_uom_qty or 0.0
-                weight = move.weight or 0.0
-                
-                # prix d'achat via PO
-                if move.origin:
-                    po = self.env['purchase.order'].search(
-                        [('name', '=', move.origin)],
-                        limit=1
-                    )
-                    
-                    if po:
-                        # On remplace lot.product_id par le product_product du 1er component_price
-                        tmpl = lot.product_id.product_tmpl_id
-                        comp = tmpl.component_price[:1]
-
-                        component_product = False
-                        if comp:
-                            # ⚠️ adapte le nom du champ many2one vers product.product dans product.component.hierarchy
-                            # le plus courant est "product_id"
-                            component_product = comp.composant_tmpl_id.product_variant_id or comp.composant_tmpl_id.product_variant_ids[:1]
-
-                        for line in po.order_line:
-
-                            # Si on a un component_product, on matche dessus, sinon on retombe sur le produit du lot
-                            target_product = component_product or lot.product_id
-                            _logger.info(
-                                f"WARNING_DKGROUP target_producttarget_producttarget_producttarget_product : "
-                                f"{target_product}"
-                            )
-                           
-                            if line.product_id == target_product:
-                                unit_price = line.price_unit or unit_price
-                                break
-
-                             # liste d'ids variants autorisés (depuis le champ texte sur le template)
-                            """variant_path_str = (target_product.product_tmpl_id.transformation_variant_ids_path or "").strip()
-
-                            allowed_variant_ids = set()
-
-                            if variant_path_str:
-                                # "12;45;78 | 12;90" -> {12,45,78,90}
-                                for chunk in variant_path_str.split('|'):
-                                    chunk = chunk.strip()
-                                    if not chunk:
-                                        continue
-                                    for token in chunk.split(';'):
-                                        token = token.strip()
-                                        if token.isdigit():
-                                            allowed_variant_ids.add(int(token))
-
-                            # fallback: si rien calculé, on accepte au moins le target_product lui-même
-                            if not allowed_variant_ids and target_product:
-                                allowed_variant_ids.add(target_product.id)
-
-                            for line in po.order_line:
-                                # ✅ match si le produit de la ligne est dans les variants du chemin de transformation
-                                if line.product_id and line.product_id.id in allowed_variant_ids:
-                                    unit_price = line.price_unit or unit_price
-                                    break"""
-
-                break  # on prend uniquement le premier incoming
-
-        # poids moyen réception
-        if qty_received > 0:
-            average_reception_weight = round(weight / qty_received, 2)
-
-        return {
-            'supplier': supplier,
-            'date': supplier_date,
-            'uos': uos,
-            'unit_price': unit_price,
-            'average_reception_weight': average_reception_weight,
-        }
-
 
     def action_export(self):
 
+
+    
         #_logger.info(f"WARNING_DKGROUP lot parent : {parent.id if parent else None} - {(parent.ref or parent.name) if parent else 'Aucun'}")
 
         quant_export = self.env['stock.quant.export'].create({'date': self.date})
-        date = self.date.strftime('%Y-%m-%d 01:00:00')
-        date_now = fields.Date.today().strftime('%Y-%m-%d 20:00:00')
+        date = self.date.strftime('%Y-%m-%d 04:00:00')
+        date_now = fields.Date.today().strftime('%Y-%m-%d 04:00:00')
 
         sql = f""" 
         SELECT squ.product_id, squ.lot_id, sum(squ.quantity)
@@ -280,7 +90,6 @@ class StockQuantExportWizard(models.TransientModel):
 
         ) AS squ, product_product pp
         WHERE squ.product_id = pp.id
-        
         GROUP BY squ.product_id, squ.lot_id, pp.default_code
         HAVING sum(squ.quantity) > 0.0
         ORDER BY pp.default_code
@@ -309,40 +118,20 @@ class StockQuantExportWizard(models.TransientModel):
 
         row = 1
         for line in result_sql:
-            
             product = self.env['product.product'].browse(line[0])
-
-            """f product.default_code != "02026":
-                continue"""
-
             lot = self.env['stock.lot'].browse(line[1])
-            lot_info = self.lot_reception_info(lot)
-           
-            kg_price = lot.kg_price or 0.0
-            supplier = lot.partner_supplier_id.name or ''
-            supplier_date = lot.partner_supplier_date or ''
-            uos_name = lot.uos_id.name  or ''
-            partner_uos = lot.partner_supplier_uos_id.name  or ''
-            unit_weight = lot.unit_weight  or 1.0
             quantity = float(line[2])
-            
-            #_logger.info(f"WARNING_DKGROUP lot_info : {lot_info}")
 
             # Fallback
             fallback_lot = self._get_fallback_lot(lot) if not lot.unit_price or not lot.partner_supplier_id else lot
 
-            unit_price = lot_info['unit_price']
-            if fallback_lot:
-                fallback_lot_info = self.fallback_lot_reception_info(lot)
-                unit_price = fallback_lot_info['unit_price']
-                _logger.info(f"WARNING_DKGROUP fallback_lot_info : {fallback_lot_info}")
-
-                kg_price = fallback_lot.kg_price  or 0.0
-                supplier = fallback_lot.partner_supplier_id.name  or ''
-                supplier_date = fallback_lot.partner_supplier_date or ''
-                uos_name = fallback_lot.uos_id.name  or ''
-                partner_uos = fallback_lot.partner_supplier_uos_id.name  or ''
-                unit_weight = fallback_lot.unit_weight or 1.0
+            unit_price = lot.unit_price or fallback_lot.unit_price or 0.0
+            kg_price = lot.kg_price or fallback_lot.kg_price or 0.0
+            supplier = lot.partner_supplier_id.name or fallback_lot.partner_supplier_id.name or ''
+            supplier_date = lot.partner_supplier_date or fallback_lot.partner_supplier_date or ''
+            uos_name = lot.uos_id.name or fallback_lot.uos_id.name or ''
+            partner_uos = lot.partner_supplier_uos_id.name or fallback_lot.partner_supplier_uos_id.name or ''
+            unit_weight = lot.unit_weight or fallback_lot.unit_weight or 1.0
 
             date_format = workbook.add_format({'num_format': 'dd/mm/yyyy'})
 
@@ -356,29 +145,26 @@ class StockQuantExportWizard(models.TransientModel):
 
             # Nouvelle colonne : Valorisation manuelle stock (related category)
             worksheet.write(row, 3, product.manual_stock_valuation)
+
             worksheet.write(row, 4, lot.uos_id.name)         # Unité vente
             worksheet.write(row, 5, product.uos_po_id.name)              # Unité achat
+
             worksheet.write(row, 6, product.global_component_quantity)                       # Quantité composant (provisoire = quantity)
-            worksheet.write(row, 7, lot_info['average_reception_weight'])                    # poids moyen du lot
+            worksheet.write(row, 7, lot.average_reception_weight)                    # poids moyen du lot
             worksheet.write(row, 8, quantity)                       # Quantité en stock
-            worksheet.write(row, 9,lot_info['supplier'])
 
-            if lot_info.get('date'):
-                # S’assurer qu’on a bien un objet datetime (pas une chaîne)
-                reception_date = fields.Datetime.from_string(lot_info['date']) \
-                    if isinstance(lot_info['date'], str) else lot_info['date']
-
-                worksheet.write_datetime(row, 10, reception_date, date_format)
-            else:
-                worksheet.write(row, 10, "", date_format)
+            worksheet.write(row, 9, supplier)
+            worksheet.write(row, 10, supplier_date)
 
             worksheet.write(row, 11, unit_price)                    # Prix unitaire
 
             # Nouvelle colonne : Cout transport
             worksheet.write(row, 12, product.transport_cost)
+
             worksheet.write(row, 13, product.transformation_cost)
             worksheet.write(row, 14, product.cutting_cost)
             worksheet.write(row, 15, product.refinement_cost)
+
             worksheet.write(row, 16, product.total_cost_price)       # Prix de revient
             
             """if lot.removal_date:
